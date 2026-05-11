@@ -5,6 +5,10 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.cryptotradecoach.data.Signal
 import com.cryptotradecoach.data.SignalHistoryRepository
+import com.cryptotradecoach.data.local.GuidelineChangeEntity
+import com.cryptotradecoach.data.local.MissedSignalEntity
+import com.cryptotradecoach.data.local.SignalHistoryEntity
+import com.cryptotradecoach.data.local.StrategyReviewEntity
 import com.cryptotradecoach.service.ScannerStateStore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,7 +18,10 @@ import kotlinx.coroutines.launch
 data class MainUiState(
     val isRunning: Boolean = false,
     val topSignals: List<Signal> = emptyList(),
-    val historyByMarket: Map<String, List<Signal>> = emptyMap(),
+    val historyByMarket: Map<String, List<SignalHistoryEntity>> = emptyMap(),
+    val missedSignals: List<MissedSignalEntity> = emptyList(),
+    val strategyReviews: List<StrategyReviewEntity> = emptyList(),
+    val guidelineChanges: List<GuidelineChangeEntity> = emptyList(),
     val lastScanAt: Long? = null,
 )
 
@@ -25,7 +32,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     init {
         viewModelScope.launch {
-            ScannerStateStore.loadHistory(historyRepository.getRecentHistoryByMarket())
+            ScannerStateStore.loadPersistedState(
+                historyByMarket = historyRepository.getRecentHistoryByMarket(),
+                missedSignals = historyRepository.getRecentMissedSignals(),
+                strategyReviews = historyRepository.getRecentStrategyReviews(),
+                guidelineChanges = historyRepository.getRecentGuidelineChanges(),
+            )
         }
         viewModelScope.launch {
             ScannerStateStore.isRunning.collect { running ->
@@ -40,6 +52,21 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             ScannerStateStore.historyByMarket.collect { history ->
                 _uiState.value = _uiState.value.copy(historyByMarket = history)
+            }
+        }
+        viewModelScope.launch {
+            ScannerStateStore.missedSignals.collect { missed ->
+                _uiState.value = _uiState.value.copy(missedSignals = missed)
+            }
+        }
+        viewModelScope.launch {
+            ScannerStateStore.strategyReviews.collect { reviews ->
+                _uiState.value = _uiState.value.copy(strategyReviews = reviews)
+            }
+        }
+        viewModelScope.launch {
+            ScannerStateStore.guidelineChanges.collect { changes ->
+                _uiState.value = _uiState.value.copy(guidelineChanges = changes)
             }
         }
         viewModelScope.launch {

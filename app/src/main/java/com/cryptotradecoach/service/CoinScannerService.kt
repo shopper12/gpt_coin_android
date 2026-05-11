@@ -6,6 +6,7 @@ import android.os.IBinder
 import com.cryptotradecoach.data.Signal
 import com.cryptotradecoach.data.SignalHistoryRepository
 import com.cryptotradecoach.data.UpbitMarketDataSource
+import com.cryptotradecoach.data.local.MissedSignalEntity
 import com.cryptotradecoach.domain.SignalEngine
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -26,6 +27,7 @@ class CoinScannerService : Service() {
     private val lastNotifiedByMarket = mutableMapOf<String, Long>()
     private val lastStrategyByMarket = mutableMapOf<String, String>()
     private val lastStrategyChangeNotifiedByMarket = mutableMapOf<String, Long>()
+    private val lastMissedSignalNotifiedByMarket = mutableMapOf<String, Long>()
 
     override fun onCreate() {
         super.onCreate()
@@ -50,11 +52,15 @@ class CoinScannerService : Service() {
         scanJob = serviceScope.launch {
             while (isActive) {
                 runCatching {
-                    val signals = engine.scan(dataSource.fetchTickers())
-                    historyRepository.saveScanResult(signals)
+                    val tickers = dataSource.fetchTickers()
+                    val signals = engine.scan(tickers)
+                    val persistence = historyRepository.saveScanResult(tickers, signals)
                     ScannerStateStore.pushScanResult(
                         validSignals = signals,
-                        persistedHistoryByMarket = historyRepository.getRecentHistoryByMarket(),
+                        persistedHistoryByMarket = persistence.historyByMarket,
+                        missedSignals = persistence.missedSignals,
+                        strategyReviews = persistence.strategyReviews,
+                        guidelineChanges = persistence.guidelineChanges,
                     )
 
                     val topSignals = signals.take(5)
@@ -62,6 +68,7 @@ class CoinScannerService : Service() {
                     filterDuplicateSignals(topSignals).forEachIndexed { index, signal ->
                         notifier.notifySignal(signal, SIGNAL_NOTIFICATION_BASE + index)
                     }
+                    notifyMissedSignals(persistence.newlyMissedSignals)
                 }
                 delay(SCAN_INTERVAL_MS)
             }
@@ -84,6 +91,17 @@ class CoinScannerService : Service() {
                 }
             }
             lastStrategyByMarket[signal.market] = signal.strategyName
+        }
+    }
+
+    private fun notifyMissedSignals(missedSignals: List<MissedSignalEntity>) {
+        val now = System.currentTimeMillis()
+        missedSignals.forEachIndexed { index, missed ->
+            val lastNotified = lastMissedSignalNotifiedByMarket[missed.market] ?: 0L
+            if ((now - lastNotified) >= MISSED_SIGNAL_COOLDOWN_MS) {
+                notifier.notifyMissedSignal(missed, MISSED_SIGNAL_NOTIFICATION_BASE + index)
+                lastMissedSignalNotifiedByMarket[missed.market] = now
+            }
         }
     }
 
@@ -120,8 +138,10 @@ class CoinScannerService : Service() {
         private const val SCAN_INTERVAL_MS = 30_000L
         private const val DUPLICATE_COOLDOWN_MS = 10 * 60 * 1000L
         private const val STRATEGY_CHANGE_COOLDOWN_MS = 5 * 60 * 1000L
+        private const val MISSED_SIGNAL_COOLDOWN_MS = 30 * 60 * 1000L
         private const val NOTIFICATION_ID = 101
         private const val SIGNAL_NOTIFICATION_BASE = 500
         private const val STRATEGY_CHANGE_NOTIFICATION_BASE = 800
+        private const val MISSED_SIGNAL_NOTIFICATION_BASE = 1_100
     }
 }

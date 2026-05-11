@@ -8,18 +8,161 @@ import androidx.room.Query
 @Dao
 interface SignalHistoryDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertAll(items: List<SignalHistoryEntity>)
+    suspend fun insertHistory(item: SignalHistoryEntity): Long
 
-    @Query("SELECT DISTINCT market FROM strategy_history ORDER BY market ASC")
-    suspend fun getMarkets(): List<String>
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertSnapshots(items: List<PriceSnapshotEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertMissedSignal(item: MissedSignalEntity): Long
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertStrategyReview(item: StrategyReviewEntity)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertGuidelineChange(item: GuidelineChangeEntity)
+
+    @Query("SELECT DISTINCT market FROM signal_history ORDER BY market ASC")
+    suspend fun getHistoryMarkets(): List<String>
 
     @Query(
         """
-        SELECT * FROM strategy_history
+        SELECT * FROM signal_history
         WHERE market = :market
-        ORDER BY timestamp DESC, id DESC
+        ORDER BY createdAt DESC, id DESC
         LIMIT :limit
         """,
     )
-    suspend fun getRecentByMarket(market: String, limit: Int = 100): List<SignalHistoryEntity>
+    suspend fun getRecentHistoryByMarket(market: String, limit: Int = 100): List<SignalHistoryEntity>
+
+    @Query(
+        """
+        SELECT * FROM signal_history
+        ORDER BY createdAt DESC, id DESC
+        LIMIT :limit
+        """,
+    )
+    suspend fun getRecentHistory(limit: Int = 300): List<SignalHistoryEntity>
+
+    @Query(
+        """
+        SELECT * FROM signal_history
+        WHERE market = :market
+        ORDER BY createdAt DESC, id DESC
+        LIMIT 1
+        """,
+    )
+    suspend fun getLatestHistoryForMarket(market: String): SignalHistoryEntity?
+
+    @Query(
+        """
+        SELECT COUNT(*) FROM signal_history
+        WHERE market = :market AND eventType = :eventType AND createdAt >= :since
+        """,
+    )
+    suspend fun countMarketEventSince(market: String, eventType: String, since: Long): Int
+
+    @Query(
+        """
+        SELECT COUNT(*) FROM signal_history
+        WHERE market = :market
+        AND eventType IN ('INITIAL_SIGNAL', 'STRATEGY_CHANGED', 'PRICE_MOVED_5_PERCENT')
+        AND createdAt >= :since
+        """,
+    )
+    suspend fun countRecentActiveSignalEvents(market: String, since: Long): Int
+
+    @Query(
+        """
+        SELECT * FROM signal_history
+        WHERE eventType IN ('INITIAL_SIGNAL', 'STRATEGY_CHANGED', 'PRICE_MOVED_5_PERCENT')
+        AND createdAt <= :expireBefore
+        AND market NOT IN (
+            SELECT market FROM signal_history
+            WHERE eventType IN ('STOP_HIT', 'TARGET_HIT', 'EXPIRED', 'INVALIDATED')
+            AND createdAt >= :terminalSince
+        )
+        ORDER BY createdAt ASC
+        LIMIT :limit
+        """,
+    )
+    suspend fun getExpiredCandidates(expireBefore: Long, terminalSince: Long, limit: Int = 100): List<SignalHistoryEntity>
+
+    @Query(
+        """
+        SELECT * FROM price_snapshots
+        WHERE market = :market AND timestamp < :before
+        ORDER BY timestamp DESC, id DESC
+        LIMIT 1
+        """,
+    )
+    suspend fun getPreviousSnapshot(market: String, before: Long): PriceSnapshotEntity?
+
+    @Query(
+        """
+        SELECT * FROM price_snapshots
+        WHERE market = :market AND timestamp >= :since
+        ORDER BY timestamp ASC, id ASC
+        LIMIT 1
+        """,
+    )
+    suspend fun getOldestSnapshotSince(market: String, since: Long): PriceSnapshotEntity?
+
+    @Query(
+        """
+        SELECT COUNT(*) FROM missed_signals
+        WHERE market = :market AND detectedAt >= :since
+        """,
+    )
+    suspend fun countRecentMissedSignals(market: String, since: Long): Int
+
+    @Query(
+        """
+        SELECT * FROM missed_signals
+        ORDER BY detectedAt DESC, id DESC
+        LIMIT :limit
+        """,
+    )
+    suspend fun getRecentMissedSignals(limit: Int = 100): List<MissedSignalEntity>
+
+    @Query(
+        """
+        SELECT * FROM strategy_reviews
+        ORDER BY reviewedAt DESC, id DESC
+        LIMIT :limit
+        """,
+    )
+    suspend fun getRecentStrategyReviews(limit: Int = 50): List<StrategyReviewEntity>
+
+    @Query(
+        """
+        SELECT * FROM guideline_changes
+        ORDER BY changedAt DESC, id DESC
+        LIMIT :limit
+        """,
+    )
+    suspend fun getRecentGuidelineChanges(limit: Int = 50): List<GuidelineChangeEntity>
+
+    @Query(
+        """
+        SELECT COUNT(*) FROM guideline_changes
+        WHERE affectedStrategyName = :strategyName
+        AND afterRule = :afterRule
+        AND changedAt >= :since
+        """,
+    )
+    suspend fun countSimilarGuidelineChanges(strategyName: String, afterRule: String, since: Long): Int
+
+    @Query("DELETE FROM price_snapshots WHERE timestamp < :cutoff")
+    suspend fun deleteSnapshotsOlderThan(cutoff: Long)
+
+    @Query(
+        """
+        DELETE FROM price_snapshots
+        WHERE id NOT IN (
+            SELECT id FROM price_snapshots ORDER BY timestamp DESC, id DESC LIMIT :limit
+        )
+        """,
+    )
+    suspend fun keepLatestSnapshots(limit: Int)
 }

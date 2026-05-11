@@ -12,10 +12,8 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -25,10 +23,13 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -37,6 +38,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import com.cryptotradecoach.data.Signal
+import com.cryptotradecoach.data.local.GuidelineChangeEntity
+import com.cryptotradecoach.data.local.MissedSignalEntity
+import com.cryptotradecoach.data.local.SignalHistoryEntity
+import com.cryptotradecoach.data.local.StrategyReviewEntity
 import com.cryptotradecoach.service.CoinScannerService
 import com.cryptotradecoach.ui.MainViewModel
 import java.text.SimpleDateFormat
@@ -58,6 +63,9 @@ class MainActivity : ComponentActivity() {
                     isRunning = state.isRunning,
                     topSignals = state.topSignals,
                     historyByMarket = state.historyByMarket,
+                    missedSignals = state.missedSignals,
+                    strategyReviews = state.strategyReviews,
+                    guidelineChanges = state.guidelineChanges,
                     lastScanAt = state.lastScanAt,
                     onStart = { startScanner() },
                     onStop = { stopScanner() },
@@ -101,13 +109,78 @@ class MainActivity : ComponentActivity() {
 private fun MainScreen(
     isRunning: Boolean,
     topSignals: List<Signal>,
-    historyByMarket: Map<String, List<Signal>>,
+    historyByMarket: Map<String, List<SignalHistoryEntity>>,
+    missedSignals: List<MissedSignalEntity>,
+    strategyReviews: List<StrategyReviewEntity>,
+    guidelineChanges: List<GuidelineChangeEntity>,
     lastScanAt: Long?,
     onStart: () -> Unit,
     onStop: () -> Unit,
 ) {
+    val tabs = listOf("Current", "History", "Missed", "Review", "Guidelines")
+    var selectedTab by remember { mutableIntStateOf(0) }
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        Text(
+            text = "Crypto Trade Coach",
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 8.dp),
+        )
+        TabRow(selectedTabIndex = selectedTab) {
+            tabs.forEachIndexed { index, title ->
+                Tab(
+                    selected = selectedTab == index,
+                    onClick = { selectedTab = index },
+                    text = { Text(title) },
+                )
+            }
+        }
+        when (selectedTab) {
+            0 -> CurrentTab(isRunning, topSignals, lastScanAt, onStart, onStop)
+            1 -> HistoryTab(historyByMarket)
+            2 -> MissedTab(missedSignals)
+            3 -> ReviewTab(strategyReviews)
+            4 -> GuidelinesTab(guidelineChanges)
+        }
+    }
+}
+
+@Composable
+private fun CurrentTab(
+    isRunning: Boolean,
+    topSignals: List<Signal>,
+    lastScanAt: Long?,
+    onStart: () -> Unit,
+    onStop: () -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
+        Text("Status: ${if (isRunning) "auto scan running" else "stopped"}")
+        Text("Last scan: ${lastScanAt?.toTimeText() ?: "-"}")
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Button(onClick = onStart, enabled = !isRunning) { Text("Start auto scan") }
+            Button(onClick = onStop, enabled = isRunning) { Text("Stop") }
+        }
+        Text("Current valid strategies Top 5", style = MaterialTheme.typography.titleMedium)
+        LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            if (topSignals.isEmpty()) {
+                item { EmptyCard(if (isRunning) "Waiting for the next scan result." else "Start auto scan to load current strategies.") }
+            } else {
+                items(topSignals) { signal -> SignalRow(signal) }
+            }
+        }
+    }
+}
+
+@Composable
+private fun HistoryTab(historyByMarket: Map<String, List<SignalHistoryEntity>>) {
     var historyMenuExpanded by remember { mutableStateOf(false) }
-    var selectedMarket by remember { mutableStateOf<String?>(null) }
+    var selectedMarket by remember(historyByMarket) { mutableStateOf(historyByMarket.keys.firstOrNull()) }
     val selectedHistory = selectedMarket?.let { historyByMarket[it].orEmpty() }.orEmpty()
 
     Column(
@@ -116,36 +189,6 @@ private fun MainScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        Text("Crypto Trade Coach", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
-        Text("Status: ${if (isRunning) "auto scan running" else "stopped"}")
-        Text("Last scan: ${lastScanAt?.toTimeText() ?: "-"}")
-
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Button(onClick = onStart, enabled = !isRunning) { Text("Start auto scan") }
-            Button(onClick = onStop, enabled = isRunning) { Text("Stop") }
-        }
-
-        Text("Top 5 valid strategies", style = MaterialTheme.typography.titleMedium)
-        if (topSignals.isEmpty()) {
-            Card(modifier = Modifier.fillMaxWidth()) {
-                Text(
-                    text = if (isRunning) "Waiting for the next scan result." else "Start auto scan to load current strategies.",
-                    modifier = Modifier.padding(12.dp),
-                )
-            }
-        } else {
-            LazyColumn(
-                modifier = Modifier.weight(1f, fill = false),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                items(topSignals) { signal ->
-                    SignalRow(signal)
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(4.dp))
-        Text("Recommendation history by market", style = MaterialTheme.typography.titleMedium)
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             OutlinedButton(
                 onClick = { historyMenuExpanded = true },
@@ -168,16 +211,60 @@ private fun MainScreen(
                 }
             }
         }
-
-        if (selectedMarket != null) {
-            LazyColumn(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                items(selectedHistory) { signal ->
-                    HistoryRow(signal)
-                }
+        LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            if (selectedHistory.isEmpty()) {
+                item { EmptyCard("No strategy history yet.") }
+            } else {
+                items(selectedHistory) { history -> HistoryRow(history) }
             }
+        }
+    }
+}
+
+@Composable
+private fun MissedTab(missedSignals: List<MissedSignalEntity>) {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        if (missedSignals.isEmpty()) {
+            item { EmptyCard("No missed signals detected yet.") }
+        } else {
+            items(missedSignals) { missed -> MissedRow(missed) }
+        }
+    }
+}
+
+@Composable
+private fun ReviewTab(strategyReviews: List<StrategyReviewEntity>) {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        if (strategyReviews.isEmpty()) {
+            item { EmptyCard("No strategy review report yet.") }
+        } else {
+            items(strategyReviews) { review -> ReviewRow(review) }
+        }
+    }
+}
+
+@Composable
+private fun GuidelinesTab(guidelineChanges: List<GuidelineChangeEntity>) {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        if (guidelineChanges.isEmpty()) {
+            item { EmptyCard("No guideline change suggestions yet.") }
+        } else {
+            items(guidelineChanges) { change -> GuidelineRow(change) }
         }
     }
 }
@@ -195,17 +282,68 @@ private fun SignalRow(signal: Signal) {
 }
 
 @Composable
-private fun HistoryRow(signal: Signal) {
+private fun HistoryRow(history: SignalHistoryEntity) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text("${signal.timestamp.toTimeText()} | ${signal.strategyName}", fontWeight = FontWeight.Bold)
-            Text("Entry: ${signal.entryPrice.toDisplay()} | Stop: ${signal.stopLossPrice.toDisplay()} | Target: ${signal.targetPrice.toDisplay()}")
-            Text("Score: ${signal.score.toDisplay()}")
+            Text("${history.eventType} | ${history.strategyName}", fontWeight = FontWeight.Bold)
+            Text("${history.createdAt.toTimeText()} | Price: ${history.currentPrice.toDisplay()} | Score: ${history.score.toDisplay()}")
+            Text("Entry: ${history.entryPrice.toDisplay()} | Stop: ${history.stopLossPrice.toDisplay()} | Target: ${history.targetPrice.toDisplay()}")
+            Text("MFE: ${history.mfePercent.toPercent()} | MAE: ${history.maePercent.toPercent()}")
+            Text(history.reason)
         }
     }
 }
 
+@Composable
+private fun MissedRow(missed: MissedSignalEntity) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text("${missed.market} | ${missed.detectedAt.toTimeText()}", fontWeight = FontWeight.Bold)
+            Text("Change: ${missed.changeRate.toPercent()} | ${missed.previousPrice.toDisplay()} -> ${missed.currentPrice.toDisplay()}")
+            Text("Ranks: change ${missed.rankByChangeRate}, trade value ${missed.rankByTradeValue}")
+            Text("Reason: ${missed.missedReason}")
+            Text("Suggested: ${missed.suggestedStrategy}")
+        }
+    }
+}
+
+@Composable
+private fun ReviewRow(review: StrategyReviewEntity) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text("${review.strategyName} | ${review.reviewedAt.toTimeText()}", fontWeight = FontWeight.Bold)
+            Text("Target: ${review.targetHitCount} | Stop: ${review.stopHitCount} | Expired: ${review.expiredCount}")
+            Text("Active: ${review.totalActiveSignals} | Missed: ${review.totalMissedSignals}")
+            Text("MFE avg: ${review.averageMfePercent.toPercent()} | MAE avg: ${review.averageMaePercent.toPercent()}")
+            Text("Diagnosis: ${review.diagnosis}")
+            Text("Suggestion: ${review.ruleChangeSuggestion}")
+        }
+    }
+}
+
+@Composable
+private fun GuidelineRow(change: GuidelineChangeEntity) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text("${change.affectedStrategyName} | Applied: ${change.applied}", fontWeight = FontWeight.Bold)
+            Text("Before: ${change.beforeRule}")
+            Text("After: ${change.afterRule}")
+            Text("Reason: ${change.reason}")
+            Text("Evidence: ${change.evidenceMarkets}")
+        }
+    }
+}
+
+@Composable
+private fun EmptyCard(text: String) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Text(text = text, modifier = Modifier.padding(12.dp))
+    }
+}
+
 private fun Double.toDisplay(): String = String.format("%,.2f", this)
+
+private fun Double.toPercent(): String = String.format("%.2f%%", this)
 
 private fun Long.toTimeText(): String {
     val formatter = SimpleDateFormat("HH:mm:ss", Locale.US)

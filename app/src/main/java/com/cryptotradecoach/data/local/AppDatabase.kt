@@ -6,8 +6,14 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 @Database(
-    entities = [SignalHistoryEntity::class],
-    version = 1,
+    entities = [
+        SignalHistoryEntity::class,
+        PriceSnapshotEntity::class,
+        MissedSignalEntity::class,
+        StrategyReviewEntity::class,
+        GuidelineChangeEntity::class,
+    ],
+    version = 2,
     exportSchema = false,
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -23,7 +29,7 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "crypto_trade_coach.db",
-                ).build().also { instance = it }
+                ).fallbackToDestructiveMigration().build().also { instance = it }
             }
         }
     }
