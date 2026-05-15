@@ -3,6 +3,8 @@ package com.cryptotradecoach.data.local
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.cryptotradecoach.data.StrategyStatus
+import com.cryptotradecoach.data.StrategyType
 
 const val STRATEGY_VERSION = "v1"
 
@@ -15,6 +17,67 @@ object SignalEventType {
     const val EXPIRED = "EXPIRED"
     const val INVALIDATED = "INVALIDATED"
 }
+
+object StrategyEventType {
+    const val NEW_ACTIVE = "NEW_ACTIVE"
+    const val RANK_UP = "RANK_UP"
+    const val PRICE_PLAN_CHANGED = "PRICE_PLAN_CHANGED"
+    const val INVALIDATED = "INVALIDATED"
+    const val HIT_TARGET = "HIT_TARGET"
+    const val STOPPED_OUT = "STOPPED_OUT"
+    const val EXPIRED = "EXPIRED"
+}
+
+@Entity(
+    tableName = "active_strategies",
+    indices = [
+        Index(value = ["symbol"], unique = true),
+        Index(value = ["status", "score", "rank"]),
+        Index(value = ["updatedAt"]),
+    ],
+)
+data class TradeStrategyEntity(
+    @PrimaryKey
+    val id: String,
+    val symbol: String,
+    val strategyType: StrategyType,
+    val status: StrategyStatus,
+    val score: Double,
+    val rank: Int,
+    val entryLow: Double,
+    val entryHigh: Double,
+    val stopLoss: Double,
+    val target1: Double,
+    val target2: Double,
+    val expectedReturnPct: Double,
+    val riskPct: Double,
+    val riskRewardRatio: Double,
+    val reason: String,
+    val invalidationReason: String?,
+    val createdAt: Long,
+    val updatedAt: Long,
+    val validUntil: Long,
+)
+
+@Entity(
+    tableName = "strategy_history",
+    indices = [
+        Index(value = ["symbol", "createdAt"]),
+        Index(value = ["strategyId", "createdAt"]),
+        Index(value = ["eventType", "createdAt"]),
+    ],
+)
+data class StrategyHistoryEntity(
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0,
+    val strategyId: String,
+    val symbol: String,
+    val eventType: String,
+    val oldSummary: String?,
+    val newSummary: String?,
+    val message: String,
+    val createdAt: Long,
+)
 
 object MissedSignalReason {
     const val TRADE_VALUE_FILTER_EXCLUDED = "TRADE_VALUE_FILTER_EXCLUDED"

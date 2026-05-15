@@ -6,6 +6,7 @@ import java.net.URL
 
 interface MarketDataSource {
     suspend fun fetchTickers(): List<Ticker>
+    suspend fun fetchMarketCandidates(limit: Int = 80): List<MarketCandidate>
 }
 
 class UpbitMarketDataSource : MarketDataSource {
@@ -13,6 +14,21 @@ class UpbitMarketDataSource : MarketDataSource {
         val markets = fetchKrwMarkets()
         if (markets.isEmpty()) return emptyList()
         return fetchTickerFor(markets)
+    }
+
+    override suspend fun fetchMarketCandidates(limit: Int): List<MarketCandidate> {
+        val topTickers = fetchTickers()
+            .sortedByDescending { it.accTradePrice24h }
+            .take(limit)
+
+        return topTickers.map { ticker ->
+            MarketCandidate(
+                ticker = ticker,
+                oneMinuteCandles = fetchCandles(ticker.market, unit = 1, count = 30),
+                fiveMinuteCandles = fetchCandles(ticker.market, unit = 5, count = 30),
+                fifteenMinuteCandles = fetchCandles(ticker.market, unit = 15, count = 30),
+            )
+        }
     }
 
     private fun fetchKrwMarkets(): List<String> {
@@ -61,5 +77,33 @@ class UpbitMarketDataSource : MarketDataSource {
             }
         }
         return tickers
+    }
+
+    private fun fetchCandles(market: String, unit: Int, count: Int): List<Candle> {
+        val url = URL("https://api.upbit.com/v1/candles/minutes/$unit?market=$market&count=$count")
+        val connection = (url.openConnection() as HttpURLConnection).apply {
+            requestMethod = "GET"
+            connectTimeout = 10_000
+            readTimeout = 10_000
+        }
+        connection.inputStream.bufferedReader().use { reader ->
+            val body = reader.readText()
+            val array = JSONArray(body)
+            val candles = mutableListOf<Candle>()
+            for (i in 0 until array.length()) {
+                val item = array.getJSONObject(i)
+                candles += Candle(
+                    market = market,
+                    openingPrice = item.optDouble("opening_price", 0.0),
+                    highPrice = item.optDouble("high_price", 0.0),
+                    lowPrice = item.optDouble("low_price", 0.0),
+                    tradePrice = item.optDouble("trade_price", 0.0),
+                    candleAccTradeVolume = item.optDouble("candle_acc_trade_volume", 0.0),
+                    candleAccTradePrice = item.optDouble("candle_acc_trade_price", 0.0),
+                    timestamp = item.optLong("timestamp", 0L),
+                )
+            }
+            return candles.sortedBy { it.timestamp }
+        }
     }
 }

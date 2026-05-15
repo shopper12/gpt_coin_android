@@ -9,6 +9,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,8 +22,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
@@ -37,16 +40,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
-import com.cryptotradecoach.data.Signal
-import com.cryptotradecoach.data.local.GuidelineChangeEntity
-import com.cryptotradecoach.data.local.MissedSignalEntity
-import com.cryptotradecoach.data.local.SignalHistoryEntity
-import com.cryptotradecoach.data.local.StrategyReviewEntity
+import com.cryptotradecoach.data.TradeStrategy
+import com.cryptotradecoach.data.local.StrategyHistoryEntity
 import com.cryptotradecoach.service.CoinScannerService
+import com.cryptotradecoach.service.ScannerStateStore
 import com.cryptotradecoach.ui.MainViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlin.math.roundToInt
 
 class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
@@ -60,15 +62,18 @@ class MainActivity : ComponentActivity() {
             MaterialTheme {
                 val state by viewModel.uiState.collectAsState()
                 MainScreen(
+                    activeStrategies = state.activeStrategies,
+                    historyBySymbol = state.historyBySymbol,
                     isRunning = state.isRunning,
-                    topSignals = state.topSignals,
-                    historyByMarket = state.historyByMarket,
-                    missedSignals = state.missedSignals,
-                    strategyReviews = state.strategyReviews,
-                    guidelineChanges = state.guidelineChanges,
                     lastScanAt = state.lastScanAt,
+                    scanIntervalMs = state.scanIntervalMs,
+                    maxDisplayCount = state.maxDisplayCount,
+                    minimumScore = state.minimumScore,
                     onStart = { startScanner() },
                     onStop = { stopScanner() },
+                    onIntervalSelected = viewModel::setScanInterval,
+                    onMaxDisplayChanged = viewModel::setMaxDisplayCount,
+                    onMinimumScoreChanged = viewModel::setMinimumScore,
                 )
             }
         }
@@ -107,17 +112,20 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 private fun MainScreen(
+    activeStrategies: List<TradeStrategy>,
+    historyBySymbol: Map<String, List<StrategyHistoryEntity>>,
     isRunning: Boolean,
-    topSignals: List<Signal>,
-    historyByMarket: Map<String, List<SignalHistoryEntity>>,
-    missedSignals: List<MissedSignalEntity>,
-    strategyReviews: List<StrategyReviewEntity>,
-    guidelineChanges: List<GuidelineChangeEntity>,
     lastScanAt: Long?,
+    scanIntervalMs: Long,
+    maxDisplayCount: Int,
+    minimumScore: Double,
     onStart: () -> Unit,
     onStop: () -> Unit,
+    onIntervalSelected: (Long) -> Unit,
+    onMaxDisplayChanged: (Int) -> Unit,
+    onMinimumScoreChanged: (Double) -> Unit,
 ) {
-    val tabs = listOf("Current", "History", "Missed", "Review", "Guidelines")
+    val tabs = listOf("현재 전략", "추천 내역", "설정")
     var selectedTab by remember { mutableIntStateOf(0) }
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -137,199 +145,169 @@ private fun MainScreen(
             }
         }
         when (selectedTab) {
-            0 -> CurrentTab(isRunning, topSignals, lastScanAt, onStart, onStop)
-            1 -> HistoryTab(historyByMarket)
-            2 -> MissedTab(missedSignals)
-            3 -> ReviewTab(strategyReviews)
-            4 -> GuidelinesTab(guidelineChanges)
+            0 -> CurrentStrategiesTab(activeStrategies, lastScanAt)
+            1 -> StrategyHistoryTab(historyBySymbol)
+            2 -> SettingsTab(
+                isRunning = isRunning,
+                scanIntervalMs = scanIntervalMs,
+                maxDisplayCount = maxDisplayCount,
+                minimumScore = minimumScore,
+                onStart = onStart,
+                onStop = onStop,
+                onIntervalSelected = onIntervalSelected,
+                onMaxDisplayChanged = onMaxDisplayChanged,
+                onMinimumScoreChanged = onMinimumScoreChanged,
+            )
         }
     }
 }
 
 @Composable
-private fun CurrentTab(
-    isRunning: Boolean,
-    topSignals: List<Signal>,
+private fun CurrentStrategiesTab(
+    activeStrategies: List<TradeStrategy>,
     lastScanAt: Long?,
+) {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        item {
+            Text("마지막 스캔: ${lastScanAt?.toTimeText() ?: "-"}")
+        }
+        if (activeStrategies.isEmpty()) {
+            item { EmptyCard("현재 유효한 전략이 없습니다.") }
+        } else {
+            items(activeStrategies) { strategy ->
+                StrategyCard(strategy)
+            }
+        }
+    }
+}
+
+@Composable
+private fun StrategyHistoryTab(historyBySymbol: Map<String, List<StrategyHistoryEntity>>) {
+    var menuExpanded by remember { mutableStateOf(false) }
+    var selectedSymbol by remember(historyBySymbol) { mutableStateOf(historyBySymbol.keys.firstOrNull()) }
+    val selectedHistory = selectedSymbol?.let { historyBySymbol[it].orEmpty() }.orEmpty()
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
+        LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            if (historyBySymbol.isEmpty()) {
+                item { EmptyCard("추천 내역이 없습니다.") }
+            } else {
+                item {
+                    Column {
+                        OutlinedButton(onClick = { menuExpanded = true }) {
+                            Text(selectedSymbol ?: "종목 선택")
+                        }
+                        DropdownMenu(
+                            expanded = menuExpanded,
+                            onDismissRequest = { menuExpanded = false },
+                        ) {
+                            historyBySymbol.keys.forEach { symbol ->
+                                DropdownMenuItem(
+                                    text = { Text(symbol) },
+                                    onClick = {
+                                        selectedSymbol = symbol
+                                        menuExpanded = false
+                                    },
+                                )
+                            }
+                        }
+                    }
+                }
+                items(selectedHistory) { history ->
+                    HistoryCard(history)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SettingsTab(
+    isRunning: Boolean,
+    scanIntervalMs: Long,
+    maxDisplayCount: Int,
+    minimumScore: Double,
     onStart: () -> Unit,
     onStop: () -> Unit,
+    onIntervalSelected: (Long) -> Unit,
+    onMaxDisplayChanged: (Int) -> Unit,
+    onMinimumScoreChanged: (Double) -> Unit,
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
+        verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
-        Text("Status: ${if (isRunning) "auto scan running" else "stopped"}")
-        Text("Last scan: ${lastScanAt?.toTimeText() ?: "-"}")
+        Text("상태: ${if (isRunning) "실행 중" else "중지됨"}")
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Button(onClick = onStart, enabled = !isRunning) { Text("Start auto scan") }
-            Button(onClick = onStop, enabled = isRunning) { Text("Stop") }
+            Button(onClick = onStart, enabled = !isRunning) { Text("스캐너 시작") }
+            OutlinedButton(onClick = onStop, enabled = isRunning) { Text("중지") }
         }
-        Text("Current valid strategies Top 5", style = MaterialTheme.typography.titleMedium)
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            if (topSignals.isEmpty()) {
-                item { EmptyCard(if (isRunning) "Waiting for the next scan result." else "Start auto scan to load current strategies.") }
-            } else {
-                items(topSignals) { signal -> SignalRow(signal) }
-            }
-        }
-    }
-}
-
-@Composable
-private fun HistoryTab(historyByMarket: Map<String, List<SignalHistoryEntity>>) {
-    var historyMenuExpanded by remember { mutableStateOf(false) }
-    var selectedMarket by remember(historyByMarket) { mutableStateOf(historyByMarket.keys.firstOrNull()) }
-    val selectedHistory = selectedMarket?.let { historyByMarket[it].orEmpty() }.orEmpty()
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
-    ) {
+        Text("스캔 주기")
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            OutlinedButton(
-                onClick = { historyMenuExpanded = true },
-                enabled = historyByMarket.isNotEmpty(),
-            ) {
-                Text(selectedMarket ?: "Select market")
-            }
-            DropdownMenu(
-                expanded = historyMenuExpanded,
-                onDismissRequest = { historyMenuExpanded = false },
-            ) {
-                historyByMarket.keys.forEach { market ->
-                    DropdownMenuItem(
-                        text = { Text(market) },
-                        onClick = {
-                            selectedMarket = market
-                            historyMenuExpanded = false
-                        },
-                    )
-                }
+            ScannerStateStore.SUPPORTED_INTERVALS_MS.forEach { interval ->
+                FilterChip(
+                    selected = scanIntervalMs == interval,
+                    onClick = { onIntervalSelected(interval) },
+                    label = { Text("${interval / 1000}초") },
+                )
             }
         }
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            if (selectedHistory.isEmpty()) {
-                item { EmptyCard("No strategy history yet.") }
-            } else {
-                items(selectedHistory) { history -> HistoryRow(history) }
-            }
+        Text("최대 표시 종목 수: $maxDisplayCount")
+        Slider(
+            value = maxDisplayCount.toFloat(),
+            onValueChange = { onMaxDisplayChanged(it.roundToInt()) },
+            valueRange = 1f..10f,
+            steps = 8,
+        )
+        Text("최소 점수 기준: ${minimumScore.roundToInt()}점")
+        Slider(
+            value = minimumScore.toFloat(),
+            onValueChange = { onMinimumScoreChanged(it.toDouble()) },
+            valueRange = 50f..90f,
+            steps = 7,
+        )
+    }
+}
+
+@Composable
+private fun StrategyCard(strategy: TradeStrategy) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text("#${strategy.rank} ${strategy.symbol} | ${strategy.strategyType}", fontWeight = FontWeight.Bold)
+            Text("점수: ${strategy.score.one()} | 기대수익: ${strategy.expectedReturnPct.percent()} | 손익비: ${strategy.riskRewardRatio.one()}")
+            Text("진입: ${strategy.entryLow.price()} - ${strategy.entryHigh.price()}")
+            Text("손절: ${strategy.stopLoss.price()} | 목표: ${strategy.target1.price()} / ${strategy.target2.price()}")
+            Text("유효시간: ${strategy.validUntil.toTimeText()} | 업데이트: ${strategy.updatedAt.toTimeText()}")
+            Text(strategy.reason)
         }
     }
 }
 
 @Composable
-private fun MissedTab(missedSignals: List<MissedSignalEntity>) {
-    LazyColumn(
+private fun HistoryCard(history: StrategyHistoryEntity) {
+    Card(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+            .fillMaxWidth()
+            .clickable { },
     ) {
-        if (missedSignals.isEmpty()) {
-            item { EmptyCard("No missed signals detected yet.") }
-        } else {
-            items(missedSignals) { missed -> MissedRow(missed) }
-        }
-    }
-}
-
-@Composable
-private fun ReviewTab(strategyReviews: List<StrategyReviewEntity>) {
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        if (strategyReviews.isEmpty()) {
-            item { EmptyCard("No strategy review report yet.") }
-        } else {
-            items(strategyReviews) { review -> ReviewRow(review) }
-        }
-    }
-}
-
-@Composable
-private fun GuidelinesTab(guidelineChanges: List<GuidelineChangeEntity>) {
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        if (guidelineChanges.isEmpty()) {
-            item { EmptyCard("No guideline change suggestions yet.") }
-        } else {
-            items(guidelineChanges) { change -> GuidelineRow(change) }
-        }
-    }
-}
-
-@Composable
-private fun SignalRow(signal: Signal) {
-    Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text("${signal.market} | ${signal.strategyName}", fontWeight = FontWeight.Bold)
-            Text("Score: ${signal.score.toDisplay()}")
-            Text("Entry: ${signal.entryPrice.toDisplay()} | Stop: ${signal.stopLossPrice.toDisplay()} | Target: ${signal.targetPrice.toDisplay()}")
-            Text("Reason: ${signal.reason}")
-        }
-    }
-}
-
-@Composable
-private fun HistoryRow(history: SignalHistoryEntity) {
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text("${history.eventType} | ${history.strategyName}", fontWeight = FontWeight.Bold)
-            Text("${history.createdAt.toTimeText()} | Price: ${history.currentPrice.toDisplay()} | Score: ${history.score.toDisplay()}")
-            Text("Entry: ${history.entryPrice.toDisplay()} | Stop: ${history.stopLossPrice.toDisplay()} | Target: ${history.targetPrice.toDisplay()}")
-            Text("MFE: ${history.mfePercent.toPercent()} | MAE: ${history.maePercent.toPercent()}")
-            Text(history.reason)
-        }
-    }
-}
-
-@Composable
-private fun MissedRow(missed: MissedSignalEntity) {
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text("${missed.market} | ${missed.detectedAt.toTimeText()}", fontWeight = FontWeight.Bold)
-            Text("Change: ${missed.changeRate.toPercent()} | ${missed.previousPrice.toDisplay()} -> ${missed.currentPrice.toDisplay()}")
-            Text("Ranks: change ${missed.rankByChangeRate}, trade value ${missed.rankByTradeValue}")
-            Text("Reason: ${missed.missedReason}")
-            Text("Suggested: ${missed.suggestedStrategy}")
-        }
-    }
-}
-
-@Composable
-private fun ReviewRow(review: StrategyReviewEntity) {
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text("${review.strategyName} | ${review.reviewedAt.toTimeText()}", fontWeight = FontWeight.Bold)
-            Text("Target: ${review.targetHitCount} | Stop: ${review.stopHitCount} | Expired: ${review.expiredCount}")
-            Text("Active: ${review.totalActiveSignals} | Missed: ${review.totalMissedSignals}")
-            Text("MFE avg: ${review.averageMfePercent.toPercent()} | MAE avg: ${review.averageMaePercent.toPercent()}")
-            Text("Diagnosis: ${review.diagnosis}")
-            Text("Suggestion: ${review.ruleChangeSuggestion}")
-        }
-    }
-}
-
-@Composable
-private fun GuidelineRow(change: GuidelineChangeEntity) {
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text("${change.affectedStrategyName} | Applied: ${change.applied}", fontWeight = FontWeight.Bold)
-            Text("Before: ${change.beforeRule}")
-            Text("After: ${change.afterRule}")
-            Text("Reason: ${change.reason}")
-            Text("Evidence: ${change.evidenceMarkets}")
+            Text("${history.symbol} | ${history.eventType}", fontWeight = FontWeight.Bold)
+            Text(history.createdAt.toTimeText())
+            Text(history.message)
+            history.oldSummary?.let { Text("이전: $it") }
+            history.newSummary?.let { Text("변경: $it") }
         }
     }
 }
@@ -341,11 +319,13 @@ private fun EmptyCard(text: String) {
     }
 }
 
-private fun Double.toDisplay(): String = String.format("%,.2f", this)
+private fun Double.price(): String = String.format("%,.2f", this)
 
-private fun Double.toPercent(): String = String.format("%.2f%%", this)
+private fun Double.percent(): String = String.format("%.2f%%", this)
+
+private fun Double.one(): String = String.format("%.1f", this)
 
 private fun Long.toTimeText(): String {
-    val formatter = SimpleDateFormat("HH:mm:ss", Locale.US)
+    val formatter = SimpleDateFormat("HH:mm:ss", Locale.KOREA)
     return formatter.format(Date(this))
 }

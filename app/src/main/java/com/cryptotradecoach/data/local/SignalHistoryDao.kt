@@ -4,11 +4,99 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Upsert
+import com.cryptotradecoach.data.StrategyStatus
 
 @Dao
 interface SignalHistoryDao {
+    @Query(
+        """
+        SELECT * FROM active_strategies
+        WHERE status = 'ACTIVE'
+        ORDER BY score DESC, rank ASC, updatedAt DESC
+        LIMIT :limit
+        """,
+    )
+    suspend fun getActiveStrategies(limit: Int = 5): List<TradeStrategyEntity>
+
+    @Upsert
+    suspend fun upsertStrategy(strategy: TradeStrategyEntity)
+
+    @Query(
+        """
+        UPDATE active_strategies
+        SET status = :status,
+            invalidationReason = :reason,
+            updatedAt = :updatedAt
+        WHERE id = :strategyId
+        """,
+    )
+    suspend fun invalidateStrategy(
+        strategyId: String,
+        status: StrategyStatus = StrategyStatus.INVALIDATED,
+        reason: String,
+        updatedAt: Long,
+    )
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertHistory(item: SignalHistoryEntity): Long
+    suspend fun insertHistory(item: StrategyHistoryEntity): Long
+
+    @Query(
+        """
+        SELECT * FROM strategy_history
+        WHERE symbol = :symbol
+        ORDER BY createdAt DESC, id DESC
+        LIMIT :limit
+        """,
+    )
+    suspend fun getHistoryBySymbol(symbol: String, limit: Int = 200): List<StrategyHistoryEntity>
+
+    @Query(
+        """
+        SELECT * FROM strategy_history
+        ORDER BY createdAt DESC, id DESC
+        LIMIT :limit
+        """,
+    )
+    suspend fun getAllHistory(limit: Int = 500): List<StrategyHistoryEntity>
+
+    @Query(
+        """
+        SELECT * FROM active_strategies
+        WHERE symbol = :symbol
+        ORDER BY updatedAt DESC
+        LIMIT 1
+        """,
+    )
+    suspend fun getLatestStrategyBySymbol(symbol: String): TradeStrategyEntity?
+
+    @Query(
+        """
+        SELECT * FROM active_strategies
+        WHERE status = 'ACTIVE'
+        ORDER BY updatedAt DESC
+        """,
+    )
+    suspend fun getAllCurrentlyActiveStrategies(): List<TradeStrategyEntity>
+
+    @Query(
+        """
+        SELECT COUNT(*) FROM strategy_history
+        WHERE symbol = :symbol
+        AND eventType = :eventType
+        AND newSummary = :newSummary
+        AND createdAt >= :since
+        """,
+    )
+    suspend fun countDuplicateStrategyHistory(
+        symbol: String,
+        eventType: String,
+        newSummary: String?,
+        since: Long,
+    ): Int
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertSignalHistory(item: SignalHistoryEntity): Long
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertSnapshots(items: List<PriceSnapshotEntity>)
