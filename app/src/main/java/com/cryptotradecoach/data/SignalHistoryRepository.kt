@@ -2,11 +2,15 @@ package com.cryptotradecoach.data
 
 import android.content.Context
 import com.cryptotradecoach.data.local.AppDatabase
+import com.cryptotradecoach.data.local.STRATEGY_VERSION
 import com.cryptotradecoach.data.local.StrategyEventType
 import com.cryptotradecoach.data.local.StrategyHistoryEntity
+import com.cryptotradecoach.data.local.StrategyPerformanceEntity
 import com.cryptotradecoach.data.local.StrategyScanLogEntity
 import com.cryptotradecoach.data.local.TradeStrategyEntity
 import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 
 data class ScanPersistenceResult(
     val activeStrategies: List<TradeStrategy>,
@@ -32,6 +36,7 @@ class SignalHistoryRepository private constructor(
         if (scanResult.scanLogs.isNotEmpty()) {
             dao.insertScanLogs(scanResult.scanLogs.map { it.toEntity() })
         }
+        updateOpenPerformance(currentPrices, now)
 
         strategies.forEach { strategy ->
             val previous = dao.getLatestStrategyBySymbol(strategy.symbol)
@@ -41,6 +46,7 @@ class SignalHistoryRepository private constructor(
             )
             val event = classifyEvent(previous, strategyToSave)
             dao.upsertStrategy(strategyToSave)
+            ensurePerformanceRow(strategy, now)
             if (event != null) {
                 insertDedupedHistory(event, now)?.let { events += it }
             }
@@ -90,6 +96,66 @@ class SignalHistoryRepository private constructor(
         return dao.getAllHistory().groupBy { it.symbol }.mapValues { (_, rows) ->
             rows.take(limitPerSymbol)
         }.toSortedMap()
+    }
+
+    private suspend fun ensurePerformanceRow(strategy: TradeStrategy, now: Long) {
+        if (dao.getPerformanceByStrategyId(strategy.id) != null) return
+        dao.insertPerformance(
+            StrategyPerformanceEntity(
+                strategyId = strategy.id,
+                symbol = strategy.symbol,
+                strategyType = strategy.strategyType,
+                rulesVersion = STRATEGY_VERSION,
+                createdAt = strategy.createdAt,
+                lastUpdatedAt = now,
+                entryPrice = strategy.entryHigh,
+                latestPrice = strategy.entryHigh,
+                target1 = strategy.target1,
+                target2 = strategy.target2,
+                stopLoss = strategy.stopLoss,
+                rankByTradeValue = strategy.rankByTradeValue,
+                score = strategy.score,
+                reason = strategy.reason,
+            ),
+        )
+    }
+
+    private suspend fun updateOpenPerformance(currentPrices: Map<String, Double>, now: Long) {
+        if (currentPrices.isEmpty()) return
+        dao.getOpenPerformance().forEach { performance ->
+            val latestPrice = currentPrices[performance.symbol] ?: return@forEach
+            if (latestPrice <= 0.0 || performance.entryPrice <= 0.0) return@forEach
+            val elapsed = now - performance.createdAt
+            val latestReturn = percentChange(performance.entryPrice, latestPrice)
+            val priceAfter5m = performance.priceAfter5m ?: latestPrice.takeIf { elapsed >= FIVE_MINUTES_MS }
+            val priceAfter15m = performance.priceAfter15m ?: latestPrice.takeIf { elapsed >= FIFTEEN_MINUTES_MS }
+            val priceAfter30m = performance.priceAfter30m ?: latestPrice.takeIf { elapsed >= THIRTY_MINUTES_MS }
+            val priceAfter60m = performance.priceAfter60m ?: latestPrice.takeIf { elapsed >= SIXTY_MINUTES_MS }
+            val target1Hit = performance.target1Hit || latestPrice >= performance.target1
+            val target2Hit = performance.target2Hit || latestPrice >= performance.target2
+            val stopHit = performance.stopHit || latestPrice <= performance.stopLoss
+            val expired = elapsed >= SIXTY_MINUTES_MS
+            dao.updatePerformance(
+                id = performance.id,
+                lastUpdatedAt = now,
+                latestPrice = latestPrice,
+                priceAfter5m = priceAfter5m,
+                priceAfter15m = priceAfter15m,
+                priceAfter30m = priceAfter30m,
+                priceAfter60m = priceAfter60m,
+                return5m = priceAfter5m?.let { percentChange(performance.entryPrice, it) },
+                return15m = priceAfter15m?.let { percentChange(performance.entryPrice, it) },
+                return30m = priceAfter30m?.let { percentChange(performance.entryPrice, it) },
+                return60m = priceAfter60m?.let { percentChange(performance.entryPrice, it) },
+                mfePct = max(performance.mfePct, latestReturn),
+                maePct = min(performance.maePct, latestReturn),
+                target1Hit = target1Hit,
+                target2Hit = target2Hit,
+                stopHit = stopHit,
+                expired = expired,
+                isComplete = expired || target2Hit || stopHit,
+            )
+        }
     }
 
     private fun classifyEvent(
@@ -280,12 +346,21 @@ class SignalHistoryRepository private constructor(
         return "rank=$rank score=${score.one()} entry=${entryLow.price()}-${entryHigh.price()} stop=${stopLoss.price()} target=${target1.price()}/${target2.price()} trail=${trailingStop.price()} status=$status"
     }
 
+    private fun percentChange(from: Double, to: Double): Double {
+        if (from <= 0.0) return 0.0
+        return ((to - from) / from) * 100.0
+    }
+
     private fun Double.one(): String = String.format("%.1f", this)
 
     private fun Double.price(): String = String.format("%.2f", this)
 
     companion object {
         private const val HISTORY_DEDUP_MS = 30 * 60 * 1000L
+        private const val FIVE_MINUTES_MS = 5 * 60 * 1000L
+        private const val FIFTEEN_MINUTES_MS = 15 * 60 * 1000L
+        private const val THIRTY_MINUTES_MS = 30 * 60 * 1000L
+        private const val SIXTY_MINUTES_MS = 60 * 60 * 1000L
 
         @Volatile
         private var instance: SignalHistoryRepository? = null
