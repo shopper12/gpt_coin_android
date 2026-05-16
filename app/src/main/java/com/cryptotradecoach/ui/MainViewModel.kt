@@ -32,6 +32,7 @@ data class MainUiState(
     val minimumScore: Double = 70.0,
     val gitHubSettings: GitHubSettings = GitHubSettings(),
     val settingsMessage: String? = null,
+    val currentRulesText: String = "",
 )
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
@@ -44,7 +45,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val gitHubSyncClient = GitHubSyncClient()
 
     init {
-        _uiState.value = _uiState.value.copy(gitHubSettings = settingsRepository.load())
+        _uiState.value = _uiState.value.copy(
+            gitHubSettings = settingsRepository.load(),
+            currentRulesText = currentRulesText(),
+        )
         viewModelScope.launch {
             ScannerStateStore.loadPersistedState(
                 activeStrategies = historyRepository.getActiveStrategies(),
@@ -148,8 +152,19 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             }
             val before = withContext(Dispatchers.IO) { rulesRepository.loadLastKnownGood() }
             val after = withContext(Dispatchers.IO) { rulesRepository.refreshFromGitHub() }
+            _uiState.value = _uiState.value.copy(currentRulesText = currentRulesText(after))
             showGitHubMessage(
-                if (after != before) "Latest rules downloaded" else "No new rules downloaded",
+                if (after != before) "Latest rules downloaded and applied" else "Rules already up to date",
+            )
+        }
+    }
+
+    fun refreshCurrentRules() {
+        viewModelScope.launch {
+            val rulesText = withContext(Dispatchers.IO) { currentRulesText() }
+            _uiState.value = _uiState.value.copy(
+                currentRulesText = rulesText,
+                settingsMessage = "Current rules refreshed",
             )
         }
     }
@@ -187,5 +202,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         } else {
             "$prefix: ${error::class.java.simpleName}"
         }
+    }
+
+    private fun currentRulesText(): String = currentRulesText(rulesRepository.loadLastKnownGood())
+
+    private fun currentRulesText(rules: com.cryptotradecoach.data.StrategyRules): String {
+        return rules.toJson().toString(2)
     }
 }
