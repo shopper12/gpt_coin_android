@@ -4,7 +4,8 @@
     [string]$RulesPath = "rules/strategy-rules.json",
     [string]$RationalePath = "reports/rule-change-rationale.md",
     [int]$PollSeconds = 30,
-    [switch]$Once
+    [switch]$Once,
+    [switch]$AutoCommit
 )
 
 $ErrorActionPreference = "Stop"
@@ -138,12 +139,15 @@ Write a concise rationale with evidence from $ReportPath to $RationalePath.
             throw "Missing rationale file: $RationalePath"
         }
 
-        git add -- $RulesPath $RationalePath
-        git commit -m "Update strategy rules from latest report"
-        git push
+        if ($AutoCommit) {
+            git add -- $RulesPath $RationalePath
+            git commit -m "Update strategy rules from latest report"
+            git push
+        } else {
+            git diff -- $RulesPath $RationalePath
+        }
     } finally {
         Pop-Location
-        Remove-Item -LiteralPath $tempRules -Force -ErrorAction SilentlyContinue
     }
 }
 

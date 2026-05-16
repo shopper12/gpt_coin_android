@@ -6,7 +6,7 @@ import java.net.URL
 
 interface MarketDataSource {
     suspend fun fetchTickers(): List<Ticker>
-    suspend fun fetchMarketCandidates(limit: Int = 110): List<MarketCandidate>
+    suspend fun fetchMarketCandidates(limit: Int = 40): List<MarketCandidate>
 }
 
 class UpbitMarketDataSource : MarketDataSource {
@@ -23,8 +23,9 @@ class UpbitMarketDataSource : MarketDataSource {
     }
 
     fun selectCandleTargets(tickers: List<Ticker>, limit: Int = MAX_CANDLE_TARGETS): List<Ticker> {
-        val byTradeValue = tickers.sortedByDescending { it.accTradePrice24h }.take(80)
-        val byChangeRate = tickers.sortedByDescending { it.signedChangeRate }.take(30)
+        val boundedLimit = limit.coerceIn(10, MAX_CANDLE_TARGETS)
+        val byTradeValue = tickers.sortedByDescending { it.accTradePrice24h }.take(60)
+        val byChangeRate = tickers.sortedByDescending { it.signedChangeRate }.take(20)
         val tradeRanks = byTradeValue.mapIndexed { index, ticker -> ticker.market to index + 1 }.toMap()
         val changeRanks = byChangeRate.mapIndexed { index, ticker -> ticker.market to index + 1 }.toMap()
         return (byTradeValue + byChangeRate)
@@ -34,7 +35,7 @@ class UpbitMarketDataSource : MarketDataSource {
                     minOf(tradeRanks[it.market] ?: Int.MAX_VALUE, changeRanks[it.market] ?: Int.MAX_VALUE)
                 }.thenByDescending { it.accTradePrice24h },
             )
-            .take(limit.coerceAtMost(MAX_CANDLE_TARGETS))
+            .take(boundedLimit)
     }
 
     fun fetchCandleData(tickers: List<Ticker>): CandleData {
@@ -53,6 +54,7 @@ class UpbitMarketDataSource : MarketDataSource {
     }
 
     override suspend fun fetchMarketCandidates(limit: Int): List<MarketCandidate> {
+        val boundedLimit = limit.coerceIn(10, MAX_CANDLE_TARGETS)
         val tickers = fetchTickers()
         val changeRanks = tickers
             .sortedByDescending { it.signedChangeRate }
@@ -63,7 +65,7 @@ class UpbitMarketDataSource : MarketDataSource {
             .mapIndexed { index, ticker -> ticker.market to index + 1 }
             .toMap()
 
-        val selectedTickers = selectCandleTargets(tickers, limit)
+        val selectedTickers = selectCandleTargets(tickers, boundedLimit)
 
         return selectedTickers.mapNotNull { ticker ->
             val fiveMinuteCandles = runCatching { fetchMinuteCandles(ticker.market, unit = 5, count = 60) }.getOrDefault(emptyList())
