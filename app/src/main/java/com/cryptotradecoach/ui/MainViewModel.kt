@@ -13,6 +13,7 @@ import com.cryptotradecoach.data.StrategyReportRepository
 import com.cryptotradecoach.data.StrategyRulesRepository
 import com.cryptotradecoach.data.TradeStrategy
 import com.cryptotradecoach.data.local.StrategyHistoryEntity
+import com.cryptotradecoach.data.local.StrategyPerformanceEntity
 import com.cryptotradecoach.service.ScannerStateStore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,6 +26,7 @@ data class MainUiState(
     val isRunning: Boolean = false,
     val activeStrategies: List<TradeStrategy> = emptyList(),
     val historyBySymbol: Map<String, List<StrategyHistoryEntity>> = emptyMap(),
+    val performanceRows: List<StrategyPerformanceEntity> = emptyList(),
     val scanDiagnostics: ScanDiagnostics = ScanDiagnostics(),
     val lastScanAt: Long? = null,
     val scanIntervalMs: Long = ScannerStateStore.DEFAULT_SCAN_INTERVAL_MS,
@@ -55,6 +57,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 historyBySymbol = historyRepository.getHistoryBySymbol(),
                 context = application,
             )
+            refreshPerformance()
         }
         viewModelScope.launch {
             ScannerStateStore.isRunning.collect { running ->
@@ -64,6 +67,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             ScannerStateStore.activeStrategies.collect { strategies ->
                 _uiState.value = _uiState.value.copy(activeStrategies = strategies)
+                refreshPerformance()
             }
         }
         viewModelScope.launch {
@@ -79,6 +83,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             ScannerStateStore.lastScanAt.collect { lastScanAt ->
                 _uiState.value = _uiState.value.copy(lastScanAt = lastScanAt)
+                refreshPerformance()
             }
         }
         viewModelScope.launch {
@@ -169,6 +174,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun refreshPerformance() {
+        viewModelScope.launch {
+            val rows = withContext(Dispatchers.IO) { historyRepository.getRecentPerformance() }
+            _uiState.value = _uiState.value.copy(performanceRows = rows)
+        }
+    }
+
     fun uploadLatestReport(settings: GitHubSettings) {
         viewModelScope.launch {
             val normalized = settings.normalized()
@@ -181,6 +193,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 reportRepository.generateLatestReport(rulesRepository.loadLastKnownGood())
                 reportRepository.uploadLatestReport()
             }
+            refreshPerformance()
             showGitHubMessage(if (uploaded) "Latest report uploaded" else "Latest report upload failed")
         }
     }
