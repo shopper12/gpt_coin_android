@@ -98,6 +98,14 @@ class SignalHistoryRepository private constructor(
         }.toSortedMap()
     }
 
+    suspend fun getRecentPerformance(
+        windowMs: Long = PERFORMANCE_WINDOW_MS,
+        limit: Int = 500,
+        now: Long = System.currentTimeMillis(),
+    ): List<StrategyPerformanceEntity> {
+        return dao.getPerformanceSince(now - windowMs, limit)
+    }
+
     private suspend fun ensurePerformanceRow(strategy: TradeStrategy, now: Long) {
         if (dao.getPerformanceByStrategyId(strategy.id) != null) return
         dao.insertPerformance(
@@ -361,6 +369,7 @@ class SignalHistoryRepository private constructor(
         private const val FIFTEEN_MINUTES_MS = 15 * 60 * 1000L
         private const val THIRTY_MINUTES_MS = 30 * 60 * 1000L
         private const val SIXTY_MINUTES_MS = 60 * 60 * 1000L
+        private const val PERFORMANCE_WINDOW_MS = 24 * 60 * 60 * 1000L
 
         @Volatile
         private var instance: SignalHistoryRepository? = null
