@@ -22,7 +22,10 @@ object StrategyEventType {
     const val NEW_ACTIVE = "NEW_ACTIVE"
     const val RANK_UP = "RANK_UP"
     const val PRICE_PLAN_CHANGED = "PRICE_PLAN_CHANGED"
+    const val WATCH_ONLY = "WATCH_ONLY"
     const val INVALIDATED = "INVALIDATED"
+    const val TARGET1_HIT = "TARGET1_HIT"
+    const val TRAILING_STOP_HIT = "TRAILING_STOP_HIT"
     const val HIT_TARGET = "HIT_TARGET"
     const val STOPPED_OUT = "STOPPED_OUT"
     const val EXPIRED = "EXPIRED"
@@ -49,9 +52,17 @@ data class TradeStrategyEntity(
     val stopLoss: Double,
     val target1: Double,
     val target2: Double,
+    val trailingStop: Double,
     val expectedReturnPct: Double,
     val riskPct: Double,
     val riskRewardRatio: Double,
+    val componentScores: String,
+    val rankByChangeRate: Int,
+    val rankByTradeValue: Int,
+    val changeRate24h: Double,
+    val changeRate30m: Double,
+    val changeRate5m: Double,
+    val volumeAcceleration: Double,
     val reason: String,
     val invalidationReason: String?,
     val createdAt: Long,
@@ -77,6 +88,39 @@ data class StrategyHistoryEntity(
     val newSummary: String?,
     val message: String,
     val createdAt: Long,
+)
+
+@Entity(
+    tableName = "strategy_scan_logs",
+    indices = [
+        Index(value = ["market", "timestamp"]),
+        Index(value = ["selectedOrMissed", "timestamp"]),
+        Index(value = ["strategyStatus", "timestamp"]),
+    ],
+)
+data class StrategyScanLogEntity(
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0,
+    val market: String,
+    val timestamp: Long,
+    val currentPrice: Double,
+    val entryPrice: Double,
+    val stopLossPrice: Double,
+    val target1: Double,
+    val target2: Double,
+    val trailingStop: Double,
+    val score: Double,
+    val componentScores: String,
+    val rankByChangeRate: Int,
+    val rankByTradeValue: Int,
+    val changeRate24h: Double,
+    val changeRate30m: Double,
+    val changeRate5m: Double,
+    val volumeAcceleration: Double,
+    val selectedOrMissed: String,
+    val missedReason: String?,
+    val topNAtScan: Int,
+    val strategyStatus: StrategyStatus,
 )
 
 object MissedSignalReason {

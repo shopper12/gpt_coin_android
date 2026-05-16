@@ -2,7 +2,10 @@ package com.cryptotradecoach.data
 
 enum class StrategyStatus {
     ACTIVE,
+    WATCH_ONLY,
     INVALIDATED,
+    TARGET1_HIT,
+    TRAILING_STOP_HIT,
     HIT_TARGET,
     STOPPED_OUT,
     EXPIRED,
@@ -39,6 +42,11 @@ data class MarketCandidate(
     val oneMinuteCandles: List<Candle>,
     val fiveMinuteCandles: List<Candle>,
     val fifteenMinuteCandles: List<Candle>,
+    val rankByChangeRate: Int,
+    val rankByTradeValue: Int,
+    val changeRate30m: Double,
+    val changeRate5m: Double,
+    val volumeAcceleration: Double,
 )
 
 data class TradeStrategy(
@@ -53,9 +61,17 @@ data class TradeStrategy(
     val stopLoss: Double,
     val target1: Double,
     val target2: Double,
+    val trailingStop: Double,
     val expectedReturnPct: Double,
     val riskPct: Double,
     val riskRewardRatio: Double,
+    val componentScores: String,
+    val rankByChangeRate: Int,
+    val rankByTradeValue: Int,
+    val changeRate24h: Double,
+    val changeRate30m: Double,
+    val changeRate5m: Double,
+    val volumeAcceleration: Double,
     val reason: String,
     val invalidationReason: String?,
     val createdAt: Long,
@@ -72,4 +88,33 @@ data class StrategyHistory(
     val newSummary: String?,
     val message: String,
     val createdAt: Long,
+)
+
+data class StrategyScanLog(
+    val id: Long = 0,
+    val market: String,
+    val timestamp: Long,
+    val currentPrice: Double,
+    val entryPrice: Double,
+    val stopLossPrice: Double,
+    val target1: Double,
+    val target2: Double,
+    val trailingStop: Double,
+    val score: Double,
+    val componentScores: String,
+    val rankByChangeRate: Int,
+    val rankByTradeValue: Int,
+    val changeRate24h: Double,
+    val changeRate30m: Double,
+    val changeRate5m: Double,
+    val volumeAcceleration: Double,
+    val selectedOrMissed: String,
+    val missedReason: String?,
+    val topNAtScan: Int,
+    val strategyStatus: StrategyStatus,
+)
+
+data class StrategyScanResult(
+    val activeStrategies: List<TradeStrategy>,
+    val scanLogs: List<StrategyScanLog>,
 )

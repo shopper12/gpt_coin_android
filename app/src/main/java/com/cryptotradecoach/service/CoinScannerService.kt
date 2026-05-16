@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.IBinder
 import com.cryptotradecoach.data.SignalHistoryRepository
 import com.cryptotradecoach.data.UpbitMarketDataSource
+import com.cryptotradecoach.data.local.StrategyEventType
 import com.cryptotradecoach.domain.SignalEngine
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -53,23 +54,30 @@ class CoinScannerService : Service() {
                     val maxDisplayCount = ScannerStateStore.maxDisplayCount.first()
                     val minimumScore = ScannerStateStore.minimumScore.first()
                     val candidates = dataSource.fetchMarketCandidates(limit = 80)
-                    val strategies = engine.scan(
+                    val scanResult = engine.scan(
                         candidates = candidates,
                         minimumScore = minimumScore,
                         maxResults = maxDisplayCount,
                     )
                     val currentPrices = candidates.associate { it.ticker.market to it.ticker.tradePrice }
                     val persistence = historyRepository.saveStrategyScanResult(
-                        strategies = strategies,
+                        scanResult = scanResult,
                         currentPrices = currentPrices,
                     )
                     ScannerStateStore.pushScanResult(
                         activeStrategies = persistence.activeStrategies,
                         historyBySymbol = persistence.historyBySymbol,
                     )
-                    persistence.newEvents.forEachIndexed { index, event ->
-                        notifier.notifyStrategyEvent(event, STRATEGY_EVENT_NOTIFICATION_BASE + index)
-                    }
+                    persistence.newEvents
+                        .filter { event ->
+                            event.eventType != StrategyEventType.NEW_ACTIVE ||
+                                event.newSummary.orEmpty().contains("rank=1") ||
+                                event.newSummary.orEmpty().contains("rank=2") ||
+                                event.newSummary.orEmpty().contains("rank=3")
+                        }
+                        .forEachIndexed { index, event ->
+                            notifier.notifyStrategyEvent(event, STRATEGY_EVENT_NOTIFICATION_BASE + index)
+                        }
                 }
                 delay(ScannerStateStore.scanIntervalMs.first())
             }

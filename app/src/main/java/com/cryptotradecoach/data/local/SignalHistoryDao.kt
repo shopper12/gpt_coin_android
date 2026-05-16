@@ -41,6 +41,9 @@ interface SignalHistoryDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertHistory(item: StrategyHistoryEntity): Long
 
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertScanLogs(items: List<StrategyScanLogEntity>)
+
     @Query(
         """
         SELECT * FROM strategy_history

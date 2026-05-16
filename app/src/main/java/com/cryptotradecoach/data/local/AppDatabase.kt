@@ -10,12 +10,13 @@ import androidx.room.RoomDatabase
         SignalHistoryEntity::class,
         TradeStrategyEntity::class,
         StrategyHistoryEntity::class,
+        StrategyScanLogEntity::class,
         PriceSnapshotEntity::class,
         MissedSignalEntity::class,
         StrategyReviewEntity::class,
         GuidelineChangeEntity::class,
     ],
-    version = 3,
+    version = 4,
     exportSchema = false,
 )
 abstract class AppDatabase : RoomDatabase() {
