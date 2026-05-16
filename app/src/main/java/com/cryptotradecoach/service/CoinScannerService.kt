@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import com.cryptotradecoach.data.ScanDiagnostics
+import com.cryptotradecoach.data.SettingsRepository
 import com.cryptotradecoach.data.SignalHistoryRepository
 import com.cryptotradecoach.data.StrategyReportRepository
 import com.cryptotradecoach.data.StrategyRulesRepository
@@ -31,6 +32,7 @@ class CoinScannerService : Service() {
     private lateinit var historyRepository: SignalHistoryRepository
     private lateinit var rulesRepository: StrategyRulesRepository
     private lateinit var reportRepository: StrategyReportRepository
+    private lateinit var settingsRepository: SettingsRepository
     private var scanJob: Job? = null
 
     override fun onCreate() {
@@ -39,6 +41,7 @@ class CoinScannerService : Service() {
         historyRepository = SignalHistoryRepository.getInstance(this)
         rulesRepository = StrategyRulesRepository.getInstance(this)
         reportRepository = StrategyReportRepository.getInstance(this)
+        settingsRepository = SettingsRepository.getInstance(this)
         notifier.ensureChannels()
     }
 
@@ -67,14 +70,17 @@ class CoinScannerService : Service() {
                     val maxDisplayCount = ScannerStateStore.maxDisplayCount.first()
                     val minimumScore = ScannerStateStore.minimumScore.first()
                     val rules = rulesRepository.refreshFromGitHub()
-                    val candidates = dataSource.fetchMarketCandidates(limit = 110)
+                    val tickers = dataSource.fetchTickers()
+                    val candleTargets = dataSource.selectCandleTargets(tickers)
+                    val candleData = dataSource.fetchCandleData(candleTargets)
                     val scanResult = engine.scan(
-                        candidates = candidates,
+                        tickers = candleTargets,
+                        candleData = candleData,
                         rules = rules,
                         minimumScore = minimumScore,
                         maxResults = maxDisplayCount,
                     )
-                    val currentPrices = candidates.associate { it.ticker.market to it.ticker.tradePrice }
+                    val currentPrices = candleTargets.associate { it.market to it.tradePrice }
                     val persistence = historyRepository.saveStrategyScanResult(
                         scanResult = scanResult,
                         currentPrices = currentPrices,
@@ -88,12 +94,12 @@ class CoinScannerService : Service() {
                             candidateCount = scanResult.candidateCount,
                             rejectedCount = scanResult.rejectedCount,
                             rejectionSummary = scanResult.rejectionSummary,
-                            lastError = null,
+                            lastError = scanResult.lastError ?: dataSource.lastError,
                         ),
                         context = this@CoinScannerService,
                     )
                     reportRepository.generateLatestReport(rules = rules)
-                    reportRepository.uploadLatestReport()
+                    uploadReportIfAutoEnabled()
                     persistence.newEvents
                         .filter { event ->
                             event.eventType != StrategyEventType.NEW_ACTIVE ||
@@ -110,6 +116,16 @@ class CoinScannerService : Service() {
                 }
                 delay(ScannerStateStore.scanIntervalMs.first())
             }
+        }
+    }
+
+    private fun uploadReportIfAutoEnabled(now: Long = System.currentTimeMillis()) {
+        val settings = settingsRepository.load().normalized()
+        if (!settings.autoUploadReport) return
+        val lastUploadedAt = settingsRepository.loadLastAutoReportUploadAt()
+        if (now - lastUploadedAt < AUTO_REPORT_UPLOAD_INTERVAL_MS) return
+        if (reportRepository.uploadLatestReport()) {
+            settingsRepository.markAutoReportUploaded(now)
         }
     }
 
@@ -135,5 +151,6 @@ class CoinScannerService : Service() {
         const val ACTION_STOP = "com.cryptotradecoach.action.STOP"
         private const val NOTIFICATION_ID = 101
         private const val STRATEGY_EVENT_NOTIFICATION_BASE = 500
+        private const val AUTO_REPORT_UPLOAD_INTERVAL_MS = 10 * 60 * 1000L
     }
 }

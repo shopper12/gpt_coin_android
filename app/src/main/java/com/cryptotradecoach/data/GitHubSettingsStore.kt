@@ -11,6 +11,7 @@ data class GitHubSyncSettings(
     val rulesPath: String = DEFAULT_RULES_PATH,
     val reportPath: String = DEFAULT_REPORT_PATH,
     val token: String = "",
+    val autoUploadReport: Boolean = false,
 ) {
     val isConfigured: Boolean
         get() = normalized().let { it.owner.isNotBlank() && it.repo.isNotBlank() && it.branch.isNotBlank() }
@@ -61,6 +62,7 @@ class SettingsRepository private constructor(context: Context) {
             rulesPath = publicPrefs.getString(KEY_RULES_PATH, GitHubSyncSettings.DEFAULT_RULES_PATH).orEmpty().ifBlank { GitHubSyncSettings.DEFAULT_RULES_PATH },
             reportPath = publicPrefs.getString(KEY_REPORT_PATH, GitHubSyncSettings.DEFAULT_REPORT_PATH).orEmpty().ifBlank { GitHubSyncSettings.DEFAULT_REPORT_PATH },
             token = securePrefs.getString(KEY_TOKEN, "").orEmpty(),
+            autoUploadReport = publicPrefs.getBoolean(KEY_AUTO_UPLOAD_REPORT, false),
         )
     }
 
@@ -72,11 +74,22 @@ class SettingsRepository private constructor(context: Context) {
             .putString(KEY_BRANCH, normalized.branch)
             .putString(KEY_RULES_PATH, normalized.rulesPath)
             .putString(KEY_REPORT_PATH, normalized.reportPath)
+            .putBoolean(KEY_AUTO_UPLOAD_REPORT, normalized.autoUploadReport)
             .commit()
         val secureSaved = securePrefs.edit()
             .putString(KEY_TOKEN, normalized.token)
             .commit()
         return publicSaved && secureSaved
+    }
+
+    fun loadLastAutoReportUploadAt(): Long {
+        return publicPrefs.getLong(KEY_LAST_AUTO_REPORT_UPLOAD_AT, 0L)
+    }
+
+    fun markAutoReportUploaded(uploadedAt: Long = System.currentTimeMillis()): Boolean {
+        return publicPrefs.edit()
+            .putLong(KEY_LAST_AUTO_REPORT_UPLOAD_AT, uploadedAt)
+            .commit()
     }
 
     private fun migrateLegacyDefaultsIfNeeded() {
@@ -112,6 +125,8 @@ class SettingsRepository private constructor(context: Context) {
         private const val KEY_TOKEN = "token"
         private const val KEY_RULES_PATH = "rules_path"
         private const val KEY_REPORT_PATH = "report_path"
+        private const val KEY_AUTO_UPLOAD_REPORT = "auto_upload_report"
+        private const val KEY_LAST_AUTO_REPORT_UPLOAD_AT = "last_auto_report_upload_at"
         private const val KEY_DEFAULTS_MIGRATED = "defaults_migrated"
 
         @Volatile

@@ -1,11 +1,14 @@
 package com.cryptotradecoach.domain
 
+import com.cryptotradecoach.data.Candle
+import com.cryptotradecoach.data.CandleData
 import com.cryptotradecoach.data.MarketCandidate
 import com.cryptotradecoach.data.StrategyRules
 import com.cryptotradecoach.data.StrategyScanLog
 import com.cryptotradecoach.data.StrategyScanResult
 import com.cryptotradecoach.data.StrategyStatus
 import com.cryptotradecoach.data.StrategyType
+import com.cryptotradecoach.data.Ticker
 import com.cryptotradecoach.data.TradeStrategy
 import kotlin.math.abs
 import kotlin.math.max
@@ -19,38 +22,71 @@ class SignalEngine {
         minimumScore: Double = rules.minimumScore,
         maxResults: Int = rules.maxResults,
     ): StrategyScanResult {
+        val tickers = candidates.map { it.ticker }
+        val candleData = candidates.associate { candidate ->
+            candidate.ticker.market to mapOf(
+                5 to candidate.fiveMinuteCandles,
+                15 to candidate.fifteenMinuteCandles,
+                240 to candidate.fourHourCandles,
+            )
+        }
+        return scan(
+            tickers = tickers,
+            candleData = candleData,
+            rules = rules,
+            now = now,
+            minimumScore = minimumScore,
+            maxResults = maxResults,
+        )
+    }
+
+    fun scan(
+        tickers: List<Ticker>,
+        candleData: CandleData,
+        rules: StrategyRules = StrategyRules.DEFAULT,
+        now: Long = System.currentTimeMillis(),
+        minimumScore: Double = rules.minimumScore,
+        maxResults: Int = rules.maxResults,
+    ): StrategyScanResult {
         val rejectionSummary = mutableMapOf<String, Int>()
-        val evaluations = candidates.mapNotNull { candidate ->
-            evaluateCandidate(candidate, rules, now).also { evaluation ->
-                if (evaluation == null) {
-                    rejectionSummary.increment("INSUFFICIENT_CANDLE_DATA")
-                }
+        val ranks = CandidateRanks.from(tickers)
+        val evaluations = tickers.mapNotNull { ticker ->
+            evaluateTicker(
+                ticker = ticker,
+                candles = candleData[ticker.market].orEmpty(),
+                ranks = ranks,
+                rules = rules,
+                now = now,
+            ).also { evaluation ->
+                if (evaluation == null) rejectionSummary.increment("INSUFFICIENT_CANDLE_DATA")
             }
         }
+
         val rankedActive = evaluations
-            .mapNotNull { it.strategy.takeIf { strategy -> strategy.status == StrategyStatus.ACTIVE && strategy.score >= minimumScore } }
+            .mapNotNull { evaluation ->
+                evaluation.strategy.takeIf { strategy ->
+                    strategy.status == StrategyStatus.ACTIVE && strategy.score >= minimumScore
+                }
+            }
             .sortedWith(compareByDescending<TradeStrategy> { it.score }.thenBy { it.riskPct })
-            .take(maxResults.coerceIn(3, 5))
+            .take(maxResults.coerceIn(1, 20))
             .mapIndexed { index, strategy -> strategy.copy(rank = index + 1) }
 
         val rankById = rankedActive.associate { it.id to it.rank }
         val activeIds = rankedActive.map { it.id }.toSet()
         val logs = evaluations.map { evaluation ->
-            val topRank = rankById[evaluation.strategy.id] ?: 0
-            val isSelected = evaluation.strategy.id in activeIds
+            val selected = evaluation.strategy.id in activeIds
             val missedReason = when {
-                isSelected -> null
+                selected -> null
                 evaluation.log.missedReason != null -> evaluation.log.missedReason
                 evaluation.strategy.score < minimumScore -> "SCORE_TOO_LOW"
                 else -> "NOT_TOP_RANKED"
             }
-            if (!isSelected) {
-                rejectionSummary.increment(missedReason ?: "REJECTED")
-            }
+            if (!selected) rejectionSummary.increment(missedReason ?: "REJECTED")
             evaluation.log.copy(
-                selectedOrMissed = if (isSelected) "SELECTED" else "MISSED",
+                selectedOrMissed = if (selected) "SELECTED" else "MISSED",
                 missedReason = missedReason,
-                topNAtScan = topRank,
+                topNAtScan = rankById[evaluation.strategy.id] ?: 0,
             )
         }
 
@@ -58,104 +94,78 @@ class SignalEngine {
             activeStrategies = rankedActive,
             scanLogs = logs,
             validSignals = rankedActive,
-            scannedCount = candidates.size,
+            scannedCount = tickers.size,
             candidateCount = evaluations.size,
-            rejectedCount = (candidates.size - rankedActive.size).coerceAtLeast(0),
+            rejectedCount = (tickers.size - rankedActive.size).coerceAtLeast(0),
             rejectionSummary = rejectionSummary.toSortedMap(),
             lastError = null,
         )
     }
 
-    private fun evaluateCandidate(candidate: MarketCandidate, rules: StrategyRules, now: Long): Evaluation? {
-        val ticker = candidate.ticker
-        val price = ticker.tradePrice
+    private fun evaluateTicker(
+        ticker: Ticker,
+        candles: Map<Int, List<Candle>>,
+        ranks: CandidateRanks,
+        rules: StrategyRules,
+        now: Long,
+    ): Evaluation? {
+        val five = candles[5].orEmpty().sortedBy { it.timestamp }
+        val fifteen = candles[15].orEmpty().sortedBy { it.timestamp }
+        val fourHour = candles[240].orEmpty().sortedBy { it.timestamp }
+        if (five.size < 25 || fifteen.size < 25) return null
+
+        val price = ticker.tradePrice.takeIf { it > 0.0 } ?: five.last().close
         if (price <= 0.0) return null
-        val one = candidate.oneMinuteCandles
-        val five = candidate.fiveMinuteCandles
-        val fifteen = candidate.fifteenMinuteCandles
-        if (one.size < 6 || five.size < 3 || fifteen.size < 2) return null
 
+        val rankByChangeRate = ranks.change[ticker.market] ?: Int.MAX_VALUE
+        val rankByTradeValue = ranks.tradeValue[ticker.market] ?: Int.MAX_VALUE
         val changeRate24h = ticker.signedChangeRate * 100.0
-        val changeRate30m = candidate.changeRate30m
-        val changeRate5m = candidate.changeRate5m
-        val snapshotMomentum = percentChange(one.takeLast(2).first().tradePrice, price)
-        val high30 = one.takeLast(30).maxOf { it.highPrice }
-        val low30 = one.takeLast(30).minOf { it.lowPrice }
-        val high15m = fifteen.takeLast(4).maxOf { it.highPrice }
-        val volumeAcceleration = candidate.volumeAcceleration
-        val nearHigh = if (high30 > 0.0) price / high30 else 0.0
-        val postSpikeDistancePct = percentChange(high30, price)
-        val rangePct = percentChange(low30, high30).coerceAtLeast(0.1)
+        val changeRate30m = percentChange(five.takeLast(6).first().open, price)
+        val changeRate5m = percentChange(five.last().open, price)
+        val recentVolume = five.takeLast(3).sumOf { it.tradePrice }
+        val baseVolume = five.dropLast(3).takeLast(20).sumOf { it.tradePrice } / 6.67
+        val volumeAcceleration = if (baseVolume > 0.0) recentVolume / baseVolume else 1.0
 
-        val immediateMomentumScore = scoreImmediateMomentum(changeRate30m, changeRate5m, snapshotMomentum, rules)
-        val volumeAccelerationScore = scoreVolumeAcceleration(volumeAcceleration, rules)
-        val entryProximityScore = scoreEntryProximity(nearHigh, postSpikeDistancePct, rangePct, rules)
-        val changeRankScore = scoreChangeRank(candidate.rankByChangeRate, rules)
-        val riskRewardScore = scoreRiskReward(rangePct, rules)
-        val liquidityScore = scoreLiquidity(ticker.accTradePrice24h, rules)
-        val overheatPenalty = scoreOverheat(changeRate24h, changeRate30m, changeRate5m, rules)
-        val staleSnapshotPenalty = scoreStaleSnapshot(candidate, rules)
-        val postSpikeChasePenalty = scorePostSpikeChase(nearHigh, changeRate5m, changeRate30m, rules)
-
-        val total = (
-            immediateMomentumScore +
-                volumeAccelerationScore +
-                entryProximityScore +
-                changeRankScore +
-                riskRewardScore +
-                liquidityScore -
-                overheatPenalty -
-                staleSnapshotPenalty -
-                postSpikeChasePenalty
-            ).coerceIn(0.0, 100.0)
-
-        val typeAndStatus = classifyStrategy(
-            changeRate24h = changeRate24h,
-            changeRate30m = changeRate30m,
-            changeRate5m = changeRate5m,
-            snapshotMomentum = snapshotMomentum,
-            rankByChangeRate = candidate.rankByChangeRate,
-            nearHigh = nearHigh,
-            high15m = high15m,
-            price = price,
-            volumeAcceleration = volumeAcceleration,
-            rangePct = rangePct,
-            rules = rules,
+        val overheatPenalty = overheatPenalty(changeRate24h, changeRate30m, changeRate5m, rules)
+        val liquidityPenalty = liquidityPenalty(ticker.accTradePrice24h)
+        val setups = listOf(
+            compressionBreakout(price, changeRate24h, volumeAcceleration, five, fifteen, rules),
+            sweepReclaim(price, volumeAcceleration, five, fifteen),
+            trendPullback(price, volumeAcceleration, five, fifteen, fourHour),
         )
-
-        val strategyType = typeAndStatus?.first ?: StrategyType.WATCH_ONLY
-        val status = typeAndStatus?.second ?: StrategyStatus.WATCH_ONLY
-        val stopLoss = price * when (strategyType) {
-            StrategyType.VOLUME_EXPANSION -> rules.risk.volumeExpansionStopMultiplier
-            else -> rules.risk.defaultStopMultiplier
-        }
-        val target1 = price * if (rangePct >= rules.risk.wideRangeThresholdPct) {
-            rules.risk.wideRangeTarget1Multiplier
-        } else {
-            rules.risk.defaultTarget1Multiplier
-        }
-        val target2 = price * (rules.risk.target2BaseMultiplier + min(rangePct / rules.risk.target2RangeDivisor, rules.risk.target2RangeCap))
-        val trailingStop = price * rules.risk.trailingStopMultiplier
+        val best = setups.maxByOrNull { it.rawScore - overheatPenalty - liquidityPenalty } ?: return null
+        val score = (best.rawScore - overheatPenalty - liquidityPenalty).coerceIn(0.0, 100.0)
+        val status = if (best.active) StrategyStatus.ACTIVE else StrategyStatus.WATCH_ONLY
+        val stopLoss = min(best.stopLoss.takeIf { it > 0.0 } ?: price * rules.risk.defaultStopMultiplier, price * 0.999)
         val riskPct = abs(percentChange(price, stopLoss)).coerceAtLeast(rules.risk.minimumRiskPct)
+        val target1 = price * (1.0 + riskPct * 1.5 / 100.0)
+        val target2 = price * (1.0 + riskPct * 2.4 / 100.0)
         val expectedReturnPct = percentChange(price, target2).coerceAtLeast(rules.risk.minimumExpectedReturnPct)
+        val trailingStop = price * (1.0 - max(riskPct * 0.55, rules.risk.minimumRiskPct) / 100.0)
         val componentScores = listOf(
-            "immediateMomentum=${immediateMomentumScore.one()}",
-            "volumeAcceleration=${volumeAccelerationScore.one()}",
-            "entryProximity=${entryProximityScore.one()}",
-            "changeRank=${changeRankScore.one()}",
-            "riskReward=${riskRewardScore.one()}",
-            "liquidity=${liquidityScore.one()}",
+            "trendScore=${best.trendScore.one()}",
+            "compressionScore=${best.compressionScore.one()}",
+            "relativeVolumeScore=${best.relativeVolumeScore.one()}",
+            "breakoutProximityScore=${best.breakoutProximityScore.one()}",
+            "reclaimScore=${best.reclaimScore.one()}",
+            "riskRewardScore=${best.riskRewardScore.one()}",
             "overheatPenalty=${overheatPenalty.one()}",
-            "staleSnapshotPenalty=${staleSnapshotPenalty.one()}",
-            "postSpikeChasePenalty=${postSpikeChasePenalty.one()}",
+            "liquidityPenalty=${liquidityPenalty.one()}",
         ).joinToString(";")
-        val missedReason = missedReason(status, total, changeRate24h, changeRate30m, volumeAcceleration, nearHigh, rules)
+        val missedReason = when {
+            status == StrategyStatus.ACTIVE -> null
+            best.strategyType == StrategyType.COMPRESSION_BREAKOUT -> "NO_COMPRESSION_BREAKOUT"
+            best.strategyType == StrategyType.SWEEP_RECLAIM -> "NO_SWEEP_RECLAIM"
+            best.strategyType == StrategyType.TREND_PULLBACK -> "NO_TREND_PULLBACK"
+            else -> "WATCH_ONLY"
+        }
+        val reason = buildReason(best, score, overheatPenalty, liquidityPenalty)
         val strategy = TradeStrategy(
-            id = "${ticker.market}-${strategyType.name}",
+            id = "${ticker.market}-${best.strategyType.name}",
             symbol = ticker.market,
-            strategyType = strategyType,
+            strategyType = best.strategyType,
             status = status,
-            score = total,
+            score = score,
             rank = Int.MAX_VALUE,
             entryLow = price * (1.0 - rules.entryBandPct / 100.0),
             entryHigh = price * (1.0 + rules.entryBandPct / 100.0),
@@ -167,13 +177,13 @@ class SignalEngine {
             riskPct = riskPct,
             riskRewardRatio = expectedReturnPct / riskPct,
             componentScores = componentScores,
-            rankByChangeRate = candidate.rankByChangeRate,
-            rankByTradeValue = candidate.rankByTradeValue,
+            rankByChangeRate = rankByChangeRate,
+            rankByTradeValue = rankByTradeValue,
             changeRate24h = changeRate24h,
             changeRate30m = changeRate30m,
             changeRate5m = changeRate5m,
             volumeAcceleration = volumeAcceleration,
-            reason = buildReason(strategyType, status, componentScores),
+            reason = reason,
             invalidationReason = missedReason,
             createdAt = now,
             updatedAt = now,
@@ -181,7 +191,7 @@ class SignalEngine {
         )
         val log = StrategyScanLog(
             market = ticker.market,
-            strategyType = strategyType,
+            strategyType = best.strategyType,
             timestamp = now,
             currentPrice = price,
             entryPrice = price,
@@ -189,10 +199,10 @@ class SignalEngine {
             target1 = target1,
             target2 = target2,
             trailingStop = trailingStop,
-            score = total,
+            score = score,
             componentScores = componentScores,
-            rankByChangeRate = candidate.rankByChangeRate,
-            rankByTradeValue = candidate.rankByTradeValue,
+            rankByChangeRate = rankByChangeRate,
+            rankByTradeValue = rankByTradeValue,
             changeRate24h = changeRate24h,
             changeRate30m = changeRate30m,
             changeRate5m = changeRate5m,
@@ -205,117 +215,165 @@ class SignalEngine {
         return Evaluation(strategy, log)
     }
 
-    private fun classifyStrategy(
+    private fun compressionBreakout(
+        price: Double,
         changeRate24h: Double,
-        changeRate30m: Double,
-        changeRate5m: Double,
-        snapshotMomentum: Double,
-        rankByChangeRate: Int,
-        nearHigh: Double,
-        high15m: Double,
+        volumeAcceleration: Double,
+        five: List<Candle>,
+        fifteen: List<Candle>,
+        rules: StrategyRules,
+    ): StrategySetup {
+        val recent = fifteen.takeLast(20)
+        val previous = fifteen.dropLast(20).takeLast(20)
+        val recentHigh = recent.maxOfOrNull { it.high } ?: price
+        val recentLow = recent.minOfOrNull { it.low } ?: price
+        val previousHigh = previous.maxOfOrNull { it.high } ?: recentHigh
+        val previousLow = previous.minOfOrNull { it.low } ?: recentLow
+        val distanceToHighPct = ((recentHigh - price) / recentHigh * 100.0).takeIf { recentHigh > 0.0 } ?: 99.0
+        val recentRangePct = percentChange(recentLow, recentHigh).coerceAtLeast(0.0)
+        val previousRangePct = percentChange(previousLow, previousHigh).coerceAtLeast(0.0)
+        val compressed = previousRangePct > 0.0 && recentRangePct <= previousRangePct * 0.85
+        val nearHigh = distanceToHighPct in 0.0..3.0
+        val volumeRising = five.last().tradePrice >= five.dropLast(1).takeLast(20).averageTradePrice() * 1.05 ||
+            volumeAcceleration >= rules.volumeExpansion.minVolumeAcceleration
+        val compressionScore = if (compressed) 18.0 else max(0.0, 12.0 - recentRangePct * 2.0)
+        val breakoutProximityScore = if (nearHigh) (18.0 - distanceToHighPct * 3.0).coerceAtLeast(8.0) else 0.0
+        val relativeVolumeScore = ((volumeAcceleration - 1.0) * 18.0).coerceIn(0.0, 20.0)
+        val riskRewardScore = riskRewardScore(price, recentLow)
+        val rawScore = compressionScore + breakoutProximityScore + relativeVolumeScore + riskRewardScore
+        return StrategySetup(
+            strategyType = StrategyType.COMPRESSION_BREAKOUT,
+            active = nearHigh && compressed && volumeRising,
+            stopLoss = recentLow * 0.997,
+            rawScore = rawScore,
+            trendScore = if (changeRate24h > 0.0) 4.0 else 0.0,
+            compressionScore = compressionScore,
+            relativeVolumeScore = relativeVolumeScore,
+            breakoutProximityScore = breakoutProximityScore,
+            reclaimScore = 0.0,
+            riskRewardScore = riskRewardScore,
+            passed = listOfNotNull(
+                "15mHighDistance=${distanceToHighPct.one()}%",
+                "rangeCompressed=${compressed}",
+                "5mVolumeRising=${volumeRising}",
+            ),
+            failed = listOfNotNull(
+                if (!nearHigh) "NOT_WITHIN_3PCT_OF_15M_HIGH" else null,
+                if (!compressed) "RANGE_NOT_COMPRESSED" else null,
+                if (!volumeRising) "NO_5M_VOLUME_RISE" else null,
+            ),
+        )
+    }
+
+    private fun sweepReclaim(
         price: Double,
         volumeAcceleration: Double,
-        rangePct: Double,
-        rules: StrategyRules,
-    ): Pair<StrategyType, StrategyStatus>? {
-        val positiveMomentum = changeRate24h > 0.0 || changeRate30m > 0.0 || changeRate5m > 0.0
-        val reboundWindow = changeRate24h in rules.pullbackRebound.minChange24hPct..rules.pullbackRebound.maxChange24hPct
-        if (changeRate24h >= rules.momentumBreakout.overheated24hPct) {
-            return if (volumeAcceleration >= rules.momentumBreakout.overheatedVolumeAcceleration) {
-                StrategyType.MOMENTUM_BREAKOUT to StrategyStatus.WATCH_ONLY
-            } else {
-                null
-            }
+        five: List<Candle>,
+        fifteen: List<Candle>,
+    ): StrategySetup {
+        val fiveSetup = reclaimOn(five, lookback = 12)
+        val fifteenSetup = reclaimOn(fifteen, lookback = 8)
+        val reclaim = listOfNotNull(fiveSetup, fifteenSetup).maxByOrNull { it.reclaimScore }
+        val active = reclaim != null
+        val reclaimScore = reclaim?.reclaimScore ?: 0.0
+        val relativeVolumeScore = ((volumeAcceleration - 1.0) * 16.0).coerceIn(0.0, 18.0)
+        val riskRewardScore = riskRewardScore(price, reclaim?.sweepLow ?: price * 0.99)
+        return StrategySetup(
+            strategyType = StrategyType.SWEEP_RECLAIM,
+            active = active,
+            stopLoss = (reclaim?.sweepLow ?: price * 0.99) * 0.997,
+            rawScore = reclaimScore + relativeVolumeScore + riskRewardScore,
+            trendScore = 0.0,
+            compressionScore = 0.0,
+            relativeVolumeScore = relativeVolumeScore,
+            breakoutProximityScore = 0.0,
+            reclaimScore = reclaimScore,
+            riskRewardScore = riskRewardScore,
+            passed = listOfNotNull(
+                reclaim?.let { "unit=${it.unit}mSweepLow=${it.sweepLow.one()}" },
+                reclaim?.let { "reclaimCloseAbovePriorLow=${it.priorLow.one()}" },
+                reclaim?.let { "volumeAboveAverage=${it.volumeAboveAverage}" },
+            ),
+            failed = if (active) emptyList() else listOf("NO_RECENT_LOW_SWEEP_AND_RECLAIM"),
+        )
+    }
+
+    private fun trendPullback(
+        price: Double,
+        volumeAcceleration: Double,
+        five: List<Candle>,
+        fifteen: List<Candle>,
+        fourHour: List<Candle>,
+    ): StrategySetup {
+        val ma120 = fourHour.takeLast(120).map { it.close }.averageOrNull()
+        val ema120 = fourHour.map { it.close }.ema(period = 120)
+        val aboveHigherTimeframe = listOfNotNull(ma120, ema120).any { price > it }
+        val fifteenMa20 = fifteen.takeLast(20).map { it.close }.averageOrNull() ?: price
+        val fifteenTrendOk = fifteen.last().close >= fifteenMa20 * 0.995 &&
+            fifteen.takeLast(6).minOf { it.low } >= fifteen.dropLast(6).takeLast(12).minOfOrNull { it.low }.orZero() * 0.985
+        val recentFive = five.takeLast(10)
+        val priorShortHigh = recentFive.dropLast(1).takeLast(6).maxOfOrNull { it.high } ?: price
+        val pullbackLow = recentFive.minOfOrNull { it.low } ?: price
+        val pullbackReclaimed = five.last().close >= priorShortHigh && pullbackLow < priorShortHigh
+        val active = aboveHigherTimeframe && fifteenTrendOk && pullbackReclaimed
+        val trendScore = when {
+            aboveHigherTimeframe && fifteenTrendOk -> 26.0
+            aboveHigherTimeframe -> 14.0
+            else -> 0.0
         }
-        if (
-            positiveMomentum &&
-            changeRate30m >= rules.momentumBreakout.minChange30mPct &&
-            changeRate5m >= rules.momentumBreakout.minChange5mPct &&
-            snapshotMomentum >= rules.momentumBreakout.minSnapshotMomentumPct
-        ) {
-            if (
-                percentChange(high15m, price) > rules.momentumBreakout.watchHigh15mDistancePct ||
-                changeRate5m > rules.momentumBreakout.watchChange5mPct
-            ) {
-                return StrategyType.MOMENTUM_BREAKOUT to StrategyStatus.WATCH_ONLY
-            }
-            return if (
-                nearHigh >= rules.momentumBreakout.minNearHigh ||
-                rankByChangeRate <= rules.momentumBreakout.maxChangeRank ||
-                volumeAcceleration >= rules.momentumBreakout.minVolumeAcceleration
-            ) {
-                StrategyType.MOMENTUM_BREAKOUT to StrategyStatus.ACTIVE
-            } else {
-                StrategyType.MOMENTUM_BREAKOUT to StrategyStatus.WATCH_ONLY
-            }
-        }
-        if (
-            volumeAcceleration >= rules.volumeExpansion.minVolumeAcceleration &&
-            abs(changeRate24h) < rules.volumeExpansion.maxAbsChange24hPct &&
-            rangePct in rules.volumeExpansion.minRangePct..rules.volumeExpansion.maxRangePct
-        ) {
-            return StrategyType.VOLUME_EXPANSION to StrategyStatus.ACTIVE
-        }
-        val reboundConfirmed = reboundWindow &&
-            changeRate30m > rules.pullbackRebound.minChange30mPct &&
-            changeRate5m > rules.pullbackRebound.minChange5mPct &&
-            price >= high15m * rules.pullbackRebound.high15mPriceMultiplier
-        if (reboundConfirmed && volumeAcceleration >= rules.pullbackRebound.minVolumeAcceleration) {
-            return StrategyType.PULLBACK_REBOUND to StrategyStatus.ACTIVE
-        }
-        if (
-            rankByChangeRate <= rules.momentumBreakout.maxChangeRank ||
-            changeRate30m > rules.momentumBreakout.minChange30mPct ||
-            volumeAcceleration >= rules.momentumBreakout.minVolumeAcceleration
-        ) {
-            return StrategyType.WATCH_ONLY to StrategyStatus.WATCH_ONLY
-        }
-        return null
+        val reclaimScore = if (pullbackReclaimed) 16.0 else 0.0
+        val relativeVolumeScore = ((volumeAcceleration - 1.0) * 12.0).coerceIn(0.0, 14.0)
+        val riskRewardScore = riskRewardScore(price, pullbackLow)
+        return StrategySetup(
+            strategyType = StrategyType.TREND_PULLBACK,
+            active = active,
+            stopLoss = pullbackLow * 0.997,
+            rawScore = trendScore + reclaimScore + relativeVolumeScore + riskRewardScore,
+            trendScore = trendScore,
+            compressionScore = 0.0,
+            relativeVolumeScore = relativeVolumeScore,
+            breakoutProximityScore = 0.0,
+            reclaimScore = reclaimScore,
+            riskRewardScore = riskRewardScore,
+            passed = listOf(
+                "240mAboveMA120orEMA120=$aboveHigherTimeframe",
+                "15mTrendIntact=$fifteenTrendOk",
+                "5mPullbackHighReclaimed=$pullbackReclaimed",
+            ),
+            failed = listOfNotNull(
+                if (!aboveHigherTimeframe) "PRICE_BELOW_240M_MA120_EMA120" else null,
+                if (!fifteenTrendOk) "15M_TREND_BROKEN" else null,
+                if (!pullbackReclaimed) "NO_5M_PULLBACK_RECLAIM" else null,
+            ),
+        )
     }
 
-    private fun scoreImmediateMomentum(change30m: Double, change5m: Double, snapshot: Double, rules: StrategyRules): Double {
-        return (
-            change30m * rules.scoring.change30mWeight +
-                change5m * rules.scoring.change5mWeight +
-                snapshot * rules.scoring.snapshotMomentumWeight
-            ).coerceIn(0.0, rules.scoring.immediateMomentumMax)
+    private fun reclaimOn(candles: List<Candle>, lookback: Int): ReclaimSetup? {
+        if (candles.size < lookback + 3) return null
+        val latest = candles.last()
+        val priorWindow = candles.dropLast(2).takeLast(lookback)
+        val priorLow = priorWindow.minOfOrNull { it.low } ?: return null
+        val sweep = candles.dropLast(1).takeLast(4).filter { it.low < priorLow }.minByOrNull { it.low } ?: return null
+        val volumeAverage = candles.dropLast(1).takeLast(20).averageVolume()
+        val volumeAboveAverage = latest.volume >= volumeAverage
+        if (latest.close <= priorLow || !volumeAboveAverage) return null
+        val reclaimScore = 18.0 + min(abs(percentChange(priorLow, sweep.low)) * 4.0, 8.0)
+        return ReclaimSetup(
+            unit = latest.unit,
+            priorLow = priorLow,
+            sweepLow = sweep.low,
+            volumeAboveAverage = volumeAboveAverage,
+            reclaimScore = reclaimScore,
+        )
     }
 
-    private fun scoreVolumeAcceleration(ratio: Double, rules: StrategyRules): Double {
-        return ((ratio - rules.scoring.volumeAccelerationBase) * rules.scoring.volumeAccelerationWeight)
-            .coerceIn(0.0, rules.scoring.volumeAccelerationMax)
+    private fun riskRewardScore(price: Double, stop: Double): Double {
+        val riskPct = abs(percentChange(price, stop)).coerceAtLeast(0.1)
+        val viable = riskPct in 0.1..4.0
+        return if (viable) (18.0 - riskPct * 2.0).coerceIn(6.0, 18.0) else 2.0
     }
 
-    private fun scoreEntryProximity(nearHigh: Double, postSpikeDistancePct: Double, rangePct: Double, rules: StrategyRules): Double {
-        val nearBreakout = ((nearHigh - rules.scoring.nearHighBase) * rules.scoring.nearHighWeight)
-            .coerceIn(0.0, rules.scoring.nearHighMax)
-        val notTooFar = if (postSpikeDistancePct <= rules.scoring.postSpikeDistanceBonusLimitPct) {
-            rules.scoring.postSpikeDistanceBonus
-        } else {
-            0.0
-        }
-        return (nearBreakout + notTooFar - max(0.0, rangePct - rules.scoring.rangePenaltyBasePct))
-            .coerceIn(0.0, rules.scoring.entryProximityMax)
-    }
-
-    private fun scoreChangeRank(rank: Int, rules: StrategyRules): Double = when {
-        rank <= rules.scoring.changeRankTopLimit -> rules.scoring.changeRankTopScore
-        rank <= rules.scoring.changeRankMidLimit -> rules.scoring.changeRankMidScore
-        rank <= rules.scoring.changeRankLowLimit -> rules.scoring.changeRankLowScore
-        else -> 0.0
-    }
-
-    private fun scoreRiskReward(rangePct: Double, rules: StrategyRules): Double {
-        return (rules.scoring.riskRewardBase + min(rangePct, rules.scoring.riskRewardRangeCapPct)).coerceIn(0.0, 10.0)
-    }
-
-    private fun scoreLiquidity(accTradePrice24h: Double, rules: StrategyRules): Double {
-        if (accTradePrice24h <= 0.0) return 0.0
-        return (kotlin.math.ln(accTradePrice24h + 1.0) / rules.scoring.liquidityLogDivisor - rules.scoring.liquidityOffset)
-            .coerceIn(0.0, 10.0)
-    }
-
-    private fun scoreOverheat(change24h: Double, change30m: Double, change5m: Double, rules: StrategyRules): Double {
+    private fun overheatPenalty(change24h: Double, change30m: Double, change5m: Double, rules: StrategyRules): Double {
         var penalty = 0.0
         if (change24h > rules.scoring.overheat24hBasePct) {
             penalty += (change24h - rules.scoring.overheat24hBasePct) * rules.scoring.overheat24hWeight
@@ -329,47 +387,20 @@ class SignalEngine {
         return penalty.coerceIn(0.0, rules.scoring.overheatMax)
     }
 
-    private fun scoreStaleSnapshot(candidate: MarketCandidate, rules: StrategyRules): Double {
-        val last = candidate.oneMinuteCandles.lastOrNull()?.timestamp ?: return rules.scoring.staleSnapshotErrorPenalty
-        val ageMs = System.currentTimeMillis() - last
+    private fun liquidityPenalty(accTradePrice24h: Double): Double {
+        val billionKrw = accTradePrice24h / 1_000_000_000.0
         return when {
-            ageMs <= rules.scoring.staleSnapshotWarningMinutes * 60 * 1000L -> 0.0
-            ageMs <= rules.scoring.staleSnapshotErrorMinutes * 60 * 1000L -> rules.scoring.staleSnapshotWarningPenalty
-            else -> rules.scoring.staleSnapshotErrorPenalty
+            billionKrw >= 20.0 -> 0.0
+            billionKrw >= 10.0 -> 3.0
+            billionKrw >= 5.0 -> 6.0
+            else -> 10.0
         }
     }
 
-    private fun scorePostSpikeChase(nearHigh: Double, change5m: Double, change30m: Double, rules: StrategyRules): Double {
-        var penalty = 0.0
-        if (nearHigh < rules.scoring.postSpikeNearHighLimit && change30m > rules.scoring.postSpikeChange30mLimitPct) {
-            penalty += rules.scoring.postSpikeNearHighPenalty
-        }
-        if (change5m > rules.scoring.postSpikeChange5mBasePct) {
-            penalty += (change5m - rules.scoring.postSpikeChange5mBasePct) * rules.scoring.postSpikeChange5mWeight
-        }
-        return penalty.coerceIn(0.0, rules.scoring.postSpikeMax)
-    }
-
-    private fun missedReason(
-        status: StrategyStatus,
-        score: Double,
-        changeRate24h: Double,
-        changeRate30m: Double,
-        volumeAcceleration: Double,
-        nearHigh: Double,
-        rules: StrategyRules,
-    ): String? = when {
-        status == StrategyStatus.ACTIVE -> null
-        changeRate24h >= rules.momentumBreakout.overheated24hPct -> "OVERHEATED_24H"
-        changeRate30m <= 0.0 -> "NO_30M_CONFIRMATION"
-        volumeAcceleration < rules.momentumBreakout.minVolumeAcceleration -> "NO_VOLUME_ACCELERATION"
-        nearHigh < rules.momentumBreakout.minNearHigh -> "ENTRY_TOO_FAR_FROM_BREAKOUT"
-        score < rules.minimumScore -> "SCORE_TOO_LOW"
-        else -> "WATCH_ONLY"
-    }
-
-    private fun buildReason(type: StrategyType, status: StrategyStatus, scores: String): String {
-        return "$type $status; $scores"
+    private fun buildReason(setup: StrategySetup, score: Double, overheatPenalty: Double, liquidityPenalty: Double): String {
+        val state = if (setup.active) "ACTIVE" else "WATCH_ONLY"
+        val failed = if (setup.failed.isEmpty()) "none" else setup.failed.joinToString(",")
+        return "${setup.strategyType} $state; passed=${setup.passed.joinToString(",")}; failed=$failed; score=${score.one()}; overheatPenalty=${overheatPenalty.one()}; liquidityPenalty=${liquidityPenalty.one()}"
     }
 
     private fun percentChange(from: Double, to: Double): Double {
@@ -377,11 +408,66 @@ class SignalEngine {
         return ((to - from) / from) * 100.0
     }
 
+    private fun List<Candle>.averageTradePrice(): Double = if (isEmpty()) 0.0 else sumOf { it.tradePrice } / size
+
+    private fun List<Candle>.averageVolume(): Double = if (isEmpty()) 0.0 else sumOf { it.volume } / size
+
+    private fun List<Double>.averageOrNull(): Double? = if (isEmpty()) null else average()
+
+    private fun List<Double>.ema(period: Int): Double? {
+        if (size < period) return null
+        val multiplier = 2.0 / (period + 1.0)
+        return drop(1).fold(first()) { acc, close -> (close - acc) * multiplier + acc }
+    }
+
+    private fun Double?.orZero(): Double = this ?: 0.0
+
     private fun Double.one(): String = String.format("%.1f", this)
 
     private fun MutableMap<String, Int>.increment(key: String) {
         this[key] = (this[key] ?: 0) + 1
     }
+
+    private data class CandidateRanks(
+        val change: Map<String, Int>,
+        val tradeValue: Map<String, Int>,
+    ) {
+        companion object {
+            fun from(tickers: List<Ticker>): CandidateRanks {
+                return CandidateRanks(
+                    change = tickers.sortedByDescending { it.signedChangeRate }
+                        .mapIndexed { index, ticker -> ticker.market to index + 1 }
+                        .toMap(),
+                    tradeValue = tickers.sortedByDescending { it.accTradePrice24h }
+                        .mapIndexed { index, ticker -> ticker.market to index + 1 }
+                        .toMap(),
+                )
+            }
+        }
+    }
+
+    private data class StrategySetup(
+        val strategyType: StrategyType,
+        val active: Boolean,
+        val stopLoss: Double,
+        val rawScore: Double,
+        val trendScore: Double,
+        val compressionScore: Double,
+        val relativeVolumeScore: Double,
+        val breakoutProximityScore: Double,
+        val reclaimScore: Double,
+        val riskRewardScore: Double,
+        val passed: List<String>,
+        val failed: List<String>,
+    )
+
+    private data class ReclaimSetup(
+        val unit: Int,
+        val priorLow: Double,
+        val sweepLow: Double,
+        val volumeAboveAverage: Boolean,
+        val reclaimScore: Double,
+    )
 
     private data class Evaluation(
         val strategy: TradeStrategy,

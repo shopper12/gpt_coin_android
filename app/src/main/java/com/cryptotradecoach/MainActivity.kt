@@ -30,6 +30,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
@@ -41,6 +42,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -304,6 +306,9 @@ private fun SettingsTab(
     var token by rememberSaveable(gitHubSettings.token) { mutableStateOf(gitHubSettings.token) }
     var rulesPath by rememberSaveable(gitHubSettings.rulesPath) { mutableStateOf(gitHubSettings.rulesPath) }
     var reportPath by rememberSaveable(gitHubSettings.reportPath) { mutableStateOf(gitHubSettings.reportPath) }
+    var autoUploadReport by rememberSaveable(gitHubSettings.autoUploadReport) {
+        mutableStateOf(gitHubSettings.autoUploadReport)
+    }
     fun currentSettings() = GitHubSettings(
         owner = owner,
         repo = repo,
@@ -311,6 +316,7 @@ private fun SettingsTab(
         rulesPath = rulesPath,
         reportPath = reportPath,
         token = token,
+        autoUploadReport = autoUploadReport,
     )
 
     LazyColumn(
@@ -360,6 +366,22 @@ private fun SettingsTab(
             )
         }
         item { Text("GitHub sync", fontWeight = FontWeight.Bold) }
+        item {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text("Auto upload report")
+                    Text("Upload at most every 10 minutes", style = MaterialTheme.typography.bodySmall)
+                }
+                Switch(
+                    checked = autoUploadReport,
+                    onCheckedChange = { autoUploadReport = it },
+                )
+            }
+        }
         item {
             OutlinedTextField(
                 value = owner,

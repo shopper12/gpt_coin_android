@@ -15,6 +15,9 @@ enum class StrategyType {
     MOMENTUM_BREAKOUT,
     PULLBACK_REBOUND,
     VOLUME_EXPANSION,
+    COMPRESSION_BREAKOUT,
+    SWEEP_RECLAIM,
+    TREND_PULLBACK,
     WATCH_ONLY,
 }
 
@@ -28,20 +31,30 @@ data class Ticker(
 
 data class Candle(
     val market: String,
-    val openingPrice: Double,
-    val highPrice: Double,
-    val lowPrice: Double,
-    val tradePrice: Double,
-    val candleAccTradeVolume: Double,
-    val candleAccTradePrice: Double,
+    val unit: Int,
     val timestamp: Long,
-)
+    val open: Double,
+    val high: Double,
+    val low: Double,
+    val close: Double,
+    val volume: Double,
+    val tradePrice: Double,
+) {
+    val openingPrice: Double get() = open
+    val highPrice: Double get() = high
+    val lowPrice: Double get() = low
+    val candleAccTradeVolume: Double get() = volume
+    val candleAccTradePrice: Double get() = tradePrice
+}
+
+typealias CandleData = Map<String, Map<Int, List<Candle>>>
 
 data class MarketCandidate(
     val ticker: Ticker,
     val oneMinuteCandles: List<Candle>,
     val fiveMinuteCandles: List<Candle>,
     val fifteenMinuteCandles: List<Candle>,
+    val fourHourCandles: List<Candle> = emptyList(),
     val rankByChangeRate: Int,
     val rankByTradeValue: Int,
     val changeRate30m: Double,
