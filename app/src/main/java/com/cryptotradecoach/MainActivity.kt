@@ -44,6 +44,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -82,6 +83,7 @@ class MainActivity : ComponentActivity() {
                     minimumScore = state.minimumScore,
                     gitHubSettings = state.gitHubSettings,
                     settingsMessage = state.settingsMessage,
+                    currentRulesText = state.currentRulesText,
                     onStart = { startScanner() },
                     onStop = { stopScanner() },
                     onIntervalSelected = viewModel::setScanInterval,
@@ -90,6 +92,7 @@ class MainActivity : ComponentActivity() {
                     onGitHubSettingsSaved = viewModel::saveGitHubSettings,
                     onGitHubSettingsTest = viewModel::testGitHubSettings,
                     onRulesDownload = viewModel::downloadLatestRules,
+                    onRulesRefresh = viewModel::refreshCurrentRules,
                     onReportUpload = viewModel::uploadLatestReport,
                 )
             }
@@ -139,6 +142,7 @@ private fun MainScreen(
     minimumScore: Double,
     gitHubSettings: GitHubSettings,
     settingsMessage: String?,
+    currentRulesText: String,
     onStart: () -> Unit,
     onStop: () -> Unit,
     onIntervalSelected: (Long) -> Unit,
@@ -147,9 +151,10 @@ private fun MainScreen(
     onGitHubSettingsSaved: (GitHubSettings) -> Unit,
     onGitHubSettingsTest: (GitHubSettings) -> Unit,
     onRulesDownload: (GitHubSettings) -> Unit,
+    onRulesRefresh: () -> Unit,
     onReportUpload: (GitHubSettings) -> Unit,
 ) {
-    val tabs = listOf("Current", "History", "Settings")
+    val tabs = listOf("Current", "History", "Rules", "Settings")
     var selectedTab by remember { mutableIntStateOf(0) }
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -171,7 +176,13 @@ private fun MainScreen(
         when (selectedTab) {
             0 -> CurrentStrategiesTab(activeStrategies, scanDiagnostics, lastScanAt)
             1 -> StrategyHistoryTab(historyBySymbol)
-            2 -> SettingsTab(
+            2 -> RulesTab(
+                currentRulesText = currentRulesText,
+                settingsMessage = settingsMessage,
+                onRulesRefresh = onRulesRefresh,
+                onRulesDownload = { onRulesDownload(gitHubSettings) },
+            )
+            3 -> SettingsTab(
                 isRunning = isRunning,
                 scanIntervalMs = scanIntervalMs,
                 maxDisplayCount = maxDisplayCount,
@@ -277,6 +288,43 @@ private fun StrategyHistoryTab(historyBySymbol: Map<String, List<StrategyHistory
                 items(selectedHistory) { history ->
                     HistoryCard(history)
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun RulesTab(
+    currentRulesText: String,
+    settingsMessage: String?,
+    onRulesRefresh: () -> Unit,
+    onRulesDownload: () -> Unit,
+) {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .navigationBarsPadding()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
+        item { Text("Current rules", fontWeight = FontWeight.Bold) }
+        item {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedButton(onClick = onRulesRefresh) { Text("Refresh local") }
+                Button(onClick = onRulesDownload) { Text("Download") }
+            }
+        }
+        settingsMessage?.let { message ->
+            item { Text(message) }
+        }
+        item {
+            Card(modifier = Modifier.fillMaxWidth()) {
+                Text(
+                    text = currentRulesText.ifBlank { "No rules loaded" },
+                    modifier = Modifier.padding(12.dp),
+                    fontFamily = FontFamily.Monospace,
+                    style = MaterialTheme.typography.bodySmall,
+                )
             }
         }
     }
