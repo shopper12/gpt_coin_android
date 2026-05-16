@@ -124,6 +124,50 @@ data class StrategyScanLogEntity(
     val strategyStatus: StrategyStatus,
 )
 
+@Entity(
+    tableName = "strategy_performance",
+    indices = [
+        Index(value = ["strategyId"], unique = true),
+        Index(value = ["symbol", "createdAt"]),
+        Index(value = ["strategyType", "createdAt"]),
+        Index(value = ["isComplete", "createdAt"]),
+    ],
+)
+data class StrategyPerformanceEntity(
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0,
+    val strategyId: String,
+    val symbol: String,
+    val strategyType: StrategyType,
+    val rulesVersion: String,
+    val createdAt: Long,
+    val lastUpdatedAt: Long,
+    val entryPrice: Double,
+    val latestPrice: Double,
+    val priceAfter5m: Double? = null,
+    val priceAfter15m: Double? = null,
+    val priceAfter30m: Double? = null,
+    val priceAfter60m: Double? = null,
+    val return5m: Double? = null,
+    val return15m: Double? = null,
+    val return30m: Double? = null,
+    val return60m: Double? = null,
+    val mfePct: Double = 0.0,
+    val maePct: Double = 0.0,
+    val target1: Double,
+    val target2: Double,
+    val stopLoss: Double,
+    val target1Hit: Boolean = false,
+    val target2Hit: Boolean = false,
+    val stopHit: Boolean = false,
+    val expired: Boolean = false,
+    val isComplete: Boolean = false,
+    val btcChangeRate24h: Double = 0.0,
+    val rankByTradeValue: Int,
+    val score: Double,
+    val reason: String,
+)
+
 object MissedSignalReason {
     const val TRADE_VALUE_FILTER_EXCLUDED = "TRADE_VALUE_FILTER_EXCLUDED"
     const val CHANGE_RATE_RULE_NOT_MATCHED = "CHANGE_RATE_RULE_NOT_MATCHED"
