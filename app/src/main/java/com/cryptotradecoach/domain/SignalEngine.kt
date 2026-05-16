@@ -30,6 +30,7 @@ class SignalEngine {
                 240 to candidate.fourHourCandles,
             )
         }
+        val candidateBtcChange = candidates.firstOrNull { it.btcChangeRate24h != 0.0 }?.btcChangeRate24h
         return scan(
             tickers = tickers,
             candleData = candleData,
@@ -37,6 +38,7 @@ class SignalEngine {
             now = now,
             minimumScore = minimumScore,
             maxResults = maxResults,
+            btcChangeRateOverride = candidateBtcChange,
         )
     }
 
@@ -47,10 +49,13 @@ class SignalEngine {
         now: Long = System.currentTimeMillis(),
         minimumScore: Double = rules.minimumScore,
         maxResults: Int = rules.maxResults,
+        btcChangeRateOverride: Double? = null,
     ): StrategyScanResult {
         val rejectionSummary = mutableMapOf<String, Int>()
         val ranks = CandidateRanks.from(tickers)
-        val btcChangeRate24h = tickers.firstOrNull { it.market == "KRW-BTC" }?.signedChangeRate?.times(100.0) ?: 0.0
+        val btcChangeRate24h = btcChangeRateOverride
+            ?: tickers.firstOrNull { it.market == "KRW-BTC" }?.signedChangeRate?.times(100.0)
+            ?: 0.0
         val evaluations = tickers.mapNotNull { ticker ->
             evaluateTicker(
                 ticker = ticker,
@@ -133,8 +138,8 @@ class SignalEngine {
         val liquidityPenalty = liquidityPenalty(ticker.accTradePrice24h)
         val setups = listOf(
             compressionBreakout(price, changeRate24h, volumeAcceleration, five, fifteen, rules),
-            sweepReclaim(price, volumeAcceleration, five, fifteen),
-            trendPullback(price, volumeAcceleration, five, fifteen, fourHour),
+            sweepReclaim(price, volumeAcceleration, five, fifteen, rules),
+            trendPullback(price, volumeAcceleration, five, fifteen, fourHour, rules),
             bearDecouplingBounce(
                 price = price,
                 btcChangeRate24h = btcChangeRate24h,
@@ -142,6 +147,7 @@ class SignalEngine {
                 rankByTradeValue = rankByTradeValue,
                 five = five,
                 fourHour = fourHour,
+                rules = rules,
             ),
         )
         val best = setups.maxByOrNull { it.rawScore - overheatPenalty - liquidityPenalty } ?: return null
@@ -244,10 +250,11 @@ class SignalEngine {
         val distanceToHighPct = ((recentHigh - price) / recentHigh * 100.0).takeIf { recentHigh > 0.0 } ?: 99.0
         val recentRangePct = percentChange(recentLow, recentHigh).coerceAtLeast(0.0)
         val previousRangePct = percentChange(previousLow, previousHigh).coerceAtLeast(0.0)
-        val compressed = previousRangePct > 0.0 && recentRangePct <= previousRangePct * 0.85
-        val nearHigh = distanceToHighPct in 0.0..3.0
-        val volumeRising = five.last().tradePrice >= five.dropLast(1).takeLast(20).averageTradePrice() * 1.05 ||
-            volumeAcceleration >= rules.volumeExpansion.minVolumeAcceleration
+        val r = rules.compressionBreakout
+        val compressed = previousRangePct > 0.0 && recentRangePct <= previousRangePct * r.rangeCompressionRatio
+        val nearHigh = distanceToHighPct in 0.0..r.maxDistanceTo15mHighPct
+        val volumeRising = five.last().tradePrice >= five.dropLast(1).takeLast(20).averageTradePrice() * r.minFiveMinuteVolumeRatio ||
+            volumeAcceleration >= r.minVolumeAcceleration
         val compressionScore = if (compressed) 18.0 else max(0.0, 12.0 - recentRangePct * 2.0)
         val breakoutProximityScore = if (nearHigh) (18.0 - distanceToHighPct * 3.0).coerceAtLeast(8.0) else 0.0
         val relativeVolumeScore = ((volumeAcceleration - 1.0) * 18.0).coerceIn(0.0, 20.0)
@@ -264,13 +271,13 @@ class SignalEngine {
             breakoutProximityScore = breakoutProximityScore,
             reclaimScore = 0.0,
             riskRewardScore = riskRewardScore,
-            passed = listOfNotNull(
+            passed = listOf(
                 "15mHighDistance=${distanceToHighPct.one()}%",
-                "rangeCompressed=${compressed}",
-                "5mVolumeRising=${volumeRising}",
+                "rangeCompressed=$compressed",
+                "5mVolumeRising=$volumeRising",
             ),
             failed = listOfNotNull(
-                if (!nearHigh) "NOT_WITHIN_3PCT_OF_15M_HIGH" else null,
+                if (!nearHigh) "NOT_WITHIN_${r.maxDistanceTo15mHighPct.one()}PCT_OF_15M_HIGH" else null,
                 if (!compressed) "RANGE_NOT_COMPRESSED" else null,
                 if (!volumeRising) "NO_5M_VOLUME_RISE" else null,
             ),
@@ -282,9 +289,11 @@ class SignalEngine {
         volumeAcceleration: Double,
         five: List<Candle>,
         fifteen: List<Candle>,
+        rules: StrategyRules,
     ): StrategySetup {
-        val fiveSetup = reclaimOn(five, lookback = 12)
-        val fifteenSetup = reclaimOn(fifteen, lookback = 8)
+        val r = rules.sweepReclaim
+        val fiveSetup = reclaimOn(five, lookback = r.fiveMinuteLookback, requireVolumeAboveAverage = r.requireVolumeAboveAverage)
+        val fifteenSetup = reclaimOn(fifteen, lookback = r.fifteenMinuteLookback, requireVolumeAboveAverage = r.requireVolumeAboveAverage)
         val reclaim = listOfNotNull(fiveSetup, fifteenSetup).maxByOrNull { it.reclaimScore }
         val active = reclaim != null
         val reclaimScore = reclaim?.reclaimScore ?: 0.0
@@ -316,15 +325,17 @@ class SignalEngine {
         five: List<Candle>,
         fifteen: List<Candle>,
         fourHour: List<Candle>,
+        rules: StrategyRules,
     ): StrategySetup {
-        val ma120 = fourHour.takeLast(120).map { it.close }.averageOrNull()
-        val ema120 = fourHour.map { it.close }.ema(period = 120)
-        val aboveHigherTimeframe = listOfNotNull(ma120, ema120).any { price > it }
-        val fifteenMa20 = fifteen.takeLast(20).map { it.close }.averageOrNull() ?: price
-        val fifteenTrendOk = fifteen.last().close >= fifteenMa20 * 0.995 &&
-            fifteen.takeLast(6).minOf { it.low } >= fifteen.dropLast(6).takeLast(12).minOfOrNull { it.low }.orZero() * 0.985
-        val recentFive = five.takeLast(10)
-        val priorShortHigh = recentFive.dropLast(1).takeLast(6).maxOfOrNull { it.high } ?: price
+        val r = rules.trendPullback
+        val ma = fourHour.takeLast(r.higherTimeframeMaPeriod).map { it.close }.averageOrNull()
+        val ema = fourHour.map { it.close }.ema(period = r.higherTimeframeMaPeriod)
+        val aboveHigherTimeframe = listOfNotNull(ma, ema).any { price > it }
+        val fifteenMa = fifteen.takeLast(r.fifteenMinuteMaPeriod).map { it.close }.averageOrNull() ?: price
+        val fifteenTrendOk = fifteen.last().close >= fifteenMa * r.min15mMaMultiplier &&
+            fifteen.takeLast(r.reclaimLookback).minOf { it.low } >= fifteen.dropLast(r.reclaimLookback).takeLast(12).minOfOrNull { it.low }.orZero() * r.minPriorLowMultiplier
+        val recentFive = five.takeLast(r.pullbackLookback)
+        val priorShortHigh = recentFive.dropLast(1).takeLast(r.reclaimLookback).maxOfOrNull { it.high } ?: price
         val pullbackLow = recentFive.minOfOrNull { it.low } ?: price
         val pullbackReclaimed = five.last().close >= priorShortHigh && pullbackLow < priorShortHigh
         val active = aboveHigherTimeframe && fifteenTrendOk && pullbackReclaimed
@@ -348,12 +359,12 @@ class SignalEngine {
             reclaimScore = reclaimScore,
             riskRewardScore = riskRewardScore,
             passed = listOf(
-                "240mAboveMA120orEMA120=$aboveHigherTimeframe",
+                "240mAboveMAorEMA=$aboveHigherTimeframe",
                 "15mTrendIntact=$fifteenTrendOk",
                 "5mPullbackHighReclaimed=$pullbackReclaimed",
             ),
             failed = listOfNotNull(
-                if (!aboveHigherTimeframe) "PRICE_BELOW_240M_MA120_EMA120" else null,
+                if (!aboveHigherTimeframe) "PRICE_BELOW_240M_MA_EMA" else null,
                 if (!fifteenTrendOk) "15M_TREND_BROKEN" else null,
                 if (!pullbackReclaimed) "NO_5M_PULLBACK_RECLAIM" else null,
             ),
@@ -367,12 +378,14 @@ class SignalEngine {
         rankByTradeValue: Int,
         five: List<Candle>,
         fourHour: List<Candle>,
+        rules: StrategyRules,
     ): StrategySetup {
+        val r = rules.bearDecouplingBounce
         if (fourHour.size < 22 || five.size < 3) {
             return StrategySetup(
                 strategyType = StrategyType.BEAR_DECOUPLING_BOUNCE,
                 active = false,
-                stopLoss = price * 0.99,
+                stopLoss = price * rules.risk.defaultStopMultiplier,
                 rawScore = 0.0,
                 trendScore = 0.0,
                 compressionScore = 0.0,
@@ -391,8 +404,8 @@ class SignalEngine {
         val volumeMultiple4h = if (avgTradeValue4h20 > 0.0) latest4h.tradePrice / avgTradeValue4h20 else 0.0
         val previousVolumeMultiple4h = if (avgTradeValue4h20 > 0.0) previous4h.tradePrice / avgTradeValue4h20 else 0.0
         val ma20_240m = fourHour.takeLast(20).map { it.close }.averageOrNull() ?: price
-        val notAtTop = price <= ma20_240m * 1.05
-        val notAfterPump = previousVolumeMultiple4h < 3.0
+        val notAtTop = price <= ma20_240m * (1.0 + r.maxPriceOver240mMa20Pct / 100.0)
+        val notAfterPump = previousVolumeMultiple4h < r.maxPreviousFourHourVolumeMultiple
         val last5 = five.last()
         val candleRange = (last5.high - last5.low).coerceAtLeast(0.0)
         val upperWickPct = if (candleRange > 0.0) {
@@ -400,23 +413,27 @@ class SignalEngine {
         } else {
             0.0
         }
-        val upperWickTooHeavy = upperWickPct > 55.0 && last5.close < last5.open
-        val btcWeak = btcChangeRate24h < -1.0
-        val altStrong = changeRate24h > 2.0
-        val rankOk = rankByTradeValue <= 30
-        val strong4hVolume = volumeMultiple4h >= 2.5
+        val upperWickTooHeavy = upperWickPct > r.maxBearishUpperWickPct && last5.close < last5.open
+        val btcWeak = btcChangeRate24h < r.btcWeakBelowPct
+        val altStrong = changeRate24h > r.altStrongAbovePct
+        val rankOk = rankByTradeValue <= r.maxTradeValueRank
+        val strong4hVolume = volumeMultiple4h >= r.minFourHourVolumeMultiple
         val decoupled = btcWeak && altStrong
-        val decouplingScore = if (decoupled) (12.0 + min(abs(btcChangeRate24h), 5.0) * 1.5 + min(changeRate24h, 10.0) * 0.7).coerceAtMost(24.0) else 0.0
+        val decouplingScore = if (decoupled) {
+            (12.0 + min(abs(btcChangeRate24h), 5.0) * 1.5 + min(changeRate24h, 10.0) * 0.7).coerceAtMost(r.decouplingScoreCap)
+        } else {
+            0.0
+        }
         val rankScore = when {
             rankByTradeValue <= 10 -> 18.0
             rankByTradeValue <= 20 -> 14.0
-            rankByTradeValue <= 30 -> 10.0
+            rankByTradeValue <= r.maxTradeValueRank -> 10.0
             else -> 0.0
         }
         val fourHourVolumeScore = ((volumeMultiple4h - 1.0) * 8.0).coerceIn(0.0, 24.0)
         val notAfterPumpScore = if (notAfterPump) 12.0 else 0.0
         val notAtTopScore = if (notAtTop) 10.0 else 0.0
-        val wickPenalty = if (upperWickTooHeavy) 12.0 else 0.0
+        val wickPenalty = if (upperWickTooHeavy) r.wickPenalty else 0.0
         val recentLow = min(latest4h.low, five.takeLast(10).minOfOrNull { it.low } ?: latest4h.low)
         val riskRewardScore = riskRewardScore(price, recentLow)
         val rawScore = decouplingScore + rankScore + fourHourVolumeScore + notAfterPumpScore + notAtTopScore + riskRewardScore - wickPenalty
@@ -444,17 +461,17 @@ class SignalEngine {
             ),
             failed = listOfNotNull(
                 if (!btcWeak) "BTC_NOT_WEAK" else null,
-                if (!altStrong) "ALT_NOT_UP_OVER_2PCT" else null,
-                if (!rankOk) "TRADE_VALUE_RANK_OVER_30" else null,
-                if (!strong4hVolume) "4H_VOLUME_UNDER_2_5X" else null,
+                if (!altStrong) "ALT_NOT_UP_OVER_${r.altStrongAbovePct.one()}PCT" else null,
+                if (!rankOk) "TRADE_VALUE_RANK_OVER_${r.maxTradeValueRank}" else null,
+                if (!strong4hVolume) "4H_VOLUME_UNDER_${r.minFourHourVolumeMultiple.one()}X" else null,
                 if (!notAfterPump) "PREVIOUS_4H_ALREADY_PUMPED" else null,
-                if (!notAtTop) "PRICE_OVER_240M_MA20_PLUS_5PCT" else null,
+                if (!notAtTop) "PRICE_OVER_240M_MA20_PLUS_${r.maxPriceOver240mMa20Pct.one()}PCT" else null,
                 if (upperWickTooHeavy) "5M_UPPER_WICK_TOO_HEAVY" else null,
             ),
         )
     }
 
-    private fun reclaimOn(candles: List<Candle>, lookback: Int): ReclaimSetup? {
+    private fun reclaimOn(candles: List<Candle>, lookback: Int, requireVolumeAboveAverage: Boolean): ReclaimSetup? {
         if (candles.size < lookback + 3) return null
         val latest = candles.last()
         val priorWindow = candles.dropLast(2).takeLast(lookback)
@@ -462,7 +479,7 @@ class SignalEngine {
         val sweep = candles.dropLast(1).takeLast(4).filter { it.low < priorLow }.minByOrNull { it.low } ?: return null
         val volumeAverage = candles.dropLast(1).takeLast(20).averageVolume()
         val volumeAboveAverage = latest.volume >= volumeAverage
-        if (latest.close <= priorLow || !volumeAboveAverage) return null
+        if (latest.close <= priorLow || (requireVolumeAboveAverage && !volumeAboveAverage)) return null
         val reclaimScore = 18.0 + min(abs(percentChange(priorLow, sweep.low)) * 4.0, 8.0)
         return ReclaimSetup(
             unit = latest.unit,
