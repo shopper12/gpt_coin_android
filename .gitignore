@@ -1,31 +1,35 @@
+# Android / Gradle
 .gradle/
-.idea/
-local.properties
 **/build/
 *.iml
-
-# Local Android SDK path
 local.properties
 
-# Gradle
-.gradle/
-build/
-app/build/
-
 # Android Studio local files
-.idea/workspace.xml
-.idea/tasks.xml
-.idea/usage.statistics.xml
-.idea/dictionaries/
-.idea/shelf/
+.idea/
 
-# Logs
+# Runtime logs and local diagnostics
 logs/
 *.log
 
 # Build outputs
 *.apk
 *.aab
+
+# Generated app data / exports
+exports/
+analysis_report/
+reports/latest.json
+reports/history/
+reports/*.json
+!reports/.gitkeep
+
+# Local secrets / keys
+*.keystore
+*.jks
+*.p12
+*.pem
+*.key
+.env
 
 # OS files
 .DS_Store
