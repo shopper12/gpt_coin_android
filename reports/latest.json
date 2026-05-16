@@ -1,53 +1,573 @@
 {
-  "generatedAt": 1778909100695,
+  "generatedAt": 1778909151901,
   "rulesVersion": "v1",
   "summaries": [
     {
       "strategyType": "MOMENTUM_BREAKOUT",
-      "totalSignals": 314,
-      "failedSignalCount": 304,
+      "totalSignals": 317,
+      "failedSignalCount": 308,
       "avgReturn15m": 0,
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.5448596174679445,
-      "avgMae": -0.9936883757961794
+      "avgMfe": 3.5521196369910997,
+      "avgMae": -0.9937481072555214
     },
     {
       "strategyType": "PULLBACK_REBOUND",
-      "totalSignals": 3,
-      "failedSignalCount": 3,
+      "totalSignals": 2,
+      "failedSignalCount": 2,
       "avgReturn15m": 0,
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.503123829766326,
-      "avgMae": -1.0000000000000013
+      "avgMfe": 3.540552982336855,
+      "avgMae": -1.0000000000000007
     },
     {
       "strategyType": "VOLUME_EXPANSION",
-      "totalSignals": 119,
-      "failedSignalCount": 118,
+      "totalSignals": 118,
+      "failedSignalCount": 116,
       "avgReturn15m": 0,
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.4073552623537653,
-      "avgMae": -0.7532112268907567
+      "avgMfe": 3.464569093398232,
+      "avgMae": -0.7662962033898308
     },
     {
       "strategyType": "WATCH_ONLY",
-      "totalSignals": 564,
-      "failedSignalCount": 564,
+      "totalSignals": 563,
+      "failedSignalCount": 563,
       "avgReturn15m": 0,
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
     }
   ],
   "failedSignals": [
+    {
+      "market": "KRW-JST",
+      "strategyType": "MOMENTUM_BREAKOUT",
+      "timestamp": 1778909151828,
+      "score": 20.3194121810968,
+      "missedReason": "SCORE_TOO_LOW",
+      "avgReturn15m": 0,
+      "avgReturn30m": 0,
+      "targetHitRate": 0,
+      "stopHitRate": 0,
+      "avgMfe": 3.5521196369910997,
+      "avgMae": -0.9937481072555214
+    },
+    {
+      "market": "KRW-SOMI",
+      "strategyType": "WATCH_ONLY",
+      "timestamp": 1778909151828,
+      "score": 21.70550919683806,
+      "missedReason": "NO_30M_CONFIRMATION",
+      "avgReturn15m": 0,
+      "avgReturn30m": 0,
+      "targetHitRate": 0,
+      "stopHitRate": 0,
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
+    },
+    {
+      "market": "KRW-VET",
+      "strategyType": "MOMENTUM_BREAKOUT",
+      "timestamp": 1778909151828,
+      "score": 33.903696567635606,
+      "missedReason": "SCORE_TOO_LOW",
+      "avgReturn15m": 0,
+      "avgReturn30m": 0,
+      "targetHitRate": 0,
+      "stopHitRate": 0,
+      "avgMfe": 3.5521196369910997,
+      "avgMae": -0.9937481072555214
+    },
+    {
+      "market": "KRW-ALT",
+      "strategyType": "WATCH_ONLY",
+      "timestamp": 1778909151828,
+      "score": 16.91984762334996,
+      "missedReason": "NO_30M_CONFIRMATION",
+      "avgReturn15m": 0,
+      "avgReturn30m": 0,
+      "targetHitRate": 0,
+      "stopHitRate": 0,
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
+    },
+    {
+      "market": "KRW-ONG",
+      "strategyType": "MOMENTUM_BREAKOUT",
+      "timestamp": 1778909151828,
+      "score": 39.221357390665396,
+      "missedReason": "SCORE_TOO_LOW",
+      "avgReturn15m": 0,
+      "avgReturn30m": 0,
+      "targetHitRate": 0,
+      "stopHitRate": 0,
+      "avgMfe": 3.5521196369910997,
+      "avgMae": -0.9937481072555214
+    },
+    {
+      "market": "KRW-ICX",
+      "strategyType": "VOLUME_EXPANSION",
+      "timestamp": 1778909151828,
+      "score": 27.340748546886502,
+      "missedReason": "SCORE_TOO_LOW",
+      "avgReturn15m": 0,
+      "avgReturn30m": 0,
+      "targetHitRate": 0,
+      "stopHitRate": 0,
+      "avgMfe": 3.464569093398232,
+      "avgMae": -0.7662962033898308
+    },
+    {
+      "market": "KRW-AXS",
+      "strategyType": "WATCH_ONLY",
+      "timestamp": 1778909151828,
+      "score": 22.127459027461263,
+      "missedReason": "NO_30M_CONFIRMATION",
+      "avgReturn15m": 0,
+      "avgReturn30m": 0,
+      "targetHitRate": 0,
+      "stopHitRate": 0,
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
+    },
+    {
+      "market": "KRW-APT",
+      "strategyType": "WATCH_ONLY",
+      "timestamp": 1778909151828,
+      "score": 22.536478260631373,
+      "missedReason": "NO_30M_CONFIRMATION",
+      "avgReturn15m": 0,
+      "avgReturn30m": 0,
+      "targetHitRate": 0,
+      "stopHitRate": 0,
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
+    },
+    {
+      "market": "KRW-BLEND",
+      "strategyType": "MOMENTUM_BREAKOUT",
+      "timestamp": 1778909151828,
+      "score": 27.95913237170797,
+      "missedReason": "SCORE_TOO_LOW",
+      "avgReturn15m": 0,
+      "avgReturn30m": 0,
+      "targetHitRate": 0,
+      "stopHitRate": 0,
+      "avgMfe": 3.5521196369910997,
+      "avgMae": -0.9937481072555214
+    },
+    {
+      "market": "KRW-IMX",
+      "strategyType": "WATCH_ONLY",
+      "timestamp": 1778909151828,
+      "score": 20.3662077707577,
+      "missedReason": "NO_30M_CONFIRMATION",
+      "avgReturn15m": 0,
+      "avgReturn30m": 0,
+      "targetHitRate": 0,
+      "stopHitRate": 0,
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
+    },
+    {
+      "market": "KRW-ETC",
+      "strategyType": "VOLUME_EXPANSION",
+      "timestamp": 1778909151828,
+      "score": 25.591393445920836,
+      "missedReason": "SCORE_TOO_LOW",
+      "avgReturn15m": 0,
+      "avgReturn30m": 0,
+      "targetHitRate": 0,
+      "stopHitRate": 0,
+      "avgMfe": 3.464569093398232,
+      "avgMae": -0.7662962033898308
+    },
+    {
+      "market": "KRW-ANKR",
+      "strategyType": "WATCH_ONLY",
+      "timestamp": 1778909151828,
+      "score": 15.160594919668902,
+      "missedReason": "NO_30M_CONFIRMATION",
+      "avgReturn15m": 0,
+      "avgReturn30m": 0,
+      "targetHitRate": 0,
+      "stopHitRate": 0,
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
+    },
+    {
+      "market": "KRW-SAND",
+      "strategyType": "WATCH_ONLY",
+      "timestamp": 1778909151828,
+      "score": 22.856263849914537,
+      "missedReason": "NO_30M_CONFIRMATION",
+      "avgReturn15m": 0,
+      "avgReturn30m": 0,
+      "targetHitRate": 0,
+      "stopHitRate": 0,
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
+    },
+    {
+      "market": "KRW-PENGU",
+      "strategyType": "WATCH_ONLY",
+      "timestamp": 1778909151828,
+      "score": 21.088983115834452,
+      "missedReason": "NO_30M_CONFIRMATION",
+      "avgReturn15m": 0,
+      "avgReturn30m": 0,
+      "targetHitRate": 0,
+      "stopHitRate": 0,
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
+    },
+    {
+      "market": "KRW-TAO",
+      "strategyType": "WATCH_ONLY",
+      "timestamp": 1778909151828,
+      "score": 25.593942752555634,
+      "missedReason": "SCORE_TOO_LOW",
+      "avgReturn15m": 0,
+      "avgReturn30m": 0,
+      "targetHitRate": 0,
+      "stopHitRate": 0,
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
+    },
+    {
+      "market": "KRW-ATH",
+      "strategyType": "MOMENTUM_BREAKOUT",
+      "timestamp": 1778909151828,
+      "score": 25.064588986334126,
+      "missedReason": "SCORE_TOO_LOW",
+      "avgReturn15m": 0,
+      "avgReturn30m": 0,
+      "targetHitRate": 0,
+      "stopHitRate": 0,
+      "avgMfe": 3.5521196369910997,
+      "avgMae": -0.9937481072555214
+    },
+    {
+      "market": "KRW-JTO",
+      "strategyType": "WATCH_ONLY",
+      "timestamp": 1778909151828,
+      "score": 32.61450210443684,
+      "missedReason": "NO_VOLUME_ACCELERATION",
+      "avgReturn15m": 0,
+      "avgReturn30m": 0,
+      "targetHitRate": 0,
+      "stopHitRate": 0,
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
+    },
+    {
+      "market": "KRW-STX",
+      "strategyType": "VOLUME_EXPANSION",
+      "timestamp": 1778909151828,
+      "score": 26.276721236716917,
+      "missedReason": "SCORE_TOO_LOW",
+      "avgReturn15m": 0,
+      "avgReturn30m": 0,
+      "targetHitRate": 0,
+      "stopHitRate": 0,
+      "avgMfe": 3.464569093398232,
+      "avgMae": -0.7662962033898308
+    },
+    {
+      "market": "KRW-BERA",
+      "strategyType": "MOMENTUM_BREAKOUT",
+      "timestamp": 1778909151828,
+      "score": 43.251229992684436,
+      "missedReason": "SCORE_TOO_LOW",
+      "avgReturn15m": 0,
+      "avgReturn30m": 0,
+      "targetHitRate": 0,
+      "stopHitRate": 0,
+      "avgMfe": 3.5521196369910997,
+      "avgMae": -0.9937481072555214
+    },
+    {
+      "market": "KRW-SIGN",
+      "strategyType": "MOMENTUM_BREAKOUT",
+      "timestamp": 1778909151828,
+      "score": 38.71676798255197,
+      "missedReason": "SCORE_TOO_LOW",
+      "avgReturn15m": 0,
+      "avgReturn30m": 0,
+      "targetHitRate": 0,
+      "stopHitRate": 0,
+      "avgMfe": 3.5521196369910997,
+      "avgMae": -0.9937481072555214
+    },
+    {
+      "market": "KRW-CPOOL",
+      "strategyType": "MOMENTUM_BREAKOUT",
+      "timestamp": 1778909151828,
+      "score": 28.876195588205455,
+      "missedReason": "SCORE_TOO_LOW",
+      "avgReturn15m": 0,
+      "avgReturn30m": 0,
+      "targetHitRate": 0,
+      "stopHitRate": 0,
+      "avgMfe": 3.5521196369910997,
+      "avgMae": -0.9937481072555214
+    },
+    {
+      "market": "KRW-FLOCK",
+      "strategyType": "MOMENTUM_BREAKOUT",
+      "timestamp": 1778909151828,
+      "score": 44.45531120327908,
+      "missedReason": "SCORE_TOO_LOW",
+      "avgReturn15m": 0,
+      "avgReturn30m": 0,
+      "targetHitRate": 0,
+      "stopHitRate": 0,
+      "avgMfe": 3.5521196369910997,
+      "avgMae": -0.9937481072555214
+    },
+    {
+      "market": "KRW-NEAR",
+      "strategyType": "WATCH_ONLY",
+      "timestamp": 1778909151828,
+      "score": 23.78058473294549,
+      "missedReason": "NO_30M_CONFIRMATION",
+      "avgReturn15m": 0,
+      "avgReturn30m": 0,
+      "targetHitRate": 0,
+      "stopHitRate": 0,
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
+    },
+    {
+      "market": "KRW-SHIB",
+      "strategyType": "WATCH_ONLY",
+      "timestamp": 1778909151828,
+      "score": 23.557605528904467,
+      "missedReason": "NO_30M_CONFIRMATION",
+      "avgReturn15m": 0,
+      "avgReturn30m": 0,
+      "targetHitRate": 0,
+      "stopHitRate": 0,
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
+    },
+    {
+      "market": "KRW-LINK",
+      "strategyType": "WATCH_ONLY",
+      "timestamp": 1778909151828,
+      "score": 22.644159360265224,
+      "missedReason": "NO_30M_CONFIRMATION",
+      "avgReturn15m": 0,
+      "avgReturn30m": 0,
+      "targetHitRate": 0,
+      "stopHitRate": 0,
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
+    },
+    {
+      "market": "KRW-IP",
+      "strategyType": "WATCH_ONLY",
+      "timestamp": 1778909151828,
+      "score": 23.56458871124897,
+      "missedReason": "NO_30M_CONFIRMATION",
+      "avgReturn15m": 0,
+      "avgReturn30m": 0,
+      "targetHitRate": 0,
+      "stopHitRate": 0,
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
+    },
+    {
+      "market": "KRW-MEGA",
+      "strategyType": "WATCH_ONLY",
+      "timestamp": 1778909151828,
+      "score": 23.705774362973546,
+      "missedReason": "NO_30M_CONFIRMATION",
+      "avgReturn15m": 0,
+      "avgReturn30m": 0,
+      "targetHitRate": 0,
+      "stopHitRate": 0,
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
+    },
+    {
+      "market": "KRW-PRL",
+      "strategyType": "VOLUME_EXPANSION",
+      "timestamp": 1778909151828,
+      "score": 40.7531535880839,
+      "missedReason": "SCORE_TOO_LOW",
+      "avgReturn15m": 0,
+      "avgReturn30m": 0,
+      "targetHitRate": 0,
+      "stopHitRate": 0,
+      "avgMfe": 3.464569093398232,
+      "avgMae": -0.7662962033898308
+    },
+    {
+      "market": "KRW-VIRTUAL",
+      "strategyType": "WATCH_ONLY",
+      "timestamp": 1778909151828,
+      "score": 23.44454481241081,
+      "missedReason": "NO_30M_CONFIRMATION",
+      "avgReturn15m": 0,
+      "avgReturn30m": 0,
+      "targetHitRate": 0,
+      "stopHitRate": 0,
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
+    },
+    {
+      "market": "KRW-ZBT",
+      "strategyType": "WATCH_ONLY",
+      "timestamp": 1778909151828,
+      "score": 30.089449442633082,
+      "missedReason": "NO_30M_CONFIRMATION",
+      "avgReturn15m": 0,
+      "avgReturn30m": 0,
+      "targetHitRate": 0,
+      "stopHitRate": 0,
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
+    },
+    {
+      "market": "KRW-XLM",
+      "strategyType": "VOLUME_EXPANSION",
+      "timestamp": 1778909151828,
+      "score": 28.287258598770592,
+      "missedReason": "SCORE_TOO_LOW",
+      "avgReturn15m": 0,
+      "avgReturn30m": 0,
+      "targetHitRate": 0,
+      "stopHitRate": 0,
+      "avgMfe": 3.464569093398232,
+      "avgMae": -0.7662962033898308
+    },
+    {
+      "market": "KRW-DKA",
+      "strategyType": "WATCH_ONLY",
+      "timestamp": 1778909151828,
+      "score": 34.01797764678439,
+      "missedReason": "NO_30M_CONFIRMATION",
+      "avgReturn15m": 0,
+      "avgReturn30m": 0,
+      "targetHitRate": 0,
+      "stopHitRate": 0,
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
+    },
+    {
+      "market": "KRW-ONDO",
+      "strategyType": "WATCH_ONLY",
+      "timestamp": 1778909151828,
+      "score": 23.175851447719594,
+      "missedReason": "NO_30M_CONFIRMATION",
+      "avgReturn15m": 0,
+      "avgReturn30m": 0,
+      "targetHitRate": 0,
+      "stopHitRate": 0,
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
+    },
+    {
+      "market": "KRW-SOL",
+      "strategyType": "VOLUME_EXPANSION",
+      "timestamp": 1778909151828,
+      "score": 27.694900262060585,
+      "missedReason": "SCORE_TOO_LOW",
+      "avgReturn15m": 0,
+      "avgReturn30m": 0,
+      "targetHitRate": 0,
+      "stopHitRate": 0,
+      "avgMfe": 3.464569093398232,
+      "avgMae": -0.7662962033898308
+    },
+    {
+      "market": "KRW-DOGE",
+      "strategyType": "MOMENTUM_BREAKOUT",
+      "timestamp": 1778909151828,
+      "score": 31.52317942131317,
+      "missedReason": "SCORE_TOO_LOW",
+      "avgReturn15m": 0,
+      "avgReturn30m": 0,
+      "targetHitRate": 0,
+      "stopHitRate": 0,
+      "avgMfe": 3.5521196369910997,
+      "avgMae": -0.9937481072555214
+    },
+    {
+      "market": "KRW-STORJ",
+      "strategyType": "VOLUME_EXPANSION",
+      "timestamp": 1778909151828,
+      "score": 56.29136710212309,
+      "missedReason": "SCORE_TOO_LOW",
+      "avgReturn15m": 0,
+      "avgReturn30m": 0,
+      "targetHitRate": 0,
+      "stopHitRate": 0,
+      "avgMfe": 3.464569093398232,
+      "avgMae": -0.7662962033898308
+    },
+    {
+      "market": "KRW-DRIFT",
+      "strategyType": "WATCH_ONLY",
+      "timestamp": 1778909151828,
+      "score": 22.17499896865833,
+      "missedReason": "NO_30M_CONFIRMATION",
+      "avgReturn15m": 0,
+      "avgReturn30m": 0,
+      "targetHitRate": 0,
+      "stopHitRate": 0,
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
+    },
+    {
+      "market": "KRW-BTC",
+      "strategyType": "WATCH_ONLY",
+      "timestamp": 1778909151828,
+      "score": 24.781081459493823,
+      "missedReason": "NO_30M_CONFIRMATION",
+      "avgReturn15m": 0,
+      "avgReturn30m": 0,
+      "targetHitRate": 0,
+      "stopHitRate": 0,
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
+    },
+    {
+      "market": "KRW-XRP",
+      "strategyType": "WATCH_ONLY",
+      "timestamp": 1778909151828,
+      "score": 26.2677413050944,
+      "missedReason": "NO_30M_CONFIRMATION",
+      "avgReturn15m": 0,
+      "avgReturn30m": 0,
+      "targetHitRate": 0,
+      "stopHitRate": 0,
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
+    },
+    {
+      "market": "KRW-IRYS",
+      "strategyType": "WATCH_ONLY",
+      "timestamp": 1778909151828,
+      "score": 20.83298294554813,
+      "missedReason": "NO_30M_CONFIRMATION",
+      "avgReturn15m": 0,
+      "avgReturn30m": 0,
+      "targetHitRate": 0,
+      "stopHitRate": 0,
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
+    },
     {
       "market": "KRW-JST",
       "strategyType": "MOMENTUM_BREAKOUT",
@@ -58,8 +578,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.5448596174679445,
-      "avgMae": -0.9936883757961794
+      "avgMfe": 3.5521196369910997,
+      "avgMae": -0.9937481072555214
     },
     {
       "market": "KRW-SOMI",
@@ -71,8 +591,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
     },
     {
       "market": "KRW-ONT",
@@ -84,8 +604,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.4073552623537653,
-      "avgMae": -0.7532112268907567
+      "avgMfe": 3.464569093398232,
+      "avgMae": -0.7662962033898308
     },
     {
       "market": "KRW-BLUR",
@@ -97,8 +617,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
     },
     {
       "market": "KRW-API3",
@@ -110,8 +630,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.4073552623537653,
-      "avgMae": -0.7532112268907567
+      "avgMfe": 3.464569093398232,
+      "avgMae": -0.7662962033898308
     },
     {
       "market": "KRW-AVNT",
@@ -123,8 +643,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
     },
     {
       "market": "KRW-AZTEC",
@@ -136,8 +656,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
     },
     {
       "market": "KRW-ARK",
@@ -149,8 +669,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
     },
     {
       "market": "KRW-SONIC",
@@ -162,8 +682,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
     },
     {
       "market": "KRW-ETC",
@@ -175,8 +695,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
     },
     {
       "market": "KRW-CFG",
@@ -188,8 +708,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
     },
     {
       "market": "KRW-LAYER",
@@ -201,8 +721,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.4073552623537653,
-      "avgMae": -0.7532112268907567
+      "avgMfe": 3.464569093398232,
+      "avgMae": -0.7662962033898308
     },
     {
       "market": "KRW-ATH",
@@ -214,8 +734,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.5448596174679445,
-      "avgMae": -0.9936883757961794
+      "avgMfe": 3.5521196369910997,
+      "avgMae": -0.9937481072555214
     },
     {
       "market": "KRW-AAVE",
@@ -227,8 +747,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.5448596174679445,
-      "avgMae": -0.9936883757961794
+      "avgMfe": 3.5521196369910997,
+      "avgMae": -0.9937481072555214
     },
     {
       "market": "KRW-BERA",
@@ -240,8 +760,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.5448596174679445,
-      "avgMae": -0.9936883757961794
+      "avgMfe": 3.5521196369910997,
+      "avgMae": -0.9937481072555214
     },
     {
       "market": "KRW-WLD",
@@ -253,8 +773,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.5448596174679445,
-      "avgMae": -0.9936883757961794
+      "avgMfe": 3.5521196369910997,
+      "avgMae": -0.9937481072555214
     },
     {
       "market": "KRW-KERNEL",
@@ -266,8 +786,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.5448596174679445,
-      "avgMae": -0.9936883757961794
+      "avgMfe": 3.5521196369910997,
+      "avgMae": -0.9937481072555214
     },
     {
       "market": "KRW-INJ",
@@ -279,8 +799,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
     },
     {
       "market": "KRW-XPL",
@@ -292,8 +812,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
     },
     {
       "market": "KRW-SHIB",
@@ -305,8 +825,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
     },
     {
       "market": "KRW-TRUMP",
@@ -318,8 +838,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
     },
     {
       "market": "KRW-BIO",
@@ -331,8 +851,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.5448596174679445,
-      "avgMae": -0.9936883757961794
+      "avgMfe": 3.5521196369910997,
+      "avgMae": -0.9937481072555214
     },
     {
       "market": "KRW-MEGA",
@@ -344,8 +864,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
     },
     {
       "market": "KRW-B3",
@@ -357,8 +877,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.5448596174679445,
-      "avgMae": -0.9936883757961794
+      "avgMfe": 3.5521196369910997,
+      "avgMae": -0.9937481072555214
     },
     {
       "market": "KRW-KITE",
@@ -370,8 +890,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
     },
     {
       "market": "KRW-ADA",
@@ -383,8 +903,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.5448596174679445,
-      "avgMae": -0.9936883757961794
+      "avgMfe": 3.5521196369910997,
+      "avgMae": -0.9937481072555214
     },
     {
       "market": "KRW-CHIP",
@@ -396,8 +916,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
     },
     {
       "market": "KRW-DKA",
@@ -409,8 +929,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
     },
     {
       "market": "KRW-SUI",
@@ -422,8 +942,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.4073552623537653,
-      "avgMae": -0.7532112268907567
+      "avgMfe": 3.464569093398232,
+      "avgMae": -0.7662962033898308
     },
     {
       "market": "KRW-PIEVERSE",
@@ -435,8 +955,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.5448596174679445,
-      "avgMae": -0.9936883757961794
+      "avgMfe": 3.5521196369910997,
+      "avgMae": -0.9937481072555214
     },
     {
       "market": "KRW-ONDO",
@@ -448,8 +968,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
     },
     {
       "market": "KRW-SOL",
@@ -461,8 +981,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.4073552623537653,
-      "avgMae": -0.7532112268907567
+      "avgMfe": 3.464569093398232,
+      "avgMae": -0.7662962033898308
     },
     {
       "market": "KRW-SAHARA",
@@ -474,8 +994,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
     },
     {
       "market": "KRW-DRIFT",
@@ -487,8 +1007,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
     },
     {
       "market": "KRW-POLYX",
@@ -500,8 +1020,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.5448596174679445,
-      "avgMae": -0.9936883757961794
+      "avgMfe": 3.5521196369910997,
+      "avgMae": -0.9937481072555214
     },
     {
       "market": "KRW-BTC",
@@ -513,8 +1033,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
     },
     {
       "market": "KRW-XRP",
@@ -526,8 +1046,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.4073552623537653,
-      "avgMae": -0.7532112268907567
+      "avgMfe": 3.464569093398232,
+      "avgMae": -0.7662962033898308
     },
     {
       "market": "KRW-IRYS",
@@ -539,8 +1059,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
     },
     {
       "market": "KRW-MON",
@@ -552,8 +1072,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.5448596174679445,
-      "avgMae": -0.9936883757961794
+      "avgMfe": 3.5521196369910997,
+      "avgMae": -0.9937481072555214
     },
     {
       "market": "KRW-ALT",
@@ -565,8 +1085,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
     },
     {
       "market": "KRW-KAVA",
@@ -578,8 +1098,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.5448596174679445,
-      "avgMae": -0.9936883757961794
+      "avgMfe": 3.5521196369910997,
+      "avgMae": -0.9937481072555214
     },
     {
       "market": "KRW-ONG",
@@ -591,8 +1111,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.5448596174679445,
-      "avgMae": -0.9936883757961794
+      "avgMfe": 3.5521196369910997,
+      "avgMae": -0.9937481072555214
     },
     {
       "market": "KRW-BCH",
@@ -604,8 +1124,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.4073552623537653,
-      "avgMae": -0.7532112268907567
+      "avgMfe": 3.464569093398232,
+      "avgMae": -0.7662962033898308
     },
     {
       "market": "KRW-ICX",
@@ -617,8 +1137,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.4073552623537653,
-      "avgMae": -0.7532112268907567
+      "avgMfe": 3.464569093398232,
+      "avgMae": -0.7662962033898308
     },
     {
       "market": "KRW-GLM",
@@ -630,8 +1150,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.5448596174679445,
-      "avgMae": -0.9936883757961794
+      "avgMfe": 3.5521196369910997,
+      "avgMae": -0.9937481072555214
     },
     {
       "market": "KRW-RENDER",
@@ -643,8 +1163,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
     },
     {
       "market": "KRW-TRX",
@@ -656,8 +1176,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.5448596174679445,
-      "avgMae": -0.9936883757961794
+      "avgMfe": 3.5521196369910997,
+      "avgMae": -0.9937481072555214
     },
     {
       "market": "KRW-IMX",
@@ -669,8 +1189,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
     },
     {
       "market": "KRW-AKT",
@@ -682,8 +1202,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
     },
     {
       "market": "KRW-WLFI",
@@ -695,8 +1215,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
     },
     {
       "market": "KRW-CVC",
@@ -708,8 +1228,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
     },
     {
       "market": "KRW-PENGU",
@@ -721,8 +1241,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
     },
     {
       "market": "KRW-AAVE",
@@ -734,8 +1254,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
     },
     {
       "market": "KRW-VVV",
@@ -747,8 +1267,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.4073552623537653,
-      "avgMae": -0.7532112268907567
+      "avgMfe": 3.464569093398232,
+      "avgMae": -0.7662962033898308
     },
     {
       "market": "KRW-JTO",
@@ -760,8 +1280,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
     },
     {
       "market": "KRW-KERNEL",
@@ -773,8 +1293,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
     },
     {
       "market": "KRW-SEI",
@@ -786,8 +1306,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.5448596174679445,
-      "avgMae": -0.9936883757961794
+      "avgMfe": 3.5521196369910997,
+      "avgMae": -0.9937481072555214
     },
     {
       "market": "KRW-SIGN",
@@ -799,8 +1319,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.5448596174679445,
-      "avgMae": -0.9936883757961794
+      "avgMfe": 3.5521196369910997,
+      "avgMae": -0.9937481072555214
     },
     {
       "market": "KRW-ENA",
@@ -812,8 +1332,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
+      "avgMfe": 3.657722837424448,
+      "avgMae": -0.9947197158081708
     },
     {
       "market": "KRW-FLOCK",
@@ -825,528 +1345,8 @@
       "avgReturn30m": 0,
       "targetHitRate": 0,
       "stopHitRate": 0,
-      "avgMfe": 3.5448596174679445,
-      "avgMae": -0.9936883757961794
-    },
-    {
-      "market": "KRW-NEAR",
-      "strategyType": "WATCH_ONLY",
-      "timestamp": 1778909050109,
-      "score": 23.781155897623464,
-      "missedReason": "NO_30M_CONFIRMATION",
-      "avgReturn15m": 0,
-      "avgReturn30m": 0,
-      "targetHitRate": 0,
-      "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
-    },
-    {
-      "market": "KRW-BIO",
-      "strategyType": "MOMENTUM_BREAKOUT",
-      "timestamp": 1778909050109,
-      "score": 31.50685312892635,
-      "missedReason": "SCORE_TOO_LOW",
-      "avgReturn15m": 0,
-      "avgReturn30m": 0,
-      "targetHitRate": 0,
-      "stopHitRate": 0,
-      "avgMfe": 3.5448596174679445,
-      "avgMae": -0.9936883757961794
-    },
-    {
-      "market": "KRW-LINK",
-      "strategyType": "WATCH_ONLY",
-      "timestamp": 1778909050109,
-      "score": 22.92562478230639,
-      "missedReason": "NO_30M_CONFIRMATION",
-      "avgReturn15m": 0,
-      "avgReturn30m": 0,
-      "targetHitRate": 0,
-      "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
-    },
-    {
-      "market": "KRW-IP",
-      "strategyType": "WATCH_ONLY",
-      "timestamp": 1778909050109,
-      "score": 24.63735485014635,
-      "missedReason": "NO_30M_CONFIRMATION",
-      "avgReturn15m": 0,
-      "avgReturn30m": 0,
-      "targetHitRate": 0,
-      "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
-    },
-    {
-      "market": "KRW-CHZ",
-      "strategyType": "WATCH_ONLY",
-      "timestamp": 1778909050109,
-      "score": 22.523932500141225,
-      "missedReason": "NO_30M_CONFIRMATION",
-      "avgReturn15m": 0,
-      "avgReturn30m": 0,
-      "targetHitRate": 0,
-      "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
-    },
-    {
-      "market": "KRW-PRL",
-      "strategyType": "VOLUME_EXPANSION",
-      "timestamp": 1778909050109,
-      "score": 41.07987274473419,
-      "missedReason": "SCORE_TOO_LOW",
-      "avgReturn15m": 0,
-      "avgReturn30m": 0,
-      "targetHitRate": 0,
-      "stopHitRate": 0,
-      "avgMfe": 3.4073552623537653,
-      "avgMae": -0.7532112268907567
-    },
-    {
-      "market": "KRW-VIRTUAL",
-      "strategyType": "MOMENTUM_BREAKOUT",
-      "timestamp": 1778909050109,
-      "score": 45.10146499997836,
-      "missedReason": "SCORE_TOO_LOW",
-      "avgReturn15m": 0,
-      "avgReturn30m": 0,
-      "targetHitRate": 0,
-      "stopHitRate": 0,
-      "avgMfe": 3.5448596174679445,
-      "avgMae": -0.9936883757961794
-    },
-    {
-      "market": "KRW-ZBT",
-      "strategyType": "WATCH_ONLY",
-      "timestamp": 1778909050109,
-      "score": 31.761589172138358,
-      "missedReason": "NO_30M_CONFIRMATION",
-      "avgReturn15m": 0,
-      "avgReturn30m": 0,
-      "targetHitRate": 0,
-      "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
-    },
-    {
-      "market": "KRW-XLM",
-      "strategyType": "MOMENTUM_BREAKOUT",
-      "timestamp": 1778909050109,
-      "score": 27.84420606883373,
-      "missedReason": "SCORE_TOO_LOW",
-      "avgReturn15m": 0,
-      "avgReturn30m": 0,
-      "targetHitRate": 0,
-      "stopHitRate": 0,
-      "avgMfe": 3.5448596174679445,
-      "avgMae": -0.9936883757961794
-    },
-    {
-      "market": "KRW-ORCA",
-      "strategyType": "WATCH_ONLY",
-      "timestamp": 1778909050109,
-      "score": 37.75721729257164,
-      "missedReason": "NO_VOLUME_ACCELERATION",
-      "avgReturn15m": 0,
-      "avgReturn30m": 0,
-      "targetHitRate": 0,
-      "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
-    },
-    {
-      "market": "KRW-ONDO",
-      "strategyType": "WATCH_ONLY",
-      "timestamp": 1778909050109,
-      "score": 23.96599615210753,
-      "missedReason": "NO_30M_CONFIRMATION",
-      "avgReturn15m": 0,
-      "avgReturn30m": 0,
-      "targetHitRate": 0,
-      "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
-    },
-    {
-      "market": "KRW-SOL",
-      "strategyType": "VOLUME_EXPANSION",
-      "timestamp": 1778909050109,
-      "score": 28.98445129085048,
-      "missedReason": "SCORE_TOO_LOW",
-      "avgReturn15m": 0,
-      "avgReturn30m": 0,
-      "targetHitRate": 0,
-      "stopHitRate": 0,
-      "avgMfe": 3.4073552623537653,
-      "avgMae": -0.7532112268907567
-    },
-    {
-      "market": "KRW-DOGE",
-      "strategyType": "MOMENTUM_BREAKOUT",
-      "timestamp": 1778909050109,
-      "score": 36.34278516355145,
-      "missedReason": "SCORE_TOO_LOW",
-      "avgReturn15m": 0,
-      "avgReturn30m": 0,
-      "targetHitRate": 0,
-      "stopHitRate": 0,
-      "avgMfe": 3.5448596174679445,
-      "avgMae": -0.9936883757961794
-    },
-    {
-      "market": "KRW-DRIFT",
-      "strategyType": "WATCH_ONLY",
-      "timestamp": 1778909050109,
-      "score": 22.320958634310713,
-      "missedReason": "NO_30M_CONFIRMATION",
-      "avgReturn15m": 0,
-      "avgReturn30m": 0,
-      "targetHitRate": 0,
-      "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
-    },
-    {
-      "market": "KRW-BTC",
-      "strategyType": "WATCH_ONLY",
-      "timestamp": 1778909050109,
-      "score": 24.777920827929744,
-      "missedReason": "NO_30M_CONFIRMATION",
-      "avgReturn15m": 0,
-      "avgReturn30m": 0,
-      "targetHitRate": 0,
-      "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
-    },
-    {
-      "market": "KRW-XRP",
-      "strategyType": "VOLUME_EXPANSION",
-      "timestamp": 1778909050109,
-      "score": 43.57301959706772,
-      "missedReason": "SCORE_TOO_LOW",
-      "avgReturn15m": 0,
-      "avgReturn30m": 0,
-      "targetHitRate": 0,
-      "stopHitRate": 0,
-      "avgMfe": 3.4073552623537653,
-      "avgMae": -0.7532112268907567
-    },
-    {
-      "market": "KRW-IRYS",
-      "strategyType": "VOLUME_EXPANSION",
-      "timestamp": 1778909050109,
-      "score": 27.381496915968526,
-      "missedReason": "SCORE_TOO_LOW",
-      "avgReturn15m": 0,
-      "avgReturn30m": 0,
-      "targetHitRate": 0,
-      "stopHitRate": 0,
-      "avgMfe": 3.4073552623537653,
-      "avgMae": -0.7532112268907567
-    },
-    {
-      "market": "KRW-SNT",
-      "strategyType": "WATCH_ONLY",
-      "timestamp": 1778909000063,
-      "score": 23.67917963877338,
-      "missedReason": "NO_30M_CONFIRMATION",
-      "avgReturn15m": 0,
-      "avgReturn30m": 0,
-      "targetHitRate": 0,
-      "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
-    },
-    {
-      "market": "KRW-AUCTION",
-      "strategyType": "VOLUME_EXPANSION",
-      "timestamp": 1778909000063,
-      "score": 26.146881582142143,
-      "missedReason": "SCORE_TOO_LOW",
-      "avgReturn15m": 0,
-      "avgReturn30m": 0,
-      "targetHitRate": 0,
-      "stopHitRate": 0,
-      "avgMfe": 3.4073552623537653,
-      "avgMae": -0.7532112268907567
-    },
-    {
-      "market": "KRW-ELSA",
-      "strategyType": "WATCH_ONLY",
-      "timestamp": 1778909000063,
-      "score": 19.14211193127891,
-      "missedReason": "NO_30M_CONFIRMATION",
-      "avgReturn15m": 0,
-      "avgReturn30m": 0,
-      "targetHitRate": 0,
-      "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
-    },
-    {
-      "market": "KRW-BOUNTY",
-      "strategyType": "MOMENTUM_BREAKOUT",
-      "timestamp": 1778909000063,
-      "score": 42.630948772529656,
-      "missedReason": "SCORE_TOO_LOW",
-      "avgReturn15m": 0,
-      "avgReturn30m": 0,
-      "targetHitRate": 0,
-      "stopHitRate": 0,
-      "avgMfe": 3.5448596174679445,
-      "avgMae": -0.9936883757961794
-    },
-    {
-      "market": "KRW-NXPC",
-      "strategyType": "MOMENTUM_BREAKOUT",
-      "timestamp": 1778909000063,
-      "score": 57.68603945317429,
-      "missedReason": "SCORE_TOO_LOW",
-      "avgReturn15m": 0,
-      "avgReturn30m": 0,
-      "targetHitRate": 0,
-      "stopHitRate": 0,
-      "avgMfe": 3.5448596174679445,
-      "avgMae": -0.9936883757961794
-    },
-    {
-      "market": "KRW-BCH",
-      "strategyType": "VOLUME_EXPANSION",
-      "timestamp": 1778909000063,
-      "score": 29.94479324209783,
-      "missedReason": "SCORE_TOO_LOW",
-      "avgReturn15m": 0,
-      "avgReturn30m": 0,
-      "targetHitRate": 0,
-      "stopHitRate": 0,
-      "avgMfe": 3.4073552623537653,
-      "avgMae": -0.7532112268907567
-    },
-    {
-      "market": "KRW-AXS",
-      "strategyType": "WATCH_ONLY",
-      "timestamp": 1778909000063,
-      "score": 17.626428297479737,
-      "missedReason": "NO_30M_CONFIRMATION",
-      "avgReturn15m": 0,
-      "avgReturn30m": 0,
-      "targetHitRate": 0,
-      "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
-    },
-    {
-      "market": "KRW-RENDER",
-      "strategyType": "WATCH_ONLY",
-      "timestamp": 1778909000063,
-      "score": 21.852309212052536,
-      "missedReason": "NO_30M_CONFIRMATION",
-      "avgReturn15m": 0,
-      "avgReturn30m": 0,
-      "targetHitRate": 0,
-      "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
-    },
-    {
-      "market": "KRW-BLEND",
-      "strategyType": "MOMENTUM_BREAKOUT",
-      "timestamp": 1778909000063,
-      "score": 27.95913510706353,
-      "missedReason": "SCORE_TOO_LOW",
-      "avgReturn15m": 0,
-      "avgReturn30m": 0,
-      "targetHitRate": 0,
-      "stopHitRate": 0,
-      "avgMfe": 3.5448596174679445,
-      "avgMae": -0.9936883757961794
-    },
-    {
-      "market": "KRW-TRX",
-      "strategyType": "WATCH_ONLY",
-      "timestamp": 1778909000063,
-      "score": 22.837592234450447,
-      "missedReason": "NO_30M_CONFIRMATION",
-      "avgReturn15m": 0,
-      "avgReturn30m": 0,
-      "targetHitRate": 0,
-      "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
-    },
-    {
-      "market": "KRW-IMX",
-      "strategyType": "WATCH_ONLY",
-      "timestamp": 1778909000063,
-      "score": 20.366645057964234,
-      "missedReason": "NO_30M_CONFIRMATION",
-      "avgReturn15m": 0,
-      "avgReturn30m": 0,
-      "targetHitRate": 0,
-      "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
-    },
-    {
-      "market": "KRW-AKT",
-      "strategyType": "WATCH_ONLY",
-      "timestamp": 1778909000063,
-      "score": 21.70171942682232,
-      "missedReason": "NO_30M_CONFIRMATION",
-      "avgReturn15m": 0,
-      "avgReturn30m": 0,
-      "targetHitRate": 0,
-      "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
-    },
-    {
-      "market": "KRW-ANKR",
-      "strategyType": "WATCH_ONLY",
-      "timestamp": 1778909000063,
-      "score": 15.160594919668902,
-      "missedReason": "NO_30M_CONFIRMATION",
-      "avgReturn15m": 0,
-      "avgReturn30m": 0,
-      "targetHitRate": 0,
-      "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
-    },
-    {
-      "market": "KRW-CVC",
-      "strategyType": "WATCH_ONLY",
-      "timestamp": 1778909000063,
-      "score": 20.68727566113373,
-      "missedReason": "NO_30M_CONFIRMATION",
-      "avgReturn15m": 0,
-      "avgReturn30m": 0,
-      "targetHitRate": 0,
-      "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
-    },
-    {
-      "market": "KRW-TAO",
-      "strategyType": "WATCH_ONLY",
-      "timestamp": 1778909000063,
-      "score": 23.070956443569074,
-      "missedReason": "NO_VOLUME_ACCELERATION",
-      "avgReturn15m": 0,
-      "avgReturn30m": 0,
-      "targetHitRate": 0,
-      "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
-    },
-    {
-      "market": "KRW-AAVE",
-      "strategyType": "WATCH_ONLY",
-      "timestamp": 1778909000063,
-      "score": 22.77107398729571,
-      "missedReason": "NO_30M_CONFIRMATION",
-      "avgReturn15m": 0,
-      "avgReturn30m": 0,
-      "targetHitRate": 0,
-      "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
-    },
-    {
-      "market": "KRW-VVV",
-      "strategyType": "VOLUME_EXPANSION",
-      "timestamp": 1778909000063,
-      "score": 30.111036581854353,
-      "missedReason": "SCORE_TOO_LOW",
-      "avgReturn15m": 0,
-      "avgReturn30m": 0,
-      "targetHitRate": 0,
-      "stopHitRate": 0,
-      "avgMfe": 3.4073552623537653,
-      "avgMae": -0.7532112268907567
-    },
-    {
-      "market": "KRW-KERNEL",
-      "strategyType": "WATCH_ONLY",
-      "timestamp": 1778909000063,
-      "score": 27.4667598189206,
-      "missedReason": "NO_30M_CONFIRMATION",
-      "avgReturn15m": 0,
-      "avgReturn30m": 0,
-      "targetHitRate": 0,
-      "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
-    },
-    {
-      "market": "KRW-SIGN",
-      "strategyType": "MOMENTUM_BREAKOUT",
-      "timestamp": 1778909000063,
-      "score": 27.263722291244225,
-      "missedReason": "SCORE_TOO_LOW",
-      "avgReturn15m": 0,
-      "avgReturn30m": 0,
-      "targetHitRate": 0,
-      "stopHitRate": 0,
-      "avgMfe": 3.5448596174679445,
-      "avgMae": -0.9936883757961794
-    },
-    {
-      "market": "KRW-ENA",
-      "strategyType": "WATCH_ONLY",
-      "timestamp": 1778909000063,
-      "score": 20.44458551574307,
-      "missedReason": "NO_30M_CONFIRMATION",
-      "avgReturn15m": 0,
-      "avgReturn30m": 0,
-      "targetHitRate": 0,
-      "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
-    },
-    {
-      "market": "KRW-NEAR",
-      "strategyType": "WATCH_ONLY",
-      "timestamp": 1778909000063,
-      "score": 24.009827141032353,
-      "missedReason": "NO_VOLUME_ACCELERATION",
-      "avgReturn15m": 0,
-      "avgReturn30m": 0,
-      "targetHitRate": 0,
-      "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
-    },
-    {
-      "market": "KRW-BIO",
-      "strategyType": "MOMENTUM_BREAKOUT",
-      "timestamp": 1778909000063,
-      "score": 41.90912488785347,
-      "missedReason": "SCORE_TOO_LOW",
-      "avgReturn15m": 0,
-      "avgReturn30m": 0,
-      "targetHitRate": 0,
-      "stopHitRate": 0,
-      "avgMfe": 3.5448596174679445,
-      "avgMae": -0.9936883757961794
-    },
-    {
-      "market": "KRW-IP",
-      "strategyType": "WATCH_ONLY",
-      "timestamp": 1778909000063,
-      "score": 23.00361201706517,
-      "missedReason": "NO_VOLUME_ACCELERATION",
-      "avgReturn15m": 0,
-      "avgReturn30m": 0,
-      "targetHitRate": 0,
-      "stopHitRate": 0,
-      "avgMfe": 3.671341583330377,
-      "avgMae": -0.996486046099291
+      "avgMfe": 3.5521196369910997,
+      "avgMae": -0.9937481072555214
     }
   ]
 }
