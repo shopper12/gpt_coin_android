@@ -1,0 +1,43 @@
+{
+  "version": "2026-05-16-policy-v1",
+  "purpose": "Promote only statistically acceptable strategy-rule changes to the app-consumed rules file.",
+  "minSampleSize": 30,
+  "minRuntimeHours": 6,
+  "requireBuildPass": true,
+  "requirePhoneSmokeTest": false,
+  "autoMergeAllowed": false,
+  "rulesOnlyAutoUpdateAllowed": true,
+  "performanceGate": {
+    "avgReturn30mMustImproveByPctPoint": 0.15,
+    "maxStopHitRateIncreasePctPoint": 0.03,
+    "minTargetHitRateIncreasePctPoint": 0.02,
+    "mfeMaeRatioMin": 1.1
+  },
+  "riskLimits": {
+    "maxNumericRuleChangePct": 10,
+    "maxDisplaySignals": 7,
+    "minScoreThreshold": 50,
+    "maxScoreThreshold": 90,
+    "maxCandidateCandleLimit": 40
+  },
+  "autoWriteAllowedPaths": [
+    "rules/strategy-rules.json",
+    "reports/rule-change-rationale.md",
+    "reports/merge-decision.json"
+  ],
+  "manualReviewRequiredPaths": [
+    "app/",
+    "build.gradle.kts",
+    "settings.gradle.kts",
+    "gradle/",
+    "app/google-services.json"
+  ],
+  "rejectIfChangedPathsContain": [
+    "logs/",
+    "exports/",
+    "analysis_report/",
+    "reports/latest.json",
+    "local.properties",
+    ".env"
+  ]
+}
