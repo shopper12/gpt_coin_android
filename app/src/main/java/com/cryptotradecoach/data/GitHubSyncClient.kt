@@ -5,57 +5,77 @@ import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
 
-data class GitHubSettings(
-    val owner: String = "",
-    val repo: String = "",
-    val branch: String = "main",
-    val token: String = "",
-    val rulesPath: String = "rules/strategy-rules.json",
-    val reportPath: String = "reports/latest.json",
-) {
-    val isConfigured: Boolean
-        get() = owner.isNotBlank() && repo.isNotBlank() && branch.isNotBlank()
-}
+class GitHubSyncException(
+    val statusCode: Int,
+    val syncPoint: String,
+    val endpoint: String,
+    val branch: String,
+    val path: String,
+) : RuntimeException("$syncPoint failed with HTTP $statusCode")
 
 class GitHubSyncClient {
-    fun downloadText(settings: GitHubSettings, path: String): String? {
-        if (!settings.isConfigured || path.isBlank()) return null
+    fun downloadText(settings: GitHubSyncSettings, path: String): String? {
+        val normalized = settings.normalized()
+        if (!normalized.isConfigured || normalized.token.isBlank() || path.isBlank()) return null
         val encodedPath = path.trim('/').split("/").joinToString("/") { encodePathSegment(it) }
-        val url = URL("https://api.github.com/repos/${settings.owner}/${settings.repo}/contents/$encodedPath?ref=${encodePathSegment(settings.branch)}")
-        val connection = openConnection(url, settings.token, "GET")
-        return connection.useJsonResponse { json ->
+        val url = URL("https://api.github.com/repos/${normalized.owner}/${normalized.repo}/contents/$encodedPath?ref=${encodePathSegment(normalized.branch)}")
+        val connection = openConnection(url, normalized.token, "GET")
+        return connection.useJsonResponse(
+            syncPoint = "download",
+            endpoint = url.toString(),
+            branch = normalized.branch,
+            path = path,
+        ) { json ->
             val encodedContent = json.optString("content").replace("\n", "")
             if (encodedContent.isBlank()) return@useJsonResponse null
             String(Base64.decode(encodedContent, Base64.DEFAULT), Charsets.UTF_8)
         }
     }
 
-    fun uploadText(settings: GitHubSettings, path: String, content: String, message: String): Boolean {
-        if (!settings.isConfigured || settings.token.isBlank() || path.isBlank()) return false
-        val sha = existingSha(settings, path)
+    fun uploadText(settings: GitHubSyncSettings, path: String, content: String, message: String): Boolean {
+        val normalized = settings.normalized()
+        if (!normalized.isConfigured || normalized.token.isBlank() || path.isBlank()) return false
+        val sha = existingSha(normalized, path)
         val encodedPath = path.trim('/').split("/").joinToString("/") { encodePathSegment(it) }
-        val url = URL("https://api.github.com/repos/${settings.owner}/${settings.repo}/contents/$encodedPath")
+        val url = URL("https://api.github.com/repos/${normalized.owner}/${normalized.repo}/contents/$encodedPath")
         val body = JSONObject()
             .put("message", message)
-            .put("branch", settings.branch)
+            .put("branch", normalized.branch)
             .put("content", Base64.encodeToString(content.toByteArray(Charsets.UTF_8), Base64.NO_WRAP))
         if (sha != null) body.put("sha", sha)
 
-        val connection = openConnection(url, settings.token, "PUT")
+        val connection = openConnection(url, normalized.token, "PUT")
         connection.doOutput = true
         connection.outputStream.use { stream ->
             stream.write(body.toString().toByteArray(Charsets.UTF_8))
         }
-        return connection.responseCode in 200..299
+        val statusCode = connection.responseCode
+        connection.disconnect()
+        if (statusCode !in 200..299) {
+            throw GitHubSyncException(
+                statusCode = statusCode,
+                syncPoint = "upload",
+                endpoint = url.toString(),
+                branch = normalized.branch,
+                path = path,
+            )
+        }
+        return true
     }
 
-    private fun existingSha(settings: GitHubSettings, path: String): String? {
-        return runCatching {
-            val encodedPath = path.trim('/').split("/").joinToString("/") { encodePathSegment(it) }
-            val url = URL("https://api.github.com/repos/${settings.owner}/${settings.repo}/contents/$encodedPath?ref=${encodePathSegment(settings.branch)}")
-            val connection = openConnection(url, settings.token, "GET")
-            connection.useJsonResponse { json -> json.optString("sha").takeIf { it.isNotBlank() } }
-        }.getOrNull()
+    private fun existingSha(settings: GitHubSyncSettings, path: String): String? {
+        val encodedPath = path.trim('/').split("/").joinToString("/") { encodePathSegment(it) }
+        val url = URL("https://api.github.com/repos/${settings.owner}/${settings.repo}/contents/$encodedPath?ref=${encodePathSegment(settings.branch)}")
+        val connection = openConnection(url, settings.token, "GET")
+        return connection.useJsonResponse(
+            syncPoint = "lookup",
+            endpoint = url.toString(),
+            branch = settings.branch,
+            path = path,
+            allowNotFound = true,
+        ) { json ->
+            json.optString("sha").takeIf { it.isNotBlank() }
+        }
     }
 
     private fun openConnection(url: URL, token: String, method: String): HttpURLConnection {
@@ -73,9 +93,26 @@ class GitHubSyncClient {
         }
     }
 
-    private fun <T> HttpURLConnection.useJsonResponse(block: (JSONObject) -> T): T? {
+    private fun <T> HttpURLConnection.useJsonResponse(
+        syncPoint: String,
+        endpoint: String,
+        branch: String,
+        path: String,
+        allowNotFound: Boolean = false,
+        block: (JSONObject) -> T,
+    ): T? {
         return try {
-            if (responseCode !in 200..299) return null
+            val statusCode = responseCode
+            if (allowNotFound && statusCode == HttpURLConnection.HTTP_NOT_FOUND) return null
+            if (statusCode !in 200..299) {
+                throw GitHubSyncException(
+                    statusCode = statusCode,
+                    syncPoint = syncPoint,
+                    endpoint = endpoint,
+                    branch = branch,
+                    path = path,
+                )
+            }
             inputStream.bufferedReader().use { reader ->
                 block(JSONObject(reader.readText()))
             }

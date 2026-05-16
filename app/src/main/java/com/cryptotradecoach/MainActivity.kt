@@ -12,9 +12,12 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -36,6 +39,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -75,12 +79,16 @@ class MainActivity : ComponentActivity() {
                     maxDisplayCount = state.maxDisplayCount,
                     minimumScore = state.minimumScore,
                     gitHubSettings = state.gitHubSettings,
+                    settingsMessage = state.settingsMessage,
                     onStart = { startScanner() },
                     onStop = { stopScanner() },
                     onIntervalSelected = viewModel::setScanInterval,
                     onMaxDisplayChanged = viewModel::setMaxDisplayCount,
                     onMinimumScoreChanged = viewModel::setMinimumScore,
                     onGitHubSettingsSaved = viewModel::saveGitHubSettings,
+                    onGitHubSettingsTest = viewModel::testGitHubSettings,
+                    onRulesDownload = viewModel::downloadLatestRules,
+                    onReportUpload = viewModel::uploadLatestReport,
                 )
             }
         }
@@ -128,12 +136,16 @@ private fun MainScreen(
     maxDisplayCount: Int,
     minimumScore: Double,
     gitHubSettings: GitHubSettings,
+    settingsMessage: String?,
     onStart: () -> Unit,
     onStop: () -> Unit,
     onIntervalSelected: (Long) -> Unit,
     onMaxDisplayChanged: (Int) -> Unit,
     onMinimumScoreChanged: (Double) -> Unit,
     onGitHubSettingsSaved: (GitHubSettings) -> Unit,
+    onGitHubSettingsTest: (GitHubSettings) -> Unit,
+    onRulesDownload: (GitHubSettings) -> Unit,
+    onReportUpload: (GitHubSettings) -> Unit,
 ) {
     val tabs = listOf("Current", "History", "Settings")
     var selectedTab by remember { mutableIntStateOf(0) }
@@ -163,12 +175,16 @@ private fun MainScreen(
                 maxDisplayCount = maxDisplayCount,
                 minimumScore = minimumScore,
                 gitHubSettings = gitHubSettings,
+                settingsMessage = settingsMessage,
                 onStart = onStart,
                 onStop = onStop,
                 onIntervalSelected = onIntervalSelected,
                 onMaxDisplayChanged = onMaxDisplayChanged,
                 onMinimumScoreChanged = onMinimumScoreChanged,
                 onGitHubSettingsSaved = onGitHubSettingsSaved,
+                onGitHubSettingsTest = onGitHubSettingsTest,
+                onRulesDownload = onRulesDownload,
+                onReportUpload = onReportUpload,
             )
         }
     }
@@ -271,114 +287,168 @@ private fun SettingsTab(
     maxDisplayCount: Int,
     minimumScore: Double,
     gitHubSettings: GitHubSettings,
+    settingsMessage: String?,
     onStart: () -> Unit,
     onStop: () -> Unit,
     onIntervalSelected: (Long) -> Unit,
     onMaxDisplayChanged: (Int) -> Unit,
     onMinimumScoreChanged: (Double) -> Unit,
     onGitHubSettingsSaved: (GitHubSettings) -> Unit,
+    onGitHubSettingsTest: (GitHubSettings) -> Unit,
+    onRulesDownload: (GitHubSettings) -> Unit,
+    onReportUpload: (GitHubSettings) -> Unit,
 ) {
-    var owner by remember(gitHubSettings) { mutableStateOf(gitHubSettings.owner) }
-    var repo by remember(gitHubSettings) { mutableStateOf(gitHubSettings.repo) }
-    var branch by remember(gitHubSettings) { mutableStateOf(gitHubSettings.branch) }
-    var token by remember(gitHubSettings) { mutableStateOf(gitHubSettings.token) }
-    var rulesPath by remember(gitHubSettings) { mutableStateOf(gitHubSettings.rulesPath) }
-    var reportPath by remember(gitHubSettings) { mutableStateOf(gitHubSettings.reportPath) }
+    var owner by rememberSaveable(gitHubSettings.owner) { mutableStateOf(gitHubSettings.owner) }
+    var repo by rememberSaveable(gitHubSettings.repo) { mutableStateOf(gitHubSettings.repo) }
+    var branch by rememberSaveable(gitHubSettings.branch) { mutableStateOf(gitHubSettings.branch) }
+    var token by rememberSaveable(gitHubSettings.token) { mutableStateOf(gitHubSettings.token) }
+    var rulesPath by rememberSaveable(gitHubSettings.rulesPath) { mutableStateOf(gitHubSettings.rulesPath) }
+    var reportPath by rememberSaveable(gitHubSettings.reportPath) { mutableStateOf(gitHubSettings.reportPath) }
+    fun currentSettings() = GitHubSettings(
+        owner = owner,
+        repo = repo,
+        branch = branch,
+        rulesPath = rulesPath,
+        reportPath = reportPath,
+        token = token,
+    )
 
-    Column(
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .navigationBarsPadding()
+            .imePadding()
+            .padding(horizontal = 16.dp),
+        contentPadding = PaddingValues(top = 16.dp, bottom = 32.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
-        Text("Status: ${if (isRunning) "running" else "stopped"}")
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Button(onClick = onStart, enabled = !isRunning) { Text("Start scanner") }
-            OutlinedButton(onClick = onStop, enabled = isRunning) { Text("Stop") }
-        }
-        Text("Scan interval")
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            ScannerStateStore.SUPPORTED_INTERVALS_MS.forEach { interval ->
-                FilterChip(
-                    selected = scanIntervalMs == interval,
-                    onClick = { onIntervalSelected(interval) },
-                    label = { Text("${interval / 1000}s") },
-                )
+        item { Text("Status: ${if (isRunning) "running" else "stopped"}") }
+        item {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Button(onClick = onStart, enabled = !isRunning) { Text("Start scanner") }
+                OutlinedButton(onClick = onStop, enabled = isRunning) { Text("Stop") }
             }
         }
-        Text("Max displayed symbols: $maxDisplayCount")
-        Slider(
-            value = maxDisplayCount.toFloat(),
-            onValueChange = { onMaxDisplayChanged(it.roundToInt()) },
-            valueRange = 1f..10f,
-            steps = 8,
-        )
-        Text("Minimum score: ${minimumScore.roundToInt()}")
-        Slider(
-            value = minimumScore.toFloat(),
-            onValueChange = { onMinimumScoreChanged(it.toDouble()) },
-            valueRange = 50f..90f,
-            steps = 7,
-        )
-        Text("GitHub sync", fontWeight = FontWeight.Bold)
-        OutlinedTextField(
-            value = owner,
-            onValueChange = { owner = it },
-            label = { Text("Owner") },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-        )
-        OutlinedTextField(
-            value = repo,
-            onValueChange = { repo = it },
-            label = { Text("Repo") },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-        )
-        OutlinedTextField(
-            value = branch,
-            onValueChange = { branch = it },
-            label = { Text("Branch") },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-        )
-        OutlinedTextField(
-            value = token,
-            onValueChange = { token = it },
-            label = { Text("Token") },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-            visualTransformation = PasswordVisualTransformation(),
-        )
-        OutlinedTextField(
-            value = rulesPath,
-            onValueChange = { rulesPath = it },
-            label = { Text("Rules path") },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-        )
-        OutlinedTextField(
-            value = reportPath,
-            onValueChange = { reportPath = it },
-            label = { Text("Report path") },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-        )
-        Button(
-            onClick = {
-                onGitHubSettingsSaved(
-                    GitHubSettings(
-                        owner = owner,
-                        repo = repo,
-                        branch = branch,
-                        token = token,
-                        rulesPath = rulesPath,
-                        reportPath = reportPath,
-                    ),
-                )
-            },
-        ) {
-            Text("Save GitHub settings")
+        item { Text("Scan interval") }
+        item {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                ScannerStateStore.SUPPORTED_INTERVALS_MS.forEach { interval ->
+                    FilterChip(
+                        selected = scanIntervalMs == interval,
+                        onClick = { onIntervalSelected(interval) },
+                        label = { Text("${interval / 1000}s") },
+                    )
+                }
+            }
+        }
+        item { Text("Max displayed symbols: $maxDisplayCount") }
+        item {
+            Slider(
+                value = maxDisplayCount.toFloat(),
+                onValueChange = { onMaxDisplayChanged(it.roundToInt()) },
+                valueRange = 1f..10f,
+                steps = 8,
+            )
+        }
+        item { Text("Minimum score: ${minimumScore.roundToInt()}") }
+        item {
+            Slider(
+                value = minimumScore.toFloat(),
+                onValueChange = { onMinimumScoreChanged(it.toDouble()) },
+                valueRange = 50f..90f,
+                steps = 7,
+            )
+        }
+        item { Text("GitHub sync", fontWeight = FontWeight.Bold) }
+        item {
+            OutlinedTextField(
+                value = owner,
+                onValueChange = { owner = it },
+                label = { Text("GitHub owner") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+            )
+        }
+        item {
+            OutlinedTextField(
+                value = repo,
+                onValueChange = { repo = it },
+                label = { Text("GitHub repository") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+            )
+        }
+        item {
+            OutlinedTextField(
+                value = branch,
+                onValueChange = { branch = it },
+                label = { Text("GitHub branch") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+            )
+        }
+        item {
+            OutlinedTextField(
+                value = rulesPath,
+                onValueChange = { rulesPath = it },
+                label = { Text("Rules JSON path") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+            )
+        }
+        item {
+            OutlinedTextField(
+                value = reportPath,
+                onValueChange = { reportPath = it },
+                label = { Text("Report JSON path") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+            )
+        }
+        item {
+            OutlinedTextField(
+                value = token,
+                onValueChange = { token = it },
+                label = { Text("GitHub token") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                visualTransformation = PasswordVisualTransformation(),
+            )
+        }
+        item {
+            Button(
+                onClick = { onGitHubSettingsSaved(currentSettings()) },
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text("Save settings")
+            }
+        }
+        item {
+            OutlinedButton(
+                onClick = { onGitHubSettingsTest(currentSettings()) },
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text("Test GitHub settings")
+            }
+        }
+        item {
+            OutlinedButton(
+                onClick = { onRulesDownload(currentSettings()) },
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text("Download latest rules")
+            }
+        }
+        item {
+            OutlinedButton(
+                onClick = { onReportUpload(currentSettings()) },
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text("Upload latest report")
+            }
+        }
+        settingsMessage?.let { message ->
+            item { Text(message) }
         }
     }
 }

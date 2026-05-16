@@ -5,6 +5,7 @@ import android.util.Log
 import com.cryptotradecoach.data.local.AppDatabase
 import com.cryptotradecoach.data.local.StrategyEventType
 import com.cryptotradecoach.data.local.StrategyScanLogEntity
+import com.cryptotradecoach.service.ScannerStateStore
 import java.io.File
 import kotlin.math.max
 import kotlin.math.min
@@ -12,7 +13,7 @@ import kotlin.math.min
 class StrategyReportRepository private constructor(
     private val context: Context,
     database: AppDatabase,
-    private val settingsStore: GitHubSettingsStore,
+    private val settingsRepository: SettingsRepository,
     private val gitHubSyncClient: GitHubSyncClient,
 ) {
     private val dao = database.signalHistoryDao()
@@ -69,8 +70,12 @@ class StrategyReportRepository private constructor(
     }
 
     fun uploadLatestReport(): Boolean {
-        val settings = settingsStore.load()
-        if (!settings.isConfigured || settings.token.isBlank() || !latestReportFile.exists()) return false
+        val settings = settingsRepository.load().normalized()
+        if (settings.token.isBlank()) {
+            ScannerStateStore.setLastError("GitHub token is missing")
+            return false
+        }
+        if (!settings.isConfigured || !latestReportFile.exists()) return false
         return runCatching {
             gitHubSyncClient.uploadText(
                 settings = settings,
@@ -78,8 +83,14 @@ class StrategyReportRepository private constructor(
                 content = latestReportFile.readText(),
                 message = "Update strategy report",
             )
-        }.onFailure {
-            Log.w(TAG, "Report upload failed.")
+        }.onFailure { error ->
+            val message = if (error is GitHubSyncException) {
+                "Report upload failed at ${error.syncPoint}: HTTP ${error.statusCode}; endpoint=${error.endpoint}; branch=${error.branch}; path=${error.path}"
+            } else {
+                "Report upload failed at ${settings.reportPath}: ${error::class.java.simpleName}"
+            }
+            ScannerStateStore.setLastError(message)
+            Log.w(TAG, message)
         }.getOrDefault(false)
     }
 
@@ -126,7 +137,7 @@ class StrategyReportRepository private constructor(
                 instance ?: StrategyReportRepository(
                     context.applicationContext,
                     AppDatabase.getInstance(context),
-                    GitHubSettingsStore.getInstance(context),
+                    SettingsRepository.getInstance(context),
                     GitHubSyncClient(),
                 ).also { instance = it }
             }

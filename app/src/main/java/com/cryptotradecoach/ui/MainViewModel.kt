@@ -3,17 +3,23 @@ package com.cryptotradecoach.ui
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.cryptotradecoach.data.GitHubSyncClient
+import com.cryptotradecoach.data.GitHubSyncException
 import com.cryptotradecoach.data.GitHubSettings
-import com.cryptotradecoach.data.GitHubSettingsStore
+import com.cryptotradecoach.data.SettingsRepository
 import com.cryptotradecoach.data.ScanDiagnostics
 import com.cryptotradecoach.data.SignalHistoryRepository
+import com.cryptotradecoach.data.StrategyReportRepository
+import com.cryptotradecoach.data.StrategyRulesRepository
 import com.cryptotradecoach.data.TradeStrategy
 import com.cryptotradecoach.data.local.StrategyHistoryEntity
 import com.cryptotradecoach.service.ScannerStateStore
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 data class MainUiState(
     val isRunning: Boolean = false,
@@ -25,16 +31,20 @@ data class MainUiState(
     val maxDisplayCount: Int = 5,
     val minimumScore: Double = 70.0,
     val gitHubSettings: GitHubSettings = GitHubSettings(),
+    val settingsMessage: String? = null,
 )
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _uiState = MutableStateFlow(MainUiState())
     val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
     private val historyRepository = SignalHistoryRepository.getInstance(application)
-    private val gitHubSettingsStore = GitHubSettingsStore.getInstance(application)
+    private val settingsRepository = SettingsRepository.getInstance(application)
+    private val rulesRepository = StrategyRulesRepository.getInstance(application)
+    private val reportRepository = StrategyReportRepository.getInstance(application)
+    private val gitHubSyncClient = GitHubSyncClient()
 
     init {
-        _uiState.value = _uiState.value.copy(gitHubSettings = gitHubSettingsStore.load())
+        _uiState.value = _uiState.value.copy(gitHubSettings = settingsRepository.load())
         viewModelScope.launch {
             ScannerStateStore.loadPersistedState(
                 activeStrategies = historyRepository.getActiveStrategies(),
@@ -97,7 +107,85 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun saveGitHubSettings(settings: GitHubSettings) {
-        gitHubSettingsStore.save(settings)
-        _uiState.value = _uiState.value.copy(gitHubSettings = settings)
+        val normalized = settings.normalized()
+        val saved = settingsRepository.save(normalized)
+        _uiState.value = _uiState.value.copy(
+            gitHubSettings = normalized,
+            settingsMessage = if (saved) "Settings saved" else "Settings save failed",
+        )
+    }
+
+    fun testGitHubSettings(settings: GitHubSettings) {
+        viewModelScope.launch {
+            val normalized = settings.normalized()
+            saveGitHubSettings(normalized)
+            if (normalized.token.isBlank()) {
+                showGitHubMessage("GitHub token is missing")
+                return@launch
+            }
+            val ok = withContext(Dispatchers.IO) {
+                runCatching {
+                    gitHubSyncClient.downloadText(normalized, normalized.rulesPath) != null
+                }
+            }.fold(
+                    onSuccess = { it },
+                    onFailure = { error ->
+                        showGitHubMessage(gitHubFailureMessage("GitHub settings test failed", error))
+                        return@launch
+                    },
+                )
+            showGitHubMessage(if (ok) "GitHub settings OK" else "GitHub settings test failed")
+        }
+    }
+
+    fun downloadLatestRules(settings: GitHubSettings) {
+        viewModelScope.launch {
+            val normalized = settings.normalized()
+            saveGitHubSettings(normalized)
+            if (normalized.token.isBlank()) {
+                showGitHubMessage("GitHub token is missing")
+                return@launch
+            }
+            val before = withContext(Dispatchers.IO) { rulesRepository.loadLastKnownGood() }
+            val after = withContext(Dispatchers.IO) { rulesRepository.refreshFromGitHub() }
+            showGitHubMessage(
+                if (after != before) "Latest rules downloaded" else "No new rules downloaded",
+            )
+        }
+    }
+
+    fun uploadLatestReport(settings: GitHubSettings) {
+        viewModelScope.launch {
+            val normalized = settings.normalized()
+            saveGitHubSettings(normalized)
+            if (normalized.token.isBlank()) {
+                showGitHubMessage("GitHub token is missing")
+                return@launch
+            }
+            val uploaded = withContext(Dispatchers.IO) {
+                reportRepository.generateLatestReport(rulesRepository.loadLastKnownGood())
+                reportRepository.uploadLatestReport()
+            }
+            showGitHubMessage(if (uploaded) "Latest report uploaded" else "Latest report upload failed")
+        }
+    }
+
+    private fun showGitHubMessage(message: String) {
+        ScannerStateStore.setLastError(
+            message.takeIf {
+                it == "GitHub token is missing" ||
+                    it.contains("HTTP ") ||
+                    it.contains("failed", ignoreCase = true)
+            },
+        )
+        _uiState.value = _uiState.value.copy(settingsMessage = message)
+    }
+
+    private fun gitHubFailureMessage(prefix: String, error: Throwable): String {
+        return if (error is GitHubSyncException) {
+            "$prefix at ${error.syncPoint}: HTTP ${error.statusCode}; endpoint=${error.endpoint}; branch=${error.branch}; path=${error.path}"
+        } else {
+            "$prefix: ${error::class.java.simpleName}"
+        }
     }
 }

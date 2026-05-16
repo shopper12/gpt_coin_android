@@ -2,11 +2,12 @@ package com.cryptotradecoach.data
 
 import android.content.Context
 import android.util.Log
+import com.cryptotradecoach.service.ScannerStateStore
 import java.io.File
 
 class StrategyRulesRepository private constructor(
     private val context: Context,
-    private val settingsStore: GitHubSettingsStore,
+    private val settingsRepository: SettingsRepository,
     private val gitHubSyncClient: GitHubSyncClient,
 ) {
     private val rulesFile: File
@@ -21,13 +22,23 @@ class StrategyRulesRepository private constructor(
 
     fun refreshFromGitHub(): StrategyRules {
         val current = loadLastKnownGood()
-        val settings = settingsStore.load()
+        val settings = settingsRepository.load().normalized()
         if (!settings.isConfigured) return current
+        if (settings.token.isBlank()) {
+            ScannerStateStore.setLastError("GitHub token is missing")
+            return current
+        }
         val downloaded = runCatching {
             gitHubSyncClient.downloadText(settings, settings.rulesPath)
                 ?.let { StrategyRules.fromJson(it) }
-        }.onFailure {
-            Log.w(TAG, "Rules download failed; keeping last-known-good rules.")
+        }.onFailure { error ->
+            val message = if (error is GitHubSyncException) {
+                "Rules download failed at ${error.syncPoint}: HTTP ${error.statusCode}; endpoint=${error.endpoint}; branch=${error.branch}; path=${error.path}"
+            } else {
+                "Rules download failed at ${settings.rulesPath}: ${error::class.java.simpleName}"
+            }
+            ScannerStateStore.setLastError(message)
+            Log.w(TAG, "$message; keeping last-known-good rules.")
         }.getOrNull()
         return if (downloaded != null) {
             persistLastKnownGood(downloaded)
@@ -56,7 +67,7 @@ class StrategyRulesRepository private constructor(
             return instance ?: synchronized(this) {
                 instance ?: StrategyRulesRepository(
                     context.applicationContext,
-                    GitHubSettingsStore.getInstance(context),
+                    SettingsRepository.getInstance(context),
                     GitHubSyncClient(),
                 ).also { instance = it }
             }
