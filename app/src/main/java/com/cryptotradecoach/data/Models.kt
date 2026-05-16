@@ -18,6 +18,7 @@ enum class StrategyType {
     COMPRESSION_BREAKOUT,
     SWEEP_RECLAIM,
     TREND_PULLBACK,
+    BEAR_BOUNCE,
     WATCH_ONLY,
 }
 
@@ -55,6 +56,7 @@ data class MarketCandidate(
     val fiveMinuteCandles: List<Candle>,
     val fifteenMinuteCandles: List<Candle>,
     val fourHourCandles: List<Candle> = emptyList(),
+    val btcChangeRate24h: Double = 0.0,
     val rankByChangeRate: Int,
     val rankByTradeValue: Int,
     val changeRate30m: Double,
