@@ -50,11 +50,13 @@ class SignalEngine {
     ): StrategyScanResult {
         val rejectionSummary = mutableMapOf<String, Int>()
         val ranks = CandidateRanks.from(tickers)
+        val btcChangeRate24h = tickers.firstOrNull { it.market == "KRW-BTC" }?.signedChangeRate?.times(100.0) ?: 0.0
         val evaluations = tickers.mapNotNull { ticker ->
             evaluateTicker(
                 ticker = ticker,
                 candles = candleData[ticker.market].orEmpty(),
                 ranks = ranks,
+                btcChangeRate24h = btcChangeRate24h,
                 rules = rules,
                 now = now,
             ).also { evaluation ->
@@ -106,6 +108,7 @@ class SignalEngine {
         ticker: Ticker,
         candles: Map<Int, List<Candle>>,
         ranks: CandidateRanks,
+        btcChangeRate24h: Double,
         rules: StrategyRules,
         now: Long,
     ): Evaluation? {
@@ -132,6 +135,14 @@ class SignalEngine {
             compressionBreakout(price, changeRate24h, volumeAcceleration, five, fifteen, rules),
             sweepReclaim(price, volumeAcceleration, five, fifteen),
             trendPullback(price, volumeAcceleration, five, fifteen, fourHour),
+            bearDecouplingBounce(
+                price = price,
+                btcChangeRate24h = btcChangeRate24h,
+                changeRate24h = changeRate24h,
+                rankByTradeValue = rankByTradeValue,
+                five = five,
+                fourHour = fourHour,
+            ),
         )
         val best = setups.maxByOrNull { it.rawScore - overheatPenalty - liquidityPenalty } ?: return null
         val score = (best.rawScore - overheatPenalty - liquidityPenalty).coerceIn(0.0, 100.0)
@@ -157,6 +168,7 @@ class SignalEngine {
             best.strategyType == StrategyType.COMPRESSION_BREAKOUT -> "NO_COMPRESSION_BREAKOUT"
             best.strategyType == StrategyType.SWEEP_RECLAIM -> "NO_SWEEP_RECLAIM"
             best.strategyType == StrategyType.TREND_PULLBACK -> "NO_TREND_PULLBACK"
+            best.strategyType == StrategyType.BEAR_DECOUPLING_BOUNCE -> "NO_BEAR_DECOUPLING_BOUNCE"
             else -> "WATCH_ONLY"
         }
         val reason = buildReason(best, score, overheatPenalty, liquidityPenalty)
@@ -344,6 +356,100 @@ class SignalEngine {
                 if (!aboveHigherTimeframe) "PRICE_BELOW_240M_MA120_EMA120" else null,
                 if (!fifteenTrendOk) "15M_TREND_BROKEN" else null,
                 if (!pullbackReclaimed) "NO_5M_PULLBACK_RECLAIM" else null,
+            ),
+        )
+    }
+
+    private fun bearDecouplingBounce(
+        price: Double,
+        btcChangeRate24h: Double,
+        changeRate24h: Double,
+        rankByTradeValue: Int,
+        five: List<Candle>,
+        fourHour: List<Candle>,
+    ): StrategySetup {
+        if (fourHour.size < 22 || five.size < 3) {
+            return StrategySetup(
+                strategyType = StrategyType.BEAR_DECOUPLING_BOUNCE,
+                active = false,
+                stopLoss = price * 0.99,
+                rawScore = 0.0,
+                trendScore = 0.0,
+                compressionScore = 0.0,
+                relativeVolumeScore = 0.0,
+                breakoutProximityScore = 0.0,
+                reclaimScore = 0.0,
+                riskRewardScore = 0.0,
+                passed = emptyList(),
+                failed = listOf("INSUFFICIENT_240M_OR_5M_CANDLES"),
+            )
+        }
+        val latest4h = fourHour.last()
+        val previous4h = fourHour.dropLast(1).last()
+        val base4h = fourHour.dropLast(1).takeLast(20)
+        val avgTradeValue4h20 = base4h.averageTradePrice()
+        val volumeMultiple4h = if (avgTradeValue4h20 > 0.0) latest4h.tradePrice / avgTradeValue4h20 else 0.0
+        val previousVolumeMultiple4h = if (avgTradeValue4h20 > 0.0) previous4h.tradePrice / avgTradeValue4h20 else 0.0
+        val ma20_240m = fourHour.takeLast(20).map { it.close }.averageOrNull() ?: price
+        val notAtTop = price <= ma20_240m * 1.05
+        val notAfterPump = previousVolumeMultiple4h < 3.0
+        val last5 = five.last()
+        val candleRange = (last5.high - last5.low).coerceAtLeast(0.0)
+        val upperWickPct = if (candleRange > 0.0) {
+            (last5.high - max(last5.open, last5.close)) / candleRange * 100.0
+        } else {
+            0.0
+        }
+        val upperWickTooHeavy = upperWickPct > 55.0 && last5.close < last5.open
+        val btcWeak = btcChangeRate24h < -1.0
+        val altStrong = changeRate24h > 2.0
+        val rankOk = rankByTradeValue <= 30
+        val strong4hVolume = volumeMultiple4h >= 2.5
+        val decoupled = btcWeak && altStrong
+        val decouplingScore = if (decoupled) (12.0 + min(abs(btcChangeRate24h), 5.0) * 1.5 + min(changeRate24h, 10.0) * 0.7).coerceAtMost(24.0) else 0.0
+        val rankScore = when {
+            rankByTradeValue <= 10 -> 18.0
+            rankByTradeValue <= 20 -> 14.0
+            rankByTradeValue <= 30 -> 10.0
+            else -> 0.0
+        }
+        val fourHourVolumeScore = ((volumeMultiple4h - 1.0) * 8.0).coerceIn(0.0, 24.0)
+        val notAfterPumpScore = if (notAfterPump) 12.0 else 0.0
+        val notAtTopScore = if (notAtTop) 10.0 else 0.0
+        val wickPenalty = if (upperWickTooHeavy) 12.0 else 0.0
+        val recentLow = min(latest4h.low, five.takeLast(10).minOfOrNull { it.low } ?: latest4h.low)
+        val riskRewardScore = riskRewardScore(price, recentLow)
+        val rawScore = decouplingScore + rankScore + fourHourVolumeScore + notAfterPumpScore + notAtTopScore + riskRewardScore - wickPenalty
+        val active = decoupled && rankOk && strong4hVolume && notAfterPump && notAtTop && !upperWickTooHeavy
+        return StrategySetup(
+            strategyType = StrategyType.BEAR_DECOUPLING_BOUNCE,
+            active = active,
+            stopLoss = recentLow * 0.997,
+            rawScore = rawScore,
+            trendScore = decouplingScore,
+            compressionScore = rankScore,
+            relativeVolumeScore = fourHourVolumeScore,
+            breakoutProximityScore = notAfterPumpScore,
+            reclaimScore = notAtTopScore,
+            riskRewardScore = riskRewardScore,
+            passed = listOf(
+                "btcChange=${btcChangeRate24h.one()}%",
+                "altChange24h=${changeRate24h.one()}%",
+                "rankByTradeValue=$rankByTradeValue",
+                "4hVolumeMultiple=${volumeMultiple4h.one()}x",
+                "prev4hVolumeMultiple=${previousVolumeMultiple4h.one()}x",
+                "notAfterPump=$notAfterPump",
+                "notAtTop=$notAtTop",
+                "upperWickPct=${upperWickPct.one()}%",
+            ),
+            failed = listOfNotNull(
+                if (!btcWeak) "BTC_NOT_WEAK" else null,
+                if (!altStrong) "ALT_NOT_UP_OVER_2PCT" else null,
+                if (!rankOk) "TRADE_VALUE_RANK_OVER_30" else null,
+                if (!strong4hVolume) "4H_VOLUME_UNDER_2_5X" else null,
+                if (!notAfterPump) "PREVIOUS_4H_ALREADY_PUMPED" else null,
+                if (!notAtTop) "PRICE_OVER_240M_MA20_PLUS_5PCT" else null,
+                if (upperWickTooHeavy) "5M_UPPER_WICK_TOO_HEAVY" else null,
             ),
         )
     }
