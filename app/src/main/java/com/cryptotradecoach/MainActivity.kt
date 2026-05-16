@@ -53,12 +53,14 @@ import com.cryptotradecoach.data.GitHubSettings
 import com.cryptotradecoach.data.ScanDiagnostics
 import com.cryptotradecoach.data.TradeStrategy
 import com.cryptotradecoach.data.local.StrategyHistoryEntity
+import com.cryptotradecoach.data.local.StrategyPerformanceEntity
 import com.cryptotradecoach.service.CoinScannerService
 import com.cryptotradecoach.service.ScannerStateStore
 import com.cryptotradecoach.ui.MainViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlin.math.abs
 import kotlin.math.roundToInt
 
 class MainActivity : ComponentActivity() {
@@ -75,6 +77,7 @@ class MainActivity : ComponentActivity() {
                 MainScreen(
                     activeStrategies = state.activeStrategies,
                     historyBySymbol = state.historyBySymbol,
+                    performanceRows = state.performanceRows,
                     scanDiagnostics = state.scanDiagnostics,
                     isRunning = state.isRunning,
                     lastScanAt = state.lastScanAt,
@@ -93,6 +96,7 @@ class MainActivity : ComponentActivity() {
                     onGitHubSettingsTest = viewModel::testGitHubSettings,
                     onRulesDownload = viewModel::downloadLatestRules,
                     onRulesRefresh = viewModel::refreshCurrentRules,
+                    onPerformanceRefresh = viewModel::refreshPerformance,
                     onReportUpload = viewModel::uploadLatestReport,
                 )
             }
@@ -134,6 +138,7 @@ class MainActivity : ComponentActivity() {
 private fun MainScreen(
     activeStrategies: List<TradeStrategy>,
     historyBySymbol: Map<String, List<StrategyHistoryEntity>>,
+    performanceRows: List<StrategyPerformanceEntity>,
     scanDiagnostics: ScanDiagnostics,
     isRunning: Boolean,
     lastScanAt: Long?,
@@ -152,9 +157,10 @@ private fun MainScreen(
     onGitHubSettingsTest: (GitHubSettings) -> Unit,
     onRulesDownload: (GitHubSettings) -> Unit,
     onRulesRefresh: () -> Unit,
+    onPerformanceRefresh: () -> Unit,
     onReportUpload: (GitHubSettings) -> Unit,
 ) {
-    val tabs = listOf("Current", "History", "Rules", "Settings")
+    val tabs = listOf("Current", "History", "Performance", "Rules", "Settings")
     var selectedTab by remember { mutableIntStateOf(0) }
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -176,13 +182,14 @@ private fun MainScreen(
         when (selectedTab) {
             0 -> CurrentStrategiesTab(activeStrategies, scanDiagnostics, lastScanAt)
             1 -> StrategyHistoryTab(historyBySymbol)
-            2 -> RulesTab(
+            2 -> PerformanceTab(performanceRows, onPerformanceRefresh)
+            3 -> RulesTab(
                 currentRulesText = currentRulesText,
                 settingsMessage = settingsMessage,
                 onRulesRefresh = onRulesRefresh,
                 onRulesDownload = { onRulesDownload(gitHubSettings) },
             )
-            3 -> SettingsTab(
+            4 -> SettingsTab(
                 isRunning = isRunning,
                 scanIntervalMs = scanIntervalMs,
                 maxDisplayCount = maxDisplayCount,
@@ -289,6 +296,72 @@ private fun StrategyHistoryTab(historyBySymbol: Map<String, List<StrategyHistory
                     HistoryCard(history)
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun PerformanceTab(
+    performanceRows: List<StrategyPerformanceEntity>,
+    onPerformanceRefresh: () -> Unit,
+) {
+    val rowsByType = performanceRows.groupBy { it.strategyType.name }
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .navigationBarsPadding()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
+        item {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                Text("Strategy performance", fontWeight = FontWeight.Bold)
+                OutlinedButton(onClick = onPerformanceRefresh) { Text("Refresh") }
+            }
+        }
+        if (performanceRows.isEmpty()) {
+            item { EmptyCard("No performance data yet. Start scanner and wait at least 5 minutes after a strategy appears.") }
+        } else {
+            rowsByType.forEach { (strategyType, rows) ->
+                item { PerformanceSummaryCard(strategyType, rows) }
+            }
+            items(performanceRows.sortedByDescending { it.createdAt }) { row ->
+                PerformanceCard(row)
+            }
+        }
+    }
+}
+
+@Composable
+private fun PerformanceSummaryCard(strategyType: String, rows: List<StrategyPerformanceEntity>) {
+    val completed = rows.count { it.isComplete }
+    val avg5 = rows.mapNotNull { it.return5m }.averageOrNullText()
+    val avg15 = rows.mapNotNull { it.return15m }.averageOrNullText()
+    val avg30 = rows.mapNotNull { it.return30m }.averageOrNullText()
+    val avg60 = rows.mapNotNull { it.return60m }.averageOrNullText()
+    val stopRate = if (rows.isEmpty()) 0.0 else rows.count { it.stopHit }.toDouble() / rows.size * 100.0
+    val targetRate = if (rows.isEmpty()) 0.0 else rows.count { it.target1Hit || it.target2Hit }.toDouble() / rows.size * 100.0
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text(strategyType, fontWeight = FontWeight.Bold)
+            Text("Signals: ${rows.size} | Complete: $completed")
+            Text("Avg return: 5m $avg5 / 15m $avg15 / 30m $avg30 / 60m $avg60")
+            Text("Target hit: ${targetRate.one()}% | Stop hit: ${stopRate.one()}%")
+        }
+    }
+}
+
+@Composable
+private fun PerformanceCard(row: StrategyPerformanceEntity) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text("${row.symbol} | ${row.strategyType} | ${if (row.isComplete) "COMPLETE" else "OPEN"}", fontWeight = FontWeight.Bold)
+            Text("Created: ${row.createdAt.toTimeText()} | Updated: ${row.lastUpdatedAt.toTimeText()}")
+            Text("Entry: ${row.entryPrice.price()} | Latest: ${row.latestPrice.price()} | Score: ${row.score.one()}")
+            Text("Return: 5m ${row.return5m.percentOrDash()} / 15m ${row.return15m.percentOrDash()} / 30m ${row.return30m.percentOrDash()} / 60m ${row.return60m.percentOrDash()}")
+            Text("MFE: ${row.mfePct.percent()} | MAE: ${row.maePct.percent()}")
+            Text("Target1: ${row.target1Hit} | Target2: ${row.target2Hit} | Stop: ${row.stopHit} | Expired: ${row.expired}")
+            Text("Rank by value: ${row.rankByTradeValue}")
         }
     }
 }
@@ -565,7 +638,11 @@ private fun Double.price(): String = String.format("%,.2f", this)
 
 private fun Double.percent(): String = String.format("%.2f%%", this)
 
+private fun Double?.percentOrDash(): String = this?.percent() ?: "-"
+
 private fun Double.one(): String = String.format("%.1f", this)
+
+private fun List<Double>.averageOrNullText(): String = if (isEmpty()) "-" else average().percent()
 
 private fun Long.toTimeText(): String {
     val formatter = SimpleDateFormat("HH:mm:ss", Locale.US)
