@@ -1,0 +1,57 @@
+
+-- index index_guideline_changes_affectedStrategyName_applied
+CREATE INDEX `index_guideline_changes_affectedStrategyName_applied` ON `guideline_changes` (`affectedStrategyName`, `applied`);
+
+-- index index_guideline_changes_changedAt
+CREATE INDEX `index_guideline_changes_changedAt` ON `guideline_changes` (`changedAt`);
+
+-- index index_missed_signals_market_detectedAt
+CREATE INDEX `index_missed_signals_market_detectedAt` ON `missed_signals` (`market`, `detectedAt`);
+
+-- index index_price_snapshots_market_timestamp
+CREATE INDEX `index_price_snapshots_market_timestamp` ON `price_snapshots` (`market`, `timestamp`);
+
+-- index index_price_snapshots_timestamp
+CREATE INDEX `index_price_snapshots_timestamp` ON `price_snapshots` (`timestamp`);
+
+-- index index_signal_history_market_createdAt
+CREATE INDEX `index_signal_history_market_createdAt` ON `signal_history` (`market`, `createdAt`);
+
+-- index index_signal_history_market_eventType_createdAt
+CREATE INDEX `index_signal_history_market_eventType_createdAt` ON `signal_history` (`market`, `eventType`, `createdAt`);
+
+-- index index_strategy_history_market_timestamp
+CREATE INDEX `index_strategy_history_market_timestamp` ON `strategy_history` (`market`, `timestamp`);
+
+-- index index_strategy_reviews_reviewedAt
+CREATE INDEX `index_strategy_reviews_reviewedAt` ON `strategy_reviews` (`reviewedAt`);
+
+-- index index_strategy_reviews_strategyName_reviewedAt
+CREATE INDEX `index_strategy_reviews_strategyName_reviewedAt` ON `strategy_reviews` (`strategyName`, `reviewedAt`);
+
+-- table android_metadata
+CREATE TABLE android_metadata (locale TEXT);
+
+-- table guideline_changes
+CREATE TABLE `guideline_changes` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `changedAt` INTEGER NOT NULL, `affectedStrategyName` TEXT NOT NULL, `strategyVersionBefore` TEXT NOT NULL, `strategyVersionAfterSuggestion` TEXT NOT NULL, `beforeRule` TEXT NOT NULL, `afterRule` TEXT NOT NULL, `reason` TEXT NOT NULL, `evidenceMarkets` TEXT NOT NULL, `expectedEffect` TEXT NOT NULL, `applied` INTEGER NOT NULL);
+
+-- table missed_signals
+CREATE TABLE `missed_signals` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `market` TEXT NOT NULL, `detectedAt` INTEGER NOT NULL, `currentPrice` REAL NOT NULL, `previousPrice` REAL NOT NULL, `changeRate` REAL NOT NULL, `rankByChangeRate` INTEGER NOT NULL, `rankByTradeValue` INTEGER NOT NULL, `missedReason` TEXT NOT NULL, `suggestedStrategy` TEXT NOT NULL, `relatedRuleBefore` TEXT NOT NULL, `suggestedRuleAfter` TEXT NOT NULL);
+
+-- table price_snapshots
+CREATE TABLE `price_snapshots` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `market` TEXT NOT NULL, `price` REAL NOT NULL, `signedChangeRate` REAL NOT NULL, `accTradePrice24h` REAL NOT NULL, `accTradeVolume24h` REAL NOT NULL, `rankByChangeRate` INTEGER NOT NULL, `rankByTradeValue` INTEGER NOT NULL, `timestamp` INTEGER NOT NULL);
+
+-- table room_master_table
+CREATE TABLE room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT);
+
+-- table signal_history
+CREATE TABLE `signal_history` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `market` TEXT NOT NULL, `strategyName` TEXT NOT NULL, `strategyVersion` TEXT NOT NULL, `baselinePrice` REAL NOT NULL, `currentPrice` REAL NOT NULL, `entryPrice` REAL NOT NULL, `stopLossPrice` REAL NOT NULL, `targetPrice` REAL NOT NULL, `score` REAL NOT NULL, `eventType` TEXT NOT NULL, `reason` TEXT NOT NULL, `mfePercent` REAL NOT NULL, `maePercent` REAL NOT NULL, `maxReturnPercent` REAL NOT NULL, `maxDrawdownPercent` REAL NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL);
+
+-- table sqlite_sequence
+CREATE TABLE sqlite_sequence(name,seq);
+
+-- table strategy_history
+CREATE TABLE `strategy_history` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `market` TEXT NOT NULL, `strategyName` TEXT NOT NULL, `entryPrice` REAL NOT NULL, `stopLossPrice` REAL NOT NULL, `targetPrice` REAL NOT NULL, `score` REAL NOT NULL, `reason` TEXT NOT NULL, `timestamp` INTEGER NOT NULL);
+
+-- table strategy_reviews
+CREATE TABLE `strategy_reviews` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `reviewedAt` INTEGER NOT NULL, `strategyName` TEXT NOT NULL, `strategyVersion` TEXT NOT NULL, `totalActiveSignals` INTEGER NOT NULL, `totalMissedSignals` INTEGER NOT NULL, `targetHitCount` INTEGER NOT NULL, `stopHitCount` INTEGER NOT NULL, `expiredCount` INTEGER NOT NULL, `averageMfePercent` REAL NOT NULL, `averageMaePercent` REAL NOT NULL, `missedMarkets` TEXT NOT NULL, `diagnosis` TEXT NOT NULL, `ruleChangeSuggestion` TEXT NOT NULL);

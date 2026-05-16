@@ -1,0 +1,98 @@
+현재 Android 코인 스캐너 앱의 전략 엔진을 추천 기록 검증 결과에 맞춰 수정해라.
+
+전제:
+- 기존 추천 기록 검증 결과, INITIAL_SIGNAL 103개 기준 전체 추적 평균 손익은 음수에 가깝고, 6시간 로그 가격 기준도 거의 0이다.
+- score >= 46 구간은 오히려 손절 비율이 높았다.
+- missed_signals 3412건 중 TRADE_VALUE_FILTER_EXCLUDED와 SCORE_TOO_LOW가 대부분이다.
+- 거래대금 상위 30 제한과 현재 점수식이 변화율 상위 종목을 놓친다.
+- 고정 목표가 1.5~2%는 큰 추세를 너무 빨리 끊고, 눌림 전략은 하락 중 진입해서 먼저 손절 후 뒤늦게 급등하는 문제가 있다.
+
+수정 목표:
+1. 손실은 줄이고, 수익이 크게 날 수 있는 종목을 더 잘 포착한다.
+2. 첫 화면에는 실제 진입 가능한 ACTIVE 전략 상위 3~5개만 보여준다.
+3. 누락 종목을 줄이기 위해 거래대금 순위뿐 아니라 변화율 순위/30분 모멘텀/거래대금 증가율을 후보군에 포함한다.
+4. 추천 기록과 누락 후보의 사후 성과를 다음 분석 때 검증할 수 있게 로그를 강화한다.
+
+구현 지시:
+
+A. 후보 유니버스 수정
+- 기존 거래대금 상위 30 단일 필터를 폐지한다.
+- 다음 집합의 합집합을 후보로 사용한다.
+  1) 24h 거래대금 상위 50
+  2) 24h 변화율 상위 20
+  3) 최근 30분 변화율 상위 20
+  4) 최근 거래대금 증가율 상위 20
+- 단, 최소 24h 거래대금 하한은 유지한다.
+- rankByChangeRate <= 10 인 종목은 tradeValue rank가 낮아도 후보군에서 제외하지 마라.
+
+B. 점수식 수정
+총점 100점:
+- immediateMomentumScore 0~25
+- volumeAccelerationScore 0~20
+- entryProximityScore 0~20
+- changeRankScore 0~15
+- riskRewardScore 0~10
+- liquidityScore 0~10
+감점:
+- overheatPenalty 최대 -25
+- staleSnapshotPenalty 최대 -15
+- postSpikeChasePenalty 최대 -20
+
+C. 전략별 진입 규칙
+1. Momentum Breakout
+- 24h 변화율만 보지 말고 최근 30분 상승률과 최근 스냅샷 변화율이 모두 양수일 때만 ACTIVE
+- rankByChangeRate <= 10 이면 가산
+- 직전 고점 대비 너무 멀리 오른 상태에서는 ACTIVE가 아니라 WATCH_ONLY
+- 이미 24h +20% 이상이면 신규 추격 매수 금지. 단 30분 거래대금 급증이면 WATCH_ONLY
+
+2. Volume Accumulation
+- 과거 검증에서 상대적으로 손실이 작았으므로 유지하되, 점수 34~38 구간의 성과가 상대적으로 좋았다는 점을 반영한다.
+- 단순 고유동성 안정 종목은 제외하고, 거래대금 증가율이 확인될 때만 ACTIVE
+
+3. Rebound Watch
+- 먼저 -2% 손절 후 나중에 급등한 사례가 있었으므로 즉시 매수 신호를 내지 마라.
+- 하락 중에는 WATCH_ONLY
+- 전고점 재돌파 또는 5분/15분 기준 재상승 확인 후 ACTIVE로 승격
+
+D. 익절/손절 변경
+- 고정 목표 1.5~2% 단일 목표를 폐지한다.
+- target1 = +1.2~1.5%
+- target2 = +3~5%
+- trailingStop = 고점 대비 -1.2%
+- stopLoss는 기본 -0.8~-1.0%
+- 변동성이 큰 종목은 stopLoss를 넓히지 말고 ACTIVE 진입 자체를 늦춰라.
+
+E. 알림/저장 로직
+- 신규 ACTIVE 상위 3개만 알림
+- 같은 종목 같은 전략은 30분 내 중복 알림 금지
+- STRATEGY_CHANGED 반복 저장 금지
+- entry/stop/target/score/rank 중 실질 변화가 있을 때만 strategy_history에 저장
+- ACTIVE -> WATCH_ONLY, ACTIVE -> INVALIDATED, ACTIVE -> TARGET1_HIT, ACTIVE -> TRAILING_STOP_HIT 상태를 저장
+
+F. 검증용 로그 강화
+각 추천과 missed candidate에 아래 컬럼을 저장하라.
+- market
+- timestamp
+- currentPrice
+- entryPrice
+- stopLossPrice
+- target1
+- target2
+- trailingStop
+- score
+- componentScores
+- rankByChangeRate
+- rankByTradeValue
+- changeRate24h
+- changeRate30m
+- changeRate5m
+- volumeAcceleration
+- selectedOrMissed
+- missedReason
+- topNAtScan
+- strategyStatus
+
+G. 빌드 검증
+- 수정 후 .\gradlew.bat :app:assembleDebug 실행
+- git diff 전체 출력 금지
+- git diff --stat 와 변경 파일 목록만 보여줘
