@@ -79,6 +79,17 @@ data class TradeStrategy(
     val validUntil: Long,
 )
 
+typealias Signal = TradeStrategy
+
+data class ScanDiagnostics(
+    val validSignals: List<Signal> = emptyList(),
+    val scannedCount: Int = 0,
+    val candidateCount: Int = 0,
+    val rejectedCount: Int = 0,
+    val rejectionSummary: Map<String, Int> = emptyMap(),
+    val lastError: String? = null,
+)
+
 data class StrategyHistory(
     val id: Long = 0,
     val strategyId: String,
@@ -93,6 +104,7 @@ data class StrategyHistory(
 data class StrategyScanLog(
     val id: Long = 0,
     val market: String,
+    val strategyType: StrategyType,
     val timestamp: Long,
     val currentPrice: Double,
     val entryPrice: Double,
@@ -117,4 +129,10 @@ data class StrategyScanLog(
 data class StrategyScanResult(
     val activeStrategies: List<TradeStrategy>,
     val scanLogs: List<StrategyScanLog>,
+    val validSignals: List<Signal> = activeStrategies,
+    val scannedCount: Int = 0,
+    val candidateCount: Int = 0,
+    val rejectedCount: Int = 0,
+    val rejectionSummary: Map<String, Int> = emptyMap(),
+    val lastError: String? = null,
 )

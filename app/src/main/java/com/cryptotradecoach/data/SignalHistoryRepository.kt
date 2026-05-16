@@ -253,6 +253,7 @@ class SignalHistoryRepository private constructor(
         return StrategyScanLogEntity(
             id = id,
             market = market,
+            strategyType = strategyType,
             timestamp = timestamp,
             currentPrice = currentPrice,
             entryPrice = entryPrice,

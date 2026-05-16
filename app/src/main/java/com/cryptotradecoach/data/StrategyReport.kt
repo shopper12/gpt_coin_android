@@ -1,0 +1,73 @@
+package com.cryptotradecoach.data
+
+import org.json.JSONArray
+import org.json.JSONObject
+
+data class StrategyReport(
+    val generatedAt: Long,
+    val rulesVersion: String,
+    val summaries: List<StrategyPerformanceSummary>,
+    val failedSignals: List<FailedSignalReport>,
+) {
+    fun toJson(): JSONObject {
+        return JSONObject()
+            .put("generatedAt", generatedAt)
+            .put("rulesVersion", rulesVersion)
+            .put("summaries", JSONArray(summaries.map { it.toJson() }))
+            .put("failedSignals", JSONArray(failedSignals.map { it.toJson() }))
+    }
+}
+
+data class StrategyPerformanceSummary(
+    val strategyType: String,
+    val totalSignals: Int,
+    val failedSignalCount: Int,
+    val avgReturn15m: Double,
+    val avgReturn30m: Double,
+    val targetHitRate: Double,
+    val stopHitRate: Double,
+    val avgMfe: Double,
+    val avgMae: Double,
+) {
+    fun toJson(): JSONObject {
+        return JSONObject()
+            .put("strategyType", strategyType)
+            .put("totalSignals", totalSignals)
+            .put("failedSignalCount", failedSignalCount)
+            .put("avgReturn15m", avgReturn15m)
+            .put("avgReturn30m", avgReturn30m)
+            .put("targetHitRate", targetHitRate)
+            .put("stopHitRate", stopHitRate)
+            .put("avgMfe", avgMfe)
+            .put("avgMae", avgMae)
+    }
+}
+
+data class FailedSignalReport(
+    val market: String,
+    val strategyType: String,
+    val timestamp: Long,
+    val score: Double,
+    val missedReason: String,
+    val avgReturn15m: Double,
+    val avgReturn30m: Double,
+    val targetHitRate: Double,
+    val stopHitRate: Double,
+    val avgMfe: Double,
+    val avgMae: Double,
+) {
+    fun toJson(): JSONObject {
+        return JSONObject()
+            .put("market", market)
+            .put("strategyType", strategyType)
+            .put("timestamp", timestamp)
+            .put("score", score)
+            .put("missedReason", missedReason)
+            .put("avgReturn15m", avgReturn15m)
+            .put("avgReturn30m", avgReturn30m)
+            .put("targetHitRate", targetHitRate)
+            .put("stopHitRate", stopHitRate)
+            .put("avgMfe", avgMfe)
+            .put("avgMae", avgMae)
+    }
+}

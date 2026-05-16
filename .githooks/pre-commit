@@ -1,0 +1,14 @@
+#!/bin/sh
+set -eu
+
+blocked_files="$(git diff --cached --name-only --diff-filter=ACMR | grep -E '(^logs/|\.log$|\.apk$|\.aab$|^local\.properties$)' || true)"
+
+if [ -n "$blocked_files" ]; then
+  echo "Commit blocked: generated/local files are staged:"
+  echo "$blocked_files"
+  echo "Unstage these files before committing."
+  exit 1
+fi
+
+echo "Running Android debug build before commit..."
+./gradlew.bat :app:assembleDebug

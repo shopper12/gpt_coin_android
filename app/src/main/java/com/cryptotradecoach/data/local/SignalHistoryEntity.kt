@@ -102,6 +102,7 @@ data class StrategyScanLogEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     val market: String,
+    val strategyType: StrategyType,
     val timestamp: Long,
     val currentPrice: Double,
     val entryPrice: Double,

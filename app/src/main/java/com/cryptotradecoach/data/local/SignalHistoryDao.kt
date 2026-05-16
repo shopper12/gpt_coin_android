@@ -46,6 +46,25 @@ interface SignalHistoryDao {
 
     @Query(
         """
+        SELECT * FROM strategy_scan_logs
+        ORDER BY timestamp DESC, id DESC
+        LIMIT :limit
+        """,
+    )
+    suspend fun getRecentStrategyScanLogs(limit: Int = 500): List<StrategyScanLogEntity>
+
+    @Query(
+        """
+        SELECT * FROM strategy_scan_logs
+        WHERE timestamp >= :since
+        ORDER BY timestamp DESC, id DESC
+        LIMIT :limit
+        """,
+    )
+    suspend fun getStrategyScanLogsSince(since: Long, limit: Int = 1000): List<StrategyScanLogEntity>
+
+    @Query(
+        """
         SELECT * FROM strategy_history
         WHERE symbol = :symbol
         ORDER BY createdAt DESC, id DESC

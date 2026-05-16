@@ -6,7 +6,7 @@ import java.net.URL
 
 interface MarketDataSource {
     suspend fun fetchTickers(): List<Ticker>
-    suspend fun fetchMarketCandidates(limit: Int = 80): List<MarketCandidate>
+    suspend fun fetchMarketCandidates(limit: Int = 110): List<MarketCandidate>
 }
 
 class UpbitMarketDataSource : MarketDataSource {
@@ -27,7 +27,12 @@ class UpbitMarketDataSource : MarketDataSource {
             .mapIndexed { index, ticker -> ticker.market to index + 1 }
             .toMap()
 
-        val enriched = tickers.mapNotNull { ticker ->
+        val selectedTickers = (tickers.sortedByDescending { it.accTradePrice24h }.take(80) +
+            tickers.sortedByDescending { it.signedChangeRate }.take(30))
+            .distinctBy { it.market }
+            .take(limit)
+
+        return selectedTickers.mapNotNull { ticker ->
             val oneMinuteCandles = runCatching { fetchCandles(ticker.market, unit = 1, count = 35) }.getOrDefault(emptyList())
             val fiveMinuteCandles = runCatching { fetchCandles(ticker.market, unit = 5, count = 30) }.getOrDefault(emptyList())
             val fifteenMinuteCandles = runCatching { fetchCandles(ticker.market, unit = 15, count = 20) }.getOrDefault(emptyList())
@@ -39,7 +44,7 @@ class UpbitMarketDataSource : MarketDataSource {
             val previousTradeValue = oneMinuteCandles.dropLast(5).takeLast(20).sumOf { it.candleAccTradePrice } / 4.0
             val volumeAcceleration = if (previousTradeValue > 0.0) recentTradeValue / previousTradeValue else 1.0
 
-            CandidateEnvelope(
+            MarketCandidate(
                 ticker = ticker,
                 oneMinuteCandles = oneMinuteCandles,
                 fiveMinuteCandles = fiveMinuteCandles,
@@ -51,37 +56,6 @@ class UpbitMarketDataSource : MarketDataSource {
                 volumeAcceleration = volumeAcceleration,
             )
         }
-
-        val selectedMarkets = buildSet {
-            addAll(enriched.sortedBy { it.rankByTradeValue }.take(50).map { it.ticker.market })
-            addAll(enriched.sortedBy { it.rankByChangeRate }.take(20).map { it.ticker.market })
-            addAll(enriched.sortedByDescending { it.changeRate30m }.take(20).map { it.ticker.market })
-            addAll(enriched.sortedByDescending { it.volumeAcceleration }.take(20).map { it.ticker.market })
-        }
-
-        return enriched
-            .filter { envelope ->
-                envelope.ticker.market in selectedMarkets &&
-                    (envelope.ticker.accTradePrice24h >= MIN_ACC_TRADE_PRICE_24H || envelope.rankByChangeRate <= 10)
-            }
-            .sortedWith(
-                compareBy<CandidateEnvelope> { it.rankByTradeValue }
-                    .thenBy { it.rankByChangeRate },
-            )
-            .take(limit)
-            .map { envelope ->
-                MarketCandidate(
-                    ticker = envelope.ticker,
-                    oneMinuteCandles = envelope.oneMinuteCandles,
-                    fiveMinuteCandles = envelope.fiveMinuteCandles,
-                    fifteenMinuteCandles = envelope.fifteenMinuteCandles,
-                    rankByChangeRate = envelope.rankByChangeRate,
-                    rankByTradeValue = envelope.rankByTradeValue,
-                    changeRate30m = envelope.changeRate30m,
-                    changeRate5m = envelope.changeRate5m,
-                    volumeAcceleration = envelope.volumeAcceleration,
-                )
-            }
     }
 
     private fun fetchKrwMarkets(): List<String> {
@@ -163,21 +137,5 @@ class UpbitMarketDataSource : MarketDataSource {
     private fun percentChange(from: Double, to: Double): Double {
         if (from <= 0.0) return 0.0
         return ((to - from) / from) * 100.0
-    }
-
-    private data class CandidateEnvelope(
-        val ticker: Ticker,
-        val oneMinuteCandles: List<Candle>,
-        val fiveMinuteCandles: List<Candle>,
-        val fifteenMinuteCandles: List<Candle>,
-        val rankByChangeRate: Int,
-        val rankByTradeValue: Int,
-        val changeRate30m: Double,
-        val changeRate5m: Double,
-        val volumeAcceleration: Double,
-    )
-
-    companion object {
-        private const val MIN_ACC_TRADE_PRICE_24H = 500_000_000.0
     }
 }

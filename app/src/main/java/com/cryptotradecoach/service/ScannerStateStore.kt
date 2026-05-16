@@ -1,5 +1,7 @@
 package com.cryptotradecoach.service
 
+import android.content.Context
+import com.cryptotradecoach.data.ScanDiagnostics
 import com.cryptotradecoach.data.TradeStrategy
 import com.cryptotradecoach.data.local.StrategyHistoryEntity
 import com.cryptotradecoach.domain.SignalEngine
@@ -18,6 +20,9 @@ object ScannerStateStore {
 
     private val _lastScanAt = MutableStateFlow<Long?>(null)
     val lastScanAt: StateFlow<Long?> = _lastScanAt
+
+    private val _scanDiagnostics = MutableStateFlow(ScanDiagnostics())
+    val scanDiagnostics: StateFlow<ScanDiagnostics> = _scanDiagnostics
 
     private val _scanIntervalMs = MutableStateFlow(DEFAULT_SCAN_INTERVAL_MS)
     val scanIntervalMs: StateFlow<Long> = _scanIntervalMs
@@ -49,24 +54,55 @@ object ScannerStateStore {
     fun pushScanResult(
         activeStrategies: List<TradeStrategy>,
         historyBySymbol: Map<String, List<StrategyHistoryEntity>>,
+        diagnostics: ScanDiagnostics = _scanDiagnostics.value.copy(validSignals = activeStrategies, lastError = null),
+        context: Context? = null,
     ) {
-        _lastScanAt.value = System.currentTimeMillis()
+        val scanAt = markScanAttempt(context)
         _activeStrategies.value = activeStrategies
             .sortedWith(compareByDescending<TradeStrategy> { it.score }.thenBy { it.rank })
             .take(_maxDisplayCount.value)
         _historyBySymbol.value = historyBySymbol.toSortedMap()
+        _scanDiagnostics.value = diagnostics.copy(validSignals = activeStrategies, lastError = null)
     }
 
     fun loadPersistedState(
         activeStrategies: List<TradeStrategy>,
         historyBySymbol: Map<String, List<StrategyHistoryEntity>>,
+        context: Context? = null,
     ) {
         _activeStrategies.value = activeStrategies
             .sortedWith(compareByDescending<TradeStrategy> { it.score }.thenBy { it.rank })
             .take(_maxDisplayCount.value)
         _historyBySymbol.value = historyBySymbol.toSortedMap()
+        context?.loadLastScanAt()?.let { _lastScanAt.value = it }
+    }
+
+    fun setLastError(error: String?) {
+        _scanDiagnostics.value = _scanDiagnostics.value.copy(lastError = error)
+    }
+
+    fun markScanAttempt(context: Context? = null): Long {
+        val scanAt = System.currentTimeMillis()
+        _lastScanAt.value = scanAt
+        context?.persistLastScanAt(scanAt)
+        return scanAt
+    }
+
+    private fun Context.persistLastScanAt(scanAt: Long) {
+        getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .edit()
+            .putLong(KEY_LAST_SCAN_AT, scanAt)
+            .apply()
+    }
+
+    private fun Context.loadLastScanAt(): Long? {
+        val value = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .getLong(KEY_LAST_SCAN_AT, 0L)
+        return value.takeIf { it > 0L }
     }
 
     const val DEFAULT_SCAN_INTERVAL_MS = 60_000L
     val SUPPORTED_INTERVALS_MS = listOf(30_000L, 60_000L, 180_000L)
+    private const val PREFS_NAME = "scanner_state"
+    private const val KEY_LAST_SCAN_AT = "last_scan_at"
 }

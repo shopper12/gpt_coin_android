@@ -2,8 +2,14 @@ package com.cryptotradecoach.service
 
 import android.app.Service
 import android.content.Intent
+import android.content.pm.ServiceInfo
+import android.os.Build
 import android.os.IBinder
+import android.util.Log
+import com.cryptotradecoach.data.ScanDiagnostics
 import com.cryptotradecoach.data.SignalHistoryRepository
+import com.cryptotradecoach.data.StrategyReportRepository
+import com.cryptotradecoach.data.StrategyRulesRepository
 import com.cryptotradecoach.data.UpbitMarketDataSource
 import com.cryptotradecoach.data.local.StrategyEventType
 import com.cryptotradecoach.domain.SignalEngine
@@ -23,12 +29,16 @@ class CoinScannerService : Service() {
     private val engine = SignalEngine()
     private lateinit var notifier: SignalNotificationHelper
     private lateinit var historyRepository: SignalHistoryRepository
+    private lateinit var rulesRepository: StrategyRulesRepository
+    private lateinit var reportRepository: StrategyReportRepository
     private var scanJob: Job? = null
 
     override fun onCreate() {
         super.onCreate()
         notifier = SignalNotificationHelper(this)
         historyRepository = SignalHistoryRepository.getInstance(this)
+        rulesRepository = StrategyRulesRepository.getInstance(this)
+        reportRepository = StrategyReportRepository.getInstance(this)
         notifier.ensureChannels()
     }
 
@@ -42,20 +52,25 @@ class CoinScannerService : Service() {
 
     private fun startScanner() {
         if (scanJob?.isActive == true) return
-        startForeground(
-            NOTIFICATION_ID,
-            notifier.foregroundNotification(ScannerStateStore.DEFAULT_SCAN_INTERVAL_MS),
-        )
+        val notification = notifier.foregroundNotification(ScannerStateStore.DEFAULT_SCAN_INTERVAL_MS)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC)
+        } else {
+            startForeground(NOTIFICATION_ID, notification)
+        }
         ScannerStateStore.setRunning(true)
 
         scanJob = serviceScope.launch {
             while (isActive) {
+                ScannerStateStore.markScanAttempt(this@CoinScannerService)
                 runCatching {
                     val maxDisplayCount = ScannerStateStore.maxDisplayCount.first()
                     val minimumScore = ScannerStateStore.minimumScore.first()
-                    val candidates = dataSource.fetchMarketCandidates(limit = 80)
+                    val rules = rulesRepository.refreshFromGitHub()
+                    val candidates = dataSource.fetchMarketCandidates(limit = 110)
                     val scanResult = engine.scan(
                         candidates = candidates,
+                        rules = rules,
                         minimumScore = minimumScore,
                         maxResults = maxDisplayCount,
                     )
@@ -67,7 +82,18 @@ class CoinScannerService : Service() {
                     ScannerStateStore.pushScanResult(
                         activeStrategies = persistence.activeStrategies,
                         historyBySymbol = persistence.historyBySymbol,
+                        diagnostics = ScanDiagnostics(
+                            validSignals = scanResult.validSignals,
+                            scannedCount = scanResult.scannedCount,
+                            candidateCount = scanResult.candidateCount,
+                            rejectedCount = scanResult.rejectedCount,
+                            rejectionSummary = scanResult.rejectionSummary,
+                            lastError = null,
+                        ),
+                        context = this@CoinScannerService,
                     )
+                    reportRepository.generateLatestReport(rules = rules)
+                    reportRepository.uploadLatestReport()
                     persistence.newEvents
                         .filter { event ->
                             event.eventType != StrategyEventType.NEW_ACTIVE ||
@@ -78,6 +104,9 @@ class CoinScannerService : Service() {
                         .forEachIndexed { index, event ->
                             notifier.notifyStrategyEvent(event, STRATEGY_EVENT_NOTIFICATION_BASE + index)
                         }
+                }.onFailure { error ->
+                    Log.e("CryptoScanner", "Scan failed", error)
+                    ScannerStateStore.setLastError(error.message ?: error::class.java.simpleName)
                 }
                 delay(ScannerStateStore.scanIntervalMs.first())
             }
