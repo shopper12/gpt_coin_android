@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import com.cryptotradecoach.data.ScanDiagnostics
+import com.cryptotradecoach.data.SettingsRepository
 import com.cryptotradecoach.data.SignalHistoryRepository
 import com.cryptotradecoach.data.StrategyReportRepository
 import com.cryptotradecoach.data.StrategyRulesRepository
@@ -31,7 +32,9 @@ class CoinScannerService : Service() {
     private lateinit var historyRepository: SignalHistoryRepository
     private lateinit var rulesRepository: StrategyRulesRepository
     private lateinit var reportRepository: StrategyReportRepository
+    private lateinit var settingsRepository: SettingsRepository
     private var scanJob: Job? = null
+    private var lastAutoUploadAttemptAt: Long = 0L
 
     override fun onCreate() {
         super.onCreate()
@@ -39,6 +42,7 @@ class CoinScannerService : Service() {
         historyRepository = SignalHistoryRepository.getInstance(this)
         rulesRepository = StrategyRulesRepository.getInstance(this)
         reportRepository = StrategyReportRepository.getInstance(this)
+        settingsRepository = SettingsRepository.getInstance(this)
         notifier.ensureChannels()
     }
 
@@ -96,7 +100,7 @@ class CoinScannerService : Service() {
                         context = this@CoinScannerService,
                     )
                     reportRepository.generateLatestReport(rules = rules)
-                    // 자동 업로드 금지, 수동 업로드만 허용
+                    maybeAutoUploadLatestReport()
                     persistence.newEvents
                         .filter { event ->
                             event.eventType != StrategyEventType.NEW_ACTIVE ||
@@ -113,6 +117,28 @@ class CoinScannerService : Service() {
                 }
                 delay(ScannerStateStore.scanIntervalMs.first())
             }
+        }
+    }
+
+    private fun maybeAutoUploadLatestReport(now: Long = System.currentTimeMillis()) {
+        val settings = settingsRepository.load().normalized()
+        if (!settings.autoUploadReport) return
+        if (settings.token.isBlank()) {
+            ScannerStateStore.setLastError("Auto report upload skipped: GitHub token is missing")
+            return
+        }
+        val lastSuccessfulUploadAt = settingsRepository.loadLastAutoReportUploadAt()
+        val lastUploadGateAt = maxOf(lastSuccessfulUploadAt, lastAutoUploadAttemptAt)
+        if (now - lastUploadGateAt < AUTO_REPORT_UPLOAD_INTERVAL_MS) return
+
+        lastAutoUploadAttemptAt = now
+        val uploaded = reportRepository.uploadLatestReport()
+        if (uploaded) {
+            settingsRepository.markAutoReportUploaded(now)
+            ScannerStateStore.setLastError(null)
+            Log.i("CryptoScanner", "Auto uploaded latest strategy report.")
+        } else {
+            Log.w("CryptoScanner", "Auto report upload failed.")
         }
     }
 
@@ -138,5 +164,6 @@ class CoinScannerService : Service() {
         const val ACTION_STOP = "com.cryptotradecoach.action.STOP"
         private const val NOTIFICATION_ID = 101
         private const val STRATEGY_EVENT_NOTIFICATION_BASE = 500
+        private const val AUTO_REPORT_UPLOAD_INTERVAL_MS = 10 * 60 * 1000L
     }
 }
