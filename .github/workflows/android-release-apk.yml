@@ -25,6 +25,9 @@ jobs:
           distribution: temurin
           java-version: '17'
 
+      - name: Make Gradle wrapper executable
+        run: chmod +x ./gradlew
+
       - name: Decode signing key
         if: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
         run: |
