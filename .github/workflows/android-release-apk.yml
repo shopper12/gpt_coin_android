@@ -2,6 +2,10 @@ name: Build Android release APK
 
 on:
   workflow_dispatch:
+  schedule:
+    # GitHub Actions cron uses UTC. This runs every day at 03:17 UTC / 12:17 KST.
+    # Scheduled workflows run only from the repository default branch, so this file must also exist on main.
+    - cron: '17 3 * * *'
   push:
     branches:
       - fix/runtime-phone-error
@@ -20,7 +24,14 @@ jobs:
   build-release-apk:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout scheduled source branch
+        if: github.event_name == 'schedule'
+        uses: actions/checkout@v4
+        with:
+          ref: fix/runtime-phone-error
+
+      - name: Checkout triggering ref
+        if: github.event_name != 'schedule'
         uses: actions/checkout@v4
 
       - name: Set up JDK 17
@@ -59,7 +70,7 @@ jobs:
           tag_name: latest-phone-apk
           name: Latest phone APK
           body: |
-            Android release APK built from `${{ github.ref_name }}`.
+            Android release APK built from `${{ github.event_name == 'schedule' && 'fix/runtime-phone-error' || github.ref_name }}`.
 
             Download `crypto-trade-coach-release.apk` from Assets on the phone and install/update it.
           files: release-apk/crypto-trade-coach-release.apk
