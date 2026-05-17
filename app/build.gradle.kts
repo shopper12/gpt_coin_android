@@ -9,6 +9,8 @@ val ciKeystoreFile = System.getenv("CI_KEYSTORE_FILE")
 val ciKeystorePassword = System.getenv("CI_KEYSTORE_PASSWORD")
 val ciKeyAlias = System.getenv("CI_KEY_ALIAS")
 val ciKeyPassword = System.getenv("CI_KEY_PASSWORD")
+val ciVersionCode = System.getenv("CI_VERSION_CODE")?.toIntOrNull() ?: 1
+val ciVersionName = System.getenv("CI_VERSION_NAME") ?: "1.0"
 val hasCiSigning = !ciKeystoreFile.isNullOrBlank() &&
     !ciKeystorePassword.isNullOrBlank() &&
     !ciKeyAlias.isNullOrBlank() &&
@@ -22,8 +24,8 @@ android {
         applicationId = "com.cryptotradecoach"
         minSdk = 26
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = ciVersionCode
+        versionName = ciVersionName
     }
 
     signingConfigs {
