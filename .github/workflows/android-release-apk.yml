@@ -1,4 +1,4 @@
-name: Build Android APK
+name: Build Android release APK
 
 on:
   workflow_dispatch:
@@ -16,10 +16,10 @@ on:
       - '.github/workflows/android-release-apk.yml'
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  build-apk:
+  build-release-apk:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout scheduled source branch
@@ -38,16 +38,42 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Build debug APK
-        run: bash ./gradlew :app:assembleDebug
+      - name: Decode signing key
+        run: |
+          echo "${{ secrets.SIGNING_KEY_B64 }}" | base64 --decode > "$RUNNER_TEMP/release-key.jks"
+
+      - name: Build release APK
+        env:
+          CI_KEYSTORE_FILE: ${{ runner.temp }}/release-key.jks
+          CI_KEYSTORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASS }}
+          CI_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          CI_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASS }}
+          CI_VERSION_CODE: ${{ github.run_number }}
+          CI_VERSION_NAME: 1.0.${{ github.run_number }}
+        run: bash ./gradlew :app:assembleRelease
 
       - name: Copy APK
         run: |
           mkdir -p apk-output
-          cp app/build/outputs/apk/debug/app-debug.apk apk-output/crypto-trade-coach-debug.apk
+          cp app/build/outputs/apk/release/app-release.apk apk-output/crypto-trade-coach-release.apk
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: crypto-trade-coach-debug-apk
-          path: apk-output/crypto-trade-coach-debug.apk
+          name: crypto-trade-coach-release-apk
+          path: apk-output/crypto-trade-coach-release.apk
+
+      - name: Publish rolling GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest-phone-apk
+          name: Latest phone APK
+          body: |
+            Android release APK built from `${{ github.ref_name }}`.
+
+            Download `crypto-trade-coach-release.apk` from Assets on the phone and install/update it.
+          files: apk-output/crypto-trade-coach-release.apk
+          prerelease: true
+          make_latest: false
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
