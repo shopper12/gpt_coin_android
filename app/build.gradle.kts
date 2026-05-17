@@ -5,6 +5,15 @@ plugins {
     id("com.google.devtools.ksp")
 }
 
+val ciKeystoreFile = System.getenv("CI_KEYSTORE_FILE")
+val ciKeystorePassword = System.getenv("CI_KEYSTORE_PASSWORD")
+val ciKeyAlias = System.getenv("CI_KEY_ALIAS")
+val ciKeyPassword = System.getenv("CI_KEY_PASSWORD")
+val hasCiSigning = !ciKeystoreFile.isNullOrBlank() &&
+    !ciKeystorePassword.isNullOrBlank() &&
+    !ciKeyAlias.isNullOrBlank() &&
+    !ciKeyPassword.isNullOrBlank()
+
 android {
     namespace = "com.cryptotradecoach"
     compileSdk = 34
@@ -17,9 +26,23 @@ android {
         versionName = "1.0"
     }
 
+    signingConfigs {
+        if (hasCiSigning) {
+            create("ciRelease") {
+                storeFile = file(ciKeystoreFile!!)
+                storePassword = ciKeystorePassword
+                keyAlias = ciKeyAlias
+                keyPassword = ciKeyPassword
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
+            if (hasCiSigning) {
+                signingConfig = signingConfigs.getByName("ciRelease")
+            }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
