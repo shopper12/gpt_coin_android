@@ -15,12 +15,12 @@ from __future__ import annotations
 import argparse
 import hashlib
 import shutil
-import subprocess
+import sys
 import time
 from pathlib import Path
 from typing import Any
 
-from common import AgentError, env_bool, load_json, repo_path, run, save_json, save_text
+from common import AgentError, env_bool, load_json, repo_path, run, save_json
 from evaluate_rules import evaluate_live_report
 from validate_rules import validate_rules
 
@@ -65,8 +65,7 @@ def write_decision(decision: dict[str, Any], config: dict[str, Any]) -> None:
 def commit_allowed_changes(config: dict[str, Any]) -> bool:
     allowed = config.get("allowedAutoWritePaths", [])
     changed = run(["git", "status", "--porcelain"], check=True).stdout.splitlines()
-    if not changed:
-        return False
+    explicit_paths = [path for path in allowed if repo_path(path).exists()]
     paths: list[str] = []
     for line in changed:
         path = line[3:].strip()
@@ -74,17 +73,23 @@ def commit_allowed_changes(config: dict[str, Any]) -> bool:
             paths.append(path)
         else:
             raise AgentError(f"Refusing to commit non-allowed path: {path}")
-    run(["git", "add", "--"] + paths)
+    paths = sorted(set(paths + explicit_paths))
+    if not paths:
+        return False
+    run(["git", "add", "-f", "--"] + paths)
+    staged = run(["git", "diff", "--cached", "--name-only"], check=True).stdout.splitlines()
+    if not staged:
+        return False
     run(["git", "commit", "-m", "Update strategy rules from validated report"])
     return True
 
 
 def run_backtest_cmd(markets: int, candles: int) -> None:
-    run(["python", "agent/backtest.py", "--markets", str(markets), "--candles", str(candles)])
+    run([sys.executable, "agent/backtest.py", "--markets", str(markets), "--candles", str(candles)])
 
 
 def run_optimize_cmd() -> None:
-    run(["python", "agent/optimize_rules.py"])
+    run([sys.executable, "agent/optimize_rules.py"])
 
 
 def process_once(args: argparse.Namespace) -> dict[str, Any]:
@@ -106,7 +111,7 @@ def process_once(args: argparse.Namespace) -> dict[str, Any]:
     live = evaluate_live_report(report, policy)
     save_json(config["decisionPath"], {"phase": "live", **live})
     if not live["ok"] and not args.force:
-        return {"ok": False, "phase": "live", "reason": "live gate failed", "live": live}
+        return {"ok": False, "phase": "live", "reason": "live gate failed", "live": live, "reportHash": before_hash}
 
     run_backtest_cmd(args.markets, args.candles)
     backtest = load_json("reports/backtest-latest.json")
@@ -163,17 +168,22 @@ def main() -> int:
     args = parser.parse_args()
     config = load_json("strategy/config.json")
     poll = int(config.get("pollSeconds", 300))
-    last_hash = None
+    last_hash: str | None = None
     while True:
         try:
+            branch = config.get("watchBranch", "fix/runtime-phone-error")
+            if not args.no_pull:
+                git_pull(branch)
             report_path = repo_path(config["reportPath"])
             current_hash = file_hash(report_path)
             if args.once or current_hash != last_hash:
-                decision = process_once(args)
-                print(decision)
+                decision = process_once(argparse.Namespace(**{**vars(args), "no_pull": True}))
+                print(decision, flush=True)
                 last_hash = current_hash
+            else:
+                print({"ok": True, "phase": "idle", "reportHash": current_hash}, flush=True)
         except Exception as exc:  # keep EC2 watcher alive
-            print(f"WATCHER ERROR: {exc}")
+            print(f"WATCHER ERROR: {exc}", flush=True)
         if args.once:
             break
         time.sleep(poll)
