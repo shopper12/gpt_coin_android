@@ -3,8 +3,6 @@ name: Build Android release APK
 on:
   workflow_dispatch:
   schedule:
-    # GitHub Actions cron uses UTC. This runs every day at 03:17 UTC / 12:17 KST.
-    # Scheduled workflows run only from the repository default branch, so this file must also exist on main.
     - cron: '17 3 * * *'
 
 permissions:
@@ -14,7 +12,7 @@ jobs:
   build-release-apk:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout scheduled source branch
+      - name: Checkout source branch
         uses: actions/checkout@v4
         with:
           ref: fix/runtime-phone-error
@@ -25,32 +23,30 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Make Gradle wrapper executable
-        run: chmod +x ./gradlew
-
       - name: Decode signing key
-        if: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
         run: |
-          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > "$RUNNER_TEMP/release-key.jks"
+          echo "${{ secrets.SIGNING_KEY_B64 }}" | base64 --decode > "$RUNNER_TEMP/release-key.jks"
 
       - name: Build release APK
         env:
           CI_KEYSTORE_FILE: ${{ runner.temp }}/release-key.jks
-          CI_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-          CI_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
-          CI_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
-        run: ./gradlew :app:assembleRelease
+          CI_KEYSTORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASS }}
+          CI_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          CI_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASS }}
+          CI_VERSION_CODE: ${{ github.run_number }}
+          CI_VERSION_NAME: 1.0.${{ github.run_number }}
+        run: bash ./gradlew :app:assembleRelease
 
       - name: Copy APK
         run: |
-          mkdir -p release-apk
-          cp app/build/outputs/apk/release/app-release.apk release-apk/crypto-trade-coach-release.apk
+          mkdir -p apk-output
+          cp app/build/outputs/apk/release/app-release.apk apk-output/crypto-trade-coach-release.apk
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: crypto-trade-coach-release-apk
-          path: release-apk/crypto-trade-coach-release.apk
+          path: apk-output/crypto-trade-coach-release.apk
 
       - name: Publish rolling GitHub release
         uses: softprops/action-gh-release@v2
@@ -58,11 +54,11 @@ jobs:
           tag_name: latest-phone-apk
           name: Latest phone APK
           body: |
-            Android release APK built from `fix/runtime-phone-error` by scheduled workflow on `main`.
+            Android release APK built from `fix/runtime-phone-error`.
 
             Download `crypto-trade-coach-release.apk` from Assets on the phone and install/update it.
-          files: release-apk/crypto-trade-coach-release.apk
+          files: apk-output/crypto-trade-coach-release.apk
           prerelease: true
           make_latest: false
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
