@@ -38,9 +38,26 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Decode signing key
+      - name: Validate release signing inputs
+        env:
+          SIGNING_KEY_B64_VALUE: ${{ secrets.SIGNING_KEY_B64 }}
+          SIGNING_STORE_PASS_VALUE: ${{ secrets.SIGNING_STORE_PASS }}
+          SIGNING_KEY_ALIAS_VALUE: ${{ secrets.SIGNING_KEY_ALIAS }}
+          SIGNING_KEY_PASS_VALUE: ${{ secrets.SIGNING_KEY_PASS }}
         run: |
-          echo "${{ secrets.SIGNING_KEY_B64 }}" | base64 --decode > "$RUNNER_TEMP/release-key.jks"
+          missing=0
+          if [ -z "$SIGNING_KEY_B64_VALUE" ]; then echo "Missing SIGNING_KEY_B64"; missing=1; fi
+          if [ -z "$SIGNING_STORE_PASS_VALUE" ]; then echo "Missing SIGNING_STORE_PASS"; missing=1; fi
+          if [ -z "$SIGNING_KEY_ALIAS_VALUE" ]; then echo "Missing SIGNING_KEY_ALIAS"; missing=1; fi
+          if [ -z "$SIGNING_KEY_PASS_VALUE" ]; then echo "Missing SIGNING_KEY_PASS"; missing=1; fi
+          if [ "$missing" -ne 0 ]; then exit 1; fi
+
+      - name: Decode signing key
+        env:
+          SIGNING_KEY_B64_VALUE: ${{ secrets.SIGNING_KEY_B64 }}
+        run: |
+          echo "$SIGNING_KEY_B64_VALUE" | base64 --decode > "$RUNNER_TEMP/release-key.jks"
+          test -s "$RUNNER_TEMP/release-key.jks"
 
       - name: Build release APK
         env:
@@ -50,11 +67,17 @@ jobs:
           CI_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASS }}
           CI_VERSION_CODE: ${{ github.run_number }}
           CI_VERSION_NAME: 1.0.${{ github.run_number }}
-        run: bash ./gradlew :app:assembleRelease
+        run: bash ./gradlew :app:assembleRelease --stacktrace
 
       - name: Copy APK
         run: |
           mkdir -p apk-output
+          echo "Release output files:"
+          find app/build/outputs/apk/release -maxdepth 1 -type f -print || true
+          if [ ! -f app/build/outputs/apk/release/app-release.apk ]; then
+            echo "app-release.apk was not produced. The release build is probably unsigned or signing failed."
+            exit 1
+          fi
           cp app/build/outputs/apk/release/app-release.apk apk-output/crypto-trade-coach-release.apk
 
       - name: Upload APK artifact
