@@ -15,8 +15,10 @@ class UpbitMarketDataSource : MarketDataSource {
         private set
 
     private val candleCache = mutableMapOf<String, CachedCandles>()
+    private var lastRequestAt: Long = 0L
 
     override suspend fun fetchTickers(): List<Ticker> {
+        lastError = null
         val markets = fetchKrwMarkets()
         if (markets.isEmpty()) return emptyList()
         return fetchTickerFor(markets)
@@ -24,8 +26,8 @@ class UpbitMarketDataSource : MarketDataSource {
 
     fun selectCandleTargets(tickers: List<Ticker>, limit: Int = MAX_CANDLE_TARGETS): List<Ticker> {
         val boundedLimit = limit.coerceIn(10, MAX_CANDLE_TARGETS)
-        val byTradeValue = tickers.sortedByDescending { it.accTradePrice24h }.take(60)
-        val byChangeRate = tickers.sortedByDescending { it.signedChangeRate }.take(20)
+        val byTradeValue = tickers.sortedByDescending { it.accTradePrice24h }.take(40)
+        val byChangeRate = tickers.sortedByDescending { it.signedChangeRate }.take(15)
         val tradeRanks = byTradeValue.mapIndexed { index, ticker -> ticker.market to index + 1 }.toMap()
         val changeRanks = byChangeRate.mapIndexed { index, ticker -> ticker.market to index + 1 }.toMap()
         return (byTradeValue + byChangeRate)
@@ -95,22 +97,32 @@ class UpbitMarketDataSource : MarketDataSource {
     }
 
     private fun fetchKrwMarkets(): List<String> {
+        throttleRequest()
         val url = URL("https://api.upbit.com/v1/market/all?isDetails=false")
         val connection = (url.openConnection() as HttpURLConnection).apply {
             requestMethod = "GET"
             connectTimeout = 10_000
             readTimeout = 10_000
         }
-        connection.inputStream.bufferedReader().use { reader ->
-            val body = reader.readText()
-            val array = JSONArray(body)
-            val out = mutableListOf<String>()
-            for (i in 0 until array.length()) {
-                val item = array.getJSONObject(i)
-                val market = item.optString("market")
-                if (market.startsWith("KRW-")) out += market
+        try {
+            val statusCode = connection.responseCode
+            if (statusCode !in 200..299) {
+                lastError = "Upbit market list failed: HTTP $statusCode"
+                return emptyList()
             }
-            return out
+            connection.inputStream.bufferedReader().use { reader ->
+                val body = reader.readText()
+                val array = JSONArray(body)
+                val out = mutableListOf<String>()
+                for (i in 0 until array.length()) {
+                    val item = array.getJSONObject(i)
+                    val market = item.optString("market")
+                    if (market.startsWith("KRW-")) out += market
+                }
+                return out
+            }
+        } finally {
+            connection.disconnect()
         }
     }
 
@@ -118,25 +130,35 @@ class UpbitMarketDataSource : MarketDataSource {
         val chunks = markets.chunked(100)
         val tickers = mutableListOf<Ticker>()
         for (chunk in chunks) {
+            throttleRequest()
             val url = URL("https://api.upbit.com/v1/ticker?markets=${chunk.joinToString(",")}")
             val connection = (url.openConnection() as HttpURLConnection).apply {
                 requestMethod = "GET"
                 connectTimeout = 10_000
                 readTimeout = 10_000
             }
-            connection.inputStream.bufferedReader().use { reader ->
-                val body = reader.readText()
-                val array = JSONArray(body)
-                for (i in 0 until array.length()) {
-                    val item = array.getJSONObject(i)
-                    tickers += Ticker(
-                        market = item.optString("market"),
-                        tradePrice = item.optDouble("trade_price", 0.0),
-                        signedChangeRate = item.optDouble("signed_change_rate", 0.0),
-                        accTradePrice24h = item.optDouble("acc_trade_price_24h", 0.0),
-                        accTradeVolume24h = item.optDouble("acc_trade_volume_24h", 0.0),
-                    )
+            try {
+                val statusCode = connection.responseCode
+                if (statusCode !in 200..299) {
+                    lastError = "Upbit ticker failed: HTTP $statusCode"
+                    continue
                 }
+                connection.inputStream.bufferedReader().use { reader ->
+                    val body = reader.readText()
+                    val array = JSONArray(body)
+                    for (i in 0 until array.length()) {
+                        val item = array.getJSONObject(i)
+                        tickers += Ticker(
+                            market = item.optString("market"),
+                            tradePrice = item.optDouble("trade_price", 0.0),
+                            signedChangeRate = item.optDouble("signed_change_rate", 0.0),
+                            accTradePrice24h = item.optDouble("acc_trade_price_24h", 0.0),
+                            accTradeVolume24h = item.optDouble("acc_trade_volume_24h", 0.0),
+                        )
+                    }
+                }
+            } finally {
+                connection.disconnect()
             }
         }
         return tickers
@@ -149,6 +171,7 @@ class UpbitMarketDataSource : MarketDataSource {
         candleCache[cacheKey]?.let { cached ->
             if (now - cached.fetchedAt < CANDLE_CACHE_MS) return cached.candles
         }
+        throttleRequest()
         val url = URL("https://api.upbit.com/v1/candles/minutes/$unit?market=$market&count=$count")
         val connection = (url.openConnection() as HttpURLConnection).apply {
             requestMethod = "GET"
@@ -200,6 +223,15 @@ class UpbitMarketDataSource : MarketDataSource {
         }
     }
 
+    private fun throttleRequest() {
+        val now = System.currentTimeMillis()
+        val waitMs = MIN_REQUEST_INTERVAL_MS - (now - lastRequestAt)
+        if (waitMs > 0) {
+            Thread.sleep(waitMs)
+        }
+        lastRequestAt = System.currentTimeMillis()
+    }
+
     private fun percentChange(from: Double, to: Double): Double {
         if (from <= 0.0) return 0.0
         return ((to - from) / from) * 100.0
@@ -211,13 +243,14 @@ class UpbitMarketDataSource : MarketDataSource {
     )
 
     private fun countForUnit(unit: Int): Int = when (unit) {
-        240 -> 140
-        else -> 60
+        240 -> 120
+        else -> 50
     }
 
     companion object {
-        private const val CANDLE_CACHE_MS = 60_000L
-        private const val MAX_CANDLE_TARGETS = 40
+        private const val CANDLE_CACHE_MS = 90_000L
+        private const val MAX_CANDLE_TARGETS = 20
+        private const val MIN_REQUEST_INTERVAL_MS = 130L
         private val SUPPORTED_UNITS = setOf(5, 15, 240)
     }
 }
