@@ -20,7 +20,9 @@ permissions:
 jobs:
   emulator-smoke:
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 20
+    env:
+      ANDROID_EMULATOR_WAIT_TIME_BEFORE_KILL: 300
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -36,6 +38,8 @@ jobs:
 
       - name: Run emulator smoke test
         uses: reactivecircus/android-emulator-runner@v2
+        env:
+          ANDROID_EMULATOR_WAIT_TIME_BEFORE_KILL: 300
         with:
           api-level: 35
           target: google_apis
