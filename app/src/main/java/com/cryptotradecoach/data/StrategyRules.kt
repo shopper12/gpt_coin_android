@@ -33,31 +33,35 @@ data class StrategyRules(
 
     companion object {
         val DEFAULT = StrategyRules(
-            version = "v2-strategy-rules",
-            minimumScore = 60.0,
-            maxResults = 5,
-            validForMinutes = 30,
-            entryBandPct = 0.2,
+            version = "v3-conservative-filters",
+            minimumScore = 72.0,
+            maxResults = 3,
+            validForMinutes = 20,
+            entryBandPct = 0.1,
             compressionBreakout = CompressionBreakoutRules(
-                rangeCompressionRatio = 0.85,
-                maxDistanceTo15mHighPct = 3.0,
-                minVolumeAcceleration = 1.2,
-                minFiveMinuteVolumeRatio = 1.05,
+                enabled = true,
+                rangeCompressionRatio = 0.75,
+                maxDistanceTo15mHighPct = 1.5,
+                minVolumeAcceleration = 1.5,
+                minFiveMinuteVolumeRatio = 1.3,
             ),
             sweepReclaim = SweepReclaimRules(
+                enabled = true,
                 fiveMinuteLookback = 12,
                 fifteenMinuteLookback = 8,
                 requireVolumeAboveAverage = true,
             ),
             trendPullback = TrendPullbackRules(
+                enabled = false,
                 higherTimeframeMaPeriod = 120,
                 fifteenMinuteMaPeriod = 20,
-                min15mMaMultiplier = 0.995,
-                minPriorLowMultiplier = 0.985,
+                min15mMaMultiplier = 0.997,
+                minPriorLowMultiplier = 0.99,
                 pullbackLookback = 10,
                 reclaimLookback = 6,
             ),
             bearDecouplingBounce = BearDecouplingBounceRules(
+                enabled = false,
                 btcWeakBelowPct = -1.0,
                 altStrongAbovePct = 2.0,
                 maxTradeValueRank = 30,
@@ -69,18 +73,22 @@ data class StrategyRules(
                 wickPenalty = 12.0,
             ),
             scoring = ScoringRules(
-                overheat24hBasePct = 16.0,
-                overheat24hWeight = 1.2,
-                overheat30mBasePct = 4.0,
-                overheat30mWeight = 2.0,
-                overheat5mBasePct = 2.5,
-                overheat5mWeight = 4.0,
-                overheatMax = 25.0,
+                overheat24hBasePct = 10.0,
+                overheat24hWeight = 1.8,
+                overheat30mBasePct = 2.8,
+                overheat30mWeight = 3.0,
+                overheat5mBasePct = 1.2,
+                overheat5mWeight = 8.0,
+                overheatMax = 45.0,
+                hardBlockBtc24hBelowPct = -4.0,
+                hardBlock30mPumpPct = 5.0,
+                hardBlock5mPumpPct = 2.2,
+                hardBlockRedUpperWickPct = 55.0,
             ),
             risk = RiskRules(
                 defaultStopMultiplier = 0.990,
-                minimumRiskPct = 0.1,
-                minimumExpectedReturnPct = 0.1,
+                minimumRiskPct = 0.15,
+                minimumExpectedReturnPct = 0.2,
             ),
         )
 
@@ -104,12 +112,14 @@ data class StrategyRules(
 }
 
 data class CompressionBreakoutRules(
+    val enabled: Boolean,
     val rangeCompressionRatio: Double,
     val maxDistanceTo15mHighPct: Double,
     val minVolumeAcceleration: Double,
     val minFiveMinuteVolumeRatio: Double,
 ) {
     fun toJson(): JSONObject = JSONObject()
+        .put("enabled", enabled)
         .put("rangeCompressionRatio", rangeCompressionRatio)
         .put("maxDistanceTo15mHighPct", maxDistanceTo15mHighPct)
         .put("minVolumeAcceleration", minVolumeAcceleration)
@@ -119,6 +129,7 @@ data class CompressionBreakoutRules(
         fun fromJson(json: JSONObject?): CompressionBreakoutRules {
             val d = StrategyRules.DEFAULT.compressionBreakout
             return CompressionBreakoutRules(
+                enabled = json?.optBoolean("enabled", d.enabled) ?: d.enabled,
                 rangeCompressionRatio = json?.optDouble("rangeCompressionRatio", d.rangeCompressionRatio) ?: d.rangeCompressionRatio,
                 maxDistanceTo15mHighPct = json?.optDouble("maxDistanceTo15mHighPct", d.maxDistanceTo15mHighPct) ?: d.maxDistanceTo15mHighPct,
                 minVolumeAcceleration = json?.optDouble("minVolumeAcceleration", d.minVolumeAcceleration) ?: d.minVolumeAcceleration,
@@ -129,11 +140,13 @@ data class CompressionBreakoutRules(
 }
 
 data class SweepReclaimRules(
+    val enabled: Boolean,
     val fiveMinuteLookback: Int,
     val fifteenMinuteLookback: Int,
     val requireVolumeAboveAverage: Boolean,
 ) {
     fun toJson(): JSONObject = JSONObject()
+        .put("enabled", enabled)
         .put("fiveMinuteLookback", fiveMinuteLookback)
         .put("fifteenMinuteLookback", fifteenMinuteLookback)
         .put("requireVolumeAboveAverage", requireVolumeAboveAverage)
@@ -142,6 +155,7 @@ data class SweepReclaimRules(
         fun fromJson(json: JSONObject?): SweepReclaimRules {
             val d = StrategyRules.DEFAULT.sweepReclaim
             return SweepReclaimRules(
+                enabled = json?.optBoolean("enabled", d.enabled) ?: d.enabled,
                 fiveMinuteLookback = json?.optInt("fiveMinuteLookback", d.fiveMinuteLookback) ?: d.fiveMinuteLookback,
                 fifteenMinuteLookback = json?.optInt("fifteenMinuteLookback", d.fifteenMinuteLookback) ?: d.fifteenMinuteLookback,
                 requireVolumeAboveAverage = json?.optBoolean("requireVolumeAboveAverage", d.requireVolumeAboveAverage) ?: d.requireVolumeAboveAverage,
@@ -151,6 +165,7 @@ data class SweepReclaimRules(
 }
 
 data class TrendPullbackRules(
+    val enabled: Boolean,
     val higherTimeframeMaPeriod: Int,
     val fifteenMinuteMaPeriod: Int,
     val min15mMaMultiplier: Double,
@@ -159,6 +174,7 @@ data class TrendPullbackRules(
     val reclaimLookback: Int,
 ) {
     fun toJson(): JSONObject = JSONObject()
+        .put("enabled", enabled)
         .put("higherTimeframeMaPeriod", higherTimeframeMaPeriod)
         .put("fifteenMinuteMaPeriod", fifteenMinuteMaPeriod)
         .put("min15mMaMultiplier", min15mMaMultiplier)
@@ -170,6 +186,7 @@ data class TrendPullbackRules(
         fun fromJson(json: JSONObject?): TrendPullbackRules {
             val d = StrategyRules.DEFAULT.trendPullback
             return TrendPullbackRules(
+                enabled = json?.optBoolean("enabled", d.enabled) ?: d.enabled,
                 higherTimeframeMaPeriod = json?.optInt("higherTimeframeMaPeriod", d.higherTimeframeMaPeriod) ?: d.higherTimeframeMaPeriod,
                 fifteenMinuteMaPeriod = json?.optInt("fifteenMinuteMaPeriod", d.fifteenMinuteMaPeriod) ?: d.fifteenMinuteMaPeriod,
                 min15mMaMultiplier = json?.optDouble("min15mMaMultiplier", d.min15mMaMultiplier) ?: d.min15mMaMultiplier,
@@ -182,6 +199,7 @@ data class TrendPullbackRules(
 }
 
 data class BearDecouplingBounceRules(
+    val enabled: Boolean,
     val btcWeakBelowPct: Double,
     val altStrongAbovePct: Double,
     val maxTradeValueRank: Int,
@@ -193,6 +211,7 @@ data class BearDecouplingBounceRules(
     val wickPenalty: Double,
 ) {
     fun toJson(): JSONObject = JSONObject()
+        .put("enabled", enabled)
         .put("btcWeakBelowPct", btcWeakBelowPct)
         .put("altStrongAbovePct", altStrongAbovePct)
         .put("maxTradeValueRank", maxTradeValueRank)
@@ -207,6 +226,7 @@ data class BearDecouplingBounceRules(
         fun fromJson(json: JSONObject?): BearDecouplingBounceRules {
             val d = StrategyRules.DEFAULT.bearDecouplingBounce
             return BearDecouplingBounceRules(
+                enabled = json?.optBoolean("enabled", d.enabled) ?: d.enabled,
                 btcWeakBelowPct = json?.optDouble("btcWeakBelowPct", d.btcWeakBelowPct) ?: d.btcWeakBelowPct,
                 altStrongAbovePct = json?.optDouble("altStrongAbovePct", d.altStrongAbovePct) ?: d.altStrongAbovePct,
                 maxTradeValueRank = json?.optInt("maxTradeValueRank", d.maxTradeValueRank) ?: d.maxTradeValueRank,
@@ -229,6 +249,10 @@ data class ScoringRules(
     val overheat5mBasePct: Double,
     val overheat5mWeight: Double,
     val overheatMax: Double,
+    val hardBlockBtc24hBelowPct: Double,
+    val hardBlock30mPumpPct: Double,
+    val hardBlock5mPumpPct: Double,
+    val hardBlockRedUpperWickPct: Double,
 ) {
     fun toJson(): JSONObject = JSONObject()
         .put("overheat24hBasePct", overheat24hBasePct)
@@ -238,6 +262,10 @@ data class ScoringRules(
         .put("overheat5mBasePct", overheat5mBasePct)
         .put("overheat5mWeight", overheat5mWeight)
         .put("overheatMax", overheatMax)
+        .put("hardBlockBtc24hBelowPct", hardBlockBtc24hBelowPct)
+        .put("hardBlock30mPumpPct", hardBlock30mPumpPct)
+        .put("hardBlock5mPumpPct", hardBlock5mPumpPct)
+        .put("hardBlockRedUpperWickPct", hardBlockRedUpperWickPct)
 
     companion object {
         fun fromJson(json: JSONObject?): ScoringRules {
@@ -250,6 +278,10 @@ data class ScoringRules(
                 overheat5mBasePct = json?.optDouble("overheat5mBasePct", d.overheat5mBasePct) ?: d.overheat5mBasePct,
                 overheat5mWeight = json?.optDouble("overheat5mWeight", d.overheat5mWeight) ?: d.overheat5mWeight,
                 overheatMax = json?.optDouble("overheatMax", d.overheatMax) ?: d.overheatMax,
+                hardBlockBtc24hBelowPct = json?.optDouble("hardBlockBtc24hBelowPct", d.hardBlockBtc24hBelowPct) ?: d.hardBlockBtc24hBelowPct,
+                hardBlock30mPumpPct = json?.optDouble("hardBlock30mPumpPct", d.hardBlock30mPumpPct) ?: d.hardBlock30mPumpPct,
+                hardBlock5mPumpPct = json?.optDouble("hardBlock5mPumpPct", d.hardBlock5mPumpPct) ?: d.hardBlock5mPumpPct,
+                hardBlockRedUpperWickPct = json?.optDouble("hardBlockRedUpperWickPct", d.hardBlockRedUpperWickPct) ?: d.hardBlockRedUpperWickPct,
             )
         }
     }
