@@ -15,6 +15,24 @@ say() {
   echo "$1" | tee -a "$SUMMARY_FILE"
 }
 
+wait_for_boot() {
+  say "Waiting for emulator boot completion"
+  adb wait-for-device
+  for i in {1..60}; do
+    boot_completed="$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r' || true)"
+    if [ "$boot_completed" = "1" ]; then
+      say "Emulator booted successfully"
+      adb shell getprop sys.boot_completed | tee -a "$SUMMARY_FILE" || true
+      return 0
+    fi
+    say "Attempt $i: Emulator still booting..."
+    sleep 5
+  done
+  say "FAIL: Emulator did not report sys.boot_completed=1 within 300 seconds"
+  adb shell getprop sys.boot_completed | tee -a "$SUMMARY_FILE" || true
+  return 1
+}
+
 say "Smoke test started"
 say "APK: $APK_PATH"
 
@@ -23,7 +41,7 @@ if [ ! -f "$APK_PATH" ]; then
   exit 1
 fi
 
-adb wait-for-device
+wait_for_boot
 adb shell settings put global window_animation_scale 0 || true
 adb shell settings put global transition_animation_scale 0 || true
 adb shell settings put global animator_duration_scale 0 || true
