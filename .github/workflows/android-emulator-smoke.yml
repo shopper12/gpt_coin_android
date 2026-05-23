@@ -20,7 +20,7 @@ permissions:
 jobs:
   emulator-smoke:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     env:
       ANDROID_EMULATOR_WAIT_TIME_BEFORE_KILL: 300
     steps:
@@ -41,11 +41,12 @@ jobs:
         env:
           ANDROID_EMULATOR_WAIT_TIME_BEFORE_KILL: 300
         with:
-          api-level: 35
+          api-level: 31
           target: google_apis
           arch: x86_64
-          profile: pixel_6
+          emulator-boot-timeout: 600
           disable-animations: true
+          disk-size: 6000M
           script: bash tools/android-emulator-smoke.sh app/build/outputs/apk/debug/app-debug.apk
 
       - name: Upload smoke output
