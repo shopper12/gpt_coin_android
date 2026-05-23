@@ -1,14 +1,14 @@
 {
-  "version": "v2-strategy-rules",
-  "minimumScore": 60.0,
-  "maxResults": 5,
-  "validForMinutes": 30,
-  "entryBandPct": 0.2,
+  "version": "v3-conservative-filters",
+  "minimumScore": 72.0,
+  "maxResults": 3,
+  "validForMinutes": 20,
+  "entryBandPct": 0.1,
   "compressionBreakout": {
-    "rangeCompressionRatio": 0.85,
-    "maxDistanceTo15mHighPct": 3.0,
-    "minVolumeAcceleration": 1.2,
-    "minFiveMinuteVolumeRatio": 1.05
+    "rangeCompressionRatio": 0.75,
+    "maxDistanceTo15mHighPct": 1.5,
+    "minVolumeAcceleration": 1.5,
+    "minFiveMinuteVolumeRatio": 1.3
   },
   "sweepReclaim": {
     "fiveMinuteLookback": 12,
@@ -18,34 +18,34 @@
   "trendPullback": {
     "higherTimeframeMaPeriod": 120,
     "fifteenMinuteMaPeriod": 20,
-    "min15mMaMultiplier": 0.995,
-    "minPriorLowMultiplier": 0.985,
+    "min15mMaMultiplier": 1.02,
+    "minPriorLowMultiplier": 1.02,
     "pullbackLookback": 10,
     "reclaimLookback": 6
   },
   "bearDecouplingBounce": {
-    "btcWeakBelowPct": -1.0,
-    "altStrongAbovePct": 2.0,
-    "maxTradeValueRank": 30,
-    "minFourHourVolumeMultiple": 2.5,
-    "maxPreviousFourHourVolumeMultiple": 3.0,
-    "maxPriceOver240mMa20Pct": 5.0,
-    "maxBearishUpperWickPct": 55.0,
-    "decouplingScoreCap": 24.0,
-    "wickPenalty": 12.0
+    "btcWeakBelowPct": -10.0,
+    "altStrongAbovePct": 15.0,
+    "maxTradeValueRank": 10,
+    "minFourHourVolumeMultiple": 8.0,
+    "maxPreviousFourHourVolumeMultiple": 1.0,
+    "maxPriceOver240mMa20Pct": -5.0,
+    "maxBearishUpperWickPct": 35.0,
+    "decouplingScoreCap": 12.0,
+    "wickPenalty": 24.0
   },
   "scoring": {
-    "overheat24hBasePct": 16.0,
-    "overheat24hWeight": 1.2,
-    "overheat30mBasePct": 4.0,
-    "overheat30mWeight": 2.0,
-    "overheat5mBasePct": 2.5,
-    "overheat5mWeight": 4.0,
-    "overheatMax": 25.0
+    "overheat24hBasePct": 10.0,
+    "overheat24hWeight": 1.8,
+    "overheat30mBasePct": 2.8,
+    "overheat30mWeight": 3.0,
+    "overheat5mBasePct": 1.2,
+    "overheat5mWeight": 8.0,
+    "overheatMax": 45.0
   },
   "risk": {
     "defaultStopMultiplier": 0.99,
-    "minimumRiskPct": 0.1,
-    "minimumExpectedReturnPct": 0.1
+    "minimumRiskPct": 0.15,
+    "minimumExpectedReturnPct": 0.2
   }
 }
