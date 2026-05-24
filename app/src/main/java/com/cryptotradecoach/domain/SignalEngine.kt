@@ -149,16 +149,49 @@ class SignalEngine {
                 fourHour = fourHour,
                 rules = rules,
             ),
+            prePumpRotation(
+                price = price,
+                changeRate24h = changeRate24h,
+                changeRate30m = changeRate30m,
+                changeRate5m = changeRate5m,
+                volumeAcceleration = volumeAcceleration,
+                rankByChangeRate = rankByChangeRate,
+                rankByTradeValue = rankByTradeValue,
+                five = five,
+                fifteen = fifteen,
+                rules = rules,
+            ),
+            btcShortRegime(
+                price = price,
+                market = ticker.market,
+                changeRate24h = changeRate24h,
+                changeRate30m = changeRate30m,
+                changeRate5m = changeRate5m,
+                volumeAcceleration = volumeAcceleration,
+                five = five,
+                fifteen = fifteen,
+                fourHour = fourHour,
+                rules = rules,
+            ),
         )
-        val best = setups.maxByOrNull { it.rawScore - overheatPenalty - liquidityPenalty } ?: return null
-        val score = (best.rawScore - overheatPenalty - liquidityPenalty).coerceIn(0.0, 100.0)
+        val best = setups.maxByOrNull { it.rawScore - it.penaltySensitiveMultiplier * (overheatPenalty + liquidityPenalty) } ?: return null
+        val score = (best.rawScore - best.penaltySensitiveMultiplier * (overheatPenalty + liquidityPenalty)).coerceIn(0.0, 100.0)
         val status = if (best.active) StrategyStatus.ACTIVE else StrategyStatus.WATCH_ONLY
-        val stopLoss = min(best.stopLoss.takeIf { it > 0.0 } ?: price * rules.risk.defaultStopMultiplier, price * 0.999)
+        val isShort = best.strategyType == StrategyType.BTC_SHORT_REGIME
+        val stopLoss = if (isShort) {
+            max(best.stopLoss.takeIf { it > 0.0 } ?: price * 1.012, price * 1.001)
+        } else {
+            min(best.stopLoss.takeIf { it > 0.0 } ?: price * rules.risk.defaultStopMultiplier, price * 0.999)
+        }
         val riskPct = abs(percentChange(price, stopLoss)).coerceAtLeast(rules.risk.minimumRiskPct)
-        val target1 = price * (1.0 + riskPct * 1.5 / 100.0)
-        val target2 = price * (1.0 + riskPct * 2.4 / 100.0)
-        val expectedReturnPct = percentChange(price, target2).coerceAtLeast(rules.risk.minimumExpectedReturnPct)
-        val trailingStop = price * (1.0 - max(riskPct * 0.55, rules.risk.minimumRiskPct) / 100.0)
+        val target1 = if (isShort) price * (1.0 - riskPct * 1.5 / 100.0) else price * (1.0 + riskPct * 1.5 / 100.0)
+        val target2 = if (isShort) price * (1.0 - riskPct * 2.4 / 100.0) else price * (1.0 + riskPct * 2.4 / 100.0)
+        val expectedReturnPct = abs(percentChange(price, target2)).coerceAtLeast(rules.risk.minimumExpectedReturnPct)
+        val trailingStop = if (isShort) {
+            price * (1.0 + max(riskPct * 0.55, rules.risk.minimumRiskPct) / 100.0)
+        } else {
+            price * (1.0 - max(riskPct * 0.55, rules.risk.minimumRiskPct) / 100.0)
+        }
         val componentScores = listOf(
             "trendScore=${best.trendScore.one()}",
             "compressionScore=${best.compressionScore.one()}",
@@ -175,6 +208,8 @@ class SignalEngine {
             best.strategyType == StrategyType.SWEEP_RECLAIM -> "NO_SWEEP_RECLAIM"
             best.strategyType == StrategyType.TREND_PULLBACK -> "NO_TREND_PULLBACK"
             best.strategyType == StrategyType.BEAR_DECOUPLING_BOUNCE -> "NO_BEAR_DECOUPLING_BOUNCE"
+            best.strategyType == StrategyType.PRE_PUMP_ROTATION -> "NO_PRE_PUMP_ROTATION"
+            best.strategyType == StrategyType.BTC_SHORT_REGIME -> "NO_BTC_SHORT_REGIME"
             else -> "WATCH_ONLY"
         }
         val reason = buildReason(best, score, overheatPenalty, liquidityPenalty)
@@ -262,7 +297,7 @@ class SignalEngine {
         val rawScore = compressionScore + breakoutProximityScore + relativeVolumeScore + riskRewardScore
         return StrategySetup(
             strategyType = StrategyType.COMPRESSION_BREAKOUT,
-            active = nearHigh && compressed && volumeRising,
+            active = r.enabled && nearHigh && compressed && volumeRising,
             stopLoss = recentLow * 0.997,
             rawScore = rawScore,
             trendScore = if (changeRate24h > 0.0) 4.0 else 0.0,
@@ -277,6 +312,7 @@ class SignalEngine {
                 "5mVolumeRising=$volumeRising",
             ),
             failed = listOfNotNull(
+                if (!r.enabled) "STRATEGY_DISABLED" else null,
                 if (!nearHigh) "NOT_WITHIN_${r.maxDistanceTo15mHighPct.one()}PCT_OF_15M_HIGH" else null,
                 if (!compressed) "RANGE_NOT_COMPRESSED" else null,
                 if (!volumeRising) "NO_5M_VOLUME_RISE" else null,
@@ -295,7 +331,7 @@ class SignalEngine {
         val fiveSetup = reclaimOn(five, lookback = r.fiveMinuteLookback, requireVolumeAboveAverage = r.requireVolumeAboveAverage)
         val fifteenSetup = reclaimOn(fifteen, lookback = r.fifteenMinuteLookback, requireVolumeAboveAverage = r.requireVolumeAboveAverage)
         val reclaim = listOfNotNull(fiveSetup, fifteenSetup).maxByOrNull { it.reclaimScore }
-        val active = reclaim != null
+        val active = r.enabled && reclaim != null
         val reclaimScore = reclaim?.reclaimScore ?: 0.0
         val relativeVolumeScore = ((volumeAcceleration - 1.0) * 16.0).coerceIn(0.0, 18.0)
         val riskRewardScore = riskRewardScore(price, reclaim?.sweepLow ?: price * 0.99)
@@ -315,7 +351,10 @@ class SignalEngine {
                 reclaim?.let { "reclaimCloseAbovePriorLow=${it.priorLow.one()}" },
                 reclaim?.let { "volumeAboveAverage=${it.volumeAboveAverage}" },
             ),
-            failed = if (active) emptyList() else listOf("NO_RECENT_LOW_SWEEP_AND_RECLAIM"),
+            failed = listOfNotNull(
+                if (!r.enabled) "STRATEGY_DISABLED" else null,
+                if (active) null else "NO_RECENT_LOW_SWEEP_AND_RECLAIM",
+            ),
         )
     }
 
@@ -338,7 +377,7 @@ class SignalEngine {
         val priorShortHigh = recentFive.dropLast(1).takeLast(r.reclaimLookback).maxOfOrNull { it.high } ?: price
         val pullbackLow = recentFive.minOfOrNull { it.low } ?: price
         val pullbackReclaimed = five.last().close >= priorShortHigh && pullbackLow < priorShortHigh
-        val active = aboveHigherTimeframe && fifteenTrendOk && pullbackReclaimed
+        val active = r.enabled && aboveHigherTimeframe && fifteenTrendOk && pullbackReclaimed
         val trendScore = when {
             aboveHigherTimeframe && fifteenTrendOk -> 26.0
             aboveHigherTimeframe -> 14.0
@@ -364,6 +403,7 @@ class SignalEngine {
                 "5mPullbackHighReclaimed=$pullbackReclaimed",
             ),
             failed = listOfNotNull(
+                if (!r.enabled) "STRATEGY_DISABLED" else null,
                 if (!aboveHigherTimeframe) "PRICE_BELOW_240M_MA_EMA" else null,
                 if (!fifteenTrendOk) "15M_TREND_BROKEN" else null,
                 if (!pullbackReclaimed) "NO_5M_PULLBACK_RECLAIM" else null,
@@ -382,20 +422,7 @@ class SignalEngine {
     ): StrategySetup {
         val r = rules.bearDecouplingBounce
         if (fourHour.size < 22 || five.size < 3) {
-            return StrategySetup(
-                strategyType = StrategyType.BEAR_DECOUPLING_BOUNCE,
-                active = false,
-                stopLoss = price * rules.risk.defaultStopMultiplier,
-                rawScore = 0.0,
-                trendScore = 0.0,
-                compressionScore = 0.0,
-                relativeVolumeScore = 0.0,
-                breakoutProximityScore = 0.0,
-                reclaimScore = 0.0,
-                riskRewardScore = 0.0,
-                passed = emptyList(),
-                failed = listOf("INSUFFICIENT_240M_OR_5M_CANDLES"),
-            )
+            return blankSetup(StrategyType.BEAR_DECOUPLING_BOUNCE, price, rules, "INSUFFICIENT_240M_OR_5M_CANDLES")
         }
         val latest4h = fourHour.last()
         val previous4h = fourHour.dropLast(1).last()
@@ -437,7 +464,7 @@ class SignalEngine {
         val recentLow = min(latest4h.low, five.takeLast(10).minOfOrNull { it.low } ?: latest4h.low)
         val riskRewardScore = riskRewardScore(price, recentLow)
         val rawScore = decouplingScore + rankScore + fourHourVolumeScore + notAfterPumpScore + notAtTopScore + riskRewardScore - wickPenalty
-        val active = decoupled && rankOk && strong4hVolume && notAfterPump && notAtTop && !upperWickTooHeavy
+        val active = r.enabled && decoupled && rankOk && strong4hVolume && notAfterPump && notAtTop && !upperWickTooHeavy
         return StrategySetup(
             strategyType = StrategyType.BEAR_DECOUPLING_BOUNCE,
             active = active,
@@ -460,6 +487,7 @@ class SignalEngine {
                 "upperWickPct=${upperWickPct.one()}%",
             ),
             failed = listOfNotNull(
+                if (!r.enabled) "STRATEGY_DISABLED" else null,
                 if (!btcWeak) "BTC_NOT_WEAK" else null,
                 if (!altStrong) "ALT_NOT_UP_OVER_${r.altStrongAbovePct.one()}PCT" else null,
                 if (!rankOk) "TRADE_VALUE_RANK_OVER_${r.maxTradeValueRank}" else null,
@@ -468,6 +496,166 @@ class SignalEngine {
                 if (!notAtTop) "PRICE_OVER_240M_MA20_PLUS_${r.maxPriceOver240mMa20Pct.one()}PCT" else null,
                 if (upperWickTooHeavy) "5M_UPPER_WICK_TOO_HEAVY" else null,
             ),
+        )
+    }
+
+    private fun prePumpRotation(
+        price: Double,
+        changeRate24h: Double,
+        changeRate30m: Double,
+        changeRate5m: Double,
+        volumeAcceleration: Double,
+        rankByChangeRate: Int,
+        rankByTradeValue: Int,
+        five: List<Candle>,
+        fifteen: List<Candle>,
+        rules: StrategyRules,
+    ): StrategySetup {
+        val last5 = five.last()
+        val prev20High = five.dropLast(1).takeLast(20).maxOfOrNull { it.high } ?: price
+        val prev20Low = five.dropLast(1).takeLast(20).minOfOrNull { it.low } ?: price
+        val rangePct = percentChange(prev20Low, prev20High).coerceAtLeast(0.0)
+        val rangePos = if (prev20High > prev20Low) ((price - prev20Low) / (prev20High - prev20Low)).coerceIn(0.0, 1.0) else 0.5
+        val fiveVolumeRatio = ratio(last5.tradePrice, five.dropLast(1).takeLast(20).averageTradePrice())
+        val fifteenVolumeRatio = ratio(fifteen.last().tradePrice, fifteen.dropLast(1).takeLast(20).averageTradePrice())
+        val closesUp = five.takeLast(4).zipWithNext().count { it.second.close > it.first.close }
+        val notAlreadyPumped = changeRate24h in -4.0..8.5 && changeRate30m < 3.2 && changeRate5m < 1.8
+        val liquidityOk = rankByTradeValue <= 25
+        val rotationOk = rankByChangeRate <= 35 || changeRate30m > 0.7
+        val volumeIgnition = volumeAcceleration >= 1.45 || fiveVolumeRatio >= 1.6 || fifteenVolumeRatio >= 1.35
+        val structureOk = rangePct <= 4.2 && rangePos >= 0.55 && price >= prev20High * 0.992
+        val active = notAlreadyPumped && liquidityOk && rotationOk && volumeIgnition && structureOk && closesUp >= 2
+        val structureScore = when {
+            structureOk -> 22.0
+            rangePos >= 0.5 -> 12.0
+            else -> 0.0
+        }
+        val volumeScore = ((maxOf(volumeAcceleration, fiveVolumeRatio, fifteenVolumeRatio) - 1.0) * 18.0).coerceIn(0.0, 24.0)
+        val rotationScore = when {
+            rankByChangeRate <= 10 -> 20.0
+            rankByChangeRate <= 25 -> 15.0
+            changeRate30m > 0.7 -> 12.0
+            else -> 0.0
+        }
+        val liquidityScore = when {
+            rankByTradeValue <= 10 -> 16.0
+            rankByTradeValue <= 25 -> 10.0
+            else -> 0.0
+        }
+        val notPumpedScore = if (notAlreadyPumped) 14.0 else 0.0
+        val stop = min(prev20Low, five.takeLast(8).minOfOrNull { it.low } ?: prev20Low) * 0.997
+        return StrategySetup(
+            strategyType = StrategyType.PRE_PUMP_ROTATION,
+            active = active,
+            stopLoss = stop,
+            rawScore = structureScore + volumeScore + rotationScore + liquidityScore + notPumpedScore,
+            trendScore = rotationScore,
+            compressionScore = structureScore,
+            relativeVolumeScore = volumeScore,
+            breakoutProximityScore = liquidityScore,
+            reclaimScore = notPumpedScore,
+            riskRewardScore = riskRewardScore(price, stop),
+            passed = listOf(
+                "prePump=notYet10pct",
+                "24h=${changeRate24h.one()}%",
+                "30m=${changeRate30m.one()}%",
+                "5m=${changeRate5m.one()}%",
+                "rangePct=${rangePct.one()}%",
+                "rangePos=${(rangePos * 100.0).one()}%",
+                "volAccel=${volumeAcceleration.one()}x",
+                "5mVolRatio=${fiveVolumeRatio.one()}x",
+                "15mVolRatio=${fifteenVolumeRatio.one()}x",
+                "rankChange=$rankByChangeRate",
+                "rankValue=$rankByTradeValue",
+            ),
+            failed = listOfNotNull(
+                if (!notAlreadyPumped) "ALREADY_PUMPED_OR_TOO_WEAK" else null,
+                if (!liquidityOk) "TRADE_VALUE_RANK_OVER_25" else null,
+                if (!rotationOk) "NO_RELATIVE_ROTATION" else null,
+                if (!volumeIgnition) "NO_VOLUME_IGNITION" else null,
+                if (!structureOk) "NO_TIGHT_RANGE_BREAK_SETUP" else null,
+                if (closesUp < 2) "NO_5M_CLOSE_STAIR" else null,
+            ),
+            penaltySensitiveMultiplier = 0.35,
+        )
+    }
+
+    private fun btcShortRegime(
+        price: Double,
+        market: String,
+        changeRate24h: Double,
+        changeRate30m: Double,
+        changeRate5m: Double,
+        volumeAcceleration: Double,
+        five: List<Candle>,
+        fifteen: List<Candle>,
+        fourHour: List<Candle>,
+        rules: StrategyRules,
+    ): StrategySetup {
+        if (market != "KRW-BTC") return blankSetup(StrategyType.BTC_SHORT_REGIME, price, rules, "ONLY_KRW_BTC")
+        if (fourHour.size < 22) return blankSetup(StrategyType.BTC_SHORT_REGIME, price, rules, "INSUFFICIENT_240M_CANDLES")
+        val last5 = five.last()
+        val prev5 = five.dropLast(1).last()
+        val ma20_15m = fifteen.takeLast(20).map { it.close }.averageOrNull() ?: price
+        val ma20_240m = fourHour.takeLast(20).map { it.close }.averageOrNull() ?: price
+        val lowerHigh = five.takeLast(8).maxOf { it.high } < five.dropLast(8).takeLast(8).maxOfOrNull { it.high }.orZero()
+        val belowShortMa = price < ma20_15m * 0.998
+        val belowFourHourMa = price < ma20_240m * 0.995
+        val downsideMomentum = changeRate30m <= -0.55 || changeRate5m <= -0.22
+        val sellVolume = volumeAcceleration >= 1.35 && last5.close < last5.open
+        val failedBounce = prev5.close > prev5.open && last5.close < prev5.open
+        val active = belowShortMa && belowFourHourMa && downsideMomentum && (sellVolume || failedBounce || lowerHigh)
+        val trendScore = if (belowFourHourMa) 22.0 else 0.0
+        val momentumScore = (abs(min(changeRate30m, 0.0)) * 18.0 + abs(min(changeRate5m, 0.0)) * 28.0).coerceIn(0.0, 24.0)
+        val volumeScore = ((volumeAcceleration - 1.0) * 18.0).coerceIn(0.0, 18.0)
+        val failureScore = listOf(lowerHigh, failedBounce, belowShortMa).count { it } * 8.0
+        val stop = five.takeLast(12).maxOfOrNull { it.high }?.times(1.003) ?: price * 1.012
+        return StrategySetup(
+            strategyType = StrategyType.BTC_SHORT_REGIME,
+            active = active,
+            stopLoss = stop,
+            rawScore = 16.0 + trendScore + momentumScore + volumeScore + failureScore,
+            trendScore = trendScore,
+            compressionScore = failureScore,
+            relativeVolumeScore = volumeScore,
+            breakoutProximityScore = momentumScore,
+            reclaimScore = if (failedBounce) 10.0 else 0.0,
+            riskRewardScore = riskRewardScore(price, stop),
+            passed = listOf(
+                "direction=SHORT",
+                "24h=${changeRate24h.one()}%",
+                "30m=${changeRate30m.one()}%",
+                "5m=${changeRate5m.one()}%",
+                "below15mMA20=$belowShortMa",
+                "below240mMA20=$belowFourHourMa",
+                "lowerHigh=$lowerHigh",
+                "sellVolume=$sellVolume",
+                "failedBounce=$failedBounce",
+            ),
+            failed = listOfNotNull(
+                if (!belowShortMa) "BTC_NOT_BELOW_15M_MA20" else null,
+                if (!belowFourHourMa) "BTC_NOT_BELOW_240M_MA20" else null,
+                if (!downsideMomentum) "NO_DOWNSIDE_MOMENTUM" else null,
+                if (!(sellVolume || failedBounce || lowerHigh)) "NO_SHORT_TRIGGER" else null,
+            ),
+            penaltySensitiveMultiplier = 0.0,
+        )
+    }
+
+    private fun blankSetup(type: StrategyType, price: Double, rules: StrategyRules, reason: String): StrategySetup {
+        return StrategySetup(
+            strategyType = type,
+            active = false,
+            stopLoss = price * rules.risk.defaultStopMultiplier,
+            rawScore = 0.0,
+            trendScore = 0.0,
+            compressionScore = 0.0,
+            relativeVolumeScore = 0.0,
+            breakoutProximityScore = 0.0,
+            reclaimScore = 0.0,
+            riskRewardScore = 0.0,
+            passed = emptyList(),
+            failed = listOf(reason),
         )
     }
 
@@ -531,6 +719,8 @@ class SignalEngine {
         return ((to - from) / from) * 100.0
     }
 
+    private fun ratio(value: Double, base: Double): Double = if (base > 0.0) value / base else 1.0
+
     private fun List<Candle>.averageTradePrice(): Double = if (isEmpty()) 0.0 else sumOf { it.tradePrice } / size
 
     private fun List<Candle>.averageVolume(): Double = if (isEmpty()) 0.0 else sumOf { it.volume } / size
@@ -582,6 +772,7 @@ class SignalEngine {
         val riskRewardScore: Double,
         val passed: List<String>,
         val failed: List<String>,
+        val penaltySensitiveMultiplier: Double = 1.0,
     )
 
     private data class ReclaimSetup(
