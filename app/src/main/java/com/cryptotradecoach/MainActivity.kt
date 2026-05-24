@@ -97,6 +97,8 @@ class MainActivity : ComponentActivity() {
                     onRulesRefresh = viewModel::refreshCurrentRules,
                     onPerformanceRefresh = viewModel::refreshPerformance,
                     onReportUpload = viewModel::uploadLatestReport,
+                    onOpenInstallPermissionSettings = viewModel::openInstallPermissionSettings,
+                    onDownloadAndInstallLatestApk = viewModel::downloadAndInstallLatestApk,
                 )
             }
         }
@@ -104,32 +106,18 @@ class MainActivity : ComponentActivity() {
 
     private fun requestNotificationPermissionIfNeeded() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            val granted = ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.POST_NOTIFICATIONS,
-            ) == PackageManager.PERMISSION_GRANTED
-            if (!granted) {
-                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-            }
+            val granted = ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+            if (!granted) notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
     }
 
     private fun startScanner() {
-        val intent = Intent(this, CoinScannerService::class.java).apply {
-            action = CoinScannerService.ACTION_START
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(intent)
-        } else {
-            startService(intent)
-        }
+        val intent = Intent(this, CoinScannerService::class.java).apply { action = CoinScannerService.ACTION_START }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) startForegroundService(intent) else startService(intent)
     }
 
     private fun stopScanner() {
-        val intent = Intent(this, CoinScannerService::class.java).apply {
-            action = CoinScannerService.ACTION_STOP
-        }
-        startService(intent)
+        startService(Intent(this, CoinScannerService::class.java).apply { action = CoinScannerService.ACTION_STOP })
     }
 }
 
@@ -158,36 +146,23 @@ private fun MainScreen(
     onRulesRefresh: () -> Unit,
     onPerformanceRefresh: () -> Unit,
     onReportUpload: (GitHubSettings) -> Unit,
+    onOpenInstallPermissionSettings: () -> Unit,
+    onDownloadAndInstallLatestApk: (GitHubSettings) -> Unit,
 ) {
     val tabs = listOf("Current", "History", "Performance", "Rules", "Settings")
     var selectedTab by remember { mutableIntStateOf(0) }
-
     Column(modifier = Modifier.fillMaxSize()) {
-        Text(
-            text = "Crypto Trade Coach",
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 8.dp),
-        )
+        Text("Crypto Trade Coach", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold, modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 8.dp))
         TabRow(selectedTabIndex = selectedTab) {
             tabs.forEachIndexed { index, title ->
-                Tab(
-                    selected = selectedTab == index,
-                    onClick = { selectedTab = index },
-                    text = { Text(title) },
-                )
+                Tab(selected = selectedTab == index, onClick = { selectedTab = index }, text = { Text(title) })
             }
         }
         when (selectedTab) {
             0 -> CurrentStrategiesTab(activeStrategies, scanDiagnostics, lastScanAt, minimumScore)
             1 -> StrategyHistoryTab(historyBySymbol)
             2 -> PerformanceTab(performanceRows, onPerformanceRefresh)
-            3 -> RulesTab(
-                currentRulesText = currentRulesText,
-                settingsMessage = settingsMessage,
-                onRulesRefresh = onRulesRefresh,
-                onRulesDownload = { onRulesDownload(gitHubSettings) },
-            )
+            3 -> RulesTab(currentRulesText, settingsMessage, onRulesRefresh) { onRulesDownload(gitHubSettings) }
             4 -> SettingsTab(
                 isRunning = isRunning,
                 scanIntervalMs = scanIntervalMs,
@@ -204,43 +179,29 @@ private fun MainScreen(
                 onGitHubSettingsTest = onGitHubSettingsTest,
                 onRulesDownload = onRulesDownload,
                 onReportUpload = onReportUpload,
+                onOpenInstallPermissionSettings = onOpenInstallPermissionSettings,
+                onDownloadAndInstallLatestApk = onDownloadAndInstallLatestApk,
             )
         }
     }
 }
 
 @Composable
-private fun CurrentStrategiesTab(
-    activeStrategies: List<TradeStrategy>,
-    scanDiagnostics: ScanDiagnostics,
-    lastScanAt: Long?,
-    minimumScore: Double,
-) {
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
+private fun CurrentStrategiesTab(activeStrategies: List<TradeStrategy>, scanDiagnostics: ScanDiagnostics, lastScanAt: Long?, minimumScore: Double) {
+    LazyColumn(modifier = Modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         item { Text("Last scan: ${lastScanAt?.toTimeText() ?: "-"}") }
         item { CurrentStrategySummaryCard(activeStrategies, scanDiagnostics, minimumScore) }
         item { DiagnosticsCard(scanDiagnostics) }
         if (activeStrategies.isEmpty()) {
             item { EmptyCard("No ACTIVE strategy. 점수가 너무 타이트하면 Settings에서 Minimum score를 65 근처로 낮추고, Rejections에서 SCORE_TOO_LOW 비중을 확인하세요.") }
         } else {
-            items(activeStrategies) { strategy ->
-                StrategyCard(strategy)
-            }
+            items(activeStrategies) { StrategyCard(it) }
         }
     }
 }
 
 @Composable
-private fun CurrentStrategySummaryCard(
-    activeStrategies: List<TradeStrategy>,
-    scanDiagnostics: ScanDiagnostics,
-    minimumScore: Double,
-) {
+private fun CurrentStrategySummaryCard(activeStrategies: List<TradeStrategy>, scanDiagnostics: ScanDiagnostics, minimumScore: Double) {
     val btcShort = activeStrategies.firstOrNull { it.strategyType.name == "BTC_SHORT_REGIME" }
     val prePumpCount = activeStrategies.count { it.strategyType.name == "PRE_PUMP_ROTATION" }
     val scoreTooLow = scanDiagnostics.rejectionSummary["SCORE_TOO_LOW"] ?: 0
@@ -249,7 +210,6 @@ private fun CurrentStrategySummaryCard(
     } else {
         "스캔 후보가 적으면 Upbit 요청 실패, 캔들 부족, 거래대금 선별 제한을 먼저 봅니다."
     }
-
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Text("현재 전략 요약", fontWeight = FontWeight.Bold)
@@ -274,13 +234,9 @@ private fun DiagnosticsCard(scanDiagnostics: ScanDiagnostics) {
             Text("Candidates: ${scanDiagnostics.candidateCount}")
             Text("Rejected: ${scanDiagnostics.rejectedCount}")
             Text("Last error: ${scanDiagnostics.lastError ?: "-"}")
-            if (scanDiagnostics.rejectionSummary.isEmpty()) {
-                Text("Rejections: -")
-            } else {
+            if (scanDiagnostics.rejectionSummary.isEmpty()) Text("Rejections: -") else {
                 Text("Rejections:")
-                scanDiagnostics.rejectionSummary.forEach { (reason, count) ->
-                    Text("$reason: $count")
-                }
+                scanDiagnostics.rejectionSummary.forEach { (reason, count) -> Text("$reason: $count") }
             }
         }
     }
@@ -291,76 +247,35 @@ private fun StrategyHistoryTab(historyBySymbol: Map<String, List<StrategyHistory
     var menuExpanded by remember { mutableStateOf(false) }
     var selectedSymbol by remember(historyBySymbol) { mutableStateOf(historyBySymbol.keys.firstOrNull()) }
     val selectedHistory = selectedSymbol?.let { historyBySymbol[it].orEmpty() }.orEmpty()
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
-    ) {
+    Column(modifier = Modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
         LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            if (historyBySymbol.isEmpty()) {
-                item { EmptyCard("No strategy history.") }
-            } else {
+            if (historyBySymbol.isEmpty()) item { EmptyCard("No strategy history.") } else {
                 item {
                     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                         Text("종목별 시간순 전략 변화", fontWeight = FontWeight.Bold)
                         Text("각 줄은 시간 → 이벤트 → 현재 매매전략 순서입니다.", style = MaterialTheme.typography.bodySmall)
-                        OutlinedButton(onClick = { menuExpanded = true }) {
-                            Text(selectedSymbol ?: "Select symbol")
-                        }
-                        DropdownMenu(
-                            expanded = menuExpanded,
-                            onDismissRequest = { menuExpanded = false },
-                        ) {
+                        OutlinedButton(onClick = { menuExpanded = true }) { Text(selectedSymbol ?: "Select symbol") }
+                        DropdownMenu(expanded = menuExpanded, onDismissRequest = { menuExpanded = false }) {
                             historyBySymbol.keys.forEach { symbol ->
-                                DropdownMenuItem(
-                                    text = { Text(symbol) },
-                                    onClick = {
-                                        selectedSymbol = symbol
-                                        menuExpanded = false
-                                    },
-                                )
+                                DropdownMenuItem(text = { Text(symbol) }, onClick = { selectedSymbol = symbol; menuExpanded = false })
                             }
                         }
                     }
                 }
-                items(selectedHistory) { history ->
-                    HistoryCard(history)
-                }
+                items(selectedHistory) { HistoryCard(it) }
             }
         }
     }
 }
 
 @Composable
-private fun PerformanceTab(
-    performanceRows: List<StrategyPerformanceEntity>,
-    onPerformanceRefresh: () -> Unit,
-) {
+private fun PerformanceTab(performanceRows: List<StrategyPerformanceEntity>, onPerformanceRefresh: () -> Unit) {
     val rowsByType = performanceRows.groupBy { it.strategyType.name }
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .navigationBarsPadding()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
-    ) {
-        item {
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                Text("Strategy performance", fontWeight = FontWeight.Bold)
-                OutlinedButton(onClick = onPerformanceRefresh) { Text("Refresh") }
-            }
-        }
-        if (performanceRows.isEmpty()) {
-            item { EmptyCard("No performance data yet. Start scanner and wait at least 5 minutes after a strategy appears.") }
-        } else {
-            rowsByType.forEach { (strategyType, rows) ->
-                item { PerformanceSummaryCard(strategyType, rows) }
-            }
-            items(performanceRows.sortedByDescending { it.createdAt }) { row ->
-                PerformanceCard(row)
-            }
+    LazyColumn(modifier = Modifier.fillMaxSize().navigationBarsPadding().padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        item { Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) { Text("Strategy performance", fontWeight = FontWeight.Bold); OutlinedButton(onClick = onPerformanceRefresh) { Text("Refresh") } } }
+        if (performanceRows.isEmpty()) item { EmptyCard("No performance data yet. Start scanner and wait at least 5 minutes after a strategy appears.") } else {
+            rowsByType.forEach { (strategyType, rows) -> item { PerformanceSummaryCard(strategyType, rows) } }
+            items(performanceRows.sortedByDescending { it.createdAt }) { PerformanceCard(it) }
         }
     }
 }
@@ -400,40 +315,13 @@ private fun PerformanceCard(row: StrategyPerformanceEntity) {
 }
 
 @Composable
-private fun RulesTab(
-    currentRulesText: String,
-    settingsMessage: String?,
-    onRulesRefresh: () -> Unit,
-    onRulesDownload: () -> Unit,
-) {
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .navigationBarsPadding()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
-    ) {
+private fun RulesTab(currentRulesText: String, settingsMessage: String?, onRulesRefresh: () -> Unit, onRulesDownload: () -> Unit) {
+    LazyColumn(modifier = Modifier.fillMaxSize().navigationBarsPadding().padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
         item { StrategyManualCard() }
         item { Text("Current rules JSON", fontWeight = FontWeight.Bold) }
-        item {
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedButton(onClick = onRulesRefresh) { Text("Refresh local") }
-                Button(onClick = onRulesDownload) { Text("Download") }
-            }
-        }
-        settingsMessage?.let { message ->
-            item { Text(message) }
-        }
-        item {
-            Card(modifier = Modifier.fillMaxWidth()) {
-                Text(
-                    text = currentRulesText.ifBlank { "No rules loaded" },
-                    modifier = Modifier.padding(12.dp),
-                    fontFamily = FontFamily.Monospace,
-                    style = MaterialTheme.typography.bodySmall,
-                )
-            }
-        }
+        item { Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) { OutlinedButton(onClick = onRulesRefresh) { Text("Refresh local") }; Button(onClick = onRulesDownload) { Text("Download") } } }
+        settingsMessage?.let { item { Text(it) } }
+        item { Card(modifier = Modifier.fillMaxWidth()) { Text(currentRulesText.ifBlank { "No rules loaded" }, modifier = Modifier.padding(12.dp), fontFamily = FontFamily.Monospace, style = MaterialTheme.typography.bodySmall) } }
     }
 }
 
@@ -470,6 +358,8 @@ private fun SettingsTab(
     onGitHubSettingsTest: (GitHubSettings) -> Unit,
     onRulesDownload: (GitHubSettings) -> Unit,
     onReportUpload: (GitHubSettings) -> Unit,
+    onOpenInstallPermissionSettings: () -> Unit,
+    onDownloadAndInstallLatestApk: (GitHubSettings) -> Unit,
 ) {
     var owner by rememberSaveable(gitHubSettings.owner) { mutableStateOf(gitHubSettings.owner) }
     var repo by rememberSaveable(gitHubSettings.repo) { mutableStateOf(gitHubSettings.repo) }
@@ -477,172 +367,37 @@ private fun SettingsTab(
     var token by rememberSaveable(gitHubSettings.token) { mutableStateOf(gitHubSettings.token) }
     var rulesPath by rememberSaveable(gitHubSettings.rulesPath) { mutableStateOf(gitHubSettings.rulesPath) }
     var reportPath by rememberSaveable(gitHubSettings.reportPath) { mutableStateOf(gitHubSettings.reportPath) }
-    var autoUploadReport by rememberSaveable(gitHubSettings.autoUploadReport) {
-        mutableStateOf(gitHubSettings.autoUploadReport)
-    }
-    fun currentSettings() = GitHubSettings(
-        owner = owner,
-        repo = repo,
-        branch = branch,
-        rulesPath = rulesPath,
-        reportPath = reportPath,
-        token = token,
-        autoUploadReport = autoUploadReport,
-    )
+    var autoUploadReport by rememberSaveable(gitHubSettings.autoUploadReport) { mutableStateOf(gitHubSettings.autoUploadReport) }
+    fun currentSettings() = GitHubSettings(owner = owner, repo = repo, branch = branch, rulesPath = rulesPath, reportPath = reportPath, token = token, autoUploadReport = autoUploadReport)
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .navigationBarsPadding()
-            .imePadding()
-            .padding(horizontal = 16.dp),
-        contentPadding = PaddingValues(top = 16.dp, bottom = 32.dp),
-        verticalArrangement = Arrangement.spacedBy(14.dp),
-    ) {
+    LazyColumn(modifier = Modifier.fillMaxSize().navigationBarsPadding().imePadding().padding(horizontal = 16.dp), contentPadding = PaddingValues(top = 16.dp, bottom = 32.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
         item { Text("Status: ${if (isRunning) "running" else "stopped"}") }
-        item {
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Button(onClick = onStart, enabled = !isRunning) { Text("Start scanner") }
-                OutlinedButton(onClick = onStop, enabled = isRunning) { Text("Stop") }
-            }
-        }
+        item { Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) { Button(onClick = onStart, enabled = !isRunning) { Text("Start scanner") }; OutlinedButton(onClick = onStop, enabled = isRunning) { Text("Stop") } } }
         item { Text("Scan interval") }
-        item {
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                ScannerStateStore.SUPPORTED_INTERVALS_MS.forEach { interval ->
-                    FilterChip(
-                        selected = scanIntervalMs == interval,
-                        onClick = { onIntervalSelected(interval) },
-                        label = { Text("${interval / 1000}s") },
-                    )
-                }
-            }
-        }
+        item { Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) { ScannerStateStore.SUPPORTED_INTERVALS_MS.forEach { interval -> FilterChip(selected = scanIntervalMs == interval, onClick = { onIntervalSelected(interval) }, label = { Text("${interval / 1000}s") }) } } }
         item { Text("Max displayed symbols: $maxDisplayCount") }
-        item {
-            Slider(
-                value = maxDisplayCount.toFloat(),
-                onValueChange = { onMaxDisplayChanged(it.roundToInt()) },
-                valueRange = 1f..10f,
-                steps = 8,
-            )
-        }
+        item { Slider(value = maxDisplayCount.toFloat(), onValueChange = { onMaxDisplayChanged(it.roundToInt()) }, valueRange = 1f..10f, steps = 8) }
         item { Text("Minimum score: ${minimumScore.roundToInt()}") }
-        item {
-            Slider(
-                value = minimumScore.toFloat(),
-                onValueChange = { onMinimumScoreChanged(it.toDouble()) },
-                valueRange = 50f..90f,
-                steps = 7,
-            )
-        }
+        item { Slider(value = minimumScore.toFloat(), onValueChange = { onMinimumScoreChanged(it.toDouble()) }, valueRange = 50f..90f, steps = 7) }
+
+        item { Text("App update", fontWeight = FontWeight.Bold) }
+        item { Text("GitHub에 새 APK가 올라간 뒤, 여기서 다운로드와 설치 화면 열기까지 처리합니다. 최종 설치 버튼은 Android 보안상 직접 눌러야 합니다.", style = MaterialTheme.typography.bodySmall) }
+        item { OutlinedButton(onClick = onOpenInstallPermissionSettings, modifier = Modifier.fillMaxWidth()) { Text("Open install permission settings") } }
+        item { Button(onClick = { onDownloadAndInstallLatestApk(currentSettings()) }, modifier = Modifier.fillMaxWidth()) { Text("Download and install latest APK") } }
+
         item { Text("GitHub sync", fontWeight = FontWeight.Bold) }
-        item {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text("Auto upload report")
-                    Text("Upload at most every 10 minutes", style = MaterialTheme.typography.bodySmall)
-                }
-                Switch(
-                    checked = autoUploadReport,
-                    onCheckedChange = { autoUploadReport = it },
-                )
-            }
-        }
-        item {
-            OutlinedTextField(
-                value = owner,
-                onValueChange = { owner = it },
-                label = { Text("GitHub owner") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-            )
-        }
-        item {
-            OutlinedTextField(
-                value = repo,
-                onValueChange = { repo = it },
-                label = { Text("GitHub repository") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-            )
-        }
-        item {
-            OutlinedTextField(
-                value = branch,
-                onValueChange = { branch = it },
-                label = { Text("GitHub branch") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-            )
-        }
-        item {
-            OutlinedTextField(
-                value = rulesPath,
-                onValueChange = { rulesPath = it },
-                label = { Text("Rules JSON path") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-            )
-        }
-        item {
-            OutlinedTextField(
-                value = reportPath,
-                onValueChange = { reportPath = it },
-                label = { Text("Report JSON path") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-            )
-        }
-        item {
-            OutlinedTextField(
-                value = token,
-                onValueChange = { token = it },
-                label = { Text("GitHub token") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                visualTransformation = PasswordVisualTransformation(),
-            )
-        }
-        item {
-            Button(
-                onClick = { onGitHubSettingsSaved(currentSettings()) },
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Text("Save settings")
-            }
-        }
-        item {
-            OutlinedButton(
-                onClick = { onGitHubSettingsTest(currentSettings()) },
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Text("Test GitHub settings")
-            }
-        }
-        item {
-            OutlinedButton(
-                onClick = { onRulesDownload(currentSettings()) },
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Text("Download latest rules")
-            }
-        }
-        item {
-            OutlinedButton(
-                onClick = { onReportUpload(currentSettings()) },
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Text("Upload latest report")
-            }
-        }
-        settingsMessage?.let { message ->
-            item { Text(message) }
-        }
+        item { Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) { Column(modifier = Modifier.weight(1f)) { Text("Auto upload report"); Text("Upload at most every 10 minutes", style = MaterialTheme.typography.bodySmall) }; Switch(checked = autoUploadReport, onCheckedChange = { autoUploadReport = it }) } }
+        item { OutlinedTextField(value = owner, onValueChange = { owner = it }, label = { Text("GitHub owner") }, modifier = Modifier.fillMaxWidth(), singleLine = true) }
+        item { OutlinedTextField(value = repo, onValueChange = { repo = it }, label = { Text("GitHub repository") }, modifier = Modifier.fillMaxWidth(), singleLine = true) }
+        item { OutlinedTextField(value = branch, onValueChange = { branch = it }, label = { Text("GitHub branch") }, modifier = Modifier.fillMaxWidth(), singleLine = true) }
+        item { OutlinedTextField(value = rulesPath, onValueChange = { rulesPath = it }, label = { Text("Rules JSON path") }, modifier = Modifier.fillMaxWidth(), singleLine = true) }
+        item { OutlinedTextField(value = reportPath, onValueChange = { reportPath = it }, label = { Text("Report JSON path") }, modifier = Modifier.fillMaxWidth(), singleLine = true) }
+        item { OutlinedTextField(value = token, onValueChange = { token = it }, label = { Text("GitHub token") }, modifier = Modifier.fillMaxWidth(), singleLine = true, visualTransformation = PasswordVisualTransformation()) }
+        item { Button(onClick = { onGitHubSettingsSaved(currentSettings()) }, modifier = Modifier.fillMaxWidth()) { Text("Save settings") } }
+        item { OutlinedButton(onClick = { onGitHubSettingsTest(currentSettings()) }, modifier = Modifier.fillMaxWidth()) { Text("Test GitHub settings") } }
+        item { OutlinedButton(onClick = { onRulesDownload(currentSettings()) }, modifier = Modifier.fillMaxWidth()) { Text("Download latest rules") } }
+        item { OutlinedButton(onClick = { onReportUpload(currentSettings()) }, modifier = Modifier.fillMaxWidth()) { Text("Upload latest report") } }
+        settingsMessage?.let { item { Text(it) } }
     }
 }
 
@@ -663,11 +418,7 @@ private fun StrategyCard(strategy: TradeStrategy) {
 
 @Composable
 private fun HistoryCard(history: StrategyHistoryEntity) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { },
-    ) {
+    Card(modifier = Modifier.fillMaxWidth().clickable { }) {
         Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Text(history.toTimelineLine(), fontWeight = FontWeight.Bold)
             history.oldSummary?.let { Text("이전: ${it.toCompactPlan()}", style = MaterialTheme.typography.bodySmall) }
@@ -678,9 +429,7 @@ private fun HistoryCard(history: StrategyHistoryEntity) {
 
 @Composable
 private fun EmptyCard(text: String) {
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Text(text = text, modifier = Modifier.padding(12.dp))
-    }
+    Card(modifier = Modifier.fillMaxWidth()) { Text(text = text, modifier = Modifier.padding(12.dp)) }
 }
 
 private fun TradeStrategy.koreanPlanLine(): String {
@@ -695,13 +444,7 @@ private fun StrategyHistoryEntity.toTimelineLine(): String {
 }
 
 private fun String.toCompactPlan(): String {
-    return replace("rank=", "순위 ")
-        .replace("score=", "점수 ")
-        .replace("entry=", "진입 ")
-        .replace("stop=", "손절 ")
-        .replace("target=", "목표 ")
-        .replace("trail=", "추적손절 ")
-        .replace("status=", "상태 ")
+    return replace("rank=", "순위 ").replace("score=", "점수 ").replace("entry=", "진입 ").replace("stop=", "손절 ").replace("target=", "목표 ").replace("trail=", "추적손절 ").replace("status=", "상태 ")
 }
 
 private fun String.toKoreanStrategyName(): String = when (this) {
@@ -743,16 +486,8 @@ private fun String.toKoreanReasonHint(): String {
 }
 
 private fun Double.price(): String = String.format("%,.2f", this)
-
 private fun Double.percent(): String = String.format("%.2f%%", this)
-
 private fun Double?.percentOrDash(): String = this?.percent() ?: "-"
-
 private fun Double.one(): String = String.format("%.1f", this)
-
 private fun List<Double>.averageOrNullText(): String = if (isEmpty()) "-" else average().percent()
-
-private fun Long.toTimeText(): String {
-    val formatter = SimpleDateFormat("HH:mm:ss", Locale.US)
-    return formatter.format(Date(this))
-}
+private fun Long.toTimeText(): String = SimpleDateFormat("HH:mm:ss", Locale.US).format(Date(this))
