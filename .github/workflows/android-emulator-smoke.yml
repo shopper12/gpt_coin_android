@@ -2,17 +2,6 @@ name: Android emulator smoke test
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - fix/runtime-phone-error
-    paths:
-      - 'app/**'
-      - 'gradle/**'
-      - 'build.gradle.kts'
-      - 'settings.gradle.kts'
-      - 'gradle.properties'
-      - 'tools/android-emulator-smoke.sh'
-      - '.github/workflows/android-emulator-smoke.yml'
 
 permissions:
   contents: read
@@ -24,8 +13,10 @@ jobs:
     env:
       ANDROID_EMULATOR_WAIT_TIME_BEFORE_KILL: 300
     steps:
-      - name: Checkout
+      - name: Checkout source branch
         uses: actions/checkout@v4
+        with:
+          ref: fix/runtime-phone-error
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
