@@ -3,6 +3,7 @@ package com.cryptotradecoach.ui
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.cryptotradecoach.data.AppUpdateRepository
 import com.cryptotradecoach.data.GitHubSyncClient
 import com.cryptotradecoach.data.GitHubSyncException
 import com.cryptotradecoach.data.GitHubSettings
@@ -44,6 +45,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val settingsRepository = SettingsRepository.getInstance(application)
     private val rulesRepository = StrategyRulesRepository.getInstance(application)
     private val reportRepository = StrategyReportRepository.getInstance(application)
+    private val appUpdateRepository = AppUpdateRepository(application.applicationContext)
     private val gitHubSyncClient = GitHubSyncClient()
 
     init {
@@ -195,6 +197,43 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             }
             refreshPerformance()
             showGitHubMessage(if (uploaded) "Latest report uploaded" else "Latest report upload failed")
+        }
+    }
+
+    fun openInstallPermissionSettings() {
+        appUpdateRepository.openUnknownAppSourcesSettings()
+        _uiState.value = _uiState.value.copy(
+            settingsMessage = "설정에서 이 앱의 APK 설치 허용을 켠 뒤 돌아와서 Download and install latest APK를 누르세요.",
+        )
+    }
+
+    fun downloadAndInstallLatestApk(settings: GitHubSettings) {
+        viewModelScope.launch {
+            val normalized = settings.normalized()
+            saveGitHubSettings(normalized)
+            if (normalized.token.isBlank()) {
+                showGitHubMessage("GitHub token is missing")
+                return@launch
+            }
+            if (!appUpdateRepository.canRequestPackageInstalls()) {
+                _uiState.value = _uiState.value.copy(
+                    settingsMessage = "APK 설치 권한이 꺼져 있습니다. Open install permission settings를 먼저 누르세요.",
+                )
+                return@launch
+            }
+            _uiState.value = _uiState.value.copy(settingsMessage = "최신 APK 다운로드 중...")
+            val result = withContext(Dispatchers.IO) {
+                runCatching { appUpdateRepository.downloadLatestReleaseApk(normalized) }
+            }
+            result.fold(
+                onSuccess = { apkFile ->
+                    _uiState.value = _uiState.value.copy(settingsMessage = "APK 다운로드 완료. 설치 화면을 엽니다.")
+                    appUpdateRepository.openApkInstaller(apkFile)
+                },
+                onFailure = { error ->
+                    showGitHubMessage("APK update failed: ${error.message ?: error::class.java.simpleName}")
+                },
+            )
         }
     }
 
