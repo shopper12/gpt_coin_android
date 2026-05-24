@@ -19,6 +19,8 @@ enum class StrategyType {
     SWEEP_RECLAIM,
     TREND_PULLBACK,
     BEAR_DECOUPLING_BOUNCE,
+    PRE_PUMP_ROTATION,
+    BTC_SHORT_REGIME,
     WATCH_ONLY,
 }
 
