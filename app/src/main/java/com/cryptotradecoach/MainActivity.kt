@@ -60,7 +60,6 @@ import com.cryptotradecoach.ui.MainViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import kotlin.math.abs
 import kotlin.math.roundToInt
 
 class MainActivity : ComponentActivity() {
@@ -180,7 +179,7 @@ private fun MainScreen(
             }
         }
         when (selectedTab) {
-            0 -> CurrentStrategiesTab(activeStrategies, scanDiagnostics, lastScanAt)
+            0 -> CurrentStrategiesTab(activeStrategies, scanDiagnostics, lastScanAt, minimumScore)
             1 -> StrategyHistoryTab(historyBySymbol)
             2 -> PerformanceTab(performanceRows, onPerformanceRefresh)
             3 -> RulesTab(
@@ -215,6 +214,7 @@ private fun CurrentStrategiesTab(
     activeStrategies: List<TradeStrategy>,
     scanDiagnostics: ScanDiagnostics,
     lastScanAt: Long?,
+    minimumScore: Double,
 ) {
     LazyColumn(
         modifier = Modifier
@@ -223,13 +223,44 @@ private fun CurrentStrategiesTab(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         item { Text("Last scan: ${lastScanAt?.toTimeText() ?: "-"}") }
+        item { CurrentStrategySummaryCard(activeStrategies, scanDiagnostics, minimumScore) }
         item { DiagnosticsCard(scanDiagnostics) }
         if (activeStrategies.isEmpty()) {
-            item { EmptyCard("No ACTIVE strategy. See diagnostics for scan failures or rejected conditions.") }
+            item { EmptyCard("No ACTIVE strategy. 점수가 너무 타이트하면 Settings에서 Minimum score를 65 근처로 낮추고, Rejections에서 SCORE_TOO_LOW 비중을 확인하세요.") }
         } else {
             items(activeStrategies) { strategy ->
                 StrategyCard(strategy)
             }
+        }
+    }
+}
+
+@Composable
+private fun CurrentStrategySummaryCard(
+    activeStrategies: List<TradeStrategy>,
+    scanDiagnostics: ScanDiagnostics,
+    minimumScore: Double,
+) {
+    val btcShort = activeStrategies.firstOrNull { it.strategyType.name == "BTC_SHORT_REGIME" }
+    val prePumpCount = activeStrategies.count { it.strategyType.name == "PRE_PUMP_ROTATION" }
+    val scoreTooLow = scanDiagnostics.rejectionSummary["SCORE_TOO_LOW"] ?: 0
+    val noSignalText = if (scanDiagnostics.candidateCount > 0 && activeStrategies.isEmpty()) {
+        "후보 ${scanDiagnostics.candidateCount}개는 평가됐지만 ACTIVE가 없습니다. SCORE_TOO_LOW가 많으면 현재 minimum score ${minimumScore.roundToInt()}가 타이트한 상태입니다."
+    } else {
+        "스캔 후보가 적으면 Upbit 요청 실패, 캔들 부족, 거래대금 선별 제한을 먼저 봅니다."
+    }
+
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text("현재 전략 요약", fontWeight = FontWeight.Bold)
+            if (btcShort != null) {
+                Text("비트코인: 숏/위험회피 신호 감지 → 진입 ${btcShort.entryLow.price()}~${btcShort.entryHigh.price()}, 손절 ${btcShort.stopLoss.price()}, 목표 ${btcShort.target1.price()}/${btcShort.target2.price()}")
+            } else {
+                Text("비트코인: 현재 ACTIVE 숏 신호 없음. BTC_SHORT_REGIME은 15분·240분 MA 하방 + 하락 모멘텀 + 매도거래량 조건일 때만 뜹니다.")
+            }
+            Text("급등 전 알트 탐지: PRE_PUMP_ROTATION ${prePumpCount}개. +10% 이상 급등 후 추격이 아니라, 거래량 점화·좁은 박스 상단·상대강도 개선을 먼저 봅니다.")
+            Text("ACTIVE: ${activeStrategies.size}개 | 후보: ${scanDiagnostics.candidateCount}개 | SCORE_TOO_LOW: $scoreTooLow")
+            if (activeStrategies.isEmpty()) Text(noSignalText)
         }
     }
 }
@@ -272,7 +303,9 @@ private fun StrategyHistoryTab(historyBySymbol: Map<String, List<StrategyHistory
                 item { EmptyCard("No strategy history.") }
             } else {
                 item {
-                    Column {
+                    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                        Text("종목별 시간순 전략 변화", fontWeight = FontWeight.Bold)
+                        Text("각 줄은 시간 → 이벤트 → 현재 매매전략 순서입니다.", style = MaterialTheme.typography.bodySmall)
                         OutlinedButton(onClick = { menuExpanded = true }) {
                             Text(selectedSymbol ?: "Select symbol")
                         }
@@ -380,7 +413,8 @@ private fun RulesTab(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        item { Text("Current rules", fontWeight = FontWeight.Bold) }
+        item { StrategyManualCard() }
+        item { Text("Current rules JSON", fontWeight = FontWeight.Bold) }
         item {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedButton(onClick = onRulesRefresh) { Text("Refresh local") }
@@ -399,6 +433,22 @@ private fun RulesTab(
                     style = MaterialTheme.typography.bodySmall,
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun StrategyManualCard() {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
+            Text("현재 전략 설명", fontWeight = FontWeight.Bold)
+            Text("COMPRESSION_BREAKOUT: 15분 박스가 좁아지고 상단에 붙은 상태에서 5분 거래량이 붙으면 돌파 후보로 봅니다.")
+            Text("SWEEP_RECLAIM: 단기 저점을 일부러 깨고 다시 회복하면 가짜 이탈 후 반등 후보로 봅니다.")
+            Text("TREND_PULLBACK: 큰 추세 위에서 눌림 후 이전 고점을 회복할 때만 봅니다. 현재는 보수적으로 비활성화될 수 있습니다.")
+            Text("BEAR_DECOUPLING_BOUNCE: BTC가 약할 때도 거래대금·4시간 거래량이 강한 알트만 예외적으로 봅니다.")
+            Text("PRE_PUMP_ROTATION: +10% 급등 전 후보 탐지용입니다. 아직 과열 전인데 거래량 점화, 좁은 박스 상단, 상대강도 개선이 동시에 나오는 종목을 잡습니다.")
+            Text("BTC_SHORT_REGIME: KRW-BTC가 15분·240분 평균선 아래에서 하락 모멘텀과 매도 거래량이 붙으면 숏/위험회피 신호로 표시합니다.")
+            Text("신호가 너무 안 나오면 먼저 Minimum score를 65로 낮추고, Rejections에서 SCORE_TOO_LOW와 INSUFFICIENT_CANDLE_DATA 비중을 확인하세요.")
         }
     }
 }
@@ -600,12 +650,13 @@ private fun SettingsTab(
 private fun StrategyCard(strategy: TradeStrategy) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text("#${strategy.rank} ${strategy.symbol} | ${strategy.strategyType}", fontWeight = FontWeight.Bold)
+            Text("#${strategy.rank} ${strategy.symbol} | ${strategy.strategyType.name.toKoreanStrategyName()}", fontWeight = FontWeight.Bold)
+            Text(strategy.koreanPlanLine())
             Text("Score: ${strategy.score.one()} | Expected: ${strategy.expectedReturnPct.percent()} | R/R: ${strategy.riskRewardRatio.one()}")
             Text("Entry: ${strategy.entryLow.price()} - ${strategy.entryHigh.price()}")
             Text("Stop: ${strategy.stopLoss.price()} | Targets: ${strategy.target1.price()} / ${strategy.target2.price()}")
             Text("Valid until: ${strategy.validUntil.toTimeText()} | Updated: ${strategy.updatedAt.toTimeText()}")
-            Text(strategy.reason)
+            Text(strategy.reason.toKoreanReasonHint())
         }
     }
 }
@@ -618,11 +669,9 @@ private fun HistoryCard(history: StrategyHistoryEntity) {
             .clickable { },
     ) {
         Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text("${history.symbol} | ${history.eventType}", fontWeight = FontWeight.Bold)
-            Text(history.createdAt.toTimeText())
-            Text(history.message)
-            history.oldSummary?.let { Text("Before: $it") }
-            history.newSummary?.let { Text("After: $it") }
+            Text(history.toTimelineLine(), fontWeight = FontWeight.Bold)
+            history.oldSummary?.let { Text("이전: ${it.toCompactPlan()}", style = MaterialTheme.typography.bodySmall) }
+            history.newSummary?.let { Text("현재: ${it.toCompactPlan()}", style = MaterialTheme.typography.bodySmall) }
         }
     }
 }
@@ -632,6 +681,65 @@ private fun EmptyCard(text: String) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Text(text = text, modifier = Modifier.padding(12.dp))
     }
+}
+
+private fun TradeStrategy.koreanPlanLine(): String {
+    val direction = if (strategyType.name == "BTC_SHORT_REGIME") "숏/하락" else "롱/상승"
+    return "$direction 전략 | 진입 ${entryLow.price()}~${entryHigh.price()} | 손절 ${stopLoss.price()} | 목표 ${target1.price()}/${target2.price()} | 24h ${changeRate24h.one()}% · 30m ${changeRate30m.one()}% · 5m ${changeRate5m.one()}% · 거래량 ${volumeAcceleration.one()}x"
+}
+
+private fun StrategyHistoryEntity.toTimelineLine(): String {
+    val current = newSummary?.toCompactPlan().orEmpty()
+    val suffix = if (current.isBlank()) message else current
+    return "${createdAt.toTimeText()} ${symbol} ${eventType.toKoreanEventName()} → $suffix"
+}
+
+private fun String.toCompactPlan(): String {
+    return replace("rank=", "순위 ")
+        .replace("score=", "점수 ")
+        .replace("entry=", "진입 ")
+        .replace("stop=", "손절 ")
+        .replace("target=", "목표 ")
+        .replace("trail=", "추적손절 ")
+        .replace("status=", "상태 ")
+}
+
+private fun String.toKoreanStrategyName(): String = when (this) {
+    "COMPRESSION_BREAKOUT" -> "압축 돌파"
+    "SWEEP_RECLAIM" -> "저점 훼손 후 회복"
+    "TREND_PULLBACK" -> "추세 눌림 회복"
+    "BEAR_DECOUPLING_BOUNCE" -> "약세장 독립강세"
+    "PRE_PUMP_ROTATION" -> "급등 전 회전 포착"
+    "BTC_SHORT_REGIME" -> "비트코인 숏/위험회피"
+    "MOMENTUM_BREAKOUT" -> "모멘텀 돌파"
+    "PULLBACK_REBOUND" -> "눌림 반등"
+    "VOLUME_EXPANSION" -> "거래량 확장"
+    else -> this
+}
+
+private fun String.toKoreanEventName(): String = when (this) {
+    "NEW_ACTIVE" -> "신규진입"
+    "RANK_UP" -> "순위상승"
+    "PRICE_PLAN_CHANGED" -> "전략변경"
+    "WATCH_ONLY" -> "관찰전환"
+    "INVALIDATED" -> "무효화"
+    "TARGET1_HIT" -> "1차목표도달"
+    "TRAILING_STOP_HIT" -> "추적손절"
+    "HIT_TARGET" -> "최종목표도달"
+    "STOPPED_OUT" -> "손절"
+    "EXPIRED" -> "만료"
+    else -> this
+}
+
+private fun String.toKoreanReasonHint(): String {
+    return replace("PRE_PUMP_ROTATION", "급등 전 회전 포착")
+        .replace("BTC_SHORT_REGIME", "비트코인 숏/위험회피")
+        .replace("COMPRESSION_BREAKOUT", "압축 돌파")
+        .replace("SWEEP_RECLAIM", "저점 훼손 후 회복")
+        .replace("TREND_PULLBACK", "추세 눌림 회복")
+        .replace("BEAR_DECOUPLING_BOUNCE", "약세장 독립강세")
+        .replace("ACTIVE", "활성")
+        .replace("WATCH_ONLY", "관찰")
 }
 
 private fun Double.price(): String = String.format("%,.2f", this)
