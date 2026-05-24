@@ -1,0 +1,54 @@
+name: Upbit strategy backtest
+
+on:
+  workflow_dispatch:
+    inputs:
+      days:
+        description: 'Historical days to fetch'
+        required: true
+        default: '7'
+      max_markets:
+        description: 'Top KRW markets by current trade value'
+        required: true
+        default: '60'
+      minimum_score:
+        description: 'Minimum strategy score'
+        required: true
+        default: '65'
+  schedule:
+    - cron: '15 21 * * *'
+
+permissions:
+  contents: read
+
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: fix/runtime-phone-error
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run Upbit backtest
+        run: |
+          python tools/backtest_upbit_strategies.py \
+            --days "${{ github.event.inputs.days || '7' }}" \
+            --max-markets "${{ github.event.inputs.max_markets || '60' }}" \
+            --minimum-score "${{ github.event.inputs.minimum_score || '65' }}" \
+            --out-dir reports
+
+      - name: Upload backtest reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: upbit-backtest-report
+          path: |
+            reports/backtest_latest.json
+            reports/backtest_latest.md
+          if-no-files-found: error
