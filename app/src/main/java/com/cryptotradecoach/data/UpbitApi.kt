@@ -125,6 +125,9 @@ class UpbitMarketDataSource : MarketDataSource {
                         signedChangeRate = item.optDouble("signed_change_rate", 0.0),
                         accTradePrice24h = item.optDouble("acc_trade_price_24h", 0.0),
                         accTradeVolume24h = item.optDouble("acc_trade_volume_24h", 0.0),
+                        highPrice24h = item.optDouble("high_price", 0.0),
+                        lowPrice24h = item.optDouble("low_price", 0.0),
+                        prevClosingPrice = item.optDouble("prev_closing_price", 0.0),
                     )
                 }
                 out
