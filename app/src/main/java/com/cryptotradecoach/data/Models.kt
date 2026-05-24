@@ -30,6 +30,9 @@ data class Ticker(
     val signedChangeRate: Double,
     val accTradePrice24h: Double,
     val accTradeVolume24h: Double,
+    val highPrice24h: Double = 0.0,
+    val lowPrice24h: Double = 0.0,
+    val prevClosingPrice: Double = 0.0,
 )
 
 data class Candle(
