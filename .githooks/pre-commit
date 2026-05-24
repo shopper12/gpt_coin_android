@@ -10,5 +10,9 @@ if [ -n "$blocked_files" ]; then
   exit 1
 fi
 
-echo "Running Android debug build before commit..."
-./gradlew.bat :app:assembleDebug
+if [ -x ./gradlew ]; then
+  echo "Running Android debug build before commit..."
+  ./gradlew :app:assembleDebug
+else
+  echo "gradlew is not executable on this platform; skipping local pre-commit build."
+fi
