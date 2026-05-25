@@ -121,31 +121,69 @@ class UpbitMarketDataSource : MarketDataSource {
         val selectedTickers = selectCandleTargets(tickers, boundedLimit, selectionRules)
 
         return selectedTickers.mapNotNull { ticker ->
-            val oneMinuteCandles = runCatching { fetchMinuteCandles(ticker.market, unit = 1, count = 60) }.getOrDefault(emptyList())
-            val fiveMinuteCandles = runCatching { fetchMinuteCandles(ticker.market, unit = 5, count = 60) }.getOrDefault(emptyList())
-            val fifteenMinuteCandles = runCatching { fetchMinuteCandles(ticker.market, unit = 15, count = 50) }.getOrDefault(emptyList())
-            val fourHourCandles = runCatching { fetchMinuteCandles(ticker.market, unit = 240, count = 120) }.getOrDefault(emptyList())
-            if (fiveMinuteCandles.size < 25 || fifteenMinuteCandles.size < 25) return@mapNotNull null
+            ticker.toMarketCandidate(changeRanks, tradeValueRanks)
+        }
+    }
 
-            val changeRate30m = percentChange(fiveMinuteCandles.takeLast(6).first().open, ticker.tradePrice)
-            val changeRate5m = percentChange(fiveMinuteCandles.last().open, ticker.tradePrice)
-            val recentTradeValue = fiveMinuteCandles.takeLast(3).sumOf { it.tradePrice }
-            val previousTradeValue = fiveMinuteCandles.dropLast(3).takeLast(20).sumOf { it.tradePrice } / 6.67
-            val volumeAcceleration = if (previousTradeValue > 0.0) recentTradeValue / previousTradeValue else 1.0
+    suspend fun fetchManualMarketCandidate(rawSymbol: String): MarketCandidate? {
+        val market = normalizeMarket(rawSymbol)
+        lastError = null
+        val allTickers = fetchTickers()
+        val ticker = allTickers.firstOrNull { it.market == market }
+            ?: fetchTickerFor(listOf(market)).firstOrNull()
+            ?: run {
+                lastError = "Manual search failed: unsupported Upbit KRW market $market"
+                return null
+            }
+        val changeRanks = allTickers
+            .sortedByDescending { it.signedChangeRate }
+            .mapIndexed { index, row -> row.market to index + 1 }
+            .toMap()
+        val tradeValueRanks = allTickers
+            .sortedByDescending { it.accTradePrice24h }
+            .mapIndexed { index, row -> row.market to index + 1 }
+            .toMap()
+        return ticker.toMarketCandidate(changeRanks, tradeValueRanks)
+    }
 
-            MarketCandidate(
-                ticker = ticker,
-                oneMinuteCandles = oneMinuteCandles,
-                fiveMinuteCandles = fiveMinuteCandles,
-                fifteenMinuteCandles = fifteenMinuteCandles,
-                fourHourCandles = fourHourCandles,
-                btcChangeRate24h = btcChangeRate24h,
-                rankByChangeRate = changeRanks[ticker.market] ?: Int.MAX_VALUE,
-                rankByTradeValue = tradeValueRanks[ticker.market] ?: Int.MAX_VALUE,
-                changeRate30m = changeRate30m,
-                changeRate5m = changeRate5m,
-                volumeAcceleration = volumeAcceleration,
-            )
+    private fun Ticker.toMarketCandidate(
+        changeRanks: Map<String, Int>,
+        tradeValueRanks: Map<String, Int>,
+    ): MarketCandidate? {
+        val oneMinuteCandles = runCatching { fetchMinuteCandles(market, unit = 1, count = 60) }.getOrDefault(emptyList())
+        val fiveMinuteCandles = runCatching { fetchMinuteCandles(market, unit = 5, count = 60) }.getOrDefault(emptyList())
+        val fifteenMinuteCandles = runCatching { fetchMinuteCandles(market, unit = 15, count = 50) }.getOrDefault(emptyList())
+        val fourHourCandles = runCatching { fetchMinuteCandles(market, unit = 240, count = 120) }.getOrDefault(emptyList())
+        if (fiveMinuteCandles.size < 25 || fifteenMinuteCandles.size < 25) {
+            lastError = "Manual search failed: insufficient candle data for $market"
+            return null
+        }
+        val changeRate30m = percentChange(fiveMinuteCandles.takeLast(6).first().open, tradePrice)
+        val changeRate5m = percentChange(fiveMinuteCandles.last().open, tradePrice)
+        val recentTradeValue = fiveMinuteCandles.takeLast(3).sumOf { it.tradePrice }
+        val previousTradeValue = fiveMinuteCandles.dropLast(3).takeLast(20).sumOf { it.tradePrice } / 6.67
+        val volumeAcceleration = if (previousTradeValue > 0.0) recentTradeValue / previousTradeValue else 1.0
+        return MarketCandidate(
+            ticker = this,
+            oneMinuteCandles = oneMinuteCandles,
+            fiveMinuteCandles = fiveMinuteCandles,
+            fifteenMinuteCandles = fifteenMinuteCandles,
+            fourHourCandles = fourHourCandles,
+            btcChangeRate24h = btcChangeRate24h,
+            rankByChangeRate = changeRanks[market] ?: Int.MAX_VALUE,
+            rankByTradeValue = tradeValueRanks[market] ?: Int.MAX_VALUE,
+            changeRate30m = changeRate30m,
+            changeRate5m = changeRate5m,
+            volumeAcceleration = volumeAcceleration,
+        )
+    }
+
+    private fun normalizeMarket(rawSymbol: String): String {
+        val upper = rawSymbol.trim().uppercase().replace("/", "-")
+        return when {
+            upper.startsWith("KRW-") -> upper
+            upper.isBlank() -> upper
+            else -> "KRW-$upper"
         }
     }
 
