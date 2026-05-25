@@ -519,12 +519,19 @@ class SignalEngine {
         val fiveVolumeRatio = ratio(last5.tradePrice, five.dropLast(1).takeLast(20).averageTradePrice())
         val fifteenVolumeRatio = ratio(fifteen.last().tradePrice, fifteen.dropLast(1).takeLast(20).averageTradePrice())
         val closesUp = five.takeLast(4).zipWithNext().count { it.second.close > it.first.close }
-        val notAlreadyPumped = changeRate24h in -4.0..8.5 && changeRate30m < 3.2 && changeRate5m < 1.8
-        val liquidityOk = rankByTradeValue <= 25
-        val rotationOk = rankByChangeRate <= 35 || changeRate30m > 0.7
-        val volumeIgnition = volumeAcceleration >= 1.45 || fiveVolumeRatio >= 1.6 || fifteenVolumeRatio >= 1.35
-        val structureOk = rangePct <= 4.2 && rangePos >= 0.55 && price >= prev20High * 0.992
-        val active = notAlreadyPumped && liquidityOk && rotationOk && volumeIgnition && structureOk && closesUp >= 2
+        val r = rules.prePumpRotation
+        val notAlreadyPumped = changeRate24h in r.minChange24hPct..r.maxChange24hPct &&
+            changeRate30m < r.maxChange30mPct &&
+            changeRate5m < r.maxChange5mPct
+        val liquidityOk = rankByTradeValue <= r.maxTradeValueRank
+        val rotationOk = rankByChangeRate <= r.maxChangeRank || changeRate30m > r.minRotation30mPct
+        val volumeIgnition = volumeAcceleration >= r.minVolumeAcceleration ||
+            fiveVolumeRatio >= r.minFiveMinuteVolumeRatio ||
+            fifteenVolumeRatio >= r.minFifteenMinuteVolumeRatio
+        val structureOk = rangePct <= r.maxRangePct &&
+            rangePos >= r.minRangePosition &&
+            price >= prev20High * r.minHighProximityMultiplier
+        val active = r.enabled && notAlreadyPumped && liquidityOk && rotationOk && volumeIgnition && structureOk && closesUp >= r.minCloseStairCount
         val structureScore = when {
             structureOk -> 22.0
             rangePos >= 0.5 -> 12.0
@@ -570,11 +577,11 @@ class SignalEngine {
             ),
             failed = listOfNotNull(
                 if (!notAlreadyPumped) "ALREADY_PUMPED_OR_TOO_WEAK" else null,
-                if (!liquidityOk) "TRADE_VALUE_RANK_OVER_25" else null,
+                if (!liquidityOk) "TRADE_VALUE_RANK_OVER_${r.maxTradeValueRank}" else null,
                 if (!rotationOk) "NO_RELATIVE_ROTATION" else null,
                 if (!volumeIgnition) "NO_VOLUME_IGNITION" else null,
                 if (!structureOk) "NO_TIGHT_RANGE_BREAK_SETUP" else null,
-                if (closesUp < 2) "NO_5M_CLOSE_STAIR" else null,
+                if (closesUp < r.minCloseStairCount) "NO_5M_CLOSE_STAIR" else null,
             ),
             penaltySensitiveMultiplier = 0.35,
         )
