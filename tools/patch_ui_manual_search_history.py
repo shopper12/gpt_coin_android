@@ -1,3 +1,4 @@
+# Trigger app-ui-maintenance workflow after manual UI patch changes.
 from pathlib import Path
 
 p = Path('app/src/main/java/com/cryptotradecoach/MainActivity.kt')
