@@ -13,6 +13,7 @@ data class StrategyRules(
     val sweepReclaim: SweepReclaimRules,
     val trendPullback: TrendPullbackRules,
     val bearDecouplingBounce: BearDecouplingBounceRules,
+    val prePumpRotation: PrePumpRotationRules,
     val scoring: ScoringRules,
     val risk: RiskRules,
 ) {
@@ -27,6 +28,7 @@ data class StrategyRules(
             .put("sweepReclaim", sweepReclaim.toJson())
             .put("trendPullback", trendPullback.toJson())
             .put("bearDecouplingBounce", bearDecouplingBounce.toJson())
+            .put("prePumpRotation", prePumpRotation.toJson())
             .put("scoring", scoring.toJson())
             .put("risk", risk.toJson())
     }
@@ -72,6 +74,23 @@ data class StrategyRules(
                 decouplingScoreCap = 24.0,
                 wickPenalty = 12.0,
             ),
+            prePumpRotation = PrePumpRotationRules(
+                enabled = true,
+                minChange24hPct = -4.0,
+                maxChange24hPct = 8.5,
+                maxChange30mPct = 3.2,
+                maxChange5mPct = 1.8,
+                maxTradeValueRank = 25,
+                maxChangeRank = 35,
+                minRotation30mPct = 0.7,
+                minVolumeAcceleration = 1.45,
+                minFiveMinuteVolumeRatio = 1.6,
+                minFifteenMinuteVolumeRatio = 1.35,
+                maxRangePct = 4.2,
+                minRangePosition = 0.55,
+                minHighProximityMultiplier = 0.992,
+                minCloseStairCount = 2,
+            ),
             scoring = ScoringRules(
                 overheat24hBasePct = 10.0,
                 overheat24hWeight = 1.8,
@@ -104,6 +123,7 @@ data class StrategyRules(
                 sweepReclaim = SweepReclaimRules.fromJson(root.optJSONObject("sweepReclaim")),
                 trendPullback = TrendPullbackRules.fromJson(root.optJSONObject("trendPullback")),
                 bearDecouplingBounce = BearDecouplingBounceRules.fromJson(root.optJSONObject("bearDecouplingBounce")),
+                prePumpRotation = PrePumpRotationRules.fromJson(root.optJSONObject("prePumpRotation")),
                 scoring = ScoringRules.fromJson(root.optJSONObject("scoring")),
                 risk = RiskRules.fromJson(root.optJSONObject("risk")),
             )
@@ -236,6 +256,64 @@ data class BearDecouplingBounceRules(
                 maxBearishUpperWickPct = json?.optDouble("maxBearishUpperWickPct", d.maxBearishUpperWickPct) ?: d.maxBearishUpperWickPct,
                 decouplingScoreCap = json?.optDouble("decouplingScoreCap", d.decouplingScoreCap) ?: d.decouplingScoreCap,
                 wickPenalty = json?.optDouble("wickPenalty", d.wickPenalty) ?: d.wickPenalty,
+            )
+        }
+    }
+}
+
+data class PrePumpRotationRules(
+    val enabled: Boolean,
+    val minChange24hPct: Double,
+    val maxChange24hPct: Double,
+    val maxChange30mPct: Double,
+    val maxChange5mPct: Double,
+    val maxTradeValueRank: Int,
+    val maxChangeRank: Int,
+    val minRotation30mPct: Double,
+    val minVolumeAcceleration: Double,
+    val minFiveMinuteVolumeRatio: Double,
+    val minFifteenMinuteVolumeRatio: Double,
+    val maxRangePct: Double,
+    val minRangePosition: Double,
+    val minHighProximityMultiplier: Double,
+    val minCloseStairCount: Int,
+) {
+    fun toJson(): JSONObject = JSONObject()
+        .put("enabled", enabled)
+        .put("minChange24hPct", minChange24hPct)
+        .put("maxChange24hPct", maxChange24hPct)
+        .put("maxChange30mPct", maxChange30mPct)
+        .put("maxChange5mPct", maxChange5mPct)
+        .put("maxTradeValueRank", maxTradeValueRank)
+        .put("maxChangeRank", maxChangeRank)
+        .put("minRotation30mPct", minRotation30mPct)
+        .put("minVolumeAcceleration", minVolumeAcceleration)
+        .put("minFiveMinuteVolumeRatio", minFiveMinuteVolumeRatio)
+        .put("minFifteenMinuteVolumeRatio", minFifteenMinuteVolumeRatio)
+        .put("maxRangePct", maxRangePct)
+        .put("minRangePosition", minRangePosition)
+        .put("minHighProximityMultiplier", minHighProximityMultiplier)
+        .put("minCloseStairCount", minCloseStairCount)
+
+    companion object {
+        fun fromJson(json: JSONObject?): PrePumpRotationRules {
+            val d = StrategyRules.DEFAULT.prePumpRotation
+            return PrePumpRotationRules(
+                enabled = json?.optBoolean("enabled", d.enabled) ?: d.enabled,
+                minChange24hPct = json?.optDouble("minChange24hPct", d.minChange24hPct) ?: d.minChange24hPct,
+                maxChange24hPct = json?.optDouble("maxChange24hPct", d.maxChange24hPct) ?: d.maxChange24hPct,
+                maxChange30mPct = json?.optDouble("maxChange30mPct", d.maxChange30mPct) ?: d.maxChange30mPct,
+                maxChange5mPct = json?.optDouble("maxChange5mPct", d.maxChange5mPct) ?: d.maxChange5mPct,
+                maxTradeValueRank = json?.optInt("maxTradeValueRank", d.maxTradeValueRank) ?: d.maxTradeValueRank,
+                maxChangeRank = json?.optInt("maxChangeRank", d.maxChangeRank) ?: d.maxChangeRank,
+                minRotation30mPct = json?.optDouble("minRotation30mPct", d.minRotation30mPct) ?: d.minRotation30mPct,
+                minVolumeAcceleration = json?.optDouble("minVolumeAcceleration", d.minVolumeAcceleration) ?: d.minVolumeAcceleration,
+                minFiveMinuteVolumeRatio = json?.optDouble("minFiveMinuteVolumeRatio", d.minFiveMinuteVolumeRatio) ?: d.minFiveMinuteVolumeRatio,
+                minFifteenMinuteVolumeRatio = json?.optDouble("minFifteenMinuteVolumeRatio", d.minFifteenMinuteVolumeRatio) ?: d.minFifteenMinuteVolumeRatio,
+                maxRangePct = json?.optDouble("maxRangePct", d.maxRangePct) ?: d.maxRangePct,
+                minRangePosition = json?.optDouble("minRangePosition", d.minRangePosition) ?: d.minRangePosition,
+                minHighProximityMultiplier = json?.optDouble("minHighProximityMultiplier", d.minHighProximityMultiplier) ?: d.minHighProximityMultiplier,
+                minCloseStairCount = json?.optInt("minCloseStairCount", d.minCloseStairCount) ?: d.minCloseStairCount,
             )
         }
     }
