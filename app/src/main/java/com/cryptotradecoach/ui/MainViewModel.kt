@@ -7,14 +7,17 @@ import com.cryptotradecoach.data.AppUpdateRepository
 import com.cryptotradecoach.data.GitHubSyncClient
 import com.cryptotradecoach.data.GitHubSyncException
 import com.cryptotradecoach.data.GitHubSettings
-import com.cryptotradecoach.data.SettingsRepository
 import com.cryptotradecoach.data.ScanDiagnostics
+import com.cryptotradecoach.data.SettingsRepository
 import com.cryptotradecoach.data.SignalHistoryRepository
 import com.cryptotradecoach.data.StrategyReportRepository
 import com.cryptotradecoach.data.StrategyRulesRepository
+import com.cryptotradecoach.data.StrategyScanResult
 import com.cryptotradecoach.data.TradeStrategy
+import com.cryptotradecoach.data.UpbitMarketDataSource
 import com.cryptotradecoach.data.local.StrategyHistoryEntity
 import com.cryptotradecoach.data.local.StrategyPerformanceEntity
+import com.cryptotradecoach.domain.SignalEngine
 import com.cryptotradecoach.service.ScannerStateStore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,6 +31,8 @@ data class MainUiState(
     val activeStrategies: List<TradeStrategy> = emptyList(),
     val historyBySymbol: Map<String, List<StrategyHistoryEntity>> = emptyMap(),
     val performanceRows: List<StrategyPerformanceEntity> = emptyList(),
+    val manualStrategy: TradeStrategy? = null,
+    val manualMessage: String? = null,
     val scanDiagnostics: ScanDiagnostics = ScanDiagnostics(),
     val lastScanAt: Long? = null,
     val scanIntervalMs: Long = ScannerStateStore.DEFAULT_SCAN_INTERVAL_MS,
@@ -46,6 +51,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val rulesRepository = StrategyRulesRepository.getInstance(application)
     private val reportRepository = StrategyReportRepository.getInstance(application)
     private val appUpdateRepository = AppUpdateRepository(application.applicationContext)
+    private val manualDataSource = UpbitMarketDataSource()
+    private val manualEngine = SignalEngine()
     private val gitHubSyncClient = GitHubSyncClient()
 
     init {
@@ -115,6 +122,74 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun setMinimumScore(score: Double) {
         ScannerStateStore.setMinimumScore(score)
+    }
+
+    fun analyzeManualSymbol(rawSymbol: String) {
+        viewModelScope.launch {
+            val symbol = rawSymbol.trim().uppercase()
+            if (symbol.isBlank()) {
+                _uiState.value = _uiState.value.copy(manualMessage = "종목을 입력하세요.", manualStrategy = null)
+                return@launch
+            }
+            _uiState.value = _uiState.value.copy(manualMessage = "분석 중: $symbol", manualStrategy = null)
+            val result = withContext(Dispatchers.IO) {
+                runCatching {
+                    val rules = rulesRepository.refreshFromGitHub()
+                    val candidate = manualDataSource.fetchManualMarketCandidate(symbol)
+                        ?: return@runCatching null
+                    manualEngine.scan(
+                        candidates = listOf(candidate),
+                        rules = rules,
+                        minimumScore = 0.0,
+                        maxResults = 1,
+                    ).activeStrategies.firstOrNull()
+                }
+            }
+            result.fold(
+                onSuccess = { strategy ->
+                    _uiState.value = if (strategy != null) {
+                        _uiState.value.copy(
+                            manualStrategy = strategy.copy(rank = 1),
+                            manualMessage = "분석 완료: ${strategy.symbol}",
+                        )
+                    } else {
+                        _uiState.value.copy(
+                            manualStrategy = null,
+                            manualMessage = manualDataSource.lastError ?: "ACTIVE 전략 조건이 없습니다. 관찰만 권장합니다.",
+                        )
+                    }
+                },
+                onFailure = { error ->
+                    _uiState.value = _uiState.value.copy(
+                        manualStrategy = null,
+                        manualMessage = "수동 분석 실패: ${error.message ?: error::class.java.simpleName}",
+                    )
+                },
+            )
+        }
+    }
+
+    fun saveManualStrategy() {
+        val strategy = _uiState.value.manualStrategy ?: run {
+            _uiState.value = _uiState.value.copy(manualMessage = "저장할 전략이 없습니다.")
+            return
+        }
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                historyRepository.saveStrategyScanResult(
+                    scanResult = StrategyScanResult(activeStrategies = listOf(strategy)),
+                    currentPrices = mapOf(strategy.symbol to strategy.entryHigh),
+                )
+            }
+            ScannerStateStore.pushScanResult(
+                activeStrategies = historyRepository.getActiveStrategies(),
+                historyBySymbol = historyRepository.getHistoryBySymbol(),
+                diagnostics = _uiState.value.scanDiagnostics,
+                context = getApplication(),
+            )
+            refreshPerformance()
+            _uiState.value = _uiState.value.copy(manualMessage = "저장 완료: ${strategy.symbol}")
+        }
     }
 
     fun saveGitHubSettings(settings: GitHubSettings) {
