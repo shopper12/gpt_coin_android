@@ -33,6 +33,22 @@ wait_for_boot() {
   return 1
 }
 
+sdk_version() {
+  adb shell getprop ro.build.version.sdk 2>/dev/null | tr -d '\r' || true
+}
+
+grant_notification_permission_if_supported() {
+  local sdk
+  sdk="$(sdk_version)"
+  say "Emulator SDK: ${sdk:-unknown}"
+  if [ -n "$sdk" ] && [ "$sdk" -ge 33 ] 2>/dev/null; then
+    say "Granting POST_NOTIFICATIONS permission"
+    adb shell pm grant "$PKG" android.permission.POST_NOTIFICATIONS || true
+  else
+    say "Skipping POST_NOTIFICATIONS grant: permission exists only on API 33+"
+  fi
+}
+
 say "Smoke test started"
 say "APK: $APK_PATH"
 
@@ -51,7 +67,7 @@ adb logcat -c
 
 say "Installing APK"
 adb install -r "$APK_PATH" | tee -a "$SUMMARY_FILE"
-adb shell pm grant "$PKG" android.permission.POST_NOTIFICATIONS || true
+grant_notification_permission_if_supported
 
 say "Launching activity"
 adb shell am start -W -n "$PKG/.MainActivity" | tee -a "$SUMMARY_FILE"
