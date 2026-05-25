@@ -8,7 +8,7 @@ import kotlin.math.abs
 
 interface MarketDataSource {
     suspend fun fetchTickers(): List<Ticker>
-    suspend fun fetchMarketCandidates(limit: Int = 40): List<MarketCandidate>
+    suspend fun fetchMarketCandidates(limit: Int = 40, rules: StrategyRules = StrategyRules.DEFAULT): List<MarketCandidate>
 }
 
 class UpbitMarketDataSource : MarketDataSource {
@@ -39,12 +39,16 @@ class UpbitMarketDataSource : MarketDataSource {
         return tickers
     }
 
-    fun selectCandleTargets(tickers: List<Ticker>, limit: Int = MAX_CANDLE_TARGETS): List<Ticker> {
-        val boundedLimit = limit.coerceIn(10, MAX_CANDLE_TARGETS)
+    fun selectCandleTargets(
+        tickers: List<Ticker>,
+        limit: Int = MAX_CANDLE_TARGETS,
+        rules: CandidateSelectionRules = StrategyRules.DEFAULT.candidateSelection,
+    ): List<Ticker> {
+        val boundedLimit = limit.coerceIn(10, rules.maxCandleTargets.coerceIn(10, MAX_CANDLE_TARGETS))
         if (tickers.isEmpty()) return emptyList()
 
-        val byTradeValue = tickers.sortedByDescending { it.accTradePrice24h }.take(40)
-        val byChangeRate = tickers.sortedByDescending { it.signedChangeRate }.take(15)
+        val byTradeValue = tickers.sortedByDescending { it.accTradePrice24h }.take(rules.topTradeValueCount)
+        val byChangeRate = tickers.sortedByDescending { it.signedChangeRate }.take(rules.topChangeRateCount)
         val tradeValueMarkets = byTradeValue.map { it.market }.toSet()
 
         val medianTradePrice = tickers.map { it.accTradePrice24h }.sorted()
@@ -52,23 +56,23 @@ class UpbitMarketDataSource : MarketDataSource {
 
         val byVolumeBuildup = tickers
             .filter { ticker ->
-                ticker.accTradePrice24h > medianTradePrice * 1.5 &&
-                    ticker.signedChangeRate in -0.02..0.05 &&
+                ticker.accTradePrice24h > medianTradePrice * rules.medianTradeValueMultiplier &&
+                    ticker.signedChangeRate * 100.0 in rules.minBuildupChangeRatePct..rules.maxBuildupChangeRatePct &&
                     ticker.market !in tradeValueMarkets
             }
             .sortedByDescending { it.accTradePrice24h }
-            .take(15)
+            .take(rules.volumeBuildupCount)
         val buildupMarkets = byVolumeBuildup.map { it.market }.toSet()
 
         val byQuietAccumulation = tickers
             .filter { ticker ->
-                abs(ticker.signedChangeRate) < 0.015 &&
+                abs(ticker.signedChangeRate * 100.0) < rules.maxQuietAbsChangeRatePct &&
                     ticker.accTradeVolume24h > 0.0 &&
                     ticker.market !in tradeValueMarkets &&
                     ticker.market !in buildupMarkets
             }
             .sortedByDescending { it.accTradeVolume24h }
-            .take(10)
+            .take(rules.quietAccumulationCount)
 
         val tradeRanks = byTradeValue.mapIndexed { index, ticker -> ticker.market to index + 1 }.toMap()
         val changeRanks = byChangeRate.mapIndexed { index, ticker -> ticker.market to index + 1 }.toMap()
@@ -86,9 +90,9 @@ class UpbitMarketDataSource : MarketDataSource {
             .take(boundedLimit)
     }
 
-    fun fetchCandleData(tickers: List<Ticker>): CandleData {
+    fun fetchCandleData(tickers: List<Ticker>, rules: CandidateSelectionRules = StrategyRules.DEFAULT.candidateSelection): CandleData {
         val out = mutableMapOf<String, Map<Int, List<Candle>>>()
-        tickers.take(MAX_CANDLE_TARGETS).forEach { ticker ->
+        tickers.take(rules.maxCandleTargets.coerceIn(10, MAX_CANDLE_TARGETS)).forEach { ticker ->
             val byUnit = SUPPORTED_UNITS.associateWith { unit ->
                 runCatching { fetchMinuteCandles(ticker.market, unit, countForUnit(unit)) }
                     .onFailure { error -> lastError = "Upbit candle $unit ${ticker.market} failed: ${error.message ?: error::class.java.simpleName}" }
@@ -101,8 +105,9 @@ class UpbitMarketDataSource : MarketDataSource {
         return out
     }
 
-    override suspend fun fetchMarketCandidates(limit: Int): List<MarketCandidate> {
-        val boundedLimit = limit.coerceIn(10, MAX_CANDLE_TARGETS)
+    override suspend fun fetchMarketCandidates(limit: Int, rules: StrategyRules): List<MarketCandidate> {
+        val selectionRules = rules.candidateSelection
+        val boundedLimit = limit.coerceIn(10, selectionRules.maxCandleTargets.coerceIn(10, MAX_CANDLE_TARGETS))
         val tickers = fetchTickers()
         val changeRanks = tickers
             .sortedByDescending { it.signedChangeRate }
@@ -113,7 +118,7 @@ class UpbitMarketDataSource : MarketDataSource {
             .mapIndexed { index, ticker -> ticker.market to index + 1 }
             .toMap()
 
-        val selectedTickers = selectCandleTargets(tickers, boundedLimit)
+        val selectedTickers = selectCandleTargets(tickers, boundedLimit, selectionRules)
 
         return selectedTickers.mapNotNull { ticker ->
             val oneMinuteCandles = runCatching { fetchMinuteCandles(ticker.market, unit = 1, count = 60) }.getOrDefault(emptyList())
@@ -289,7 +294,7 @@ class UpbitMarketDataSource : MarketDataSource {
 
     companion object {
         private const val CANDLE_CACHE_MS = 25_000L
-        private const val MAX_CANDLE_TARGETS = 35
+        private const val MAX_CANDLE_TARGETS = 80
         private const val MIN_REQUEST_INTERVAL_MS = 130L
         private const val MAX_RETRIES = 3
         private const val INITIAL_RETRY_BACKOFF_MS = 500L
