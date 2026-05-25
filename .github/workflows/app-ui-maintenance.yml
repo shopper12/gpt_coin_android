@@ -1,0 +1,54 @@
+name: App UI maintenance
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'tools/patch_ui_manual_search_history.py'
+      - 'tools/patch_auto_tune_cooldown.py'
+      - '.github/workflows/app-ui-maintenance.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch-and-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Apply requested patches
+        run: |
+          python tools/patch_ui_manual_search_history.py
+          python tools/patch_auto_tune_cooldown.py
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Verify Android debug build
+        run: bash ./gradlew :app:assembleDebug --stacktrace
+
+      - name: Commit patched files
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- app/src/main/java/com/cryptotradecoach/MainActivity.kt tools/auto_tune_rules.py; then
+            echo "No UI or auto tune diff to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app/src/main/java/com/cryptotradecoach/MainActivity.kt tools/auto_tune_rules.py
+          git commit -m "Apply manual search UI and tune cooldown"
+          git push origin HEAD:main
