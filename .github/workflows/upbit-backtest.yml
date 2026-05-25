@@ -50,6 +50,15 @@ jobs:
             --minimum-score "${{ github.event.inputs.minimum_score || '65' }}" \
             --out-dir reports
 
+      - name: Analyze missed moves
+        run: |
+          python tools/analyze_missed_pumps.py \
+            --days "${{ github.event.inputs.days || '7' }}" \
+            --max-markets "${{ github.event.inputs.max_markets || '60' }}" \
+            --pump-threshold-pct 8.0 \
+            --backtest reports/backtest_latest.json \
+            --out-dir reports
+
       - name: Generate rules proposal
         run: |
           python tools/auto_tune_rules.py \
@@ -93,6 +102,8 @@ jobs:
           path: |
             reports/backtest_latest.json
             reports/backtest_latest.md
+            reports/missed_pumps_latest.json
+            reports/missed_pumps_latest.md
             reports/proposed_strategy_rules.json
             reports/rules_update_plan.md
             reports/auto_tune_decision.env
