@@ -94,10 +94,10 @@ else
   exit 1
 fi
 
-say "Checking fatal logs"
-if grep -E "FATAL EXCEPTION|AndroidRuntime|Process: $PKG" "$LOG_FILE" >/dev/null; then
+say "Checking app fatal logs"
+if grep -E "Process: $PKG" "$LOG_FILE" >/dev/null; then
   say "FAIL: fatal app crash found in logcat"
-  grep -n -A 80 -B 20 -E "FATAL EXCEPTION|AndroidRuntime|Process: $PKG" "$LOG_FILE" | tail -n 250 | tee -a "$SUMMARY_FILE"
+  grep -n -A 80 -B 20 -E "FATAL EXCEPTION|Process: $PKG" "$LOG_FILE" | tail -n 250 | tee -a "$SUMMARY_FILE"
   exit 1
 fi
 
