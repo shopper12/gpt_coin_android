@@ -4,6 +4,7 @@ import org.json.JSONArray
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
+import kotlin.math.abs
 
 interface MarketDataSource {
     suspend fun fetchTickers(): List<Ticker>
@@ -15,27 +16,71 @@ class UpbitMarketDataSource : MarketDataSource {
     var lastError: String? = null
         private set
 
+    @Volatile
+    var btcChangeRate24h: Double = 0.0
+        private set
+
     private val candleCache = mutableMapOf<String, CachedCandles>()
     private var lastRequestAt: Long = 0L
 
     override suspend fun fetchTickers(): List<Ticker> {
         lastError = null
         val markets = fetchKrwMarkets()
-        if (markets.isEmpty()) return emptyList()
-        return fetchTickerFor(markets)
+        if (markets.isEmpty()) {
+            btcChangeRate24h = 0.0
+            return emptyList()
+        }
+        val tickers = fetchTickerFor(markets)
+        btcChangeRate24h = tickers
+            .firstOrNull { it.market == "KRW-BTC" }
+            ?.signedChangeRate
+            ?.times(100.0)
+            ?: 0.0
+        return tickers
     }
 
     fun selectCandleTargets(tickers: List<Ticker>, limit: Int = MAX_CANDLE_TARGETS): List<Ticker> {
         val boundedLimit = limit.coerceIn(10, MAX_CANDLE_TARGETS)
+        if (tickers.isEmpty()) return emptyList()
+
         val byTradeValue = tickers.sortedByDescending { it.accTradePrice24h }.take(40)
         val byChangeRate = tickers.sortedByDescending { it.signedChangeRate }.take(15)
+        val tradeValueMarkets = byTradeValue.map { it.market }.toSet()
+
+        val medianTradePrice = tickers.map { it.accTradePrice24h }.sorted()
+            .let { values -> if (values.isEmpty()) 0.0 else values[values.size / 2] }
+
+        val byVolumeBuildup = tickers
+            .filter { ticker ->
+                ticker.accTradePrice24h > medianTradePrice * 1.5 &&
+                    ticker.signedChangeRate in -0.02..0.05 &&
+                    ticker.market !in tradeValueMarkets
+            }
+            .sortedByDescending { it.accTradePrice24h }
+            .take(15)
+        val buildupMarkets = byVolumeBuildup.map { it.market }.toSet()
+
+        val byQuietAccumulation = tickers
+            .filter { ticker ->
+                abs(ticker.signedChangeRate) < 0.015 &&
+                    ticker.accTradeVolume24h > 0.0 &&
+                    ticker.market !in tradeValueMarkets &&
+                    ticker.market !in buildupMarkets
+            }
+            .sortedByDescending { it.accTradeVolume24h }
+            .take(10)
+
         val tradeRanks = byTradeValue.mapIndexed { index, ticker -> ticker.market to index + 1 }.toMap()
         val changeRanks = byChangeRate.mapIndexed { index, ticker -> ticker.market to index + 1 }.toMap()
-        return (byTradeValue + byChangeRate)
+
+        return (byTradeValue + byChangeRate + byVolumeBuildup + byQuietAccumulation)
             .distinctBy { it.market }
             .sortedWith(
                 compareBy<Ticker> {
-                    minOf(tradeRanks[it.market] ?: Int.MAX_VALUE, changeRanks[it.market] ?: Int.MAX_VALUE)
+                    minOf(
+                        tradeRanks[it.market] ?: Int.MAX_VALUE,
+                        changeRanks[it.market] ?: Int.MAX_VALUE,
+                    )
                 }.thenByDescending { it.accTradePrice24h },
             )
             .take(boundedLimit)
@@ -71,9 +116,10 @@ class UpbitMarketDataSource : MarketDataSource {
         val selectedTickers = selectCandleTargets(tickers, boundedLimit)
 
         return selectedTickers.mapNotNull { ticker ->
+            val oneMinuteCandles = runCatching { fetchMinuteCandles(ticker.market, unit = 1, count = 60) }.getOrDefault(emptyList())
             val fiveMinuteCandles = runCatching { fetchMinuteCandles(ticker.market, unit = 5, count = 60) }.getOrDefault(emptyList())
-            val fifteenMinuteCandles = runCatching { fetchMinuteCandles(ticker.market, unit = 15, count = 60) }.getOrDefault(emptyList())
-            val fourHourCandles = runCatching { fetchMinuteCandles(ticker.market, unit = 240, count = 140) }.getOrDefault(emptyList())
+            val fifteenMinuteCandles = runCatching { fetchMinuteCandles(ticker.market, unit = 15, count = 50) }.getOrDefault(emptyList())
+            val fourHourCandles = runCatching { fetchMinuteCandles(ticker.market, unit = 240, count = 120) }.getOrDefault(emptyList())
             if (fiveMinuteCandles.size < 25 || fifteenMinuteCandles.size < 25) return@mapNotNull null
 
             val changeRate30m = percentChange(fiveMinuteCandles.takeLast(6).first().open, ticker.tradePrice)
@@ -84,10 +130,11 @@ class UpbitMarketDataSource : MarketDataSource {
 
             MarketCandidate(
                 ticker = ticker,
-                oneMinuteCandles = fiveMinuteCandles,
+                oneMinuteCandles = oneMinuteCandles,
                 fiveMinuteCandles = fiveMinuteCandles,
                 fifteenMinuteCandles = fifteenMinuteCandles,
                 fourHourCandles = fourHourCandles,
+                btcChangeRate24h = btcChangeRate24h,
                 rankByChangeRate = changeRanks[ticker.market] ?: Int.MAX_VALUE,
                 rankByTradeValue = tradeValueRanks[ticker.market] ?: Int.MAX_VALUE,
                 changeRate30m = changeRate30m,
@@ -233,16 +280,19 @@ class UpbitMarketDataSource : MarketDataSource {
     )
 
     private fun countForUnit(unit: Int): Int = when (unit) {
+        1 -> 60
+        5 -> 60
+        15 -> 50
         240 -> 120
         else -> 50
     }
 
     companion object {
-        private const val CANDLE_CACHE_MS = 90_000L
-        private const val MAX_CANDLE_TARGETS = 20
+        private const val CANDLE_CACHE_MS = 25_000L
+        private const val MAX_CANDLE_TARGETS = 35
         private const val MIN_REQUEST_INTERVAL_MS = 130L
         private const val MAX_RETRIES = 3
         private const val INITIAL_RETRY_BACKOFF_MS = 500L
-        private val SUPPORTED_UNITS = setOf(5, 15, 240)
+        private val SUPPORTED_UNITS = setOf(1, 5, 15, 240)
     }
 }
