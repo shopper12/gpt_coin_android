@@ -8,6 +8,18 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+DEFAULT_CANDIDATE_SELECTION = {
+    "maxCandleTargets": 35,
+    "topTradeValueCount": 40,
+    "topChangeRateCount": 15,
+    "volumeBuildupCount": 15,
+    "quietAccumulationCount": 10,
+    "medianTradeValueMultiplier": 1.5,
+    "minBuildupChangeRatePct": -2.0,
+    "maxBuildupChangeRatePct": 5.0,
+    "maxQuietAbsChangeRatePct": 1.5,
+}
+
 DEFAULT_PRE_PUMP = {
     "enabled": True,
     "minChange24hPct": -4.0,
@@ -80,11 +92,15 @@ def getv(root: dict[str, Any], path: str, default: Any) -> Any:
     return cur
 
 
-def ensure_pre_pump_defaults(root: dict[str, Any]) -> None:
-    current = root.setdefault("prePumpRotation", {})
-    if isinstance(current, dict):
+def ensure_defaults(root: dict[str, Any]) -> None:
+    candidate = root.setdefault("candidateSelection", {})
+    if isinstance(candidate, dict):
+        for key, value in DEFAULT_CANDIDATE_SELECTION.items():
+            candidate.setdefault(key, value)
+    pre = root.setdefault("prePumpRotation", {})
+    if isinstance(pre, dict):
         for key, value in DEFAULT_PRE_PUMP.items():
-            current.setdefault(key, value)
+            pre.setdefault(key, value)
 
 
 def weighted_metrics(report: dict[str, Any]) -> tuple[int, float, float, float]:
@@ -114,12 +130,18 @@ def tune_from_backtest(proposed: dict[str, Any], report: dict[str, Any], changes
     if total == 0:
         setv(proposed, "minimumScore", round(clamp(min_score - 4.0, 58.0, 82.0), 1), "no signals; loosen score gate", changes)
         setv(proposed, "maxResults", min(max_results + 1, 8), "no signals; show more candidates", changes)
+        setv(proposed, "candidateSelection.maxCandleTargets", min(integer(getv(proposed, "candidateSelection", {}), "maxCandleTargets", 35) + 10, 80), "no signals; scan wider market pool", changes)
+        setv(proposed, "candidateSelection.topTradeValueCount", min(integer(getv(proposed, "candidateSelection", {}), "topTradeValueCount", 40) + 10, 100), "no signals; widen liquid universe", changes)
+        setv(proposed, "candidateSelection.topChangeRateCount", min(integer(getv(proposed, "candidateSelection", {}), "topChangeRateCount", 15) + 5, 80), "no signals; widen rotation universe", changes)
+        setv(proposed, "candidateSelection.volumeBuildupCount", min(integer(getv(proposed, "candidateSelection", {}), "volumeBuildupCount", 15) + 5, 80), "no signals; include more buildup candidates", changes)
         setv(proposed, "compressionBreakout.minVolumeAcceleration", round(clamp(num(getv(proposed, "compressionBreakout", {}), "minVolumeAcceleration", 1.35) - 0.08, 1.05, 2.20), 2), "no signals; loosen compression volume gate", changes)
         setv(proposed, "prePumpRotation.minVolumeAcceleration", round(clamp(num(getv(proposed, "prePumpRotation", {}), "minVolumeAcceleration", 1.45) - 0.08, 1.05, 2.20), 2), "no signals; loosen pre-pump volume gate", changes)
         setv(proposed, "prePumpRotation.maxTradeValueRank", min(integer(getv(proposed, "prePumpRotation", {}), "maxTradeValueRank", 25) + 5, 60), "no signals; widen pre-pump liquidity rank", changes)
     elif signals < 12:
         setv(proposed, "minimumScore", round(clamp(min_score - 2.0, 58.0, 82.0), 1), "too few signals; loosen cautiously", changes)
         setv(proposed, "maxResults", min(max_results + 1, 8), "too few signals; keep more candidates", changes)
+        setv(proposed, "candidateSelection.maxCandleTargets", min(integer(getv(proposed, "candidateSelection", {}), "maxCandleTargets", 35) + 5, 80), "too few signals; scan wider market pool", changes)
+        setv(proposed, "candidateSelection.topChangeRateCount", min(integer(getv(proposed, "candidateSelection", {}), "topChangeRateCount", 15) + 3, 80), "too few signals; widen rotation universe", changes)
         setv(proposed, "prePumpRotation.maxChangeRank", min(integer(getv(proposed, "prePumpRotation", {}), "maxChangeRank", 35) + 3, 70), "too few signals; widen relative-strength rank", changes)
     elif stop_rate > 42.0 or avg_ret < -0.10:
         setv(proposed, "minimumScore", round(clamp(min_score + 2.0, 58.0, 82.0), 1), "weak result; tighten score gate", changes)
@@ -130,6 +152,7 @@ def tune_from_backtest(proposed: dict[str, Any], report: dict[str, Any], changes
     elif avg_ret > 0.18 and t1_rate > 35.0 and stop_rate < 32.0:
         setv(proposed, "minimumScore", round(clamp(min_score - 1.0, 58.0, 82.0), 1), "good result; loosen slightly", changes)
         setv(proposed, "maxResults", min(max_results + 1, 8), "good result; expose more candidates", changes)
+        setv(proposed, "candidateSelection.volumeBuildupCount", min(integer(getv(proposed, "candidateSelection", {}), "volumeBuildupCount", 15) + 2, 80), "good result; include more buildup candidates", changes)
 
     comp = summaries.get("COMPRESSION_BREAKOUT", {}) or {}
     if integer(comp, "signals") >= 8 and (num(comp, "stop_hit_rate_pct") > 42.0 or num(comp, "avg_return_pct") < -0.10):
@@ -175,11 +198,19 @@ def tune_from_missed(proposed: dict[str, Any], missed: dict[str, Any], avg_ret: 
 
     if candidate_pool >= 3:
         setv(proposed, "maxResults", min(integer(proposed, "maxResults", 4) + 1, 8), "missed pumps: displayed result set too narrow; show more candidates", changes)
+        setv(proposed, "candidateSelection.maxCandleTargets", min(integer(getv(proposed, "candidateSelection", {}), "maxCandleTargets", 35) + 10, 80), "missed pumps: scanned candle pool too narrow", changes)
+        setv(proposed, "candidateSelection.topTradeValueCount", min(integer(getv(proposed, "candidateSelection", {}), "topTradeValueCount", 40) + 10, 100), "missed pumps: liquid universe too narrow", changes)
+        setv(proposed, "candidateSelection.topChangeRateCount", min(integer(getv(proposed, "candidateSelection", {}), "topChangeRateCount", 15) + 5, 80), "missed pumps: rotation universe too narrow", changes)
+        setv(proposed, "candidateSelection.volumeBuildupCount", min(integer(getv(proposed, "candidateSelection", {}), "volumeBuildupCount", 15) + 5, 80), "missed pumps: buildup bucket too narrow", changes)
+        setv(proposed, "candidateSelection.quietAccumulationCount", min(integer(getv(proposed, "candidateSelection", {}), "quietAccumulationCount", 10) + 3, 80), "missed pumps: quiet accumulation bucket too narrow", changes)
+        setv(proposed, "candidateSelection.medianTradeValueMultiplier", round(clamp(num(getv(proposed, "candidateSelection", {}), "medianTradeValueMultiplier", 1.5) - 0.1, 0.5, 3.0), 2), "missed pumps: buildup liquidity threshold too strict", changes)
         setv(proposed, "prePumpRotation.maxTradeValueRank", min(integer(getv(proposed, "prePumpRotation", {}), "maxTradeValueRank", 25) + 5, 60), "missed pumps: liquidity rank gate too narrow", changes)
         setv(proposed, "prePumpRotation.maxChangeRank", min(integer(getv(proposed, "prePumpRotation", {}), "maxChangeRank", 35) + 5, 70), "missed pumps: relative-strength rank gate too narrow", changes)
-        notes.append("code_needed=if this repeats, expose UpbitApi candle target pool size as a rule")
 
     if low_volume >= 3 and not weak_live_profile:
+        setv(proposed, "candidateSelection.volumeBuildupCount", min(integer(getv(proposed, "candidateSelection", {}), "volumeBuildupCount", 15) + 5, 80), "missed pumps: include more volume buildup candidates", changes)
+        setv(proposed, "candidateSelection.medianTradeValueMultiplier", round(clamp(num(getv(proposed, "candidateSelection", {}), "medianTradeValueMultiplier", 1.5) - 0.08, 0.5, 3.0), 2), "missed pumps: allow earlier lower-value buildup", changes)
+        setv(proposed, "candidateSelection.maxBuildupChangeRatePct", round(clamp(num(getv(proposed, "candidateSelection", {}), "maxBuildupChangeRatePct", 5.0) + 0.5, 0.0, 15.0), 2), "missed pumps: allow stronger buildup before breakout", changes)
         setv(proposed, "compressionBreakout.minVolumeAcceleration", round(clamp(num(getv(proposed, "compressionBreakout", {}), "minVolumeAcceleration", 1.35) - 0.05, 1.05, 2.20), 2), "missed pumps: early volume gate too late", changes)
         setv(proposed, "compressionBreakout.minFiveMinuteVolumeRatio", round(clamp(num(getv(proposed, "compressionBreakout", {}), "minFiveMinuteVolumeRatio", 1.2) - 0.03, 1.05, 1.80), 2), "missed pumps: 5m volume gate too strict", changes)
         setv(proposed, "prePumpRotation.minVolumeAcceleration", round(clamp(num(getv(proposed, "prePumpRotation", {}), "minVolumeAcceleration", 1.45) - 0.05, 1.05, 2.20), 2), "missed pumps: pre-pump volume gate too late", changes)
@@ -188,25 +219,29 @@ def tune_from_missed(proposed: dict[str, Any], missed: dict[str, Any], avg_ret: 
 
     if strict_filter >= 3 and not weak_live_profile:
         setv(proposed, "minimumScore", round(clamp(num(proposed, "minimumScore", 68.0) - 1.0, 58.0, 82.0), 1), "missed pumps: score/structure filter too strict", changes)
+        setv(proposed, "candidateSelection.quietAccumulationCount", min(integer(getv(proposed, "candidateSelection", {}), "quietAccumulationCount", 10) + 3, 80), "missed pumps: include more quiet accumulation candidates", changes)
+        setv(proposed, "candidateSelection.maxQuietAbsChangeRatePct", round(clamp(num(getv(proposed, "candidateSelection", {}), "maxQuietAbsChangeRatePct", 1.5) + 0.2, 0.1, 5.0), 2), "missed pumps: quiet accumulation filter too strict", changes)
         setv(proposed, "compressionBreakout.maxDistanceTo15mHighPct", round(clamp(num(getv(proposed, "compressionBreakout", {}), "maxDistanceTo15mHighPct", 2.0) + 0.15, 0.8, 3.5), 2), "missed pumps: allow setup slightly farther from 15m high", changes)
         setv(proposed, "prePumpRotation.maxRangePct", round(clamp(num(getv(proposed, "prePumpRotation", {}), "maxRangePct", 4.2) + 0.15, 2.0, 6.0), 2), "missed pumps: pre-pump range gate too strict", changes)
         setv(proposed, "prePumpRotation.minRangePosition", round(clamp(num(getv(proposed, "prePumpRotation", {}), "minRangePosition", 0.55) - 0.02, 0.35, 0.80), 2), "missed pumps: pre-pump position gate too strict", changes)
         setv(proposed, "prePumpRotation.minHighProximityMultiplier", round(clamp(num(getv(proposed, "prePumpRotation", {}), "minHighProximityMultiplier", 0.992) - 0.001, 0.980, 0.998), 3), "missed pumps: high-proximity gate too strict", changes)
 
     if late_move >= 3:
+        setv(proposed, "candidateSelection.topChangeRateCount", min(integer(getv(proposed, "candidateSelection", {}), "topChangeRateCount", 15) + 5, 80), "missed pumps already moving; track more rotation names earlier", changes)
         setv(proposed, "scoring.overheat5mWeight", round(clamp(num(getv(proposed, "scoring", {}), "overheat5mWeight", 8.0) + 0.4, 4.0, 14.0), 2), "missed pumps were already moving; avoid late chase", changes)
         setv(proposed, "scoring.hardBlock5mPumpPct", round(clamp(num(getv(proposed, "scoring", {}), "hardBlock5mPumpPct", 2.2) - 0.05, 1.4, 3.0), 2), "missed pumps were late; block later entries sooner", changes)
         setv(proposed, "prePumpRotation.maxChange5mPct", round(clamp(num(getv(proposed, "prePumpRotation", {}), "maxChange5mPct", 1.8) - 0.05, 0.8, 3.0), 2), "missed pumps were already moving; demand earlier entry", changes)
         setv(proposed, "prePumpRotation.maxChange30mPct", round(clamp(num(getv(proposed, "prePumpRotation", {}), "maxChange30mPct", 3.2) - 0.10, 1.5, 5.0), 2), "missed pumps were already moving; demand earlier 30m entry", changes)
 
     if low_rs >= 3:
+        setv(proposed, "candidateSelection.topChangeRateCount", min(integer(getv(proposed, "candidateSelection", {}), "topChangeRateCount", 15) + 5, 80), "missed pumps: relative-strength universe too narrow", changes)
         setv(proposed, "prePumpRotation.maxChangeRank", min(integer(getv(proposed, "prePumpRotation", {}), "maxChangeRank", 35) + 5, 70), "missed pumps: relative-strength rank gate too narrow", changes)
         setv(proposed, "prePumpRotation.minRotation30mPct", round(clamp(num(getv(proposed, "prePumpRotation", {}), "minRotation30mPct", 0.7) - 0.05, 0.2, 1.5), 2), "missed pumps: 30m rotation trigger too strict", changes)
 
 
 def tune(rules: dict[str, Any], report: dict[str, Any], missed: dict[str, Any]) -> tuple[dict[str, Any], list[str], list[str]]:
     proposed = copy.deepcopy(rules)
-    ensure_pre_pump_defaults(proposed)
+    ensure_defaults(proposed)
     changes: list[str] = []
     notes: list[str] = []
     avg_ret, stop_rate, _t1_rate, _signals = tune_from_backtest(proposed, report, changes, notes)
