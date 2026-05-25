@@ -35,6 +35,68 @@ MAX_CANDLES_PER_REQUEST = 200
 REQUEST_SLEEP_SECONDS = 0.13
 DEFAULT_HORIZON_BARS = 12  # 12 * 5m = 60m
 
+DEFAULT_RULES = {
+    "version": "backtest-default",
+    "candidateSelection": {
+        "maxCandleTargets": 35,
+        "topTradeValueCount": 40,
+        "topChangeRateCount": 15,
+        "volumeBuildupCount": 15,
+        "quietAccumulationCount": 10,
+        "medianTradeValueMultiplier": 1.5,
+        "minBuildupChangeRatePct": -2.0,
+        "maxBuildupChangeRatePct": 5.0,
+        "maxQuietAbsChangeRatePct": 1.5,
+    },
+    "prePumpRotation": {
+        "enabled": True,
+        "minChange24hPct": -4.0,
+        "maxChange24hPct": 8.5,
+        "maxChange30mPct": 3.2,
+        "maxChange5mPct": 1.8,
+        "maxTradeValueRank": 25,
+        "maxChangeRank": 35,
+        "minRotation30mPct": 0.7,
+        "minVolumeAcceleration": 1.45,
+        "minFiveMinuteVolumeRatio": 1.6,
+        "minFifteenMinuteVolumeRatio": 1.35,
+        "maxRangePct": 4.2,
+        "minRangePosition": 0.55,
+        "minHighProximityMultiplier": 0.992,
+        "minCloseStairCount": 2,
+    },
+}
+
+def _merge(a, b):
+    out = dict(a)
+    for k, v in b.items():
+        out[k] = _merge(out[k], v) if isinstance(v, dict) and isinstance(out.get(k), dict) else v
+    return out
+
+def load_rules(path: Path) -> dict:
+    return DEFAULT_RULES if not path.exists() else _merge(DEFAULT_RULES, json.loads(path.read_text(encoding="utf-8")))
+
+def rv(rules: dict, key: str, default):
+    cur = rules
+    for part in key.split("."):
+        if not isinstance(cur, dict) or part not in cur:
+            return default
+        cur = cur[part]
+    return cur
+
+def rf(rules: dict, key: str, default: float) -> float:
+    try:
+        return float(rv(rules, key, default))
+    except (TypeError, ValueError):
+        return default
+
+def ri(rules: dict, key: str, default: int) -> int:
+    try:
+        return int(rv(rules, key, default))
+    except (TypeError, ValueError):
+        return default
+
+
 
 @dataclass(frozen=True)
 class Candle:
@@ -290,6 +352,27 @@ def add_ranks(snapshots_by_market: dict[str, dict[int, Snapshot]]) -> dict[str, 
     }
 
 
+
+def candidate_markets_at_ts(snaps: list[Snapshot], rules: dict) -> set[str]:
+    if not snaps:
+        return set()
+    max_targets = max(10, min(ri(rules, "candidateSelection.maxCandleTargets", 35), 80))
+    top_trade = sorted(snaps, key=lambda x: x.acc_trade_value_24h, reverse=True)[:ri(rules, "candidateSelection.topTradeValueCount", 40)]
+    top_change = sorted(snaps, key=lambda x: x.change_24h, reverse=True)[:ri(rules, "candidateSelection.topChangeRateCount", 15)]
+    trade_set = {x.market for x in top_trade}
+    values = sorted(x.acc_trade_value_24h for x in snaps)
+    median_value = values[len(values) // 2] if values else 0.0
+    buildup = [x for x in snaps if x.acc_trade_value_24h > median_value * rf(rules, "candidateSelection.medianTradeValueMultiplier", 1.5) and rf(rules, "candidateSelection.minBuildupChangeRatePct", -2.0) <= x.change_24h <= rf(rules, "candidateSelection.maxBuildupChangeRatePct", 5.0) and x.market not in trade_set]
+    buildup = sorted(buildup, key=lambda x: x.acc_trade_value_24h, reverse=True)[:ri(rules, "candidateSelection.volumeBuildupCount", 15)]
+    quiet = [x for x in snaps if abs(x.change_24h) < rf(rules, "candidateSelection.maxQuietAbsChangeRatePct", 1.5) and x.market not in trade_set and x.market not in {y.market for y in buildup}]
+    quiet = sorted(quiet, key=lambda x: x.acc_trade_value_24h, reverse=True)[:ri(rules, "candidateSelection.quietAccumulationCount", 10)]
+    cr = {x.market: n + 1 for n, x in enumerate(top_change)}
+    vr = {x.market: n + 1 for n, x in enumerate(top_trade)}
+    merged = {x.market: x for x in top_trade + top_change + buildup + quiet}
+    ranked = sorted(merged.values(), key=lambda x: (min(cr.get(x.market, 9999), vr.get(x.market, 9999)), -x.acc_trade_value_24h))
+    return {x.market for x in ranked[:max_targets]}
+
+
 def risk_targets_long(entry: float, stop: float) -> tuple[float, float, float]:
     stop = min(stop if stop > 0 else entry * 0.985, entry * 0.999)
     risk_pct = max(abs(percent_change(entry, stop)), 0.35)
@@ -302,7 +385,7 @@ def risk_targets_short(entry: float, stop: float) -> tuple[float, float, float]:
     return stop, entry * (1 - risk_pct * 1.5 / 100.0), entry * (1 - risk_pct * 2.4 / 100.0)
 
 
-def pre_pump_signal(market: str, i: int, five: list[Candle], fifteen: list[Candle], snap: Snapshot) -> Signal | None:
+def pre_pump_signal(market: str, i: int, five: list[Candle], fifteen: list[Candle], snap: Snapshot, rules: dict) -> Signal | None:
     c = five[i]
     prev20 = five[max(0, i - 20) : i]
     if len(prev20) < 20 or len(fifteen) < 25:
@@ -316,19 +399,21 @@ def pre_pump_signal(market: str, i: int, five: list[Candle], fifteen: list[Candl
     recent4 = five[max(0, i - 3) : i + 1]
     closes_up = sum(1 for a, b in zip(recent4, recent4[1:]) if b.close > a.close)
 
-    not_already_pumped = -4.0 <= snap.change_24h <= 8.5 and snap.change_30m < 3.2 and snap.change_5m < 1.8
-    liquidity_ok = snap.rank_value <= 25
-    rotation_ok = snap.rank_change <= 35 or snap.change_30m > 0.7
-    volume_ignition = snap.volume_accel >= 1.45 or five_vol_ratio >= 1.6 or fifteen_vol_ratio >= 1.35
-    structure_ok = range_pct <= 4.2 and range_pos >= 0.55 and snap.price >= prev20_high * 0.992
-    active = not_already_pumped and liquidity_ok and rotation_ok and volume_ignition and structure_ok and closes_up >= 2
+    if not rv(rules, "prePumpRotation.enabled", True):
+        return None
+    not_already_pumped = rf(rules, "prePumpRotation.minChange24hPct", -4.0) <= snap.change_24h <= rf(rules, "prePumpRotation.maxChange24hPct", 8.5) and snap.change_30m < rf(rules, "prePumpRotation.maxChange30mPct", 3.2) and snap.change_5m < rf(rules, "prePumpRotation.maxChange5mPct", 1.8)
+    liquidity_ok = snap.rank_value <= ri(rules, "prePumpRotation.maxTradeValueRank", 25)
+    rotation_ok = snap.rank_change <= ri(rules, "prePumpRotation.maxChangeRank", 35) or snap.change_30m > rf(rules, "prePumpRotation.minRotation30mPct", 0.7)
+    volume_ignition = snap.volume_accel >= rf(rules, "prePumpRotation.minVolumeAcceleration", 1.45) or five_vol_ratio >= rf(rules, "prePumpRotation.minFiveMinuteVolumeRatio", 1.6) or fifteen_vol_ratio >= rf(rules, "prePumpRotation.minFifteenMinuteVolumeRatio", 1.35)
+    structure_ok = range_pct <= rf(rules, "prePumpRotation.maxRangePct", 4.2) and range_pos >= rf(rules, "prePumpRotation.minRangePosition", 0.55) and snap.price >= prev20_high * rf(rules, "prePumpRotation.minHighProximityMultiplier", 0.992)
+    active = not_already_pumped and liquidity_ok and rotation_ok and volume_ignition and structure_ok and closes_up >= ri(rules, "prePumpRotation.minCloseStairCount", 2)
     if not active:
         return None
 
     structure_score = 22.0 if structure_ok else (12.0 if range_pos >= 0.5 else 0.0)
     volume_score = min(max((max(snap.volume_accel, five_vol_ratio, fifteen_vol_ratio) - 1.0) * 18.0, 0.0), 24.0)
-    rotation_score = 20.0 if snap.rank_change <= 10 else 15.0 if snap.rank_change <= 25 else 12.0 if snap.change_30m > 0.7 else 0.0
-    liquidity_score = 16.0 if snap.rank_value <= 10 else 10.0 if snap.rank_value <= 25 else 0.0
+    rotation_score = 20.0 if snap.rank_change <= 10 else 15.0 if snap.rank_change <= 25 else 12.0 if snap.change_30m > rf(rules, "prePumpRotation.minRotation30mPct", 0.7) else 0.0
+    liquidity_score = 16.0 if snap.rank_value <= 10 else 10.0 if snap.rank_value <= ri(rules, "prePumpRotation.maxTradeValueRank", 25) else 0.0
     score = structure_score + volume_score + rotation_score + liquidity_score + 14.0
     raw_stop = min(prev20_low, min(x.low for x in five[max(0, i - 7) : i + 1])) * 0.997
     stop, target1, target2 = risk_targets_long(snap.price, raw_stop)
@@ -541,7 +626,7 @@ def evaluate_signal(signal: Signal, future: list[Candle], horizon_bars: int) -> 
     )
 
 
-def backtest(days: int, max_markets: int, horizon_bars: int, minimum_score: float) -> dict[str, Any]:
+def backtest(days: int, max_markets: int, horizon_bars: int, minimum_score: float, rules: dict) -> dict[str, Any]:
     markets = select_markets(fetch_krw_markets(), max_markets=max_markets)
     candles_by_market: dict[str, list[Candle]] = {}
     snapshots_by_market: dict[str, dict[int, Snapshot]] = {}
@@ -557,6 +642,11 @@ def backtest(days: int, max_markets: int, horizon_bars: int, minimum_score: floa
         candles_by_market[market] = candles
         snapshots_by_market[market] = build_snapshots(market, candles)
     snapshots_by_market = add_ranks(snapshots_by_market)
+    snaps_by_ts: dict[int, list[Snapshot]] = defaultdict(list)
+    for rows in snapshots_by_market.values():
+        for snap in rows.values():
+            snaps_by_ts[snap.ts].append(snap)
+    candidate_pool_by_ts = {ts: candidate_markets_at_ts(snaps, rules) for ts, snaps in snaps_by_ts.items()}
 
     outcomes: list[Outcome] = []
     signals_seen: set[tuple[str, str, int]] = set()
@@ -567,14 +657,14 @@ def backtest(days: int, max_markets: int, horizon_bars: int, minimum_score: floa
         four_by_ts = {c.ts: pos for pos, c in enumerate(four_all)}
         for i in range(300, len(candles) - horizon_bars):
             snap = snapshots_by_market.get(market, {}).get(candles[i].ts)
-            if not snap:
+            if not snap or market not in candidate_pool_by_ts.get(snap.ts, set()):
                 continue
             fifteen_pos = max((pos for ts, pos in fifteen_by_ts.items() if ts <= candles[i].ts), default=-1)
             if fifteen_pos < 24:
                 continue
             fifteen = fifteen_all[: fifteen_pos + 1]
             candidates: list[Signal | None] = [
-                pre_pump_signal(market, i, candles, fifteen, snap),
+                pre_pump_signal(market, i, candles, fifteen, snap, rules),
                 range_bottom_signal(market, i, candles, snap),
                 prev_close_signal(market, i, candles, snap),
             ]
@@ -591,7 +681,7 @@ def backtest(days: int, max_markets: int, horizon_bars: int, minimum_score: floa
                     continue
                 signals_seen.add(dedup_key)
                 outcomes.append(evaluate_signal(signal, candles[i + 1 :], horizon_bars=horizon_bars))
-    return summarize(outcomes, days, max_markets, horizon_bars, minimum_score, markets)
+    return summarize(outcomes, days, max_markets, horizon_bars, minimum_score, markets, rules)
 
 
 def quantile(values: list[float], q: float) -> float:
@@ -602,7 +692,7 @@ def quantile(values: list[float], q: float) -> float:
     return sorted_values[index]
 
 
-def summarize(outcomes: list[Outcome], days: int, max_markets: int, horizon_bars: int, minimum_score: float, markets: list[str]) -> dict[str, Any]:
+def summarize(outcomes: list[Outcome], days: int, max_markets: int, horizon_bars: int, minimum_score: float, markets: list[str], rules: dict) -> dict[str, Any]:
     by_strategy: dict[str, list[Outcome]] = defaultdict(list)
     for row in outcomes:
         by_strategy[row.strategy].append(row)
@@ -630,12 +720,14 @@ def summarize(outcomes: list[Outcome], days: int, max_markets: int, horizon_bars
             "max_markets": max_markets,
             "horizon_minutes": horizon_bars * UNIT_MINUTES,
             "minimum_score": minimum_score,
+            "rules_version": rules.get("version", "unknown"),
             "markets": markets,
         },
         "total_signals": len(outcomes),
         "strategy_summary": strategy_summary,
         "top_outcomes": [asdict(x) for x in top],
         "bottom_outcomes": [asdict(x) for x in bottom],
+        "all_outcomes": [asdict(x) for x in outcomes],
     }
 
 
@@ -684,6 +776,7 @@ def main() -> None:
     parser.add_argument("--max-markets", type=int, default=60)
     parser.add_argument("--horizon-bars", type=int, default=DEFAULT_HORIZON_BARS)
     parser.add_argument("--minimum-score", type=float, default=65.0)
+    parser.add_argument("--rules", type=Path, default=Path("rules/strategy-rules.json"))
     parser.add_argument("--out-dir", type=Path, default=Path("reports"))
     args = parser.parse_args()
     result = backtest(
@@ -691,6 +784,7 @@ def main() -> None:
         max_markets=args.max_markets,
         horizon_bars=args.horizon_bars,
         minimum_score=args.minimum_score,
+        rules=load_rules(args.rules),
     )
     write_reports(result, args.out_dir)
     print(json.dumps(result["strategy_summary"], ensure_ascii=False, indent=2))
