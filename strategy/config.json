@@ -1,0 +1,40 @@
+{
+  "version": "2026-05-16-ec2-watcher-v1",
+  "mode": "github_rules_sync",
+  "sourceOfTruth": "github",
+  "watchBranch": "fix/runtime-phone-error",
+  "approvedRulesBranch": "fix/runtime-phone-error",
+  "botBranch": "bot/rules-auto-update",
+  "reportPath": "reports/latest.json",
+  "rulesPath": "rules/strategy-rules.json",
+  "rationalePath": "reports/rule-change-rationale.md",
+  "decisionPath": "reports/merge-decision.json",
+  "historyPath": "reports/history",
+  "failureLogPath": "reports/failures",
+  "pollSeconds": 300,
+  "autoCommit": true,
+  "autoPush": true,
+  "autoMergeToMain": false,
+  "autoApplyApprovedRules": true,
+  "requireManualApprovalForAppCode": true,
+  "allowedAutoWritePaths": [
+    "rules/strategy-rules.json",
+    "reports/rule-change-rationale.md",
+    "reports/merge-decision.json"
+  ],
+  "blockedAutoWritePaths": [
+    "app/",
+    "build.gradle.kts",
+    "settings.gradle.kts",
+    "gradle/",
+    "local.properties",
+    "logs/",
+    "exports/",
+    "analysis_report/"
+  ],
+  "notes": [
+    "Android app downloads only approved rules from rules/strategy-rules.json.",
+    "Reports and failed strategy records are operational data; do not commit large exports/logs.",
+    "EC2 watcher may update rules only when merge-policy gates pass. App code changes require manual review."
+  ]
+}

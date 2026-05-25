@@ -1,0 +1,59 @@
+{
+  "version": "v3-scannable-conservative",
+  "minimumScore": 68.0,
+  "maxResults": 4,
+  "validForMinutes": 20,
+  "entryBandPct": 0.12,
+  "compressionBreakout": {
+    "enabled": true,
+    "rangeCompressionRatio": 0.8,
+    "maxDistanceTo15mHighPct": 2.0,
+    "minVolumeAcceleration": 1.35,
+    "minFiveMinuteVolumeRatio": 1.2
+  },
+  "sweepReclaim": {
+    "enabled": true,
+    "fiveMinuteLookback": 12,
+    "fifteenMinuteLookback": 8,
+    "requireVolumeAboveAverage": true
+  },
+  "trendPullback": {
+    "enabled": false,
+    "higherTimeframeMaPeriod": 120,
+    "fifteenMinuteMaPeriod": 20,
+    "min15mMaMultiplier": 0.997,
+    "minPriorLowMultiplier": 0.99,
+    "pullbackLookback": 10,
+    "reclaimLookback": 6
+  },
+  "bearDecouplingBounce": {
+    "enabled": false,
+    "btcWeakBelowPct": -1.0,
+    "altStrongAbovePct": 2.0,
+    "maxTradeValueRank": 30,
+    "minFourHourVolumeMultiple": 2.5,
+    "maxPreviousFourHourVolumeMultiple": 3.0,
+    "maxPriceOver240mMa20Pct": 5.0,
+    "maxBearishUpperWickPct": 55.0,
+    "decouplingScoreCap": 24.0,
+    "wickPenalty": 12.0
+  },
+  "scoring": {
+    "overheat24hBasePct": 10.0,
+    "overheat24hWeight": 1.8,
+    "overheat30mBasePct": 2.8,
+    "overheat30mWeight": 3.0,
+    "overheat5mBasePct": 1.2,
+    "overheat5mWeight": 8.0,
+    "overheatMax": 45.0,
+    "hardBlockBtc24hBelowPct": -4.0,
+    "hardBlock30mPumpPct": 5.0,
+    "hardBlock5mPumpPct": 2.2,
+    "hardBlockRedUpperWickPct": 55.0
+  },
+  "risk": {
+    "defaultStopMultiplier": 0.99,
+    "minimumRiskPct": 0.15,
+    "minimumExpectedReturnPct": 0.2
+  }
+}

@@ -1,5 +1,44 @@
+# Android / Gradle
 .gradle/
-.idea/
-local.properties
 **/build/
 *.iml
+local.properties
+
+# Android Studio local files
+.idea/
+
+# Runtime logs and local diagnostics
+logs/
+*.log
+
+# Build outputs
+*.apk
+*.aab
+
+# Generated app data / exports
+exports/
+analysis_report/
+reports/latest.json
+reports/history/
+reports/*.json
+!reports/.gitkeep
+
+# Python local artifacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Local backups
+.local-backup/
+
+# Local secrets / keys
+*.keystore
+*.jks
+*.p12
+*.pem
+*.key
+.env
+
+# OS files
+.DS_Store
+Thumbs.db

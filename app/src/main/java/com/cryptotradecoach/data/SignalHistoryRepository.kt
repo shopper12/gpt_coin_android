@@ -2,22 +2,20 @@ package com.cryptotradecoach.data
 
 import android.content.Context
 import com.cryptotradecoach.data.local.AppDatabase
-import com.cryptotradecoach.data.local.GuidelineChangeEntity
-import com.cryptotradecoach.data.local.MissedSignalEntity
-import com.cryptotradecoach.data.local.MissedSignalReason
-import com.cryptotradecoach.data.local.PriceSnapshotEntity
 import com.cryptotradecoach.data.local.STRATEGY_VERSION
-import com.cryptotradecoach.data.local.SignalEventType
-import com.cryptotradecoach.data.local.SignalHistoryEntity
-import com.cryptotradecoach.data.local.StrategyReviewEntity
+import com.cryptotradecoach.data.local.StrategyEventType
+import com.cryptotradecoach.data.local.StrategyHistoryEntity
+import com.cryptotradecoach.data.local.StrategyPerformanceEntity
+import com.cryptotradecoach.data.local.StrategyScanLogEntity
+import com.cryptotradecoach.data.local.TradeStrategyEntity
 import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 
 data class ScanPersistenceResult(
-    val historyByMarket: Map<String, List<SignalHistoryEntity>>,
-    val missedSignals: List<MissedSignalEntity>,
-    val strategyReviews: List<StrategyReviewEntity>,
-    val guidelineChanges: List<GuidelineChangeEntity>,
-    val newlyMissedSignals: List<MissedSignalEntity>,
+    val activeStrategies: List<TradeStrategy>,
+    val historyBySymbol: Map<String, List<StrategyHistoryEntity>>,
+    val newEvents: List<StrategyHistoryEntity>,
 )
 
 class SignalHistoryRepository private constructor(
@@ -25,313 +23,335 @@ class SignalHistoryRepository private constructor(
 ) {
     private val dao = database.signalHistoryDao()
 
-    suspend fun saveScanResult(tickers: List<Ticker>, signals: List<Signal>): ScanPersistenceResult {
-        val now = System.currentTimeMillis()
-        val snapshots = tickers.toSnapshots(now)
-        dao.insertSnapshots(snapshots)
-        cleanupSnapshots(now)
+    suspend fun saveStrategyScanResult(
+        scanResult: StrategyScanResult,
+        currentPrices: Map<String, Double> = emptyMap(),
+        now: Long = System.currentTimeMillis(),
+    ): ScanPersistenceResult {
+        val strategies = scanResult.activeStrategies
+        val incomingBySymbol = strategies.associateBy { it.symbol }
+        val scanLogByMarket = scanResult.scanLogs.associateBy { it.market }
+        val events = mutableListOf<StrategyHistoryEntity>()
 
-        val tickerByMarket = tickers.associateBy { it.market }
-        signals.forEach { signal ->
-            recordSignalEvents(signal, tickerByMarket[signal.market]?.tradePrice ?: signal.entryPrice, now)
+        if (scanResult.scanLogs.isNotEmpty()) {
+            dao.insertScanLogs(scanResult.scanLogs.map { it.toEntity() })
         }
-        recordExpiredSignals(tickerByMarket, now)
-        val newlyMissedSignals = detectMissedSignals(snapshots, signals.take(5).map { it.market }.toSet(), now)
-        val reviews = buildStrategyReviews(now)
-        reviews.forEach { dao.insertStrategyReview(it) }
-        reviews.forEach { maybeCreateGuidelineChange(it, now) }
+        updateOpenPerformance(currentPrices, now)
+
+        strategies.forEach { strategy ->
+            val previous = dao.getLatestStrategyBySymbol(strategy.symbol)
+            val strategyToSave = strategy.toEntity(
+                createdAt = previous?.createdAt ?: strategy.createdAt,
+                updatedAt = now,
+            )
+            val event = classifyEvent(previous, strategyToSave)
+            dao.upsertStrategy(strategyToSave)
+            ensurePerformanceRow(strategy, now)
+            if (event != null) {
+                insertDedupedHistory(event, now)?.let { events += it }
+            }
+        }
+
+        dao.getAllCurrentlyActiveStrategies()
+            .filter { it.symbol !in incomingBySymbol }
+            .forEach { previous ->
+                val terminalStatus = terminalStatus(
+                    previous = previous,
+                    currentPrice = currentPrices[previous.symbol],
+                    logStatus = scanLogByMarket[previous.symbol]?.strategyStatus,
+                    now = now,
+                )
+                dao.invalidateStrategy(
+                    strategyId = previous.id,
+                    status = terminalStatus,
+                    reason = terminalReason(terminalStatus),
+                    updatedAt = now,
+                )
+                insertDedupedHistory(
+                    StrategyHistoryEntity(
+                        strategyId = previous.id,
+                        symbol = previous.symbol,
+                        eventType = eventTypeFor(terminalStatus),
+                        oldSummary = previous.summary(),
+                        newSummary = previous.copy(status = terminalStatus).summary(),
+                        message = terminalReason(terminalStatus),
+                        createdAt = now,
+                    ),
+                    now,
+                )?.let { events += it }
+            }
 
         return ScanPersistenceResult(
-            historyByMarket = getRecentHistoryByMarket(),
-            missedSignals = dao.getRecentMissedSignals(),
-            strategyReviews = dao.getRecentStrategyReviews(),
-            guidelineChanges = dao.getRecentGuidelineChanges(),
-            newlyMissedSignals = newlyMissedSignals,
+            activeStrategies = getActiveStrategies(),
+            historyBySymbol = getHistoryBySymbol(),
+            newEvents = events,
         )
     }
 
-    suspend fun getRecentHistoryByMarket(limitPerMarket: Int = 100): Map<String, List<SignalHistoryEntity>> {
-        return dao.getHistoryMarkets().associateWith { market ->
-            dao.getRecentHistoryByMarket(market, limitPerMarket)
-        }
+    suspend fun getActiveStrategies(limit: Int = 5): List<TradeStrategy> {
+        return dao.getActiveStrategies(limit).map { it.toModel() }
     }
 
-    suspend fun getRecentMissedSignals(): List<MissedSignalEntity> = dao.getRecentMissedSignals()
-
-    suspend fun getRecentStrategyReviews(): List<StrategyReviewEntity> = dao.getRecentStrategyReviews()
-
-    suspend fun getRecentGuidelineChanges(): List<GuidelineChangeEntity> = dao.getRecentGuidelineChanges()
-
-    private suspend fun recordSignalEvents(signal: Signal, currentPrice: Double, now: Long) {
-        val latest = dao.getLatestHistoryForMarket(signal.market)
-        val baseline = latest?.baselinePrice ?: signal.entryPrice
-        val changedStrategy = latest != null && latest.strategyName != signal.strategyName
-        val shouldInitial = latest == null || latest.eventType in TERMINAL_EVENTS
-
-        if (shouldInitial) {
-            insertEvent(signal, SignalEventType.INITIAL_SIGNAL, baselinePrice = signal.entryPrice, currentPrice = currentPrice, now = now)
-        } else if (changedStrategy) {
-            insertEvent(
-                signal = signal,
-                eventType = SignalEventType.STRATEGY_CHANGED,
-                baselinePrice = baseline,
-                currentPrice = currentPrice,
-                now = now,
-                extraReason = "Strategy changed from ${latest?.strategyName} to ${signal.strategyName}",
-            )
-        }
-
-        val baselineMove = percentChange(baseline, currentPrice)
-        if (abs(baselineMove) >= 5.0) {
-            insertEventWithCooldown(signal, SignalEventType.PRICE_MOVED_5_PERCENT, baseline, currentPrice, now, EVENT_COOLDOWN_MS)
-        }
-        if (currentPrice <= signal.stopLossPrice) {
-            insertEventWithCooldown(signal, SignalEventType.STOP_HIT, baseline, currentPrice, now, TERMINAL_COOLDOWN_MS)
-        }
-        if (currentPrice >= signal.targetPrice) {
-            insertEventWithCooldown(signal, SignalEventType.TARGET_HIT, baseline, currentPrice, now, TERMINAL_COOLDOWN_MS)
-        }
+    suspend fun getHistoryBySymbol(limitPerSymbol: Int = 200): Map<String, List<StrategyHistoryEntity>> {
+        return dao.getAllHistory().groupBy { it.symbol }.mapValues { (_, rows) ->
+            rows.take(limitPerSymbol)
+        }.toSortedMap()
     }
 
-    private suspend fun recordExpiredSignals(tickerByMarket: Map<String, Ticker>, now: Long) {
-        val candidates = dao.getExpiredCandidates(
-            expireBefore = now - SIGNAL_EXPIRY_MS,
-            terminalSince = now - SIGNAL_EXPIRY_MS,
-        )
-        candidates.forEach { active ->
-            val currentPrice = tickerByMarket[active.market]?.tradePrice ?: active.currentPrice
-            if (dao.countMarketEventSince(active.market, SignalEventType.EXPIRED, active.createdAt) == 0) {
-                dao.insertHistory(
-                    active.copy(
-                        id = 0,
-                        eventType = SignalEventType.EXPIRED,
-                        currentPrice = currentPrice,
-                        reason = "No target or stop hit within 6 hours of the signal.",
-                        updatedAt = now,
-                        createdAt = now,
-                    ).withPerformance(currentPrice),
-                )
-            }
-        }
+    suspend fun getRecentPerformance(
+        windowMs: Long = PERFORMANCE_WINDOW_MS,
+        limit: Int = 500,
+        now: Long = System.currentTimeMillis(),
+    ): List<StrategyPerformanceEntity> {
+        return dao.getPerformanceSince(now - windowMs, limit)
     }
 
-    private suspend fun detectMissedSignals(
-        snapshots: List<PriceSnapshotEntity>,
-        topSignalMarkets: Set<String>,
-        now: Long,
-    ): List<MissedSignalEntity> {
-        val missed = mutableListOf<MissedSignalEntity>()
-        snapshots.forEach { snapshot ->
-            val previous = dao.getPreviousSnapshot(snapshot.market, snapshot.timestamp)
-            val firstInThirtyMinutes = dao.getOldestSnapshotSince(snapshot.market, now - MISSED_LOOKBACK_MS)
-            val previousJumpPercent = previous?.let { percentChange(it.price, snapshot.price) } ?: 0.0
-            val thirtyMinutePercent = firstInThirtyMinutes?.let { percentChange(it.price, snapshot.price) } ?: 0.0
-            val rankRisingWithoutSignal = snapshot.rankByTradeValue <= 10 && snapshot.market !in topSignalMarkets
-            val candidate = snapshot.rankByChangeRate <= 10 ||
-                previousJumpPercent >= 3.0 ||
-                thirtyMinutePercent >= 5.0 ||
-                rankRisingWithoutSignal
-
-            if (!candidate) return@forEach
-            if (dao.countRecentActiveSignalEvents(snapshot.market, now - MISSED_LOOKBACK_MS) > 0) return@forEach
-            if (dao.countRecentMissedSignals(snapshot.market, now - MISSED_NOTIFICATION_COOLDOWN_MS) > 0) return@forEach
-
-            val reasonCode = classifyMissedReason(snapshot, previousJumpPercent, thirtyMinutePercent, rankRisingWithoutSignal)
-            val entity = MissedSignalEntity(
-                market = snapshot.market,
-                detectedAt = now,
-                currentPrice = snapshot.price,
-                previousPrice = previous?.price ?: snapshot.price,
-                changeRate = maxOf(snapshot.signedChangeRate * 100.0, previousJumpPercent, thirtyMinutePercent),
-                rankByChangeRate = snapshot.rankByChangeRate,
-                rankByTradeValue = snapshot.rankByTradeValue,
-                missedReason = missedReasonText(reasonCode, previousJumpPercent, thirtyMinutePercent),
-                suggestedStrategy = suggestedStrategy(reasonCode),
-                relatedRuleBefore = relatedRuleBefore(reasonCode),
-                suggestedRuleAfter = suggestedRuleAfter(reasonCode),
-            )
-            if (dao.insertMissedSignal(entity) > 0L) {
-                missed += entity
-            }
-        }
-        return missed
-    }
-
-    private suspend fun buildStrategyReviews(now: Long): List<StrategyReviewEntity> {
-        val recentHistory = dao.getRecentHistory(300)
-        if (recentHistory.isEmpty()) return emptyList()
-        val missed = dao.getRecentMissedSignals(100)
-        return recentHistory.groupBy { it.strategyName }.map { (strategyName, rows) ->
-            val targetCount = rows.count { it.eventType == SignalEventType.TARGET_HIT }
-            val stopCount = rows.count { it.eventType == SignalEventType.STOP_HIT }
-            val expiredCount = rows.count { it.eventType == SignalEventType.EXPIRED }
-            val relatedMissed = missed.filter { it.suggestedStrategy == strategyName || strategyName in it.suggestedStrategy }
-            val repeatedMissedReason = missed.groupBy { it.missedReason }.maxByOrNull { it.value.size }
-            val diagnosis = when {
-                stopCount > targetCount -> "$strategyName has more stop hits than target hits in recent history."
-                expiredCount > targetCount -> "$strategyName has many expired signals without target or stop confirmation."
-                relatedMissed.isNotEmpty() -> "$strategyName is related to repeated missed opportunities."
-                else -> "$strategyName is stable in the recent sample, but needs more observations."
-            }
-            val suggestion = repeatedMissedReason?.let {
-                "Review rule for ${it.key}; repeated ${it.value.size} time(s)."
-            } ?: "No immediate rule change suggested."
-
-            StrategyReviewEntity(
-                reviewedAt = now,
-                strategyName = strategyName,
-                strategyVersion = STRATEGY_VERSION,
-                totalActiveSignals = rows.count { it.eventType in ACTIVE_EVENTS },
-                totalMissedSignals = relatedMissed.size,
-                targetHitCount = targetCount,
-                stopHitCount = stopCount,
-                expiredCount = expiredCount,
-                averageMfePercent = rows.map { it.mfePercent }.averageOrZero(),
-                averageMaePercent = rows.map { it.maePercent }.averageOrZero(),
-                missedMarkets = relatedMissed.map { it.market }.distinct().joinToString(", "),
-                diagnosis = diagnosis,
-                ruleChangeSuggestion = suggestion,
-            )
-        }
-    }
-
-    private suspend fun maybeCreateGuidelineChange(review: StrategyReviewEntity, now: Long) {
-        if (review.ruleChangeSuggestion == "No immediate rule change suggested.") return
-        if (dao.countSimilarGuidelineChanges(review.strategyName, review.ruleChangeSuggestion, now - GUIDELINE_COOLDOWN_MS) > 0) return
-        dao.insertGuidelineChange(
-            GuidelineChangeEntity(
-                changedAt = now,
-                affectedStrategyName = review.strategyName,
-                strategyVersionBefore = review.strategyVersion,
-                strategyVersionAfterSuggestion = "${review.strategyVersion}-proposal",
-                beforeRule = "Current SignalEngine scoring and filters for ${review.strategyName}.",
-                afterRule = review.ruleChangeSuggestion,
-                reason = review.diagnosis,
-                evidenceMarkets = review.missedMarkets.ifBlank { "Recent signal history" },
-                expectedEffect = "Reduce repeated misses or weak outcomes after user review.",
-                applied = false,
+    private suspend fun ensurePerformanceRow(strategy: TradeStrategy, now: Long) {
+        if (dao.getPerformanceByStrategyId(strategy.id) != null) return
+        dao.insertPerformance(
+            StrategyPerformanceEntity(
+                strategyId = strategy.id,
+                symbol = strategy.symbol,
+                strategyType = strategy.strategyType,
+                rulesVersion = STRATEGY_VERSION,
+                createdAt = strategy.createdAt,
+                lastUpdatedAt = now,
+                entryPrice = strategy.entryHigh,
+                latestPrice = strategy.entryHigh,
+                target1 = strategy.target1,
+                target2 = strategy.target2,
+                stopLoss = strategy.stopLoss,
+                rankByTradeValue = strategy.rankByTradeValue,
+                score = strategy.score,
+                reason = strategy.reason,
             ),
         )
-        // Future approval flow can read unapplied rows and map accepted suggestions into SignalEngine rules.
     }
 
-    private suspend fun insertEventWithCooldown(
-        signal: Signal,
-        eventType: String,
-        baselinePrice: Double,
-        currentPrice: Double,
-        now: Long,
-        cooldownMs: Long,
-    ) {
-        if (dao.countMarketEventSince(signal.market, eventType, now - cooldownMs) == 0) {
-            insertEvent(signal, eventType, baselinePrice, currentPrice, now)
+    private suspend fun updateOpenPerformance(currentPrices: Map<String, Double>, now: Long) {
+        if (currentPrices.isEmpty()) return
+        dao.getOpenPerformance().forEach { performance ->
+            val latestPrice = currentPrices[performance.symbol] ?: return@forEach
+            if (latestPrice <= 0.0 || performance.entryPrice <= 0.0) return@forEach
+            val elapsed = now - performance.createdAt
+            val latestReturn = percentChange(performance.entryPrice, latestPrice)
+            val priceAfter5m = performance.priceAfter5m ?: latestPrice.takeIf { elapsed >= FIVE_MINUTES_MS }
+            val priceAfter15m = performance.priceAfter15m ?: latestPrice.takeIf { elapsed >= FIFTEEN_MINUTES_MS }
+            val priceAfter30m = performance.priceAfter30m ?: latestPrice.takeIf { elapsed >= THIRTY_MINUTES_MS }
+            val priceAfter60m = performance.priceAfter60m ?: latestPrice.takeIf { elapsed >= SIXTY_MINUTES_MS }
+            val target1Hit = performance.target1Hit || latestPrice >= performance.target1
+            val target2Hit = performance.target2Hit || latestPrice >= performance.target2
+            val stopHit = performance.stopHit || latestPrice <= performance.stopLoss
+            val expired = elapsed >= SIXTY_MINUTES_MS
+            dao.updatePerformance(
+                id = performance.id,
+                lastUpdatedAt = now,
+                latestPrice = latestPrice,
+                priceAfter5m = priceAfter5m,
+                priceAfter15m = priceAfter15m,
+                priceAfter30m = priceAfter30m,
+                priceAfter60m = priceAfter60m,
+                return5m = priceAfter5m?.let { percentChange(performance.entryPrice, it) },
+                return15m = priceAfter15m?.let { percentChange(performance.entryPrice, it) },
+                return30m = priceAfter30m?.let { percentChange(performance.entryPrice, it) },
+                return60m = priceAfter60m?.let { percentChange(performance.entryPrice, it) },
+                mfePct = max(performance.mfePct, latestReturn),
+                maePct = min(performance.maePct, latestReturn),
+                target1Hit = target1Hit,
+                target2Hit = target2Hit,
+                stopHit = stopHit,
+                expired = expired,
+                isComplete = expired || target2Hit || stopHit,
+            )
         }
     }
 
-    private suspend fun insertEvent(
-        signal: Signal,
-        eventType: String,
-        baselinePrice: Double,
-        currentPrice: Double,
-        now: Long,
-        extraReason: String? = null,
-    ) {
-        dao.insertHistory(
-            SignalHistoryEntity(
-                market = signal.market,
-                strategyName = signal.strategyName,
-                strategyVersion = STRATEGY_VERSION,
-                baselinePrice = baselinePrice,
-                currentPrice = currentPrice,
-                entryPrice = signal.entryPrice,
-                stopLossPrice = signal.stopLossPrice,
-                targetPrice = signal.targetPrice,
-                score = signal.score,
-                eventType = eventType,
-                reason = extraReason ?: signal.reason,
-                mfePercent = maxOf(0.0, percentChange(baselinePrice, currentPrice)),
-                maePercent = minOf(0.0, percentChange(baselinePrice, currentPrice)),
-                maxReturnPercent = maxOf(0.0, percentChange(signal.entryPrice, currentPrice)),
-                maxDrawdownPercent = minOf(0.0, percentChange(signal.entryPrice, currentPrice)),
+    private fun classifyEvent(
+        previous: TradeStrategyEntity?,
+        current: TradeStrategyEntity,
+    ): StrategyHistoryEntity? {
+        val now = current.updatedAt
+        if (previous == null || previous.status != StrategyStatus.ACTIVE) {
+            return StrategyHistoryEntity(
+                strategyId = current.id,
+                symbol = current.symbol,
+                eventType = StrategyEventType.NEW_ACTIVE,
+                oldSummary = previous?.summary(),
+                newSummary = current.summary(),
+                message = "New ACTIVE strategy was created.",
                 createdAt = now,
-                updatedAt = now,
-            ),
+            )
+        }
+        if (!materiallyChanged(previous, current)) return null
+        val eventType = if (current.rank < previous.rank) {
+            StrategyEventType.RANK_UP
+        } else {
+            StrategyEventType.PRICE_PLAN_CHANGED
+        }
+        return StrategyHistoryEntity(
+            strategyId = current.id,
+            symbol = current.symbol,
+            eventType = eventType,
+            oldSummary = previous.summary(),
+            newSummary = current.summary(),
+            message = "Entry, stop, target, score, or rank changed materially.",
+            createdAt = now,
         )
     }
 
-    private fun List<Ticker>.toSnapshots(now: Long): List<PriceSnapshotEntity> {
-        val changeRanks = sortedByDescending { it.signedChangeRate }.mapIndexed { index, ticker -> ticker.market to index + 1 }.toMap()
-        val valueRanks = sortedByDescending { it.accTradePrice24h }.mapIndexed { index, ticker -> ticker.market to index + 1 }.toMap()
-        return map { ticker ->
-            PriceSnapshotEntity(
-                market = ticker.market,
-                price = ticker.tradePrice,
-                signedChangeRate = ticker.signedChangeRate,
-                accTradePrice24h = ticker.accTradePrice24h,
-                accTradeVolume24h = ticker.accTradeVolume24h,
-                rankByChangeRate = changeRanks[ticker.market] ?: Int.MAX_VALUE,
-                rankByTradeValue = valueRanks[ticker.market] ?: Int.MAX_VALUE,
-                timestamp = now,
-            )
+    private suspend fun insertDedupedHistory(event: StrategyHistoryEntity, now: Long): StrategyHistoryEntity? {
+        val since = now - HISTORY_DEDUP_MS
+        if (dao.countDuplicateStrategyHistory(event.symbol, event.eventType, event.newSummary, since) > 0) return null
+        val id = dao.insertHistory(event)
+        return if (id > 0L) event.copy(id = id) else null
+    }
+
+    private fun terminalStatus(
+        previous: TradeStrategyEntity,
+        currentPrice: Double?,
+        logStatus: StrategyStatus?,
+        now: Long,
+    ): StrategyStatus {
+        return when {
+            logStatus == StrategyStatus.WATCH_ONLY -> StrategyStatus.WATCH_ONLY
+            currentPrice != null && currentPrice >= previous.target2 -> StrategyStatus.HIT_TARGET
+            currentPrice != null && currentPrice >= previous.target1 -> StrategyStatus.TARGET1_HIT
+            currentPrice != null && currentPrice <= previous.trailingStop && currentPrice > previous.stopLoss -> StrategyStatus.TRAILING_STOP_HIT
+            currentPrice != null && currentPrice <= previous.stopLoss -> StrategyStatus.STOPPED_OUT
+            now > previous.validUntil -> StrategyStatus.EXPIRED
+            else -> StrategyStatus.INVALIDATED
         }
     }
 
-    private suspend fun cleanupSnapshots(now: Long) {
-        dao.deleteSnapshotsOlderThan(now - SNAPSHOT_RETENTION_MS)
-        dao.keepLatestSnapshots(SNAPSHOT_RETENTION_COUNT)
+    private fun eventTypeFor(status: StrategyStatus): String = when (status) {
+        StrategyStatus.WATCH_ONLY -> StrategyEventType.WATCH_ONLY
+        StrategyStatus.TARGET1_HIT -> StrategyEventType.TARGET1_HIT
+        StrategyStatus.TRAILING_STOP_HIT -> StrategyEventType.TRAILING_STOP_HIT
+        StrategyStatus.HIT_TARGET -> StrategyEventType.HIT_TARGET
+        StrategyStatus.STOPPED_OUT -> StrategyEventType.STOPPED_OUT
+        StrategyStatus.EXPIRED -> StrategyEventType.EXPIRED
+        else -> StrategyEventType.INVALIDATED
     }
 
-    private fun classifyMissedReason(
-        snapshot: PriceSnapshotEntity,
-        previousJumpPercent: Double,
-        thirtyMinutePercent: Double,
-        rankRisingWithoutSignal: Boolean,
-    ): String = when {
-        snapshot.rankByTradeValue > 30 -> MissedSignalReason.TRADE_VALUE_FILTER_EXCLUDED
-        previousJumpPercent >= 3.0 && snapshot.accTradeVolume24h <= 0.0 -> MissedSignalReason.VOLUME_SCORE_TOO_LOW
-        thirtyMinutePercent >= 5.0 && snapshot.signedChangeRate < 0.03 -> MissedSignalReason.CHANGE_RATE_RULE_NOT_MATCHED
-        rankRisingWithoutSignal -> MissedSignalReason.SCORE_TOO_LOW
-        previousJumpPercent >= 3.0 -> MissedSignalReason.SIDEWAYS_BREAKOUT_MISSED
-        snapshot.signedChangeRate < 0.0 -> MissedSignalReason.REVERSAL_PATTERN_MISSED
-        else -> MissedSignalReason.UNKNOWN
+    private fun terminalReason(status: StrategyStatus): String = when (status) {
+        StrategyStatus.WATCH_ONLY -> "Strategy was downgraded to WATCH_ONLY."
+        StrategyStatus.TARGET1_HIT -> "Target1 was reached."
+        StrategyStatus.TRAILING_STOP_HIT -> "Trailing stop was reached."
+        StrategyStatus.HIT_TARGET -> "Target2 was reached."
+        StrategyStatus.STOPPED_OUT -> "Stop loss was reached."
+        StrategyStatus.EXPIRED -> "Strategy valid window expired."
+        else -> "Score or conditions fell, so the strategy was removed from the first screen."
     }
 
-    private fun missedReasonText(reasonCode: String, previousJumpPercent: Double, thirtyMinutePercent: Double): String {
-        return "$reasonCode: move ${previousJumpPercent.formatPercent()} from previous snapshot, ${thirtyMinutePercent.formatPercent()} over 30 minutes."
+    private fun materiallyChanged(previous: TradeStrategyEntity, current: TradeStrategyEntity): Boolean {
+        return current.rank < previous.rank ||
+            abs(current.score - previous.score) >= 3.0 ||
+            priceChanged(previous.entryLow, current.entryLow) ||
+            priceChanged(previous.entryHigh, current.entryHigh) ||
+            priceChanged(previous.stopLoss, current.stopLoss) ||
+            priceChanged(previous.target1, current.target1) ||
+            priceChanged(previous.target2, current.target2) ||
+            priceChanged(previous.trailingStop, current.trailingStop)
     }
 
-    private fun suggestedStrategy(reasonCode: String): String = when (reasonCode) {
-        MissedSignalReason.REVERSAL_PATTERN_MISSED -> "Rebound Watch"
-        MissedSignalReason.SIDEWAYS_BREAKOUT_MISSED -> "Volume Accumulation"
-        else -> "Momentum Breakout"
+    private fun priceChanged(old: Double, new: Double): Boolean {
+        if (old <= 0.0) return true
+        return abs((new - old) / old) >= 0.003
     }
 
-    private fun relatedRuleBefore(reasonCode: String): String = when (reasonCode) {
-        MissedSignalReason.TRADE_VALUE_FILTER_EXCLUDED -> "Only top 30 markets by 24h trade value are scanned for strategies."
-        MissedSignalReason.CHANGE_RATE_RULE_NOT_MATCHED -> "Momentum requires signedChangeRate between 3% and 12%."
-        MissedSignalReason.VOLUME_SCORE_TOO_LOW -> "Volume score must pass the current strategy threshold."
-        else -> "Current score threshold and pattern filters did not produce a top signal."
-    }
-
-    private fun suggestedRuleAfter(reasonCode: String): String = when (reasonCode) {
-        MissedSignalReason.TRADE_VALUE_FILTER_EXCLUDED -> "Include fast-rising change-rate top 10 markets even when outside trade-value top 30."
-        MissedSignalReason.CHANGE_RATE_RULE_NOT_MATCHED -> "Add 30-minute momentum as a secondary breakout trigger."
-        MissedSignalReason.VOLUME_SCORE_TOO_LOW -> "Allow rapid price moves with lower 24h volume score when trade value rank improves sharply."
-        MissedSignalReason.SIDEWAYS_BREAKOUT_MISSED -> "Add sideways range breakout detection before full momentum confirmation."
-        MissedSignalReason.REVERSAL_PATTERN_MISSED -> "Add reversal candidate scoring for fast rebounds from negative change-rate states."
-        MissedSignalReason.SCORE_TOO_LOW -> "Rebalance score weights when rank and short-term move both improve."
-        else -> "Review SignalEngine filters for this market pattern."
-    }
-
-    private fun SignalHistoryEntity.withPerformance(currentPrice: Double): SignalHistoryEntity {
-        val baselineMove = percentChange(baselinePrice, currentPrice)
-        val entryMove = percentChange(entryPrice, currentPrice)
-        return copy(
-            mfePercent = maxOf(mfePercent, baselineMove, 0.0),
-            maePercent = minOf(maePercent, baselineMove, 0.0),
-            maxReturnPercent = maxOf(maxReturnPercent, entryMove, 0.0),
-            maxDrawdownPercent = minOf(maxDrawdownPercent, entryMove, 0.0),
+    private fun TradeStrategy.toEntity(createdAt: Long, updatedAt: Long): TradeStrategyEntity {
+        return TradeStrategyEntity(
+            id = id,
+            symbol = symbol,
+            strategyType = strategyType,
+            status = status,
+            score = score,
+            rank = rank,
+            entryLow = entryLow,
+            entryHigh = entryHigh,
+            stopLoss = stopLoss,
+            target1 = target1,
+            target2 = target2,
+            trailingStop = trailingStop,
+            expectedReturnPct = expectedReturnPct,
+            riskPct = riskPct,
+            riskRewardRatio = riskRewardRatio,
+            componentScores = componentScores,
+            rankByChangeRate = rankByChangeRate,
+            rankByTradeValue = rankByTradeValue,
+            changeRate24h = changeRate24h,
+            changeRate30m = changeRate30m,
+            changeRate5m = changeRate5m,
+            volumeAcceleration = volumeAcceleration,
+            reason = reason,
+            invalidationReason = invalidationReason,
+            createdAt = createdAt,
+            updatedAt = updatedAt,
+            validUntil = validUntil,
         )
+    }
+
+    private fun TradeStrategyEntity.toModel(): TradeStrategy {
+        return TradeStrategy(
+            id = id,
+            symbol = symbol,
+            strategyType = strategyType,
+            status = status,
+            score = score,
+            rank = rank,
+            entryLow = entryLow,
+            entryHigh = entryHigh,
+            stopLoss = stopLoss,
+            target1 = target1,
+            target2 = target2,
+            trailingStop = trailingStop,
+            expectedReturnPct = expectedReturnPct,
+            riskPct = riskPct,
+            riskRewardRatio = riskRewardRatio,
+            componentScores = componentScores,
+            rankByChangeRate = rankByChangeRate,
+            rankByTradeValue = rankByTradeValue,
+            changeRate24h = changeRate24h,
+            changeRate30m = changeRate30m,
+            changeRate5m = changeRate5m,
+            volumeAcceleration = volumeAcceleration,
+            reason = reason,
+            invalidationReason = invalidationReason,
+            createdAt = createdAt,
+            updatedAt = updatedAt,
+            validUntil = validUntil,
+        )
+    }
+
+    private fun StrategyScanLog.toEntity(): StrategyScanLogEntity {
+        return StrategyScanLogEntity(
+            id = id,
+            market = market,
+            strategyType = strategyType,
+            timestamp = timestamp,
+            currentPrice = currentPrice,
+            entryPrice = entryPrice,
+            stopLossPrice = stopLossPrice,
+            target1 = target1,
+            target2 = target2,
+            trailingStop = trailingStop,
+            score = score,
+            componentScores = componentScores,
+            rankByChangeRate = rankByChangeRate,
+            rankByTradeValue = rankByTradeValue,
+            changeRate24h = changeRate24h,
+            changeRate30m = changeRate30m,
+            changeRate5m = changeRate5m,
+            volumeAcceleration = volumeAcceleration,
+            selectedOrMissed = selectedOrMissed,
+            missedReason = missedReason,
+            topNAtScan = topNAtScan,
+            strategyStatus = strategyStatus,
+        )
+    }
+
+    private fun TradeStrategyEntity.summary(): String {
+        return "rank=$rank score=${score.one()} entry=${entryLow.price()}-${entryHigh.price()} stop=${stopLoss.price()} target=${target1.price()}/${target2.price()} trail=${trailingStop.price()} status=$status"
     }
 
     private fun percentChange(from: Double, to: Double): Double {
@@ -339,30 +359,17 @@ class SignalHistoryRepository private constructor(
         return ((to - from) / from) * 100.0
     }
 
-    private fun List<Double>.averageOrZero(): Double = if (isEmpty()) 0.0 else average()
+    private fun Double.one(): String = String.format("%.1f", this)
 
-    private fun Double.formatPercent(): String = String.format("%.2f%%", this)
+    private fun Double.price(): String = String.format("%.2f", this)
 
     companion object {
-        private val TERMINAL_EVENTS = setOf(
-            SignalEventType.STOP_HIT,
-            SignalEventType.TARGET_HIT,
-            SignalEventType.EXPIRED,
-            SignalEventType.INVALIDATED,
-        )
-        private val ACTIVE_EVENTS = setOf(
-            SignalEventType.INITIAL_SIGNAL,
-            SignalEventType.STRATEGY_CHANGED,
-            SignalEventType.PRICE_MOVED_5_PERCENT,
-        )
-        private const val SIGNAL_EXPIRY_MS = 6 * 60 * 60 * 1000L
-        private const val EVENT_COOLDOWN_MS = 30 * 60 * 1000L
-        private const val TERMINAL_COOLDOWN_MS = 6 * 60 * 60 * 1000L
-        private const val MISSED_LOOKBACK_MS = 30 * 60 * 1000L
-        private const val MISSED_NOTIFICATION_COOLDOWN_MS = 30 * 60 * 1000L
-        private const val GUIDELINE_COOLDOWN_MS = 12 * 60 * 60 * 1000L
-        private const val SNAPSHOT_RETENTION_MS = 24 * 60 * 60 * 1000L
-        private const val SNAPSHOT_RETENTION_COUNT = 5_000
+        private const val HISTORY_DEDUP_MS = 30 * 60 * 1000L
+        private const val FIVE_MINUTES_MS = 5 * 60 * 1000L
+        private const val FIFTEEN_MINUTES_MS = 15 * 60 * 1000L
+        private const val THIRTY_MINUTES_MS = 30 * 60 * 1000L
+        private const val SIXTY_MINUTES_MS = 60 * 60 * 1000L
+        private const val PERFORMANCE_WINDOW_MS = 24 * 60 * 60 * 1000L
 
         @Volatile
         private var instance: SignalHistoryRepository? = null

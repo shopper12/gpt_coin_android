@@ -9,80 +9,62 @@ import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.cryptotradecoach.MainActivity
-import com.cryptotradecoach.data.Signal
-import com.cryptotradecoach.data.local.MissedSignalEntity
+import com.cryptotradecoach.data.local.StrategyEventType
+import com.cryptotradecoach.data.local.StrategyHistoryEntity
 
 class SignalNotificationHelper(private val context: Context) {
     private val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
     fun ensureChannels() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val serviceChannel = NotificationChannel(
-                CHANNEL_SERVICE,
-                "Coin Scanner Service",
-                NotificationManager.IMPORTANCE_LOW,
+            manager.createNotificationChannel(
+                NotificationChannel(
+                    CHANNEL_SERVICE,
+                    "Coin Scanner Service",
+                    NotificationManager.IMPORTANCE_LOW,
+                ),
             )
-            val signalChannel = NotificationChannel(
-                CHANNEL_SIGNAL,
-                "Coin Signals",
-                NotificationManager.IMPORTANCE_HIGH,
+            manager.createNotificationChannel(
+                NotificationChannel(
+                    CHANNEL_STRATEGY,
+                    "Strategy Events",
+                    NotificationManager.IMPORTANCE_HIGH,
+                ),
             )
-            val changeChannel = NotificationChannel(
-                CHANNEL_STRATEGY_CHANGE,
-                "Strategy Changes",
-                NotificationManager.IMPORTANCE_HIGH,
-            )
-            manager.createNotificationChannel(serviceChannel)
-            manager.createNotificationChannel(signalChannel)
-            manager.createNotificationChannel(changeChannel)
         }
     }
 
-    fun foregroundNotification(): Notification {
+    fun foregroundNotification(scanIntervalMs: Long): Notification {
         return NotificationCompat.Builder(context, CHANNEL_SERVICE)
             .setSmallIcon(android.R.drawable.stat_notify_sync)
-            .setContentTitle("Coin scanner running")
-            .setContentText("Scanning Upbit KRW markets every 30 seconds.")
+            .setContentTitle("코인 스캐너 실행 중")
+            .setContentText("Upbit KRW 시장을 ${scanIntervalMs / 1000}초 주기로 자동 스캔합니다.")
             .setContentIntent(openAppPendingIntent(REQUEST_CODE_SERVICE))
             .setOngoing(true)
             .build()
     }
 
-    fun notifySignal(signal: Signal, id: Int) {
-        val text = "Entry ${signal.entryPrice.format()} / Stop ${signal.stopLossPrice.format()} / Target ${signal.targetPrice.format()}"
-        val notification = NotificationCompat.Builder(context, CHANNEL_SIGNAL)
+    fun notifyStrategyEvent(event: StrategyHistoryEntity, id: Int) {
+        val title = when (event.eventType) {
+            StrategyEventType.NEW_ACTIVE -> "${event.symbol} 신규 전략"
+            StrategyEventType.RANK_UP -> "${event.symbol} 순위 상승"
+            StrategyEventType.PRICE_PLAN_CHANGED -> "${event.symbol} 매매전략 변경"
+            StrategyEventType.WATCH_ONLY -> "${event.symbol} 관찰 전환"
+            StrategyEventType.INVALIDATED -> "${event.symbol} 전략 무효화"
+            StrategyEventType.TARGET1_HIT -> "${event.symbol} 1차 목표 도달"
+            StrategyEventType.TRAILING_STOP_HIT -> "${event.symbol} 트레일링 스탑"
+            StrategyEventType.HIT_TARGET -> "${event.symbol} 목표가 도달"
+            StrategyEventType.STOPPED_OUT -> "${event.symbol} 손절가 도달"
+            StrategyEventType.EXPIRED -> "${event.symbol} 전략 만료"
+            else -> "${event.symbol} 전략 알림"
+        }
+        val text = event.message
+        val detail = listOfNotNull(event.message, event.newSummary).joinToString("\n")
+        val notification = NotificationCompat.Builder(context, CHANNEL_STRATEGY)
             .setSmallIcon(android.R.drawable.stat_notify_more)
-            .setContentTitle("${signal.market} ${signal.strategyName}")
+            .setContentTitle(title)
             .setContentText(text)
-            .setStyle(NotificationCompat.BigTextStyle().bigText("${signal.reason}\n$text"))
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setContentIntent(openAppPendingIntent(id))
-            .setAutoCancel(true)
-            .build()
-        manager.notify(id, notification)
-    }
-
-    fun notifyStrategyChanged(signal: Signal, previousStrategy: String, id: Int) {
-        val text = "$previousStrategy -> ${signal.strategyName}"
-        val notification = NotificationCompat.Builder(context, CHANNEL_STRATEGY_CHANGE)
-            .setSmallIcon(android.R.drawable.stat_notify_more)
-            .setContentTitle("${signal.market} strategy changed")
-            .setContentText(text)
-            .setStyle(NotificationCompat.BigTextStyle().bigText("$text\n${signal.reason}"))
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setContentIntent(openAppPendingIntent(id))
-            .setAutoCancel(true)
-            .build()
-        manager.notify(id, notification)
-    }
-
-    fun notifyMissedSignal(missed: MissedSignalEntity, id: Int) {
-        val text = "${missed.market} ${missed.changeRate.format()}% missed: ${missed.suggestedStrategy}"
-        val notification = NotificationCompat.Builder(context, CHANNEL_SIGNAL)
-            .setSmallIcon(android.R.drawable.stat_notify_more)
-            .setContentTitle("Missed signal detected")
-            .setContentText(text)
-            .setStyle(NotificationCompat.BigTextStyle().bigText("${missed.missedReason}\n${missed.suggestedRuleAfter}"))
+            .setStyle(NotificationCompat.BigTextStyle().bigText(detail))
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(openAppPendingIntent(id))
             .setAutoCancel(true)
@@ -105,9 +87,6 @@ class SignalNotificationHelper(private val context: Context) {
     companion object {
         private const val REQUEST_CODE_SERVICE = 1
         const val CHANNEL_SERVICE = "scanner_service"
-        const val CHANNEL_SIGNAL = "scanner_signal"
-        const val CHANNEL_STRATEGY_CHANGE = "strategy_change"
+        const val CHANNEL_STRATEGY = "strategy_events"
     }
 }
-
-private fun Double.format(): String = String.format("%,.2f", this)
