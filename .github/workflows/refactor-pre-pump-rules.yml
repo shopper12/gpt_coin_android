@@ -1,0 +1,51 @@
+name: Refactor pre-pump rules
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'tools/patch_signal_engine_pre_pump.py'
+      - '.github/workflows/refactor-pre-pump-rules.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  refactor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Patch SignalEngine pre-pump thresholds
+        run: python tools/patch_signal_engine_pre_pump.py
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Verify Android build
+        run: bash ./gradlew :app:assembleDebug --stacktrace
+
+      - name: Commit refactor
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- app/src/main/java/com/cryptotradecoach/domain/SignalEngine.kt; then
+            echo "No SignalEngine diff to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app/src/main/java/com/cryptotradecoach/domain/SignalEngine.kt
+          git commit -m "Use rules for pre-pump rotation thresholds"
+          git push origin HEAD:main
