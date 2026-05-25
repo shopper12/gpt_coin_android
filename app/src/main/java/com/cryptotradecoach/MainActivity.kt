@@ -42,8 +42,6 @@ import com.cryptotradecoach.data.local.GuidelineChangeEntity
 import com.cryptotradecoach.data.local.MissedSignalEntity
 import com.cryptotradecoach.data.local.SignalHistoryEntity
 import com.cryptotradecoach.data.local.StrategyReviewEntity
-import com.cryptotradecoach.data.remote.KrShortStock
-import com.cryptotradecoach.data.remote.StockScannerSnapshot
 import com.cryptotradecoach.service.CoinScannerService
 import com.cryptotradecoach.ui.MainViewModel
 import java.text.SimpleDateFormat
@@ -69,12 +67,8 @@ class MainActivity : ComponentActivity() {
                     strategyReviews = state.strategyReviews,
                     guidelineChanges = state.guidelineChanges,
                     lastScanAt = state.lastScanAt,
-                    stockSnapshot = state.stockSnapshot,
-                    stockLoading = state.stockLoading,
-                    stockError = state.stockError,
                     onStart = { startScanner() },
                     onStop = { stopScanner() },
-                    onRefreshStocks = { viewModel.refreshStockScanner() },
                 )
             }
         }
@@ -120,14 +114,10 @@ private fun MainScreen(
     strategyReviews: List<StrategyReviewEntity>,
     guidelineChanges: List<GuidelineChangeEntity>,
     lastScanAt: Long?,
-    stockSnapshot: StockScannerSnapshot?,
-    stockLoading: Boolean,
-    stockError: String?,
     onStart: () -> Unit,
     onStop: () -> Unit,
-    onRefreshStocks: () -> Unit,
 ) {
-    val tabs = listOf("Current", "Stocks", "History", "Missed", "Review", "Guidelines")
+    val tabs = listOf("Current", "History", "Missed", "Review", "Guidelines")
     var selectedTab by remember { mutableIntStateOf(0) }
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -148,62 +138,10 @@ private fun MainScreen(
         }
         when (selectedTab) {
             0 -> CurrentTab(isRunning, topSignals, lastScanAt, onStart, onStop)
-            1 -> StocksTab(stockSnapshot, stockLoading, stockError, onRefreshStocks)
-            2 -> HistoryTab(historyByMarket)
-            3 -> MissedTab(missedSignals)
-            4 -> ReviewTab(strategyReviews)
-            5 -> GuidelinesTab(guidelineChanges)
-        }
-    }
-}
-
-@Composable
-private fun StocksTab(
-    snapshot: StockScannerSnapshot?,
-    loading: Boolean,
-    error: String?,
-    onRefresh: () -> Unit,
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
-    ) {
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Button(onClick = onRefresh, enabled = !loading) { Text(if (loading) "Loading" else "Refresh") }
-        }
-        if (error != null) {
-            EmptyCard("Stock scanner API error: $error")
-        }
-        if (snapshot == null) {
-            EmptyCard(if (loading) "Loading latest stock scan." else "No stock scan loaded yet.")
-            return@Column
-        }
-        Text("Scan: ${snapshot.createdAtKst} / mode=${snapshot.mode}")
-        Text("Quote quality: ${snapshot.quoteOk}/${snapshot.total} (${(snapshot.quoteOkRate * 100).toDisplay()}%)")
-        Text("KR short candidates", style = MaterialTheme.typography.titleMedium)
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            if (snapshot.krShortStocks.isEmpty()) {
-                item { EmptyCard("No KR short candidates.") }
-            } else {
-                items(snapshot.krShortStocks) { stock -> StockRow(stock) }
-            }
-        }
-    }
-}
-
-@Composable
-private fun StockRow(stock: KrShortStock) {
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text("${stock.name}(${stock.code}) | ${stock.sector}/${stock.strategyType}", fontWeight = FontWeight.Bold)
-            Text("Score: ${stock.score.toDisplay()} | Risk: ${stock.riskPct.toDisplay()}%")
-            Text("Now: ${stock.currentPrice.toPrice()} (${stock.priceBasis}, ${stock.quoteSource})")
-            Text("Time: ${stock.priceTimestamp}")
-            Text("Entry: ${stock.entry.toPrice()} | Stop: ${stock.stopLoss.toPrice()} | Target: ${stock.target1.toPrice()} → ${stock.target2.toPrice()}")
-            Text("Reason: ${stock.reason}")
-            Text("Invalidation: ${stock.failureCondition}")
+            1 -> HistoryTab(historyByMarket)
+            2 -> MissedTab(missedSignals)
+            3 -> ReviewTab(strategyReviews)
+            4 -> GuidelinesTab(guidelineChanges)
         }
     }
 }
@@ -406,8 +344,6 @@ private fun EmptyCard(text: String) {
 private fun Double.toDisplay(): String = String.format("%,.2f", this)
 
 private fun Double.toPercent(): String = String.format("%.2f%%", this)
-
-private fun Double.toPrice(): String = String.format("%,.0f", this)
 
 private fun Long.toTimeText(): String {
     val formatter = SimpleDateFormat("HH:mm:ss", Locale.US)
