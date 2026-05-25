@@ -26,10 +26,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
-      - name: Checkout
+      - name: Checkout main
         uses: actions/checkout@v4
-        with:
-          ref: fix/runtime-phone-error
 
       - name: Set up Python
         uses: actions/setup-python@v5
