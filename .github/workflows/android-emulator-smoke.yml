@@ -9,7 +9,7 @@ permissions:
 jobs:
   emulator-smoke:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 35
     env:
       ANDROID_EMULATOR_WAIT_TIME_BEFORE_KILL: 300
     steps:
@@ -22,6 +22,15 @@ jobs:
           distribution: temurin
           java-version: '17'
 
+      - name: Enable KVM for Android emulator
+        run: |
+          if [ -e /dev/kvm ]; then
+            sudo chmod 666 /dev/kvm
+            ls -l /dev/kvm
+          else
+            echo "WARN: /dev/kvm is not available on this runner. Emulator may boot slowly or fail."
+          fi
+
       - name: Build debug APK for emulator
         run: bash ./gradlew :app:assembleDebug --stacktrace
 
@@ -30,13 +39,15 @@ jobs:
         env:
           ANDROID_EMULATOR_WAIT_TIME_BEFORE_KILL: 300
         with:
-          api-level: 31
-          target: google_apis
+          api-level: 29
+          target: default
           arch: x86_64
-          emulator-boot-timeout: 600
+          emulator-boot-timeout: 900
           disable-animations: true
           disk-size: 6000M
-          script: bash tools/android-emulator-smoke.sh app/build/outputs/apk/debug/app-debug.apk
+          script: |
+            adb devices -l
+            bash tools/android-emulator-smoke.sh app/build/outputs/apk/debug/app-debug.apk
 
       - name: Upload smoke output
         if: always()
