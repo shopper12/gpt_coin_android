@@ -9,6 +9,7 @@ data class StrategyRules(
     val maxResults: Int,
     val validForMinutes: Int,
     val entryBandPct: Double,
+    val candidateSelection: CandidateSelectionRules,
     val compressionBreakout: CompressionBreakoutRules,
     val sweepReclaim: SweepReclaimRules,
     val trendPullback: TrendPullbackRules,
@@ -24,6 +25,7 @@ data class StrategyRules(
             .put("maxResults", maxResults)
             .put("validForMinutes", validForMinutes)
             .put("entryBandPct", entryBandPct)
+            .put("candidateSelection", candidateSelection.toJson())
             .put("compressionBreakout", compressionBreakout.toJson())
             .put("sweepReclaim", sweepReclaim.toJson())
             .put("trendPullback", trendPullback.toJson())
@@ -40,6 +42,17 @@ data class StrategyRules(
             maxResults = 3,
             validForMinutes = 20,
             entryBandPct = 0.1,
+            candidateSelection = CandidateSelectionRules(
+                maxCandleTargets = 35,
+                topTradeValueCount = 40,
+                topChangeRateCount = 15,
+                volumeBuildupCount = 15,
+                quietAccumulationCount = 10,
+                medianTradeValueMultiplier = 1.5,
+                minBuildupChangeRatePct = -2.0,
+                maxBuildupChangeRatePct = 5.0,
+                maxQuietAbsChangeRatePct = 1.5,
+            ),
             compressionBreakout = CompressionBreakoutRules(
                 enabled = true,
                 rangeCompressionRatio = 0.75,
@@ -119,6 +132,7 @@ data class StrategyRules(
                 maxResults = root.optInt("maxResults", DEFAULT.maxResults).coerceIn(1, 20),
                 validForMinutes = max(1, root.optInt("validForMinutes", DEFAULT.validForMinutes)),
                 entryBandPct = root.optDouble("entryBandPct", DEFAULT.entryBandPct).coerceIn(0.0, 5.0),
+                candidateSelection = CandidateSelectionRules.fromJson(root.optJSONObject("candidateSelection")),
                 compressionBreakout = CompressionBreakoutRules.fromJson(root.optJSONObject("compressionBreakout")),
                 sweepReclaim = SweepReclaimRules.fromJson(root.optJSONObject("sweepReclaim")),
                 trendPullback = TrendPullbackRules.fromJson(root.optJSONObject("trendPullback")),
@@ -126,6 +140,46 @@ data class StrategyRules(
                 prePumpRotation = PrePumpRotationRules.fromJson(root.optJSONObject("prePumpRotation")),
                 scoring = ScoringRules.fromJson(root.optJSONObject("scoring")),
                 risk = RiskRules.fromJson(root.optJSONObject("risk")),
+            )
+        }
+    }
+}
+
+data class CandidateSelectionRules(
+    val maxCandleTargets: Int,
+    val topTradeValueCount: Int,
+    val topChangeRateCount: Int,
+    val volumeBuildupCount: Int,
+    val quietAccumulationCount: Int,
+    val medianTradeValueMultiplier: Double,
+    val minBuildupChangeRatePct: Double,
+    val maxBuildupChangeRatePct: Double,
+    val maxQuietAbsChangeRatePct: Double,
+) {
+    fun toJson(): JSONObject = JSONObject()
+        .put("maxCandleTargets", maxCandleTargets)
+        .put("topTradeValueCount", topTradeValueCount)
+        .put("topChangeRateCount", topChangeRateCount)
+        .put("volumeBuildupCount", volumeBuildupCount)
+        .put("quietAccumulationCount", quietAccumulationCount)
+        .put("medianTradeValueMultiplier", medianTradeValueMultiplier)
+        .put("minBuildupChangeRatePct", minBuildupChangeRatePct)
+        .put("maxBuildupChangeRatePct", maxBuildupChangeRatePct)
+        .put("maxQuietAbsChangeRatePct", maxQuietAbsChangeRatePct)
+
+    companion object {
+        fun fromJson(json: JSONObject?): CandidateSelectionRules {
+            val d = StrategyRules.DEFAULT.candidateSelection
+            return CandidateSelectionRules(
+                maxCandleTargets = json?.optInt("maxCandleTargets", d.maxCandleTargets)?.coerceIn(10, 80) ?: d.maxCandleTargets,
+                topTradeValueCount = json?.optInt("topTradeValueCount", d.topTradeValueCount)?.coerceIn(10, 100) ?: d.topTradeValueCount,
+                topChangeRateCount = json?.optInt("topChangeRateCount", d.topChangeRateCount)?.coerceIn(5, 80) ?: d.topChangeRateCount,
+                volumeBuildupCount = json?.optInt("volumeBuildupCount", d.volumeBuildupCount)?.coerceIn(0, 80) ?: d.volumeBuildupCount,
+                quietAccumulationCount = json?.optInt("quietAccumulationCount", d.quietAccumulationCount)?.coerceIn(0, 80) ?: d.quietAccumulationCount,
+                medianTradeValueMultiplier = json?.optDouble("medianTradeValueMultiplier", d.medianTradeValueMultiplier)?.coerceIn(0.5, 3.0) ?: d.medianTradeValueMultiplier,
+                minBuildupChangeRatePct = json?.optDouble("minBuildupChangeRatePct", d.minBuildupChangeRatePct)?.coerceIn(-10.0, 5.0) ?: d.minBuildupChangeRatePct,
+                maxBuildupChangeRatePct = json?.optDouble("maxBuildupChangeRatePct", d.maxBuildupChangeRatePct)?.coerceIn(0.0, 15.0) ?: d.maxBuildupChangeRatePct,
+                maxQuietAbsChangeRatePct = json?.optDouble("maxQuietAbsChangeRatePct", d.maxQuietAbsChangeRatePct)?.coerceIn(0.1, 5.0) ?: d.maxQuietAbsChangeRatePct,
             )
         }
     }
