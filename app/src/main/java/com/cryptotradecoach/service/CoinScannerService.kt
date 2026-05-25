@@ -65,59 +65,107 @@ class CoinScannerService : Service() {
         ScannerStateStore.setRunning(true)
 
         scanJob = serviceScope.launch {
-            while (isActive) {
-                ScannerStateStore.markScanAttempt(this@CoinScannerService)
-                runCatching {
-                    val maxDisplayCount = ScannerStateStore.maxDisplayCount.first()
-                    val minimumScore = ScannerStateStore.minimumScore.first()
-                    val rules = rulesRepository.refreshFromGitHub()
-                    val tickers = dataSource.fetchTickers()
-                    val candleTargets = dataSource.selectCandleTargets(tickers)
-                    val candleData = dataSource.fetchCandleData(candleTargets)
-                    val scanResult = engine.scan(
-                        tickers = candleTargets,
-                        candleData = candleData,
-                        rules = rules,
-                        minimumScore = minimumScore,
-                        maxResults = maxDisplayCount,
-                    )
-                    val currentPrices = candleTargets.associate { it.market to it.tradePrice }
-                    val persistence = historyRepository.saveStrategyScanResult(
-                        scanResult = scanResult,
-                        currentPrices = currentPrices,
-                    )
-                    ScannerStateStore.pushScanResult(
-                        activeStrategies = persistence.activeStrategies,
-                        historyBySymbol = persistence.historyBySymbol,
-                        diagnostics = ScanDiagnostics(
-                            validSignals = scanResult.validSignals,
-                            scannedCount = scanResult.scannedCount,
-                            candidateCount = scanResult.candidateCount,
-                            rejectedCount = scanResult.rejectedCount,
-                            rejectionSummary = scanResult.rejectionSummary,
-                            lastError = scanResult.lastError ?: dataSource.lastError,
-                        ),
-                        context = this@CoinScannerService,
-                    )
-                    reportRepository.generateLatestReport(rules = rules)
-                    maybeAutoUploadLatestReport()
-                    persistence.newEvents
-                        .filter { event ->
-                            event.eventType != StrategyEventType.NEW_ACTIVE ||
-                                event.newSummary.orEmpty().contains("rank=1") ||
-                                event.newSummary.orEmpty().contains("rank=2") ||
-                                event.newSummary.orEmpty().contains("rank=3")
+            launch {
+                while (isActive) {
+                    runCatching { performLightScan() }
+                        .onFailure { error ->
+                            Log.w("CryptoScanner", "Light scan failed", error)
+                            ScannerStateStore.setLastError("Light scan failed: ${error.message ?: error::class.java.simpleName}")
                         }
-                        .forEachIndexed { index, event ->
-                            notifier.notifyStrategyEvent(event, STRATEGY_EVENT_NOTIFICATION_BASE + index)
-                        }
-                }.onFailure { error ->
-                    Log.e("CryptoScanner", "Scan failed", error)
-                    ScannerStateStore.setLastError(error.message ?: error::class.java.simpleName)
+                    delay(LIGHT_SCAN_INTERVAL_MS)
                 }
-                delay(ScannerStateStore.scanIntervalMs.first())
+            }
+            launch {
+                while (isActive) {
+                    ScannerStateStore.markScanAttempt(this@CoinScannerService)
+                    runCatching { performDeepScan() }
+                        .onFailure { error ->
+                            Log.e("CryptoScanner", "Scan failed", error)
+                            ScannerStateStore.setLastError(error.message ?: error::class.java.simpleName)
+                        }
+                    delay(ScannerStateStore.scanIntervalMs.first())
+                }
             }
         }
+    }
+
+    private suspend fun performLightScan() {
+        val tickers = dataSource.fetchTickers()
+        val previousByMarket = ScannerStateStore.lastTickerSnapshot.value.associateBy { it.market }
+        val medianTradeValue = tickers.map { it.accTradePrice24h }.sorted()
+            .let { values -> if (values.isEmpty()) 0.0 else values[values.size / 2] }
+
+        val alerts = if (previousByMarket.isNotEmpty()) {
+            tickers.mapNotNull { ticker ->
+                val previous = previousByMarket[ticker.market] ?: return@mapNotNull null
+                val volumeChange = if (previous.accTradeVolume24h > 0.0) {
+                    ticker.accTradeVolume24h / previous.accTradeVolume24h
+                } else {
+                    1.0
+                }
+                val valueChange = if (previous.accTradePrice24h > 0.0) {
+                    ticker.accTradePrice24h / previous.accTradePrice24h
+                } else {
+                    1.0
+                }
+                val volumeOrValueMoved = volumeChange >= 1.015 || valueChange >= 1.012
+                val priceNotExtended = ticker.signedChangeRate in -0.02..0.06
+                val liquidityOk = ticker.accTradePrice24h > medianTradeValue * 0.3
+                if (volumeOrValueMoved && priceNotExtended && liquidityOk) {
+                    ticker to maxOf(volumeChange, valueChange)
+                } else {
+                    null
+                }
+            }.sortedByDescending { it.second }.take(5).map { it.first }
+        } else {
+            emptyList()
+        }
+
+        ScannerStateStore.updateTickerSnapshot(tickers)
+        ScannerStateStore.pushVolumeAlerts(alerts)
+    }
+
+    private suspend fun performDeepScan() {
+        val maxDisplayCount = ScannerStateStore.maxDisplayCount.first()
+        val minimumScore = ScannerStateStore.minimumScore.first()
+        val rules = rulesRepository.refreshFromGitHub()
+        val candidates = dataSource.fetchMarketCandidates(maxDisplayCount.coerceAtLeast(35))
+        val scanResult = engine.scan(
+            candidates = candidates,
+            rules = rules,
+            minimumScore = minimumScore,
+            maxResults = maxDisplayCount,
+        )
+        val currentPrices = candidates.associate { it.ticker.market to it.ticker.tradePrice }
+        val persistence = historyRepository.saveStrategyScanResult(
+            scanResult = scanResult,
+            currentPrices = currentPrices,
+        )
+        ScannerStateStore.pushScanResult(
+            activeStrategies = persistence.activeStrategies,
+            historyBySymbol = persistence.historyBySymbol,
+            diagnostics = ScanDiagnostics(
+                validSignals = scanResult.validSignals,
+                scannedCount = scanResult.scannedCount,
+                candidateCount = scanResult.candidateCount,
+                rejectedCount = scanResult.rejectedCount,
+                rejectionSummary = scanResult.rejectionSummary,
+                lastError = scanResult.lastError ?: dataSource.lastError,
+            ),
+            context = this@CoinScannerService,
+        )
+        reportRepository.generateLatestReport(rules = rules)
+        maybeAutoUploadLatestReport()
+        persistence.newEvents
+            .filter { event ->
+                event.eventType != StrategyEventType.NEW_ACTIVE ||
+                    event.newSummary.orEmpty().contains("rank=1") ||
+                    event.newSummary.orEmpty().contains("rank=2") ||
+                    event.newSummary.orEmpty().contains("rank=3")
+            }
+            .forEachIndexed { index, event ->
+                notifier.notifyStrategyEvent(event, STRATEGY_EVENT_NOTIFICATION_BASE + index)
+            }
     }
 
     private fun maybeAutoUploadLatestReport(now: Long = System.currentTimeMillis()) {
@@ -164,6 +212,7 @@ class CoinScannerService : Service() {
         const val ACTION_STOP = "com.cryptotradecoach.action.STOP"
         private const val NOTIFICATION_ID = 101
         private const val STRATEGY_EVENT_NOTIFICATION_BASE = 500
+        private const val LIGHT_SCAN_INTERVAL_MS = 10_000L
         private const val AUTO_REPORT_UPLOAD_INTERVAL_MS = 10 * 60 * 1000L
     }
 }
