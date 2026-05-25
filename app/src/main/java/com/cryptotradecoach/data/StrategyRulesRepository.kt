@@ -9,6 +9,7 @@ class StrategyRulesRepository private constructor(
     private val context: Context,
     private val settingsRepository: SettingsRepository,
     private val gitHubSyncClient: GitHubSyncClient,
+    private val publicTextReader: PublicTextReader,
 ) {
     private val rulesFile: File
         get() = File(context.filesDir, "rules/strategy-rules.json")
@@ -24,13 +25,13 @@ class StrategyRulesRepository private constructor(
         val current = loadLastKnownGood()
         val settings = settingsRepository.load().normalized()
         if (!settings.isConfigured) return current
-        if (settings.token.isBlank()) {
-            ScannerStateStore.setLastError("GitHub token is missing")
-            return current
-        }
         val downloaded = runCatching {
-            gitHubSyncClient.downloadText(settings, settings.rulesPath)
-                ?.let { StrategyRules.fromJson(it) }
+            val text = if (settings.token.isBlank()) {
+                publicTextReader.read(rawRulesUrl(settings))
+            } else {
+                gitHubSyncClient.downloadText(settings, settings.rulesPath)
+            }
+            text?.let { StrategyRules.fromJson(it) }
         }.onFailure { error ->
             val message = if (error is GitHubSyncException) {
                 "Rules download failed at ${error.syncPoint}: HTTP ${error.statusCode}; endpoint=${error.endpoint}; branch=${error.branch}; path=${error.path}"
@@ -57,6 +58,15 @@ class StrategyRulesRepository private constructor(
         }
     }
 
+    private fun rawRulesUrl(settings: GitHubSyncSettings): String {
+        val cleanPath = settings.rulesPath.trim('/').split('/').joinToString("/") { encodePathSegment(it) }
+        return "https://raw.githubusercontent.com/${settings.owner}/${settings.repo}/${encodePathSegment(settings.branch)}/$cleanPath"
+    }
+
+    private fun encodePathSegment(value: String): String {
+        return java.net.URLEncoder.encode(value, Charsets.UTF_8.name()).replace("+", "%20")
+    }
+
     companion object {
         private const val TAG = "StrategyRulesRepo"
 
@@ -69,6 +79,7 @@ class StrategyRulesRepository private constructor(
                     context.applicationContext,
                     SettingsRepository.getInstance(context),
                     GitHubSyncClient(),
+                    PublicTextReader(),
                 ).also { instance = it }
             }
         }
