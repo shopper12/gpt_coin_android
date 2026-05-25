@@ -42,6 +42,15 @@ jobs:
             --minimum-score "${{ github.event.inputs.minimum_score || '65' }}" \
             --out-dir reports
 
+      - name: Generate rules proposal
+        run: |
+          python tools/auto_tune_rules.py \
+            --backtest reports/backtest_latest.json \
+            --rules rules/strategy-rules.json \
+            --out-rules reports/proposed_strategy_rules.json \
+            --out-plan reports/rules_update_plan.md \
+            --out-env reports/auto_tune_decision.env
+
       - name: Upload backtest reports
         uses: actions/upload-artifact@v4
         with:
@@ -49,4 +58,7 @@ jobs:
           path: |
             reports/backtest_latest.json
             reports/backtest_latest.md
+            reports/proposed_strategy_rules.json
+            reports/rules_update_plan.md
+            reports/auto_tune_decision.env
           if-no-files-found: error
