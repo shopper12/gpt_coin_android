@@ -129,7 +129,8 @@ class CoinScannerService : Service() {
         val maxDisplayCount = ScannerStateStore.maxDisplayCount.first()
         val minimumScore = ScannerStateStore.minimumScore.first()
         val rules = rulesRepository.refreshFromGitHub()
-        val candidates = dataSource.fetchMarketCandidates(maxDisplayCount.coerceAtLeast(35))
+        val candidateLimit = maxOf(maxDisplayCount, rules.candidateSelection.maxCandleTargets)
+        val candidates = dataSource.fetchMarketCandidates(candidateLimit, rules)
         val scanResult = engine.scan(
             candidates = candidates,
             rules = rules,
