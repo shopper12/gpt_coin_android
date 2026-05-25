@@ -9,8 +9,6 @@ import com.cryptotradecoach.data.local.GuidelineChangeEntity
 import com.cryptotradecoach.data.local.MissedSignalEntity
 import com.cryptotradecoach.data.local.SignalHistoryEntity
 import com.cryptotradecoach.data.local.StrategyReviewEntity
-import com.cryptotradecoach.data.remote.StockScannerApi
-import com.cryptotradecoach.data.remote.StockScannerSnapshot
 import com.cryptotradecoach.service.ScannerStateStore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,16 +23,12 @@ data class MainUiState(
     val strategyReviews: List<StrategyReviewEntity> = emptyList(),
     val guidelineChanges: List<GuidelineChangeEntity> = emptyList(),
     val lastScanAt: Long? = null,
-    val stockSnapshot: StockScannerSnapshot? = null,
-    val stockLoading: Boolean = false,
-    val stockError: String? = null,
 )
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _uiState = MutableStateFlow(MainUiState())
     val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
     private val historyRepository = SignalHistoryRepository.getInstance(application)
-    private val stockScannerApi = StockScannerApi()
 
     init {
         viewModelScope.launch {
@@ -79,27 +73,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             ScannerStateStore.lastScanAt.collect { lastScanAt ->
                 _uiState.value = _uiState.value.copy(lastScanAt = lastScanAt)
             }
-        }
-        refreshStockScanner()
-    }
-
-    fun refreshStockScanner() {
-        viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(stockLoading = true, stockError = null)
-            runCatching { stockScannerApi.fetchLatest() }
-                .onSuccess { snapshot ->
-                    _uiState.value = _uiState.value.copy(
-                        stockSnapshot = snapshot,
-                        stockLoading = false,
-                        stockError = null,
-                    )
-                }
-                .onFailure { error ->
-                    _uiState.value = _uiState.value.copy(
-                        stockLoading = false,
-                        stockError = error.message ?: error::class.java.simpleName,
-                    )
-                }
         }
     }
 }
