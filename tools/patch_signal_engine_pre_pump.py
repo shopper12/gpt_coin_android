@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Triggered patcher: moves PRE_PUMP_ROTATION thresholds from SignalEngine constants to StrategyRules.
 from pathlib import Path
 
 path = Path('app/src/main/java/com/cryptotradecoach/domain/SignalEngine.kt')
