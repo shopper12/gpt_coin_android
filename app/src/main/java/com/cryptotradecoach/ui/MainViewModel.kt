@@ -130,21 +130,19 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             val normalized = settings.normalized()
             saveGitHubSettings(normalized)
-            if (normalized.token.isBlank()) {
-                showGitHubMessage("GitHub token is missing")
-                return@launch
-            }
             val ok = withContext(Dispatchers.IO) {
                 runCatching {
-                    gitHubSyncClient.downloadText(normalized, normalized.rulesPath) != null
+                    val rules = rulesRepository.refreshFromGitHub()
+                    _uiState.value = _uiState.value.copy(currentRulesText = currentRulesText(rules))
+                    true
                 }
             }.fold(
-                    onSuccess = { it },
-                    onFailure = { error ->
-                        showGitHubMessage(gitHubFailureMessage("GitHub settings test failed", error))
-                        return@launch
-                    },
-                )
+                onSuccess = { it },
+                onFailure = { error ->
+                    showGitHubMessage(gitHubFailureMessage("GitHub settings test failed", error))
+                    return@launch
+                },
+            )
             showGitHubMessage(if (ok) "GitHub settings OK" else "GitHub settings test failed")
         }
     }
@@ -153,10 +151,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             val normalized = settings.normalized()
             saveGitHubSettings(normalized)
-            if (normalized.token.isBlank()) {
-                showGitHubMessage("GitHub token is missing")
-                return@launch
-            }
             val before = withContext(Dispatchers.IO) { rulesRepository.loadLastKnownGood() }
             val after = withContext(Dispatchers.IO) { rulesRepository.refreshFromGitHub() }
             _uiState.value = _uiState.value.copy(currentRulesText = currentRulesText(after))
