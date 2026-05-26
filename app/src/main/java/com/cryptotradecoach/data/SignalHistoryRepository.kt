@@ -55,12 +55,12 @@ class SignalHistoryRepository private constructor(
         dao.getAllCurrentlyActiveStrategies()
             .filter { it.symbol !in incomingBySymbol }
             .forEach { previous ->
-                val terminalStatus = terminalStatus(
+                val terminalStatus = terminalStatusOrNull(
                     previous = previous,
                     currentPrice = currentPrices[previous.symbol],
                     logStatus = scanLogByMarket[previous.symbol]?.strategyStatus,
                     now = now,
-                )
+                ) ?: return@forEach
                 dao.invalidateStrategy(
                     strategyId = previous.id,
                     status = terminalStatus,
@@ -183,7 +183,7 @@ class SignalHistoryRepository private constructor(
             )
         }
         if (!materiallyChanged(previous, current)) return null
-        val eventType = if (current.rank < previous.rank) {
+        val eventType = if (current.rank < previous.rank && previous.rank - current.rank >= MIN_RANK_IMPROVEMENT_TO_LOG) {
             StrategyEventType.RANK_UP
         } else {
             StrategyEventType.PRICE_PLAN_CHANGED
@@ -206,20 +206,20 @@ class SignalHistoryRepository private constructor(
         return if (id > 0L) event.copy(id = id) else null
     }
 
-    private fun terminalStatus(
+    private fun terminalStatusOrNull(
         previous: TradeStrategyEntity,
         currentPrice: Double?,
         logStatus: StrategyStatus?,
         now: Long,
-    ): StrategyStatus {
+    ): StrategyStatus? {
         return when {
-            logStatus == StrategyStatus.WATCH_ONLY -> StrategyStatus.WATCH_ONLY
+            logStatus == StrategyStatus.WATCH_ONLY && now > previous.validUntil -> StrategyStatus.WATCH_ONLY
             currentPrice != null && currentPrice >= previous.target2 -> StrategyStatus.HIT_TARGET
             currentPrice != null && currentPrice >= previous.target1 -> StrategyStatus.TARGET1_HIT
             currentPrice != null && currentPrice <= previous.trailingStop && currentPrice > previous.stopLoss -> StrategyStatus.TRAILING_STOP_HIT
             currentPrice != null && currentPrice <= previous.stopLoss -> StrategyStatus.STOPPED_OUT
             now > previous.validUntil -> StrategyStatus.EXPIRED
-            else -> StrategyStatus.INVALIDATED
+            else -> null
         }
     }
 
@@ -234,18 +234,19 @@ class SignalHistoryRepository private constructor(
     }
 
     private fun terminalReason(status: StrategyStatus): String = when (status) {
-        StrategyStatus.WATCH_ONLY -> "Strategy was downgraded to WATCH_ONLY."
+        StrategyStatus.WATCH_ONLY -> "Strategy was downgraded to WATCH_ONLY after its valid window."
         StrategyStatus.TARGET1_HIT -> "Target1 was reached."
         StrategyStatus.TRAILING_STOP_HIT -> "Trailing stop was reached."
         StrategyStatus.HIT_TARGET -> "Target2 was reached."
         StrategyStatus.STOPPED_OUT -> "Stop loss was reached."
         StrategyStatus.EXPIRED -> "Strategy valid window expired."
-        else -> "Score or conditions fell, so the strategy was removed from the first screen."
+        else -> "Strategy was terminally invalidated."
     }
 
     private fun materiallyChanged(previous: TradeStrategyEntity, current: TradeStrategyEntity): Boolean {
-        return current.rank < previous.rank ||
-            abs(current.score - previous.score) >= 3.0 ||
+        val rankImprovedMaterially = current.rank < previous.rank && previous.rank - current.rank >= MIN_RANK_IMPROVEMENT_TO_LOG
+        return rankImprovedMaterially ||
+            abs(current.score - previous.score) >= MIN_SCORE_CHANGE_TO_LOG ||
             priceChanged(previous.entryLow, current.entryLow) ||
             priceChanged(previous.entryHigh, current.entryHigh) ||
             priceChanged(previous.stopLoss, current.stopLoss) ||
@@ -256,7 +257,7 @@ class SignalHistoryRepository private constructor(
 
     private fun priceChanged(old: Double, new: Double): Boolean {
         if (old <= 0.0) return true
-        return abs((new - old) / old) >= 0.003
+        return abs((new - old) / old) >= MATERIAL_PRICE_CHANGE_RATIO
     }
 
     private fun TradeStrategy.toEntity(createdAt: Long, updatedAt: Long): TradeStrategyEntity {
@@ -364,7 +365,10 @@ class SignalHistoryRepository private constructor(
     private fun Double.price(): String = String.format("%.2f", this)
 
     companion object {
-        private const val HISTORY_DEDUP_MS = 30 * 60 * 1000L
+        private const val HISTORY_DEDUP_MS = 2 * 60 * 60 * 1000L
+        private const val MATERIAL_PRICE_CHANGE_RATIO = 0.012
+        private const val MIN_SCORE_CHANGE_TO_LOG = 7.0
+        private const val MIN_RANK_IMPROVEMENT_TO_LOG = 2
         private const val FIVE_MINUTES_MS = 5 * 60 * 1000L
         private const val FIFTEEN_MINUTES_MS = 15 * 60 * 1000L
         private const val THIRTY_MINUTES_MS = 30 * 60 * 1000L
