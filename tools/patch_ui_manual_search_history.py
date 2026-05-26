@@ -109,7 +109,6 @@ private fun SymbolHistorySection(symbol: String, rows: List<StrategyHistoryEntit
 '''
 s = s.replace(old_history, new_history)
 
-insert_after = new_history
 manual_tab = '''
 @Composable
 private fun ManualSearchTab(
@@ -141,9 +140,11 @@ private fun ManualSearchTab(
 if 'private fun ManualSearchTab(' not in s:
     s = s.replace(new_history, new_history + manual_tab)
 
-# remove now-unused dropdown imports if present
+# Dropdown imports become unused after replacing history selector.
 s = s.replace('import androidx.compose.material3.DropdownMenu\n', '')
 s = s.replace('import androidx.compose.material3.DropdownMenuItem\n', '')
-s = s.replace('import androidx.compose.foundation.clickable\n', '')
+# Keep clickable import because HistoryCard still uses Modifier.clickable.
+if 'import androidx.compose.foundation.clickable\n' not in s:
+    s = s.replace('import androidx.compose.foundation.layout.Arrangement\n', 'import androidx.compose.foundation.clickable\nimport androidx.compose.foundation.layout.Arrangement\n')
 
 p.write_text(s, encoding='utf-8')
