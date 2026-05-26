@@ -177,7 +177,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 historyRepository.saveStrategyScanResult(
-                    scanResult = StrategyScanResult(activeStrategies = listOf(strategy)),
+                    scanResult = StrategyScanResult(activeStrategies = listOf(strategy), scanLogs = emptyList()),
                     currentPrices = mapOf(strategy.symbol to strategy.entryHigh),
                 )
             }
