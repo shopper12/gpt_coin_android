@@ -239,11 +239,25 @@ def tune_from_missed(proposed: dict[str, Any], missed: dict[str, Any], avg_ret: 
         setv(proposed, "prePumpRotation.minRotation30mPct", round(clamp(num(getv(proposed, "prePumpRotation", {}), "minRotation30mPct", 0.7) - 0.05, 0.2, 1.5), 2), "missed pumps: 30m rotation trigger too strict", changes)
 
 
+
+def should_allow_rule_change(report: dict[str, Any], missed: dict[str, Any], notes: list[str]) -> bool:
+    total = integer(report, "total_signals", 0)
+    missed_count = integer(missed, "missed_pump_count", 0) if missed else 0
+    generated = str(report.get("generated_at_utc", ""))[:10]
+    if total < 20 and missed_count < 10:
+        notes.append("rule_change_guard=blocked_low_sample_total_signals_lt20_and_missed_lt10")
+        return False
+    if generated:
+        notes.append("rule_change_guard=daily_workflow_only; generated_date=" + generated)
+    return True
+
 def tune(rules: dict[str, Any], report: dict[str, Any], missed: dict[str, Any]) -> tuple[dict[str, Any], list[str], list[str]]:
     proposed = copy.deepcopy(rules)
     ensure_defaults(proposed)
     changes: list[str] = []
     notes: list[str] = []
+    if not should_allow_rule_change(report, missed, notes):
+        return proposed, [], notes
     avg_ret, stop_rate, _t1_rate, _signals = tune_from_backtest(proposed, report, changes, notes)
     tune_from_missed(proposed, missed, avg_ret, stop_rate, changes, notes)
     if changes:
