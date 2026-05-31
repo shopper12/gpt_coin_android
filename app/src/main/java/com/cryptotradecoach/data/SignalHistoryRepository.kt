@@ -46,6 +46,21 @@ class SignalHistoryRepository private constructor(
 
         strategies.forEach { strategy ->
             val previous = dao.getLatestStrategyBySymbol(strategy.symbol)
+            if (previous?.status == StrategyStatus.ACTIVE) {
+                val terminalStatus = terminalStatusOrNull(
+                    previous = previous,
+                    currentPrice = currentPrices[previous.symbol],
+                    logStatus = scanLogByMarket[previous.symbol]?.strategyStatus,
+                    now = now,
+                )
+                if (terminalStatus == null) {
+                    // Strategy lock: once ACTIVE, keep original entry/stop/targets until profit, stop, trailing stop, or expiry.
+                    return@forEach
+                }
+                closeTerminalStrategy(previous, terminalStatus, now, events)
+                return@forEach
+            }
+
             val strategyToSave = strategy.toEntity(
                 createdAt = previous?.createdAt ?: strategy.createdAt,
                 updatedAt = now,
@@ -67,24 +82,7 @@ class SignalHistoryRepository private constructor(
                     logStatus = scanLogByMarket[previous.symbol]?.strategyStatus,
                     now = now,
                 ) ?: return@forEach
-                dao.invalidateStrategy(
-                    strategyId = previous.id,
-                    status = terminalStatus,
-                    reason = terminalReason(terminalStatus),
-                    updatedAt = now,
-                )
-                insertDedupedHistory(
-                    StrategyHistoryEntity(
-                        strategyId = previous.id,
-                        symbol = previous.symbol,
-                        eventType = eventTypeFor(terminalStatus),
-                        oldSummary = previous.summary(),
-                        newSummary = previous.copy(status = terminalStatus).summary(),
-                        message = terminalReason(terminalStatus),
-                        createdAt = now,
-                    ),
-                    now,
-                )?.let { events += it }
+                closeTerminalStrategy(previous, terminalStatus, now, events)
             }
 
         return ScanPersistenceResult(
@@ -230,7 +228,7 @@ class SignalHistoryRepository private constructor(
             val target1Hit = performance.target1Hit || latestPrice >= performance.target1
             val target2Hit = performance.target2Hit || latestPrice >= performance.target2
             val stopHit = performance.stopHit || latestPrice <= performance.stopLoss
-            val expired = elapsed >= SIXTY_MINUTES_MS
+            val expired = elapsed >= LOCKED_STRATEGY_MAX_HOLD_MS
             dao.updatePerformance(
                 id = performance.id,
                 lastUpdatedAt = now,
@@ -252,6 +250,32 @@ class SignalHistoryRepository private constructor(
                 isComplete = expired || target2Hit || stopHit,
             )
         }
+    }
+
+    private suspend fun closeTerminalStrategy(
+        previous: TradeStrategyEntity,
+        terminalStatus: StrategyStatus,
+        now: Long,
+        events: MutableList<StrategyHistoryEntity>,
+    ) {
+        dao.invalidateStrategy(
+            strategyId = previous.id,
+            status = terminalStatus,
+            reason = terminalReason(terminalStatus),
+            updatedAt = now,
+        )
+        insertDedupedHistory(
+            StrategyHistoryEntity(
+                strategyId = previous.id,
+                symbol = previous.symbol,
+                eventType = eventTypeFor(terminalStatus),
+                oldSummary = previous.summary(),
+                newSummary = previous.copy(status = terminalStatus).summary(),
+                message = terminalReason(terminalStatus),
+                createdAt = now,
+            ),
+            now,
+        )?.let { events += it }
     }
 
     private fun classifyEvent(
@@ -475,6 +499,7 @@ class SignalHistoryRepository private constructor(
         private const val FIFTEEN_MINUTES_MS = 15 * 60 * 1000L
         private const val THIRTY_MINUTES_MS = 30 * 60 * 1000L
         private const val SIXTY_MINUTES_MS = 60 * 60 * 1000L
+        private const val LOCKED_STRATEGY_MAX_HOLD_MS = 4 * 60 * 60 * 1000L
         private const val PERFORMANCE_WINDOW_MS = 24 * 60 * 60 * 1000L
         private const val WATCH_ONLY_CHECK_AFTER_MS = 30 * 60 * 1000L
         private const val WATCH_ONLY_DEDUP_MS = 30 * 60 * 1000L
