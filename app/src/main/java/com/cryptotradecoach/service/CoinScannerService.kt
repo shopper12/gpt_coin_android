@@ -6,6 +6,7 @@ import android.content.pm.ServiceInfo
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
+import com.cryptotradecoach.data.AppUpdateRepository
 import com.cryptotradecoach.data.ScanDiagnostics
 import com.cryptotradecoach.data.SettingsRepository
 import com.cryptotradecoach.data.SignalHistoryRepository
@@ -38,12 +39,15 @@ class CoinScannerService : Service() {
     private lateinit var rulesRepository: StrategyRulesRepository
     private lateinit var reportRepository: StrategyReportRepository
     private lateinit var settingsRepository: SettingsRepository
+    private lateinit var appUpdateRepository: AppUpdateRepository
     private lateinit var signalMonitor: SignalMonitor
     private lateinit var backtestEngine: BacktestEngine
     private lateinit var evolver: StrategyEvolver
     private var scanJob: Job? = null
     private var lastAutoUploadAttemptAt: Long = 0L
     private var lastBacktestAttemptAt: Long = 0L
+    private var lastAppUpdateCheckAt: Long = 0L
+    private var lastNotifiedVersionCode: Int = 0
 
     override fun onCreate() {
         super.onCreate()
@@ -53,6 +57,7 @@ class CoinScannerService : Service() {
         rulesRepository = StrategyRulesRepository.getInstance(this)
         reportRepository = StrategyReportRepository.getInstance(this)
         settingsRepository = SettingsRepository.getInstance(this)
+        appUpdateRepository = AppUpdateRepository(this)
         signalMonitor = SignalMonitor(dataSource, db, serviceScope)
         backtestEngine = BacktestEngine(db)
         evolver = StrategyEvolver(rulesRepository, db)
@@ -179,6 +184,7 @@ class CoinScannerService : Service() {
         reportRepository.generateLatestReport(rules = rules)
         maybeRunBacktestAndEvolution()
         maybeAutoUploadLatestReport()
+        maybeNotifyAppUpdate()
         persistence.newEvents
             .filter { event ->
                 event.eventType != StrategyEventType.NEW_ACTIVE ||
@@ -222,6 +228,17 @@ class CoinScannerService : Service() {
         }
     }
 
+    private fun maybeNotifyAppUpdate(now: Long = System.currentTimeMillis()) {
+        if (now - lastAppUpdateCheckAt < APP_UPDATE_CHECK_INTERVAL_MS) return
+        lastAppUpdateCheckAt = now
+        val settings = settingsRepository.load().normalized()
+        val info = appUpdateRepository.checkLatestRelease(settings) ?: return
+        if (info.hasUpdate && info.versionCode != lastNotifiedVersionCode) {
+            lastNotifiedVersionCode = info.versionCode
+            notifier.notifyAppUpdateAvailable(info)
+        }
+    }
+
     private fun stopScanner() {
         scanJob?.cancel()
         scanJob = null
@@ -247,5 +264,6 @@ class CoinScannerService : Service() {
         private const val LIGHT_SCAN_INTERVAL_MS = 10_000L
         private const val AUTO_REPORT_UPLOAD_INTERVAL_MS = 10 * 60 * 1000L
         private const val BACKTEST_INTERVAL_MS = 6L * 60L * 60L * 1000L
+        private const val APP_UPDATE_CHECK_INTERVAL_MS = 6L * 60L * 60L * 1000L
     }
 }
