@@ -23,6 +23,7 @@ import androidx.room.RoomDatabase
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun signalHistoryDao(): SignalHistoryDao
+    abstract fun evolutionLogDao(): EvolutionLogDao
 
     companion object {
         @Volatile
