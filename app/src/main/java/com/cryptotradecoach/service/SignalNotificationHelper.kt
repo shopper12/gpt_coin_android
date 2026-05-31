@@ -9,6 +9,7 @@ import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.cryptotradecoach.MainActivity
+import com.cryptotradecoach.data.AppUpdateRepository
 import com.cryptotradecoach.data.local.StrategyEventType
 import com.cryptotradecoach.data.local.StrategyHistoryEntity
 
@@ -28,6 +29,13 @@ class SignalNotificationHelper(private val context: Context) {
                 NotificationChannel(
                     CHANNEL_STRATEGY,
                     "Strategy Events",
+                    NotificationManager.IMPORTANCE_HIGH,
+                ),
+            )
+            manager.createNotificationChannel(
+                NotificationChannel(
+                    CHANNEL_APP_UPDATE,
+                    "App Updates",
                     NotificationManager.IMPORTANCE_HIGH,
                 ),
             )
@@ -72,6 +80,20 @@ class SignalNotificationHelper(private val context: Context) {
         manager.notify(id, notification)
     }
 
+    fun notifyAppUpdateAvailable(info: AppUpdateRepository.ReleaseApkInfo) {
+        val text = "현재 ${info.currentVersionCode}, 최신 ${info.versionCode} (${info.versionName})"
+        val notification = NotificationCompat.Builder(context, CHANNEL_APP_UPDATE)
+            .setSmallIcon(android.R.drawable.stat_sys_download_done)
+            .setContentTitle("새 앱 업데이트가 있습니다")
+            .setContentText(text)
+            .setStyle(NotificationCompat.BigTextStyle().bigText("$text\nSettings 탭에서 Download and install latest APK를 누르세요."))
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setContentIntent(openAppPendingIntent(REQUEST_CODE_APP_UPDATE))
+            .setAutoCancel(true)
+            .build()
+        manager.notify(NOTIFICATION_ID_APP_UPDATE, notification)
+    }
+
     private fun openAppPendingIntent(requestCode: Int): PendingIntent {
         val intent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or
@@ -86,7 +108,10 @@ class SignalNotificationHelper(private val context: Context) {
 
     companion object {
         private const val REQUEST_CODE_SERVICE = 1
+        private const val REQUEST_CODE_APP_UPDATE = 2
+        private const val NOTIFICATION_ID_APP_UPDATE = 80
         const val CHANNEL_SERVICE = "scanner_service"
         const val CHANNEL_STRATEGY = "strategy_events"
+        const val CHANNEL_APP_UPDATE = "app_updates"
     }
 }
