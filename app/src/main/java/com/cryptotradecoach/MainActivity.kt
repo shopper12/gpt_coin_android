@@ -390,7 +390,7 @@ private fun BacktestDetailCard(result: BacktestResult) {
                 Text("${result.sampleSize}건")
             }
             Text("승률 ${(result.winRate * 100.0).one()}% | 기댓값 ${result.expectancy.percent()} | PF ${result.profitFactor.one()}")
-            Text("60m 평균 ${result.avgReturn60m.percent()} | 평균 MFE ${result.avgMfe.percent()} | 평균 MAE ${result.avgMae.percent()}")
+            Text("60m 평균 ${result.avgReturn60m.percent()} | 240m 평균 ${result.avgReturn240m.percent()} | 평균 MFE ${result.avgMfe.percent()} | 평균 MAE ${result.avgMae.percent()}")
             Text("손절률 ${(result.stopHitRate * 100.0).one()}% | 1차목표 ${(result.target1HitRate * 100.0).one()}% | 2차목표 ${(result.target2HitRate * 100.0).one()}%")
             Text("최고 점수구간 ${result.bestScoreRange} | 강한 시간대 ${result.bestTimeOfDay} | 최적보유 ${result.avgHoldMinutes.roundToInt()}분 | 점수상관 ${result.scoreCorrelation.one()}", style = MaterialTheme.typography.bodySmall)
         }
