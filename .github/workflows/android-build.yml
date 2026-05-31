@@ -5,6 +5,9 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   assemble-debug:
     runs-on: ubuntu-latest
@@ -27,9 +30,28 @@ jobs:
       - name: Build debug APK
         run: ./gradlew :app:assembleDebug --stacktrace
 
-      - name: Upload debug APK
+      - name: Normalize APK name
+        run: |
+          mkdir -p release
+          cp app/build/outputs/apk/debug/*.apk release/crypto-trade-coach-release.apk
+
+      - name: Upload debug APK artifact
         if: success()
         uses: actions/upload-artifact@v4
         with:
           name: app-debug-apk
-          path: app/build/outputs/apk/debug/*.apk
+          path: release/crypto-trade-coach-release.apk
+
+      - name: Publish latest-phone-apk release
+        if: success()
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest-phone-apk
+          name: Latest phone APK
+          body: |
+            Automated debug APK build for phone installation.
+            Commit: ${{ github.sha }}
+          files: release/crypto-trade-coach-release.apk
+          make_latest: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
