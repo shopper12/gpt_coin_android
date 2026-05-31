@@ -5,6 +5,7 @@ import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
 import kotlin.math.abs
+import kotlin.math.min
 
 interface MarketDataSource {
     suspend fun fetchTickers(): List<Ticker>
@@ -74,17 +75,24 @@ class UpbitMarketDataSource : MarketDataSource {
             .sortedByDescending { it.accTradeVolume24h }
             .take(rules.quietAccumulationCount)
 
+        val byForcedMajorAlts = tickers
+            .filter { it.market in FORCE_WATCH_MARKETS }
+            .sortedByDescending { it.accTradePrice24h }
+
         val tradeRanks = byTradeValue.mapIndexed { index, ticker -> ticker.market to index + 1 }.toMap()
         val changeRanks = byChangeRate.mapIndexed { index, ticker -> ticker.market to index + 1 }.toMap()
 
-        return (byTradeValue + byChangeRate + byVolumeBuildup + byQuietAccumulation)
+        return (byForcedMajorAlts + byTradeValue + byChangeRate + byVolumeBuildup + byQuietAccumulation)
             .distinctBy { it.market }
             .sortedWith(
                 compareBy<Ticker> {
-                    minOf(
-                        tradeRanks[it.market] ?: Int.MAX_VALUE,
-                        changeRanks[it.market] ?: Int.MAX_VALUE,
-                    )
+                    when {
+                        it.market in FORCE_WATCH_MARKETS -> 0
+                        else -> minOf(
+                            tradeRanks[it.market] ?: Int.MAX_VALUE,
+                            changeRanks[it.market] ?: Int.MAX_VALUE,
+                        )
+                    }
                 }.thenByDescending { it.accTradePrice24h },
             )
             .take(boundedLimit)
@@ -332,10 +340,25 @@ class UpbitMarketDataSource : MarketDataSource {
 
     companion object {
         private const val CANDLE_CACHE_MS = 25_000L
-        private const val MAX_CANDLE_TARGETS = 80
+        private const val MAX_CANDLE_TARGETS = 100
         private const val MIN_REQUEST_INTERVAL_MS = 130L
         private const val MAX_RETRIES = 3
         private const val INITIAL_RETRY_BACKOFF_MS = 500L
         private val SUPPORTED_UNITS = setOf(1, 5, 15, 240)
+        private val FORCE_WATCH_MARKETS = setOf(
+            "KRW-XLM",
+            "KRW-XRP",
+            "KRW-ADA",
+            "KRW-DOGE",
+            "KRW-SOL",
+            "KRW-LINK",
+            "KRW-AVAX",
+            "KRW-DOT",
+            "KRW-SUI",
+            "KRW-APT",
+            "KRW-ONDO",
+            "KRW-HBAR",
+            "KRW-STX",
+        )
     }
 }
