@@ -13,27 +13,43 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 class AppUpdateRepository(private val context: Context) {
+    data class ReleaseApkInfo(
+        val versionCode: Int,
+        val versionName: String,
+        val assetName: String,
+        val assetUrl: String,
+        val releaseBody: String,
+        val currentVersionCode: Int,
+    ) {
+        val hasUpdate: Boolean get() = versionCode > currentVersionCode
+    }
+
+    fun checkLatestRelease(settings: GitHubSyncSettings): ReleaseApkInfo? {
+        val normalized = settings.normalized()
+        if (!normalized.isConfigured || normalized.token.isBlank()) return null
+        val releaseJson = fetchLatestReleaseJson(normalized)
+        val asset = findApkAsset(releaseJson)
+        val body = releaseJson.optString("body")
+        val assetName = asset.optString("name")
+        return ReleaseApkInfo(
+            versionCode = parseVersionCode(body, assetName),
+            versionName = parseVersionName(body, assetName),
+            assetName = assetName,
+            assetUrl = asset.optString("url"),
+            releaseBody = body,
+            currentVersionCode = currentVersionCode(),
+        )
+    }
+
     fun downloadLatestReleaseApk(settings: GitHubSyncSettings): File {
         val normalized = settings.normalized()
         if (!normalized.isConfigured) throw IOException("GitHub settings are incomplete")
         if (normalized.token.isBlank()) throw IOException("GitHub token is missing")
 
-        val releaseUrl = URL("https://api.github.com/repos/${normalized.owner}/${normalized.repo}/releases/tags/$RELEASE_TAG")
-        val releaseJson = fetchJson(releaseUrl, normalized.token)
-        val assets = releaseJson.optJSONArray("assets") ?: throw IOException("Release has no assets")
-        var assetUrl: String? = null
-        var assetName: String? = null
-        for (i in 0 until assets.length()) {
-            val asset = assets.getJSONObject(i)
-            val name = asset.optString("name")
-            if (name == APK_ASSET_NAME || name.endsWith(".apk")) {
-                assetUrl = asset.optString("url")
-                assetName = name
-                break
-            }
-        }
-        val downloadUrl = assetUrl?.takeIf { it.isNotBlank() } ?: throw IOException("APK asset not found in $RELEASE_TAG")
-        val fileName = assetName?.takeIf { it.isNotBlank() } ?: APK_ASSET_NAME
+        val releaseJson = fetchLatestReleaseJson(normalized)
+        val asset = findApkAsset(releaseJson)
+        val downloadUrl = asset.optString("url").takeIf { it.isNotBlank() } ?: throw IOException("APK asset URL not found in $RELEASE_TAG")
+        val fileName = asset.optString("name").takeIf { it.isNotBlank() } ?: APK_ASSET_FALLBACK_NAME
         val outDir = File(context.cacheDir, "updates").also { it.mkdirs() }
         val outFile = File(outDir, fileName)
         downloadBinary(URL(downloadUrl), normalized.token, outFile)
@@ -67,6 +83,48 @@ class AppUpdateRepository(private val context: Context) {
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
         context.startActivity(intent)
+    }
+
+    private fun fetchLatestReleaseJson(settings: GitHubSyncSettings): JSONObject {
+        val releaseUrl = URL("https://api.github.com/repos/${settings.owner}/${settings.repo}/releases/tags/$RELEASE_TAG")
+        return fetchJson(releaseUrl, settings.token)
+    }
+
+    private fun findApkAsset(releaseJson: JSONObject): JSONObject {
+        val assets = releaseJson.optJSONArray("assets") ?: throw IOException("Release has no assets")
+        for (i in 0 until assets.length()) {
+            val asset = assets.getJSONObject(i)
+            val name = asset.optString("name")
+            if (name.endsWith(".apk") && name.startsWith("crypto-trade-coach")) {
+                return asset
+            }
+        }
+        for (i in 0 until assets.length()) {
+            val asset = assets.getJSONObject(i)
+            if (asset.optString("name").endsWith(".apk")) return asset
+        }
+        throw IOException("APK asset not found in $RELEASE_TAG")
+    }
+
+    private fun parseVersionCode(body: String, assetName: String): Int {
+        Regex("versionCode:\\s*(\\d+)").find(body)?.groupValues?.getOrNull(1)?.toIntOrNull()?.let { return it }
+        Regex("v(\\d+)\\.apk$").find(assetName)?.groupValues?.getOrNull(1)?.toIntOrNull()?.let { return it }
+        return 0
+    }
+
+    private fun parseVersionName(body: String, assetName: String): String {
+        Regex("versionName:\\s*([^\\s]+)").find(body)?.groupValues?.getOrNull(1)?.let { return it }
+        Regex("v(\\d+)\\.apk$").find(assetName)?.groupValues?.getOrNull(1)?.let { return "1.0.$it" }
+        return "unknown"
+    }
+
+    private fun currentVersionCode(): Int {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            context.packageManager.getPackageInfo(context.packageName, 0).longVersionCode.toInt()
+        } else {
+            @Suppress("DEPRECATION")
+            context.packageManager.getPackageInfo(context.packageName, 0).versionCode
+        }
     }
 
     private fun fetchJson(url: URL, token: String): JSONObject {
@@ -110,7 +168,7 @@ class AppUpdateRepository(private val context: Context) {
 
     companion object {
         private const val RELEASE_TAG = "latest-phone-apk"
-        private const val APK_ASSET_NAME = "crypto-trade-coach-release.apk"
+        private const val APK_ASSET_FALLBACK_NAME = "crypto-trade-coach-release.apk"
         private const val APK_MIME_TYPE = "application/vnd.android.package-archive"
     }
 }
