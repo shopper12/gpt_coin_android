@@ -13,8 +13,11 @@ import com.cryptotradecoach.data.SignalHistoryRepository
 import com.cryptotradecoach.data.SignalMonitor
 import com.cryptotradecoach.data.StrategyReportRepository
 import com.cryptotradecoach.data.StrategyRulesRepository
+import com.cryptotradecoach.data.Ticker
 import com.cryptotradecoach.data.UpbitMarketDataSource
 import com.cryptotradecoach.data.local.AppDatabase
+import com.cryptotradecoach.data.local.MissedSignalEntity
+import com.cryptotradecoach.data.local.MissedSignalReason
 import com.cryptotradecoach.data.local.StrategyEventType
 import com.cryptotradecoach.domain.BacktestEngine
 import com.cryptotradecoach.domain.SignalEngine
@@ -48,6 +51,7 @@ class CoinScannerService : Service() {
     private var lastBacktestAttemptAt: Long = 0L
     private var lastAppUpdateCheckAt: Long = 0L
     private var lastNotifiedVersionCode: Int = 0
+    private val pumpBaselines = mutableMapOf<String, PumpBaseline>()
 
     override fun onCreate() {
         super.onCreate()
@@ -108,10 +112,13 @@ class CoinScannerService : Service() {
     }
 
     private suspend fun performLightScan() {
+        val now = System.currentTimeMillis()
         val tickers = dataSource.fetchTickers()
         val previousByMarket = ScannerStateStore.lastTickerSnapshot.value.associateBy { it.market }
         val medianTradeValue = tickers.map { it.accTradePrice24h }.sorted()
             .let { values -> if (values.isEmpty()) 0.0 else values[values.size / 2] }
+        val changeRanks = tickers.sortedByDescending { it.signedChangeRate }.mapIndexed { index, ticker -> ticker.market to index + 1 }.toMap()
+        val tradeValueRanks = tickers.sortedByDescending { it.accTradePrice24h }.mapIndexed { index, ticker -> ticker.market to index + 1 }.toMap()
 
         val alerts = if (previousByMarket.isNotEmpty()) {
             tickers.mapNotNull { ticker ->
@@ -139,8 +146,82 @@ class CoinScannerService : Service() {
             emptyList()
         }
 
+        recordMissedPumpCandidates(tickers, now, changeRanks, tradeValueRanks)
         ScannerStateStore.updateTickerSnapshot(tickers)
         ScannerStateStore.pushVolumeAlerts(alerts)
+    }
+
+    private suspend fun recordMissedPumpCandidates(
+        tickers: List<Ticker>,
+        now: Long,
+        changeRanks: Map<String, Int>,
+        tradeValueRanks: Map<String, Int>,
+    ) {
+        if (tickers.isEmpty()) return
+        val rules = rulesRepository.loadLastKnownGood()
+        val activeSymbols = ScannerStateStore.activeStrategies.value.map { it.symbol }.toSet()
+        tickers.forEach { ticker ->
+            val price = ticker.tradePrice
+            if (price <= 0.0) return@forEach
+            val rankByChange = changeRanks[ticker.market] ?: Int.MAX_VALUE
+            val rankByValue = tradeValueRanks[ticker.market] ?: Int.MAX_VALUE
+            val baseline = pumpBaselines[ticker.market]
+            if (baseline == null) {
+                pumpBaselines[ticker.market] = PumpBaseline(price, now, rankByChange, rankByValue)
+                return@forEach
+            }
+            val elapsed = now - baseline.timestamp
+            val movedPct = percentChange(baseline.price, price)
+            if (elapsed > MISSED_PUMP_BASELINE_RESET_MS || movedPct < -2.0) {
+                pumpBaselines[ticker.market] = PumpBaseline(price, now, rankByChange, rankByValue)
+                return@forEach
+            }
+            if (elapsed < MISSED_PUMP_MIN_WINDOW_MS || movedPct < MISSED_PUMP_RETURN_PCT) return@forEach
+            if (ticker.market in activeSymbols) {
+                pumpBaselines[ticker.market] = PumpBaseline(price, now, rankByChange, rankByValue)
+                return@forEach
+            }
+            if (db.signalHistoryDao().countRecentMissedSignals(ticker.market, now - MISSED_PUMP_DUPLICATE_WINDOW_MS) > 0) return@forEach
+
+            val reason = classifyMissedPumpReason(
+                baseline = baseline,
+                rankByChange = rankByChange,
+                rankByValue = rankByValue,
+                rulesMaxChangeRank = rules.prePumpRotation.maxChangeRank,
+                rulesMaxValueRank = rules.prePumpRotation.maxTradeValueRank,
+            )
+            db.signalHistoryDao().insertMissedSignal(
+                MissedSignalEntity(
+                    market = ticker.market,
+                    detectedAt = now,
+                    currentPrice = price,
+                    previousPrice = baseline.price,
+                    changeRate = movedPct,
+                    rankByChangeRate = rankByChange,
+                    rankByTradeValue = rankByValue,
+                    missedReason = reason,
+                    suggestedStrategy = "PRE_PUMP_ROTATION",
+                    relatedRuleBefore = "maxTradeValueRank=${rules.prePumpRotation.maxTradeValueRank}; maxChangeRank=${rules.prePumpRotation.maxChangeRank}; minVolumeAcceleration=${rules.prePumpRotation.minVolumeAcceleration}; minFiveMinuteVolumeRatio=${rules.prePumpRotation.minFiveMinuteVolumeRatio}; maxRangePct=${rules.prePumpRotation.maxRangePct}; minimumScore=${rules.minimumScore}",
+                    suggestedRuleAfter = "Widen candidate universe, lower pre-pump ignition thresholds, prioritize ACTIVE setups over WATCH_ONLY, and force-watch recurring missed markets.",
+                ),
+            )
+            ScannerStateStore.setLastError("Missed pump recorded: ${ticker.market} +${String.format(java.util.Locale.US, "%.1f", movedPct)}% reason=$reason")
+            pumpBaselines[ticker.market] = PumpBaseline(price, now, rankByChange, rankByValue)
+        }
+    }
+
+    private fun classifyMissedPumpReason(
+        baseline: PumpBaseline,
+        rankByChange: Int,
+        rankByValue: Int,
+        rulesMaxChangeRank: Int,
+        rulesMaxValueRank: Int,
+    ): String {
+        return when {
+            baseline.rankByTradeValue > rulesMaxValueRank && rankByValue > rulesMaxValueRank -> MissedSignalReason.TRADE_VALUE_FILTER_EXCLUDED
+            baseline.rankByChangeRate > rulesMaxChangeRank && rankByChange > rulesMaxChangeRank -> MissedSignalReason.CHANGE_RATE_RULE_NOT_MATCHED
+            else -> MissedSignalReason.UNKNOWN
+        }
     }
 
     private suspend fun performDeepScan() {
@@ -239,6 +320,11 @@ class CoinScannerService : Service() {
         }
     }
 
+    private fun percentChange(from: Double, to: Double): Double {
+        if (from <= 0.0) return 0.0
+        return (to - from) / from * 100.0
+    }
+
     private fun stopScanner() {
         scanJob?.cancel()
         scanJob = null
@@ -256,6 +342,13 @@ class CoinScannerService : Service() {
 
     override fun onBind(intent: Intent?): IBinder? = null
 
+    private data class PumpBaseline(
+        val price: Double,
+        val timestamp: Long,
+        val rankByChangeRate: Int,
+        val rankByTradeValue: Int,
+    )
+
     companion object {
         const val ACTION_START = "com.cryptotradecoach.action.START"
         const val ACTION_STOP = "com.cryptotradecoach.action.STOP"
@@ -265,5 +358,9 @@ class CoinScannerService : Service() {
         private const val AUTO_REPORT_UPLOAD_INTERVAL_MS = 10 * 60 * 1000L
         private const val BACKTEST_INTERVAL_MS = 6L * 60L * 60L * 1000L
         private const val APP_UPDATE_CHECK_INTERVAL_MS = 6L * 60L * 60L * 1000L
+        private const val MISSED_PUMP_MIN_WINDOW_MS = 3L * 60L * 1000L
+        private const val MISSED_PUMP_BASELINE_RESET_MS = 45L * 60L * 1000L
+        private const val MISSED_PUMP_DUPLICATE_WINDOW_MS = 6L * 60L * 60L * 1000L
+        private const val MISSED_PUMP_RETURN_PCT = 4.5
     }
 }
