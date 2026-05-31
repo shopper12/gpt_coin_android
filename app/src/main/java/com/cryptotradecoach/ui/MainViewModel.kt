@@ -11,6 +11,7 @@ import com.cryptotradecoach.data.ScanDiagnostics
 import com.cryptotradecoach.data.SettingsRepository
 import com.cryptotradecoach.data.SignalHistoryRepository
 import com.cryptotradecoach.data.StrategyReportRepository
+import com.cryptotradecoach.data.StrategyRules
 import com.cryptotradecoach.data.StrategyRulesRepository
 import com.cryptotradecoach.data.StrategyScanResult
 import com.cryptotradecoach.data.TradeStrategy
@@ -159,33 +160,46 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 runCatching {
                     val rules = rulesRepository.refreshFromGitHub()
                     val candidate = manualDataSource.fetchManualMarketCandidate(symbol)
-                        ?: return@runCatching null
-                    manualEngine.scan(
+                        ?: return@runCatching ManualAnalyzeResult(null, manualDataSource.lastError ?: "후보 생성 실패")
+                    val scanResult = manualEngine.scan(
                         candidates = listOf(candidate),
                         rules = rules,
                         minimumScore = 0.0,
                         maxResults = 1,
-                    ).activeStrategies.firstOrNull()
+                    )
+                    val strategy = scanResult.activeStrategies.firstOrNull()?.copy(rank = 1)
+                    val message = if (strategy != null) {
+                        "분석 완료: ${strategy.symbol}"
+                    } else {
+                        scanResult.scanLogs.firstOrNull()?.let { log ->
+                            "ACTIVE 전략 조건 없음: ${log.market} score=${String.format(java.util.Locale.US, "%.1f", log.score)} reason=${log.missedReason ?: log.strategyStatus.name}"
+                        } ?: "ACTIVE 전략 조건이 없습니다. 관찰만 권장합니다."
+                    }
+                    historyRepository.recordManualSearch(symbol, strategy, message)
+                    ManualAnalyzeResult(strategy, message)
                 }
             }
             result.fold(
-                onSuccess = { strategy ->
-                    _uiState.value = if (strategy != null) {
-                        _uiState.value.copy(
-                            manualStrategy = strategy.copy(rank = 1),
-                            manualMessage = "분석 완료: ${strategy.symbol}",
-                        )
-                    } else {
-                        _uiState.value.copy(
-                            manualStrategy = null,
-                            manualMessage = manualDataSource.lastError ?: "ACTIVE 전략 조건이 없습니다. 관찰만 권장합니다.",
-                        )
-                    }
+                onSuccess = { analyzed ->
+                    val latestHistory = withContext(Dispatchers.IO) { historyRepository.getHistoryBySymbol() }
+                    ScannerStateStore.pushScanResult(
+                        activeStrategies = historyRepository.getActiveStrategies(),
+                        historyBySymbol = latestHistory,
+                        diagnostics = _uiState.value.scanDiagnostics,
+                        context = getApplication(),
+                    )
+                    _uiState.value = _uiState.value.copy(
+                        manualStrategy = analyzed.strategy,
+                        manualMessage = analyzed.message,
+                        historyBySymbol = latestHistory,
+                    )
                 },
                 onFailure = { error ->
+                    val message = "수동 분석 실패: ${error.message ?: error::class.java.simpleName}"
+                    withContext(Dispatchers.IO) { historyRepository.recordManualSearch(symbol, null, message) }
                     _uiState.value = _uiState.value.copy(
                         manualStrategy = null,
-                        manualMessage = "수동 분석 실패: ${error.message ?: error::class.java.simpleName}",
+                        manualMessage = message,
                     )
                 },
             )
@@ -264,6 +278,31 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             _uiState.value = _uiState.value.copy(
                 currentRulesText = rulesText,
                 settingsMessage = "Current rules refreshed",
+            )
+        }
+    }
+
+    fun saveRulesText(rawJson: String) {
+        viewModelScope.launch {
+            val result = withContext(Dispatchers.IO) {
+                runCatching {
+                    val rules = StrategyRules.fromJson(rawJson)
+                    rulesRepository.persistLocal(rules)
+                    rules.toJson().toString(2)
+                }
+            }
+            result.fold(
+                onSuccess = { formatted ->
+                    _uiState.value = _uiState.value.copy(
+                        currentRulesText = formatted,
+                        settingsMessage = "Rules saved locally. 다음 스캔부터 적용됩니다.",
+                    )
+                },
+                onFailure = { error ->
+                    _uiState.value = _uiState.value.copy(
+                        settingsMessage = "Rules save failed: ${error.message ?: error::class.java.simpleName}",
+                    )
+                },
             )
         }
     }
@@ -370,7 +409,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private fun currentRulesText(): String = currentRulesText(rulesRepository.loadLastKnownGood())
 
-    private fun currentRulesText(rules: com.cryptotradecoach.data.StrategyRules): String {
+    private fun currentRulesText(rules: StrategyRules): String {
         return rules.toJson().toString(2)
     }
+
+    private data class ManualAnalyzeResult(
+        val strategy: TradeStrategy?,
+        val message: String,
+    )
 }
