@@ -15,8 +15,12 @@ import com.cryptotradecoach.data.StrategyRulesRepository
 import com.cryptotradecoach.data.StrategyScanResult
 import com.cryptotradecoach.data.TradeStrategy
 import com.cryptotradecoach.data.UpbitMarketDataSource
+import com.cryptotradecoach.data.local.AppDatabase
+import com.cryptotradecoach.data.local.EvolutionLogEntity
 import com.cryptotradecoach.data.local.StrategyHistoryEntity
 import com.cryptotradecoach.data.local.StrategyPerformanceEntity
+import com.cryptotradecoach.domain.BacktestEngine
+import com.cryptotradecoach.domain.BacktestResult
 import com.cryptotradecoach.domain.SignalEngine
 import com.cryptotradecoach.service.ScannerStateStore
 import kotlinx.coroutines.Dispatchers
@@ -31,6 +35,9 @@ data class MainUiState(
     val activeStrategies: List<TradeStrategy> = emptyList(),
     val historyBySymbol: Map<String, List<StrategyHistoryEntity>> = emptyMap(),
     val performanceRows: List<StrategyPerformanceEntity> = emptyList(),
+    val backtestResults: List<BacktestResult> = emptyList(),
+    val evolutionLog: List<EvolutionLogEntity> = emptyList(),
+    val lastEvolvedAt: Long? = null,
     val manualStrategy: TradeStrategy? = null,
     val manualMessage: String? = null,
     val scanDiagnostics: ScanDiagnostics = ScanDiagnostics(),
@@ -46,6 +53,7 @@ data class MainUiState(
 class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _uiState = MutableStateFlow(MainUiState())
     val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
+    private val db = AppDatabase.getInstance(application)
     private val historyRepository = SignalHistoryRepository.getInstance(application)
     private val settingsRepository = SettingsRepository.getInstance(application)
     private val rulesRepository = StrategyRulesRepository.getInstance(application)
@@ -67,6 +75,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 context = application,
             )
             refreshPerformance()
+            refreshBacktest()
+            refreshEvolutionLog()
         }
         viewModelScope.launch {
             ScannerStateStore.isRunning.collect { running ->
@@ -108,6 +118,19 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             ScannerStateStore.minimumScore.collect { score ->
                 _uiState.value = _uiState.value.copy(minimumScore = score)
+            }
+        }
+        viewModelScope.launch {
+            ScannerStateStore.backtestResults.collect { results ->
+                _uiState.value = _uiState.value.copy(backtestResults = results)
+            }
+        }
+        viewModelScope.launch {
+            ScannerStateStore.evolutionLog.collect { rows ->
+                _uiState.value = _uiState.value.copy(
+                    evolutionLog = rows,
+                    lastEvolvedAt = rows.maxOfOrNull { it.changedAt },
+                )
             }
         }
     }
@@ -252,6 +275,25 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun refreshBacktest() {
+        viewModelScope.launch {
+            val results = withContext(Dispatchers.IO) { BacktestEngine(db).runAll() }
+            ScannerStateStore.updateBacktestResults(results)
+            _uiState.value = _uiState.value.copy(backtestResults = results)
+        }
+    }
+
+    fun refreshEvolutionLog() {
+        viewModelScope.launch {
+            val rows = withContext(Dispatchers.IO) { db.evolutionLogDao().getRecent() }
+            ScannerStateStore.updateEvolutionLog(rows)
+            _uiState.value = _uiState.value.copy(
+                evolutionLog = rows,
+                lastEvolvedAt = rows.maxOfOrNull { it.changedAt },
+            )
+        }
+    }
+
     fun uploadLatestReport(settings: GitHubSettings) {
         viewModelScope.launch {
             val normalized = settings.normalized()
@@ -265,6 +307,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 reportRepository.uploadLatestReport()
             }
             refreshPerformance()
+            refreshBacktest()
             showGitHubMessage(if (uploaded) "Latest report uploaded" else "Latest report upload failed")
         }
     }
