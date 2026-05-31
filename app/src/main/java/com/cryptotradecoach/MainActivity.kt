@@ -100,6 +100,7 @@ class MainActivity : ComponentActivity() {
                     onGitHubSettingsTest = viewModel::testGitHubSettings,
                     onRulesDownload = viewModel::downloadLatestRules,
                     onRulesRefresh = viewModel::refreshCurrentRules,
+                    onRulesSave = viewModel::saveRulesText,
                     onPerformanceRefresh = viewModel::refreshPerformance,
                     onBacktestRefresh = viewModel::refreshBacktest,
                     onEvolutionRefresh = viewModel::refreshEvolutionLog,
@@ -158,6 +159,7 @@ private fun MainScreen(
     onGitHubSettingsTest: (GitHubSettings) -> Unit,
     onRulesDownload: (GitHubSettings) -> Unit,
     onRulesRefresh: () -> Unit,
+    onRulesSave: (String) -> Unit,
     onPerformanceRefresh: () -> Unit,
     onBacktestRefresh: () -> Unit,
     onEvolutionRefresh: () -> Unit,
@@ -181,7 +183,13 @@ private fun MainScreen(
             1 -> ManualSearchTab(manualStrategy, manualMessage, onManualAnalyze, onManualSave)
             2 -> StrategyHistoryTab(historyBySymbol)
             3 -> PerformanceTab(performanceRows, backtestResults, evolutionLog, lastEvolvedAt, onPerformanceRefresh, onBacktestRefresh, onEvolutionRefresh)
-            4 -> RulesTab(currentRulesText, settingsMessage, onRulesRefresh) { onRulesDownload(gitHubSettings) }
+            4 -> RulesTab(
+                currentRulesText = currentRulesText,
+                settingsMessage = settingsMessage,
+                onRulesRefresh = onRulesRefresh,
+                onRulesDownload = { onRulesDownload(gitHubSettings) },
+                onRulesSave = onRulesSave,
+            )
             5 -> SettingsTab(
                 isRunning = isRunning,
                 scanIntervalMs = scanIntervalMs,
@@ -274,7 +282,7 @@ private fun ManualSearchTab(
             Card(modifier = Modifier.fillMaxWidth()) {
                 Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text("수동 종목 분석", fontWeight = FontWeight.Bold)
-                    Text("업비트 KRW 종목을 입력하면 현재 rules 기준으로 매매 전략을 계산합니다. 예: XRP 또는 KRW-XRP", style = MaterialTheme.typography.bodySmall)
+                    Text("업비트 KRW 종목을 입력하면 현재 rules 기준으로 매매 전략을 계산하고, Analyze만 눌러도 History에 MANUAL_SEARCH로 저장합니다. 예: XRP 또는 KRW-XRP", style = MaterialTheme.typography.bodySmall)
                     OutlinedTextField(value = symbol, onValueChange = { symbol = it }, label = { Text("Symbol") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         Button(onClick = { onManualAnalyze(symbol) }) { Text("Analyze") }
@@ -294,7 +302,7 @@ private fun StrategyHistoryTab(historyBySymbol: Map<String, List<StrategyHistory
         item {
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 Text("종목별 히스토리", fontWeight = FontWeight.Bold)
-                Text("종목별 추천 생성·변경·손절·만료 이력을 한 화면에서 봅니다.", style = MaterialTheme.typography.bodySmall)
+                Text("종목별 추천 생성·수동검색·변경·손절·만료 이력을 한 화면에서 봅니다.", style = MaterialTheme.typography.bodySmall)
             }
         }
         if (historyBySymbol.isEmpty()) {
@@ -432,18 +440,37 @@ private fun PerformanceCard(row: StrategyPerformanceEntity) {
 }
 
 @Composable
-private fun RulesTab(currentRulesText: String, settingsMessage: String?, onRulesRefresh: () -> Unit, onRulesDownload: () -> Unit) {
-    LazyColumn(modifier = Modifier.fillMaxSize().navigationBarsPadding().padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+private fun RulesTab(
+    currentRulesText: String,
+    settingsMessage: String?,
+    onRulesRefresh: () -> Unit,
+    onRulesDownload: () -> Unit,
+    onRulesSave: (String) -> Unit,
+) {
+    var editableRulesText by rememberSaveable(currentRulesText) { mutableStateOf(currentRulesText) }
+    LazyColumn(modifier = Modifier.fillMaxSize().navigationBarsPadding().imePadding().padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
         item { StrategyManualCard() }
         item { Text("Current rules JSON", fontWeight = FontWeight.Bold) }
+        item { Text("아래 JSON 조건값을 직접 수정한 뒤 Save local rules를 누르면 다음 스캔부터 로컬 rules가 적용됩니다. Download를 누르면 GitHub rules로 다시 덮어씁니다.", style = MaterialTheme.typography.bodySmall) }
         item {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedButton(onClick = onRulesRefresh) { Text("Refresh local") }
-                Button(onClick = onRulesDownload) { Text("Download") }
+                Button(onClick = { onRulesSave(editableRulesText) }) { Text("Save local rules") }
+                OutlinedButton(onClick = onRulesDownload) { Text("Download") }
             }
         }
         settingsMessage?.let { item { Text(it) } }
-        item { Card(modifier = Modifier.fillMaxWidth()) { Text(currentRulesText.ifBlank { "No rules loaded" }, modifier = Modifier.padding(12.dp), fontFamily = FontFamily.Monospace, style = MaterialTheme.typography.bodySmall) } }
+        item {
+            OutlinedTextField(
+                value = editableRulesText,
+                onValueChange = { editableRulesText = it },
+                label = { Text("Rules JSON") },
+                modifier = Modifier.fillMaxWidth(),
+                minLines = 18,
+                singleLine = false,
+                textStyle = MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace),
+            )
+        }
     }
 }
 
@@ -506,6 +533,8 @@ private fun SettingsTab(
         item { Slider(value = maxDisplayCount.toFloat(), onValueChange = { onMaxDisplayChanged(it.roundToInt()) }, valueRange = 1f..10f, steps = 8) }
         item { Text("Minimum score: ${minimumScore.roundToInt()}") }
         item { Slider(value = minimumScore.toFloat(), onValueChange = { onMinimumScoreChanged(it.toDouble()) }, valueRange = 50f..90f, steps = 7) }
+        item { Text("조건값 수정", fontWeight = FontWeight.Bold) }
+        item { Text("세부 전략 조건값은 Rules 탭의 JSON에서 직접 수정합니다. Settings의 minimum score는 화면 표시/스캔 필터이고, Rules JSON은 전략 엔진 파라미터입니다.", style = MaterialTheme.typography.bodySmall) }
         item { Text("App update", fontWeight = FontWeight.Bold) }
         item { Text("GitHub에 새 APK가 올라간 뒤, 여기서 다운로드와 설치 화면 열기까지 처리합니다. 최종 설치 버튼은 Android 보안상 직접 눌러야 합니다.", style = MaterialTheme.typography.bodySmall) }
         item { OutlinedButton(onClick = onOpenInstallPermissionSettings, modifier = Modifier.fillMaxWidth()) { Text("Open install permission settings") } }
@@ -548,6 +577,7 @@ private fun HistoryCard(history: StrategyHistoryEntity) {
             Text(history.toTimelineLine(), fontWeight = FontWeight.Bold)
             history.oldSummary?.let { Text("이전: ${it.toCompactPlan()}", style = MaterialTheme.typography.bodySmall) }
             history.newSummary?.let { Text("현재: ${it.toCompactPlan()}", style = MaterialTheme.typography.bodySmall) }
+            if (history.message.isNotBlank()) Text("메모: ${history.message}", style = MaterialTheme.typography.bodySmall)
         }
     }
 }
@@ -569,7 +599,7 @@ private fun StrategyHistoryEntity.toTimelineLine(): String {
 }
 
 private fun String.toCompactPlan(): String {
-    return replace("rank=", "순위 ").replace("score=", "점수 ").replace("entry=", "진입 ").replace("stop=", "손절 ").replace("target=", "목표 ").replace("trail=", "추적손절 ").replace("status=", "상태 ")
+    return replace("rank=", "순위 ").replace("score=", "점수 ").replace("entry=", "진입 ").replace("stop=", "손절 ").replace("target=", "목표 ").replace("trail=", "추적손절 ").replace("status=", "상태 ").replace("strategy=", "전략 ")
 }
 
 private fun String.toKoreanStrategyName(): String = when (this) {
@@ -587,6 +617,7 @@ private fun String.toKoreanStrategyName(): String = when (this) {
 
 private fun String.toKoreanEventName(): String = when (this) {
     "NEW_ACTIVE" -> "신규진입"
+    "MANUAL_SEARCH" -> "수동검색"
     "RANK_UP" -> "순위상승"
     "PRICE_PLAN_CHANGED" -> "전략변경"
     "WATCH_ONLY" -> "관찰전환"
