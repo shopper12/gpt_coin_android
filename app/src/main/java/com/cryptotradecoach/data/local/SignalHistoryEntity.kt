@@ -258,46 +258,41 @@ data class MissedSignalEntity(
     ],
 )
 data class StrategyReviewEntity(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    val strategyName: String,
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0,
     val reviewedAt: Long,
-    val sampleSize: Int,
-    val avgReturn5m: Double,
-    val avgReturn15m: Double,
-    val avgReturn30m: Double,
-    val avgReturn60m: Double,
-    val winRate60m: Double,
-    val stopHitRate: Double,
-    val target1HitRate: Double,
-    val target2HitRate: Double,
-    val avgMfePct: Double,
-    val avgMaePct: Double,
-    val recommendation: String,
-    val beforeRuleJson: String,
-    val suggestedRuleJson: String,
+    val strategyName: String,
+    val strategyVersion: String,
+    val totalActiveSignals: Int,
+    val totalMissedSignals: Int,
+    val targetHitCount: Int,
+    val stopHitCount: Int,
+    val expiredCount: Int,
+    val averageMfePercent: Double,
+    val averageMaePercent: Double,
+    val missedMarkets: String,
+    val diagnosis: String,
+    val ruleChangeSuggestion: String,
 )
 
 @Entity(
     tableName = "guideline_changes",
     indices = [
         Index(value = ["changedAt"]),
-        Index(value = ["affectedStrategyName", "changedAt"]),
+        Index(value = ["affectedStrategyName", "applied"]),
     ],
 )
 data class GuidelineChangeEntity(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    val affectedStrategyName: String,
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0,
     val changedAt: Long,
-    val reason: String,
+    val affectedStrategyName: String,
+    val strategyVersionBefore: String,
+    val strategyVersionAfterSuggestion: String,
     val beforeRule: String,
     val afterRule: String,
-    val applied: Boolean,
-)
-
-@Entity(tableName = "evolution_logs")
-data class EvolutionLogEntity(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    val changedAt: Long,
-    val changeLog: String,
-    val rulesJson: String,
+    val reason: String,
+    val evidenceMarkets: String,
+    val expectedEffect: String,
+    val applied: Boolean = false,
 )
