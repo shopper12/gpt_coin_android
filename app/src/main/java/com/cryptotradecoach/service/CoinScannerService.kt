@@ -7,13 +7,21 @@ import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import com.cryptotradecoach.data.AppUpdateRepository
+import com.cryptotradecoach.data.Candle
+import com.cryptotradecoach.data.MarketCandidate
 import com.cryptotradecoach.data.ScanDiagnostics
 import com.cryptotradecoach.data.SettingsRepository
 import com.cryptotradecoach.data.SignalHistoryRepository
 import com.cryptotradecoach.data.SignalMonitor
 import com.cryptotradecoach.data.StrategyReportRepository
+import com.cryptotradecoach.data.StrategyRules
 import com.cryptotradecoach.data.StrategyRulesRepository
+import com.cryptotradecoach.data.StrategyScanLog
+import com.cryptotradecoach.data.StrategyScanResult
+import com.cryptotradecoach.data.StrategyStatus
+import com.cryptotradecoach.data.StrategyType
 import com.cryptotradecoach.data.Ticker
+import com.cryptotradecoach.data.TradeStrategy
 import com.cryptotradecoach.data.UpbitMarketDataSource
 import com.cryptotradecoach.data.local.AppDatabase
 import com.cryptotradecoach.data.local.MissedSignalEntity
@@ -225,17 +233,26 @@ class CoinScannerService : Service() {
     }
 
     private suspend fun performDeepScan() {
+        val now = System.currentTimeMillis()
         val maxDisplayCount = ScannerStateStore.maxDisplayCount.first()
         val minimumScore = ScannerStateStore.minimumScore.first()
         val previousActiveIds = ScannerStateStore.activeStrategies.value.map { it.id }.toSet()
         val rules = rulesRepository.refreshFromGitHub()
         val candidateLimit = maxOf(maxDisplayCount, rules.candidateSelection.maxCandleTargets)
         val candidates = dataSource.fetchMarketCandidates(candidateLimit, rules)
-        val scanResult = engine.scan(
+        val baseScanResult = engine.scan(
             candidates = candidates,
             rules = rules,
             minimumScore = minimumScore,
             maxResults = maxDisplayCount,
+        )
+        val scanResult = rescueMissedPrePumpCandidates(
+            base = baseScanResult,
+            candidates = candidates,
+            rules = rules,
+            minimumScore = minimumScore,
+            maxResults = maxDisplayCount,
+            now = now,
         )
         val currentPrices = candidates.associate { it.ticker.market to it.ticker.tradePrice }
         val persistence = historyRepository.saveStrategyScanResult(
@@ -276,6 +293,147 @@ class CoinScannerService : Service() {
             .forEachIndexed { index, event ->
                 notifier.notifyStrategyEvent(event, STRATEGY_EVENT_NOTIFICATION_BASE + index)
             }
+    }
+
+    private fun rescueMissedPrePumpCandidates(
+        base: StrategyScanResult,
+        candidates: List<MarketCandidate>,
+        rules: StrategyRules,
+        minimumScore: Double,
+        maxResults: Int,
+        now: Long,
+    ): StrategyScanResult {
+        val selectedSymbols = base.activeStrategies.map { it.symbol }.toSet()
+        val rescue = candidates
+            .filter { it.ticker.market !in selectedSymbols }
+            .mapNotNull { buildRescuePrePumpStrategy(it, rules, minimumScore, now) }
+        if (rescue.isEmpty()) return base
+        val combined = (base.activeStrategies + rescue)
+            .distinctBy { it.symbol }
+            .sortedWith(compareByDescending<TradeStrategy> { it.score }.thenBy { it.riskPct })
+            .take(maxResults.coerceIn(1, 20))
+            .mapIndexed { index, strategy -> strategy.copy(rank = index + 1) }
+        val rescueLogs = rescue.map { strategy -> strategy.toRescueScanLog(now, selected = combined.any { it.id == strategy.id }) }
+        val summary = base.rejectionSummary.toMutableMap()
+        summary["RESCUED_PRE_PUMP"] = rescue.size
+        return base.copy(
+            activeStrategies = combined,
+            validSignals = combined,
+            scanLogs = base.scanLogs + rescueLogs,
+            rejectionSummary = summary.toSortedMap(),
+            lastError = base.lastError,
+        )
+    }
+
+    private fun buildRescuePrePumpStrategy(
+        candidate: MarketCandidate,
+        rules: StrategyRules,
+        minimumScore: Double,
+        now: Long,
+    ): TradeStrategy? {
+        val ticker = candidate.ticker
+        val price = ticker.tradePrice
+        val five = candidate.fiveMinuteCandles.sortedBy { it.timestamp }
+        val fifteen = candidate.fifteenMinuteCandles.sortedBy { it.timestamp }
+        if (price <= 0.0 || five.size < 25 || fifteen.size < 25) return null
+        val r = rules.prePumpRotation
+        val prev20High = five.dropLast(1).takeLast(20).maxOfOrNull { it.high } ?: return null
+        val prev20Low = five.dropLast(1).takeLast(20).minOfOrNull { it.low } ?: return null
+        val rangePct = percentChange(prev20Low, prev20High).coerceAtLeast(0.0)
+        val rangePos = if (prev20High > prev20Low) ((price - prev20Low) / (prev20High - prev20Low)).coerceIn(0.0, 1.0) else 0.5
+        val avg5Value = five.dropLast(1).takeLast(20).averageTradePrice()
+        val avg15Value = fifteen.dropLast(1).takeLast(20).averageTradePrice()
+        val fiveVolumeRatio = if (avg5Value > 0.0) five.last().tradePrice / avg5Value else 1.0
+        val fifteenVolumeRatio = if (avg15Value > 0.0) fifteen.last().tradePrice / avg15Value else 1.0
+        val change24h = ticker.signedChangeRate * 100.0
+        val notAlreadyPumped = change24h in (r.minChange24hPct - 1.0)..(r.maxChange24hPct + 1.5) &&
+            candidate.changeRate30m <= r.maxChange30mPct + 0.8 &&
+            candidate.changeRate5m <= r.maxChange5mPct + 0.5
+        val rankOk = candidate.rankByTradeValue <= r.maxTradeValueRank + 15 || ticker.market in RESCUE_MARKETS
+        val rotationOk = candidate.rankByChangeRate <= r.maxChangeRank + 20 || candidate.changeRate30m >= r.minRotation30mPct * 0.5
+        val volumeOk = candidate.volumeAcceleration >= r.minVolumeAcceleration * 0.88 ||
+            fiveVolumeRatio >= r.minFiveMinuteVolumeRatio * 0.88 ||
+            fifteenVolumeRatio >= r.minFifteenMinuteVolumeRatio * 0.88
+        val structureOk = rangePct <= r.maxRangePct * 1.25 &&
+            rangePos >= (r.minRangePosition - 0.12).coerceAtLeast(0.25) &&
+            price >= prev20High * (r.minHighProximityMultiplier - 0.010)
+        if (!(notAlreadyPumped && rankOk && rotationOk && volumeOk && structureOk)) return null
+        val structureScore = 21.0
+        val volumeScore = ((maxOf(candidate.volumeAcceleration, fiveVolumeRatio, fifteenVolumeRatio) - 1.0) * 16.0).coerceIn(0.0, 24.0)
+        val rotationScore = when {
+            candidate.rankByChangeRate <= 15 -> 18.0
+            candidate.rankByChangeRate <= r.maxChangeRank + 20 -> 13.0
+            candidate.changeRate30m >= r.minRotation30mPct * 0.5 -> 10.0
+            else -> 0.0
+        }
+        val liquidityScore = when {
+            candidate.rankByTradeValue <= 15 -> 15.0
+            candidate.rankByTradeValue <= r.maxTradeValueRank + 15 -> 10.0
+            ticker.market in RESCUE_MARKETS -> 8.0
+            else -> 0.0
+        }
+        val score = (18.0 + structureScore + volumeScore + rotationScore + liquidityScore).coerceIn(0.0, 92.0)
+        if (score < minimumScore.coerceAtMost(68.0)) return null
+        val stop = minOf(prev20Low, five.takeLast(8).minOfOrNull { it.low } ?: prev20Low) * 0.996
+        val riskPct = kotlin.math.abs(percentChange(price, stop)).coerceAtLeast(rules.risk.minimumRiskPct)
+        val target1 = price * (1.0 + riskPct * 1.5 / 100.0)
+        val target2 = price * (1.0 + riskPct * 2.4 / 100.0)
+        val expectedReturn = kotlin.math.abs(percentChange(price, target2)).coerceAtLeast(rules.risk.minimumExpectedReturnPct)
+        return TradeStrategy(
+            id = "${ticker.market}-PRE_PUMP_RESCUE",
+            symbol = ticker.market,
+            strategyType = StrategyType.PRE_PUMP_ROTATION,
+            status = StrategyStatus.ACTIVE,
+            score = score,
+            rank = Int.MAX_VALUE,
+            entryLow = price * (1.0 - rules.entryBandPct / 100.0),
+            entryHigh = price * (1.0 + rules.entryBandPct / 100.0),
+            stopLoss = stop,
+            target1 = target1,
+            target2 = target2,
+            trailingStop = price * (1.0 - maxOf(riskPct * 0.55, rules.risk.minimumRiskPct) / 100.0),
+            expectedReturnPct = expectedReturn,
+            riskPct = riskPct,
+            riskRewardRatio = expectedReturn / riskPct,
+            componentScores = "rescue=true;structureScore=${structureScore.one()};volumeScore=${volumeScore.one()};rotationScore=${rotationScore.one()};liquidityScore=${liquidityScore.one()};rangePct=${rangePct.one()};rangePos=${(rangePos * 100.0).one()};5mVolRatio=${fiveVolumeRatio.one()};15mVolRatio=${fifteenVolumeRatio.one()}",
+            rankByChangeRate = candidate.rankByChangeRate,
+            rankByTradeValue = candidate.rankByTradeValue,
+            changeRate24h = change24h,
+            changeRate30m = candidate.changeRate30m,
+            changeRate5m = candidate.changeRate5m,
+            volumeAcceleration = candidate.volumeAcceleration,
+            reason = "PRE_PUMP_RESCUE ACTIVE; rescued from possible WATCH_ONLY overwrite or rank filter; rangePct=${rangePct.one()}%; rangePos=${(rangePos * 100.0).one()}%; volAccel=${candidate.volumeAcceleration.one()}x; 5mVolRatio=${fiveVolumeRatio.one()}x; 15mVolRatio=${fifteenVolumeRatio.one()}x; rankChange=${candidate.rankByChangeRate}; rankValue=${candidate.rankByTradeValue}",
+            invalidationReason = null,
+            createdAt = now,
+            updatedAt = now,
+            validUntil = now + rules.validForMinutes * 60 * 1000L,
+        )
+    }
+
+    private fun TradeStrategy.toRescueScanLog(now: Long, selected: Boolean): StrategyScanLog {
+        return StrategyScanLog(
+            market = symbol,
+            strategyType = strategyType,
+            timestamp = now,
+            currentPrice = entryHigh,
+            entryPrice = entryHigh,
+            stopLossPrice = stopLoss,
+            target1 = target1,
+            target2 = target2,
+            trailingStop = trailingStop,
+            score = score,
+            componentScores = componentScores,
+            rankByChangeRate = rankByChangeRate,
+            rankByTradeValue = rankByTradeValue,
+            changeRate24h = changeRate24h,
+            changeRate30m = changeRate30m,
+            changeRate5m = changeRate5m,
+            volumeAcceleration = volumeAcceleration,
+            selectedOrMissed = if (selected) "SELECTED" else "MISSED",
+            missedReason = if (selected) null else "RESCUE_NOT_TOP_RANKED",
+            topNAtScan = rank,
+            strategyStatus = status,
+        )
     }
 
     private suspend fun maybeRunBacktestAndEvolution(now: Long = System.currentTimeMillis()) {
@@ -325,6 +483,12 @@ class CoinScannerService : Service() {
         return (to - from) / from * 100.0
     }
 
+    private fun List<Candle>.averageTradePrice(): Double {
+        return if (isEmpty()) 0.0 else sumOf { it.tradePrice } / size
+    }
+
+    private fun Double.one(): String = String.format(java.util.Locale.US, "%.1f", this)
+
     private fun stopScanner() {
         scanJob?.cancel()
         scanJob = null
@@ -362,5 +526,20 @@ class CoinScannerService : Service() {
         private const val MISSED_PUMP_BASELINE_RESET_MS = 45L * 60L * 1000L
         private const val MISSED_PUMP_DUPLICATE_WINDOW_MS = 6L * 60L * 60L * 1000L
         private const val MISSED_PUMP_RETURN_PCT = 4.5
+        private val RESCUE_MARKETS = setOf(
+            "KRW-XLM",
+            "KRW-XRP",
+            "KRW-ADA",
+            "KRW-DOGE",
+            "KRW-SOL",
+            "KRW-LINK",
+            "KRW-AVAX",
+            "KRW-DOT",
+            "KRW-SUI",
+            "KRW-APT",
+            "KRW-ONDO",
+            "KRW-HBAR",
+            "KRW-STX",
+        )
     }
 }
