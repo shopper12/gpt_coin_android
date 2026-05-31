@@ -5,7 +5,6 @@ import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
 import kotlin.math.abs
-import kotlin.math.min
 
 interface MarketDataSource {
     suspend fun fetchTickers(): List<Ticker>
@@ -159,23 +158,33 @@ class UpbitMarketDataSource : MarketDataSource {
         tradeValueRanks: Map<String, Int>,
     ): MarketCandidate? {
         val oneMinuteCandles = runCatching { fetchMinuteCandles(market, unit = 1, count = 60) }.getOrDefault(emptyList())
-        val fiveMinuteCandles = runCatching { fetchMinuteCandles(market, unit = 5, count = 60) }.getOrDefault(emptyList())
-        val fifteenMinuteCandles = runCatching { fetchMinuteCandles(market, unit = 15, count = 50) }.getOrDefault(emptyList())
+        val rawFiveMinuteCandles = runCatching { fetchMinuteCandles(market, unit = 5, count = 60) }.getOrDefault(emptyList())
+        val rawFifteenMinuteCandles = runCatching { fetchMinuteCandles(market, unit = 15, count = 50) }.getOrDefault(emptyList())
         val fourHourCandles = runCatching { fetchMinuteCandles(market, unit = 240, count = 120) }.getOrDefault(emptyList())
-        if (fiveMinuteCandles.size < 25 || fifteenMinuteCandles.size < 25) {
-            lastError = "Manual search failed: insufficient candle data for $market"
-            return null
+        if (rawFiveMinuteCandles.size < 25 || rawFifteenMinuteCandles.size < 25) {
+            if (oneMinuteCandles.size < 3) {
+                lastError = "Candidate skipped: insufficient candle data for $market"
+                return null
+            }
         }
-        val changeRate30m = percentChange(fiveMinuteCandles.takeLast(6).first().open, tradePrice)
-        val changeRate5m = percentChange(fiveMinuteCandles.last().open, tradePrice)
-        val recentTradeValue = fiveMinuteCandles.takeLast(3).sumOf { it.tradePrice }
-        val previousTradeValue = fiveMinuteCandles.dropLast(3).takeLast(20).sumOf { it.tradePrice } / 6.67
-        val volumeAcceleration = if (previousTradeValue > 0.0) recentTradeValue / previousTradeValue else 1.0
+        val effectiveFiveMinuteCandles = if (rawFiveMinuteCandles.size >= 25) rawFiveMinuteCandles else oneMinuteCandles
+        val effectiveFifteenMinuteCandles = if (rawFifteenMinuteCandles.size >= 25) rawFifteenMinuteCandles else oneMinuteCandles
+        val changeRate30m = effectiveFiveMinuteCandles.takeLast(6).firstOrNull()?.let { percentChange(it.open, tradePrice) }
+            ?: percentChange(effectiveFiveMinuteCandles.first().open, tradePrice)
+        val changeRate5m = effectiveFiveMinuteCandles.lastOrNull()?.let { percentChange(it.open, tradePrice) } ?: 0.0
+        val recentTradeValue = effectiveFiveMinuteCandles.takeLast(3).sumOf { it.tradePrice }
+        val previousTradeValue = effectiveFiveMinuteCandles.dropLast(3).takeLast(20).sumOf { it.tradePrice } / 6.67
+        val fallbackBaseValue = effectiveFiveMinuteCandles.dropLast(1).takeLast(12).sumOf { it.tradePrice }.takeIf { it > 0.0 }
+        val volumeAcceleration = when {
+            previousTradeValue > 0.0 -> recentTradeValue / previousTradeValue
+            fallbackBaseValue != null -> recentTradeValue / (fallbackBaseValue / 4.0)
+            else -> 1.0
+        }
         return MarketCandidate(
             ticker = this,
             oneMinuteCandles = oneMinuteCandles,
-            fiveMinuteCandles = fiveMinuteCandles,
-            fifteenMinuteCandles = fifteenMinuteCandles,
+            fiveMinuteCandles = effectiveFiveMinuteCandles,
+            fifteenMinuteCandles = effectiveFifteenMinuteCandles,
             fourHourCandles = fourHourCandles,
             btcChangeRate24h = btcChangeRate24h,
             rankByChangeRate = changeRanks[market] ?: Int.MAX_VALUE,
