@@ -445,7 +445,9 @@ class CoinScannerService : Service() {
     }
 
     private suspend fun maybeRunBacktestAndEvolution(now: Long = System.currentTimeMillis()) {
-        if (now - lastBacktestAttemptAt < BACKTEST_INTERVAL_MS) return
+        val recentCompleted = db.signalHistoryDao().getPerformanceSince(now - BACKTEST_SAMPLE_LOOKBACK_MS, 5000).count { it.isComplete }
+        val interval = if (recentCompleted < BACKTEST_MIN_SAMPLE_TARGET) BACKTEST_FAST_INTERVAL_MS else BACKTEST_STABLE_INTERVAL_MS
+        if (now - lastBacktestAttemptAt < interval) return
         lastBacktestAttemptAt = now
         val results = backtestEngine.runAll(now)
         ScannerStateStore.updateBacktestResults(results)
@@ -554,7 +556,10 @@ class CoinScannerService : Service() {
         private const val STRATEGY_EVENT_NOTIFICATION_BASE = 500
         private const val LIGHT_SCAN_INTERVAL_MS = 10_000L
         private const val AUTO_REPORT_UPLOAD_INTERVAL_MS = 10 * 60 * 1000L
-        private const val BACKTEST_INTERVAL_MS = 6L * 60L * 60L * 1000L
+        private const val BACKTEST_FAST_INTERVAL_MS = 30L * 60L * 1000L
+        private const val BACKTEST_STABLE_INTERVAL_MS = 6L * 60L * 60L * 1000L
+        private const val BACKTEST_SAMPLE_LOOKBACK_MS = 14L * 24L * 60L * 60L * 1000L
+        private const val BACKTEST_MIN_SAMPLE_TARGET = 15
         private const val APP_UPDATE_CHECK_INTERVAL_MS = 6L * 60L * 60L * 1000L
         private const val MISSED_PUMP_MIN_WINDOW_MS = 3L * 60L * 1000L
         private const val MISSED_PUMP_BASELINE_RESET_MS = 45L * 60L * 1000L
