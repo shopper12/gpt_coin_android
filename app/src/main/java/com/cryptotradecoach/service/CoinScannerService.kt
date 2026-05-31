@@ -9,11 +9,15 @@ import android.util.Log
 import com.cryptotradecoach.data.ScanDiagnostics
 import com.cryptotradecoach.data.SettingsRepository
 import com.cryptotradecoach.data.SignalHistoryRepository
+import com.cryptotradecoach.data.SignalMonitor
 import com.cryptotradecoach.data.StrategyReportRepository
 import com.cryptotradecoach.data.StrategyRulesRepository
 import com.cryptotradecoach.data.UpbitMarketDataSource
+import com.cryptotradecoach.data.local.AppDatabase
 import com.cryptotradecoach.data.local.StrategyEventType
+import com.cryptotradecoach.domain.BacktestEngine
 import com.cryptotradecoach.domain.SignalEngine
+import com.cryptotradecoach.domain.StrategyEvolver
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -28,21 +32,30 @@ class CoinScannerService : Service() {
     private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private val dataSource = UpbitMarketDataSource()
     private val engine = SignalEngine()
+    private lateinit var db: AppDatabase
     private lateinit var notifier: SignalNotificationHelper
     private lateinit var historyRepository: SignalHistoryRepository
     private lateinit var rulesRepository: StrategyRulesRepository
     private lateinit var reportRepository: StrategyReportRepository
     private lateinit var settingsRepository: SettingsRepository
+    private lateinit var signalMonitor: SignalMonitor
+    private lateinit var backtestEngine: BacktestEngine
+    private lateinit var evolver: StrategyEvolver
     private var scanJob: Job? = null
     private var lastAutoUploadAttemptAt: Long = 0L
+    private var lastBacktestAttemptAt: Long = 0L
 
     override fun onCreate() {
         super.onCreate()
+        db = AppDatabase.getInstance(this)
         notifier = SignalNotificationHelper(this)
         historyRepository = SignalHistoryRepository.getInstance(this)
         rulesRepository = StrategyRulesRepository.getInstance(this)
         reportRepository = StrategyReportRepository.getInstance(this)
         settingsRepository = SettingsRepository.getInstance(this)
+        signalMonitor = SignalMonitor(dataSource, db, serviceScope)
+        backtestEngine = BacktestEngine(db)
+        evolver = StrategyEvolver(rulesRepository, db)
         notifier.ensureChannels()
     }
 
@@ -128,6 +141,7 @@ class CoinScannerService : Service() {
     private suspend fun performDeepScan() {
         val maxDisplayCount = ScannerStateStore.maxDisplayCount.first()
         val minimumScore = ScannerStateStore.minimumScore.first()
+        val previousActiveIds = ScannerStateStore.activeStrategies.value.map { it.id }.toSet()
         val rules = rulesRepository.refreshFromGitHub()
         val candidateLimit = maxOf(maxDisplayCount, rules.candidateSelection.maxCandleTargets)
         val candidates = dataSource.fetchMarketCandidates(candidateLimit, rules)
@@ -142,6 +156,13 @@ class CoinScannerService : Service() {
             scanResult = scanResult,
             currentPrices = currentPrices,
         )
+        val nextActiveIds = persistence.activeStrategies.map { it.id }.toSet()
+        persistence.activeStrategies.forEach { strategy ->
+            if (strategy.id !in previousActiveIds) signalMonitor.startMonitoring(strategy)
+        }
+        previousActiveIds.forEach { id ->
+            if (id !in nextActiveIds) signalMonitor.stopMonitoring(id, "SIGNAL_ENDED")
+        }
         ScannerStateStore.pushScanResult(
             activeStrategies = persistence.activeStrategies,
             historyBySymbol = persistence.historyBySymbol,
@@ -156,6 +177,7 @@ class CoinScannerService : Service() {
             context = this@CoinScannerService,
         )
         reportRepository.generateLatestReport(rules = rules)
+        maybeRunBacktestAndEvolution()
         maybeAutoUploadLatestReport()
         persistence.newEvents
             .filter { event ->
@@ -167,6 +189,15 @@ class CoinScannerService : Service() {
             .forEachIndexed { index, event ->
                 notifier.notifyStrategyEvent(event, STRATEGY_EVENT_NOTIFICATION_BASE + index)
             }
+    }
+
+    private suspend fun maybeRunBacktestAndEvolution(now: Long = System.currentTimeMillis()) {
+        if (now - lastBacktestAttemptAt < BACKTEST_INTERVAL_MS) return
+        lastBacktestAttemptAt = now
+        val results = backtestEngine.runAll(now)
+        ScannerStateStore.updateBacktestResults(results)
+        evolver.maybeEvolve(results, now)
+        ScannerStateStore.updateEvolutionLog(db.evolutionLogDao().getRecent())
     }
 
     private fun maybeAutoUploadLatestReport(now: Long = System.currentTimeMillis()) {
@@ -215,5 +246,6 @@ class CoinScannerService : Service() {
         private const val STRATEGY_EVENT_NOTIFICATION_BASE = 500
         private const val LIGHT_SCAN_INTERVAL_MS = 10_000L
         private const val AUTO_REPORT_UPLOAD_INTERVAL_MS = 10 * 60 * 1000L
+        private const val BACKTEST_INTERVAL_MS = 6L * 60L * 60L * 1000L
     }
 }
