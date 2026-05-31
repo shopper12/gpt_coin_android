@@ -16,12 +16,14 @@ class StrategyEvolver(
         if (now - lastEvolvedAt < EVOLUTION_INTERVAL_MS) return
         if (backtestResults.none { it.sampleSize >= MIN_SAMPLES_FOR_EVOLUTION }) return
         val current = rulesRepository.loadLastKnownGood()
-        val recentSignalCount = db.signalHistoryDao().countPerformanceCreatedAfter(now - 24L * 60L * 60L * 1000L)
+        val recentSignalCount = db.signalHistoryDao()
+            .getPerformanceSince(now - 24L * 60L * 60L * 1000L, 5000)
+            .size
         val evolved = evolveRules(current, backtestResults, recentSignalCount)
         if (evolved != current) {
             val changeLog = generateChangeLog(current, evolved, backtestResults, recentSignalCount, now)
             rulesRepository.persistLocal(evolved)
-            db.signalHistoryDao().insertEvolutionLog(
+            db.evolutionLogDao().insert(
                 EvolutionLogEntity(
                     changedAt = now,
                     changeLog = changeLog,
