@@ -232,6 +232,8 @@ data class PriceSnapshotEntity(
     tableName = "missed_signals",
     indices = [
         Index(value = ["market", "detectedAt"]),
+        Index(value = ["missedReason", "detectedAt"]),
+        Index(value = ["isAnalyzed", "detectedAt"]),
     ],
 )
 data class MissedSignalEntity(
@@ -248,6 +250,9 @@ data class MissedSignalEntity(
     val suggestedStrategy: String,
     val relatedRuleBefore: String,
     val suggestedRuleAfter: String,
+    val postMortemResult: String = "",
+    val suggestedParamAdjust: String = "",
+    val isAnalyzed: Boolean = false,
 )
 
 @Entity(
