@@ -167,6 +167,7 @@ class CoinScannerService : Service() {
     ) {
         if (tickers.isEmpty()) return
         val rules = rulesRepository.loadLastKnownGood()
+        val missedThreshold = missedPumpReturnThreshold(rules)
         val activeSymbols = ScannerStateStore.activeStrategies.value.map { it.symbol }.toSet()
         tickers.forEach { ticker ->
             val price = ticker.tradePrice
@@ -184,7 +185,7 @@ class CoinScannerService : Service() {
                 pumpBaselines[ticker.market] = PumpBaseline(price, now, rankByChange, rankByValue)
                 return@forEach
             }
-            if (elapsed < MISSED_PUMP_MIN_WINDOW_MS || movedPct < MISSED_PUMP_RETURN_PCT) return@forEach
+            if (elapsed < MISSED_PUMP_MIN_WINDOW_MS || movedPct < missedThreshold) return@forEach
             if (ticker.market in activeSymbols) {
                 pumpBaselines[ticker.market] = PumpBaseline(price, now, rankByChange, rankByValue)
                 return@forEach
@@ -209,11 +210,11 @@ class CoinScannerService : Service() {
                     rankByTradeValue = rankByValue,
                     missedReason = reason,
                     suggestedStrategy = "PRE_PUMP_ROTATION",
-                    relatedRuleBefore = "maxTradeValueRank=${rules.prePumpRotation.maxTradeValueRank}; maxChangeRank=${rules.prePumpRotation.maxChangeRank}; minVolumeAcceleration=${rules.prePumpRotation.minVolumeAcceleration}; minFiveMinuteVolumeRatio=${rules.prePumpRotation.minFiveMinuteVolumeRatio}; maxRangePct=${rules.prePumpRotation.maxRangePct}; minimumScore=${rules.minimumScore}",
+                    relatedRuleBefore = "maxTradeValueRank=${rules.prePumpRotation.maxTradeValueRank}; maxChangeRank=${rules.prePumpRotation.maxChangeRank}; minVolumeAcceleration=${rules.prePumpRotation.minVolumeAcceleration}; minFiveMinuteVolumeRatio=${rules.prePumpRotation.minFiveMinuteVolumeRatio}; maxRangePct=${rules.prePumpRotation.maxRangePct}; minimumScore=${rules.minimumScore}; missedPumpThreshold=$missedThreshold",
                     suggestedRuleAfter = "Widen candidate universe, lower pre-pump ignition thresholds, prioritize ACTIVE setups over WATCH_ONLY, and force-watch recurring missed markets.",
                 ),
             )
-            ScannerStateStore.setLastError("Missed pump recorded: ${ticker.market} +${String.format(java.util.Locale.US, "%.1f", movedPct)}% reason=$reason")
+            ScannerStateStore.setLastError("Missed pump recorded: ${ticker.market} +${String.format(java.util.Locale.US, "%.1f", movedPct)}% reason=$reason threshold=${String.format(java.util.Locale.US, "%.1f", missedThreshold)}%")
             pumpBaselines[ticker.market] = PumpBaseline(price, now, rankByChange, rankByValue)
         }
     }
@@ -228,6 +229,10 @@ class CoinScannerService : Service() {
         return when {
             baseline.rankByTradeValue > rulesMaxValueRank && rankByValue > rulesMaxValueRank -> MissedSignalReason.TRADE_VALUE_FILTER_EXCLUDED
             baseline.rankByChangeRate > rulesMaxChangeRank && rankByChange > rulesMaxChangeRank -> MissedSignalReason.CHANGE_RATE_RULE_NOT_MATCHED
+            baseline.rankByTradeValue > rulesMaxValueRank && rankByValue <= rulesMaxValueRank -> "LATE_LIQUIDITY_ROTATION"
+            baseline.rankByChangeRate > rulesMaxChangeRank && rankByChange <= rulesMaxChangeRank -> "LATE_CHANGE_RANK_ROTATION"
+            rankByValue <= rulesMaxValueRank && rankByChange <= rulesMaxChangeRank -> MissedSignalReason.SCORE_TOO_LOW
+            rankByValue <= rulesMaxValueRank + 15 -> MissedSignalReason.VOLUME_SCORE_TOO_LOW
             else -> MissedSignalReason.UNKNOWN
         }
     }
@@ -253,6 +258,7 @@ class CoinScannerService : Service() {
             minimumScore = minimumScore,
             maxResults = maxDisplayCount,
             now = now,
+            rescueMarkets = adaptiveRescueMarkets(now),
         )
         val currentPrices = candidates.associate { it.ticker.market to it.ticker.tradePrice }
         val persistence = historyRepository.saveStrategyScanResult(
@@ -302,11 +308,12 @@ class CoinScannerService : Service() {
         minimumScore: Double,
         maxResults: Int,
         now: Long,
+        rescueMarkets: Set<String>,
     ): StrategyScanResult {
         val selectedSymbols = base.activeStrategies.map { it.symbol }.toSet()
         val rescue = candidates
             .filter { it.ticker.market !in selectedSymbols }
-            .mapNotNull { buildRescuePrePumpStrategy(it, rules, minimumScore, now) }
+            .mapNotNull { buildRescuePrePumpStrategy(it, rules, minimumScore, now, rescueMarkets) }
         if (rescue.isEmpty()) return base
         val combined = (base.activeStrategies + rescue)
             .distinctBy { it.symbol }
@@ -330,6 +337,7 @@ class CoinScannerService : Service() {
         rules: StrategyRules,
         minimumScore: Double,
         now: Long,
+        rescueMarkets: Set<String>,
     ): TradeStrategy? {
         val ticker = candidate.ticker
         val price = ticker.tradePrice
@@ -349,7 +357,7 @@ class CoinScannerService : Service() {
         val notAlreadyPumped = change24h in (r.minChange24hPct - 1.0)..(r.maxChange24hPct + 1.5) &&
             candidate.changeRate30m <= r.maxChange30mPct + 0.8 &&
             candidate.changeRate5m <= r.maxChange5mPct + 0.5
-        val rankOk = candidate.rankByTradeValue <= r.maxTradeValueRank + 15 || ticker.market in RESCUE_MARKETS
+        val rankOk = candidate.rankByTradeValue <= r.maxTradeValueRank + 15 || ticker.market in rescueMarkets
         val rotationOk = candidate.rankByChangeRate <= r.maxChangeRank + 20 || candidate.changeRate30m >= r.minRotation30mPct * 0.5
         val volumeOk = candidate.volumeAcceleration >= r.minVolumeAcceleration * 0.88 ||
             fiveVolumeRatio >= r.minFiveMinuteVolumeRatio * 0.88 ||
@@ -369,7 +377,7 @@ class CoinScannerService : Service() {
         val liquidityScore = when {
             candidate.rankByTradeValue <= 15 -> 15.0
             candidate.rankByTradeValue <= r.maxTradeValueRank + 15 -> 10.0
-            ticker.market in RESCUE_MARKETS -> 8.0
+            ticker.market in rescueMarkets -> 8.0
             else -> 0.0
         }
         val score = (18.0 + structureScore + volumeScore + rotationScore + liquidityScore).coerceIn(0.0, 92.0)
@@ -395,14 +403,14 @@ class CoinScannerService : Service() {
             expectedReturnPct = expectedReturn,
             riskPct = riskPct,
             riskRewardRatio = expectedReturn / riskPct,
-            componentScores = "rescue=true;structureScore=${structureScore.one()};volumeScore=${volumeScore.one()};rotationScore=${rotationScore.one()};liquidityScore=${liquidityScore.one()};rangePct=${rangePct.one()};rangePos=${(rangePos * 100.0).one()};5mVolRatio=${fiveVolumeRatio.one()};15mVolRatio=${fifteenVolumeRatio.one()}",
+            componentScores = "rescue=true;structureScore=${structureScore.one()};volumeScore=${volumeScore.one()};rotationScore=${rotationScore.one()};liquidityScore=${liquidityScore.one()};rangePct=${rangePct.one()};rangePos=${(rangePos * 100.0).one()};5mVolRatio=${fiveVolumeRatio.one()};15mVolRatio=${fifteenVolumeRatio.one()};adaptiveRescue=${ticker.market in rescueMarkets}",
             rankByChangeRate = candidate.rankByChangeRate,
             rankByTradeValue = candidate.rankByTradeValue,
             changeRate24h = change24h,
             changeRate30m = candidate.changeRate30m,
             changeRate5m = candidate.changeRate5m,
             volumeAcceleration = candidate.volumeAcceleration,
-            reason = "PRE_PUMP_RESCUE ACTIVE; rescued from possible WATCH_ONLY overwrite or rank filter; rangePct=${rangePct.one()}%; rangePos=${(rangePos * 100.0).one()}%; volAccel=${candidate.volumeAcceleration.one()}x; 5mVolRatio=${fiveVolumeRatio.one()}x; 15mVolRatio=${fifteenVolumeRatio.one()}x; rankChange=${candidate.rankByChangeRate}; rankValue=${candidate.rankByTradeValue}",
+            reason = "PRE_PUMP_RESCUE ACTIVE; adaptive rescue universe; rangePct=${rangePct.one()}%; rangePos=${(rangePos * 100.0).one()}%; volAccel=${candidate.volumeAcceleration.one()}x; 5mVolRatio=${fiveVolumeRatio.one()}x; 15mVolRatio=${fifteenVolumeRatio.one()}x; rankChange=${candidate.rankByChangeRate}; rankValue=${candidate.rankByTradeValue}",
             invalidationReason = null,
             createdAt = now,
             updatedAt = now,
@@ -443,6 +451,32 @@ class CoinScannerService : Service() {
         ScannerStateStore.updateBacktestResults(results)
         evolver.maybeEvolve(results, now)
         ScannerStateStore.updateEvolutionLog(db.evolutionLogDao().getRecent())
+    }
+
+    private suspend fun adaptiveRescueMarkets(now: Long): Set<String> {
+        val recent = db.signalHistoryDao().getRecentMissedSignals(80)
+            .filter { it.detectedAt >= now - RESCUE_LOOKBACK_MS }
+            .sortedWith(compareByDescending<MissedSignalEntity> { it.changeRate }.thenBy { it.rankByTradeValue })
+            .map { it.market }
+            .distinct()
+            .take(12)
+            .toSet()
+        return if (recent.size >= 3) recent else FALLBACK_RESCUE_MARKETS
+    }
+
+    private fun missedPumpReturnThreshold(rules: StrategyRules): Double {
+        val activeCount = ScannerStateStore.activeStrategies.value.size
+        val scoreAdjustment = when {
+            rules.minimumScore >= 75.0 -> -0.4
+            rules.minimumScore <= 62.0 -> 0.4
+            else -> 0.0
+        }
+        val signalAdjustment = when {
+            activeCount == 0 -> -0.3
+            activeCount >= 5 -> 0.3
+            else -> 0.0
+        }
+        return (BASE_MISSED_PUMP_RETURN_PCT + scoreAdjustment + signalAdjustment).coerceIn(3.6, 5.4)
     }
 
     private fun maybeAutoUploadLatestReport(now: Long = System.currentTimeMillis()) {
@@ -525,8 +559,9 @@ class CoinScannerService : Service() {
         private const val MISSED_PUMP_MIN_WINDOW_MS = 3L * 60L * 1000L
         private const val MISSED_PUMP_BASELINE_RESET_MS = 45L * 60L * 1000L
         private const val MISSED_PUMP_DUPLICATE_WINDOW_MS = 6L * 60L * 60L * 1000L
-        private const val MISSED_PUMP_RETURN_PCT = 4.5
-        private val RESCUE_MARKETS = setOf(
+        private const val BASE_MISSED_PUMP_RETURN_PCT = 4.5
+        private const val RESCUE_LOOKBACK_MS = 3L * 24L * 60L * 60L * 1000L
+        private val FALLBACK_RESCUE_MARKETS = setOf(
             "KRW-XLM",
             "KRW-XRP",
             "KRW-ADA",
