@@ -196,6 +196,21 @@ interface SignalHistoryDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertMissedSignal(item: MissedSignalEntity): Long
 
+    @Query(
+        """
+        UPDATE missed_signals
+        SET postMortemResult = :postMortemResult,
+            suggestedParamAdjust = :suggestedParamAdjust,
+            isAnalyzed = 1
+        WHERE id = :id
+        """,
+    )
+    suspend fun updateMissedSignalPostMortem(
+        id: Long,
+        postMortemResult: String,
+        suggestedParamAdjust: String,
+    )
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertStrategyReview(item: StrategyReviewEntity)
 
@@ -307,6 +322,27 @@ interface SignalHistoryDao {
 
     @Query(
         """
+        SELECT * FROM missed_signals
+        WHERE isAnalyzed = 0
+        ORDER BY detectedAt DESC, id DESC
+        LIMIT :limit
+        """,
+    )
+    suspend fun getUnanalyzedMissedSignals(limit: Int = 50): List<MissedSignalEntity>
+
+    @Query(
+        """
+        SELECT missedReason, COUNT(*) AS count
+        FROM missed_signals
+        WHERE detectedAt >= :since
+        GROUP BY missedReason
+        ORDER BY count DESC
+        """,
+    )
+    suspend fun getMissedReasonStatsSince(since: Long): List<MissedReasonCount>
+
+    @Query(
+        """
         SELECT * FROM strategy_reviews
         ORDER BY reviewedAt DESC, id DESC
         LIMIT :limit
@@ -346,3 +382,8 @@ interface SignalHistoryDao {
     )
     suspend fun keepLatestSnapshots(limit: Int)
 }
+
+data class MissedReasonCount(
+    val missedReason: String,
+    val count: Int,
+)
