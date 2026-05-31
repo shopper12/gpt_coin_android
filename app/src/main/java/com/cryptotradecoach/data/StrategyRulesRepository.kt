@@ -18,7 +18,7 @@ class StrategyRulesRepository private constructor(
         val saved = runCatching {
             if (rulesFile.exists()) StrategyRules.fromJson(rulesFile.readText()) else null
         }.getOrNull()
-        return saved ?: StrategyRules.DEFAULT.also { persistLastKnownGood(it) }
+        return saved ?: StrategyRules.DEFAULT.also { persistLocal(it) }
     }
 
     fun refreshFromGitHub(): StrategyRules {
@@ -42,14 +42,14 @@ class StrategyRulesRepository private constructor(
             Log.w(TAG, "$message; keeping last-known-good rules.")
         }.getOrNull()
         return if (downloaded != null) {
-            persistLastKnownGood(downloaded)
+            persistLocal(downloaded)
             downloaded
         } else {
             current
         }
     }
 
-    private fun persistLastKnownGood(rules: StrategyRules) {
+    fun persistLocal(rules: StrategyRules) {
         runCatching {
             rulesFile.parentFile?.mkdirs()
             rulesFile.writeText(rules.toJson().toString(2))
