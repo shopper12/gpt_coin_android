@@ -8,6 +8,8 @@ on:
       - 'tools/patch_auto_tune_cooldown.py'
       - 'tools/patch_live_review_report.py'
       - 'tools/patch_auto_tune_live_report.py'
+      - 'tools/patch_missed_5pct_monitor.py'
+      - 'tools/patch_history_performance_ui.py'
       - '.github/workflows/app-ui-maintenance.yml'
 
 permissions:
@@ -34,6 +36,8 @@ jobs:
           python tools/patch_auto_tune_cooldown.py
           python tools/patch_live_review_report.py
           python tools/patch_auto_tune_live_report.py
+          python tools/patch_missed_5pct_monitor.py
+          python tools/patch_history_performance_ui.py
           python -m py_compile tools/auto_tune_rules.py
 
       - name: Set up JDK 17
@@ -48,12 +52,12 @@ jobs:
       - name: Commit patched files
         run: |
           set -euo pipefail
-          if git diff --quiet -- app/src/main/java/com/cryptotradecoach/MainActivity.kt app/src/main/java/com/cryptotradecoach/data/StrategyReportRepository.kt tools/auto_tune_rules.py; then
-            echo "No UI, live review, or auto tune diff to commit."
+          if git diff --quiet -- app/src/main/java/com/cryptotradecoach/MainActivity.kt app/src/main/java/com/cryptotradecoach/service/CoinScannerService.kt app/src/main/java/com/cryptotradecoach/data/SignalHistoryRepository.kt app/src/main/java/com/cryptotradecoach/data/StrategyReportRepository.kt tools/auto_tune_rules.py; then
+            echo "No UI, missed pump, live review, or auto tune diff to commit."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add app/src/main/java/com/cryptotradecoach/MainActivity.kt app/src/main/java/com/cryptotradecoach/data/StrategyReportRepository.kt tools/auto_tune_rules.py
-          git commit -m "Apply manual UI and live review tuning patches"
+          git add app/src/main/java/com/cryptotradecoach/MainActivity.kt app/src/main/java/com/cryptotradecoach/service/CoinScannerService.kt app/src/main/java/com/cryptotradecoach/data/SignalHistoryRepository.kt app/src/main/java/com/cryptotradecoach/data/StrategyReportRepository.kt tools/auto_tune_rules.py
+          git commit -m "Apply missed pump monitor and live outcome UI"
           git push origin HEAD:main
