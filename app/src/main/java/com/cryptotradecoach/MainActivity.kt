@@ -183,32 +183,8 @@ private fun MainScreen(
             1 -> ManualSearchTab(manualStrategy, manualMessage, onManualAnalyze, onManualSave)
             2 -> StrategyHistoryTab(historyBySymbol)
             3 -> PerformanceTab(performanceRows, backtestResults, evolutionLog, lastEvolvedAt, onPerformanceRefresh, onBacktestRefresh, onEvolutionRefresh)
-            4 -> RulesTab(
-                currentRulesText = currentRulesText,
-                settingsMessage = settingsMessage,
-                onRulesRefresh = onRulesRefresh,
-                onRulesDownload = { onRulesDownload(gitHubSettings) },
-                onRulesSave = onRulesSave,
-            )
-            5 -> SettingsTab(
-                isRunning = isRunning,
-                scanIntervalMs = scanIntervalMs,
-                maxDisplayCount = maxDisplayCount,
-                minimumScore = minimumScore,
-                gitHubSettings = gitHubSettings,
-                settingsMessage = settingsMessage,
-                onStart = onStart,
-                onStop = onStop,
-                onIntervalSelected = onIntervalSelected,
-                onMaxDisplayChanged = onMaxDisplayChanged,
-                onMinimumScoreChanged = onMinimumScoreChanged,
-                onGitHubSettingsSaved = onGitHubSettingsSaved,
-                onGitHubSettingsTest = onGitHubSettingsTest,
-                onRulesDownload = onRulesDownload,
-                onReportUpload = onReportUpload,
-                onOpenInstallPermissionSettings = onOpenInstallPermissionSettings,
-                onDownloadAndInstallLatestApk = onDownloadAndInstallLatestApk,
-            )
+            4 -> RulesTab(currentRulesText, settingsMessage, onRulesRefresh, { onRulesDownload(gitHubSettings) }, onRulesSave)
+            5 -> SettingsTab(isRunning, scanIntervalMs, maxDisplayCount, minimumScore, gitHubSettings, settingsMessage, onStart, onStop, onIntervalSelected, onMaxDisplayChanged, onMinimumScoreChanged, onGitHubSettingsSaved, onGitHubSettingsTest, onRulesDownload, onReportUpload, onOpenInstallPermissionSettings, onDownloadAndInstallLatestApk)
         }
     }
 }
@@ -270,12 +246,7 @@ private fun DiagnosticsCard(scanDiagnostics: ScanDiagnostics) {
 }
 
 @Composable
-private fun ManualSearchTab(
-    manualStrategy: TradeStrategy?,
-    manualMessage: String?,
-    onManualAnalyze: (String) -> Unit,
-    onManualSave: () -> Unit,
-) {
+private fun ManualSearchTab(manualStrategy: TradeStrategy?, manualMessage: String?, onManualAnalyze: (String) -> Unit, onManualSave: () -> Unit) {
     var symbol by rememberSaveable { mutableStateOf("") }
     LazyColumn(modifier = Modifier.fillMaxSize().navigationBarsPadding().imePadding().padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
         item {
@@ -298,19 +269,34 @@ private fun ManualSearchTab(
 
 @Composable
 private fun StrategyHistoryTab(historyBySymbol: Map<String, List<StrategyHistoryEntity>>) {
+    var selectedSymbol by rememberSaveable { mutableStateOf("ALL") }
+    val symbols = historyBySymbol.keys.sorted()
+    val visible = if (selectedSymbol == "ALL") historyBySymbol.toSortedMap() else historyBySymbol.filterKeys { it == selectedSymbol }
     LazyColumn(modifier = Modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
         item {
-            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text("종목별 히스토리", fontWeight = FontWeight.Bold)
-                Text("종목별 추천 생성·수동검색·변경·손절·만료 이력을 한 화면에서 봅니다.", style = MaterialTheme.typography.bodySmall)
+                Text("종목을 선택해서 보고, 각 종목은 최근 4건만 짧게 표시합니다.", style = MaterialTheme.typography.bodySmall)
+                OutlinedTextField(
+                    value = if (selectedSymbol == "ALL") "" else selectedSymbol,
+                    onValueChange = { value ->
+                        val normalized = value.trim().uppercase().let { if (it.isBlank()) "ALL" else if (it.startsWith("KRW-")) it else "KRW-$it" }
+                        selectedSymbol = if (normalized == "ALL" || historyBySymbol.containsKey(normalized)) normalized else value.trim().uppercase()
+                    },
+                    label = { Text("Symbol filter, e.g. XRP or KRW-XRP") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                )
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    FilterChip(selected = selectedSymbol == "ALL", onClick = { selectedSymbol = "ALL" }, label = { Text("ALL") })
+                    symbols.take(4).forEach { s -> FilterChip(selected = selectedSymbol == s, onClick = { selectedSymbol = s }, label = { Text(s.removePrefix("KRW-")) }) }
+                }
             }
         }
-        if (historyBySymbol.isEmpty()) {
-            item { EmptyCard("No strategy history.") }
+        if (visible.isEmpty()) {
+            item { EmptyCard("No matching strategy history.") }
         } else {
-            historyBySymbol.toSortedMap().forEach { (symbol, rows) ->
-                item { SymbolHistorySection(symbol, rows) }
-            }
+            visible.forEach { (symbol, rows) -> item { SymbolHistorySection(symbol, rows) } }
         }
     }
 }
@@ -318,34 +304,27 @@ private fun StrategyHistoryTab(historyBySymbol: Map<String, List<StrategyHistory
 @Composable
 private fun SymbolHistorySection(symbol: String, rows: List<StrategyHistoryEntity>) {
     Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Text(symbol, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
-            rows.take(12).forEach { HistoryCard(it) }
-            if (rows.size > 12) Text("외 ${rows.size - 12}건 더 있음", style = MaterialTheme.typography.bodySmall)
+        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text("$symbol · ${rows.size}건", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
+            rows.take(4).forEach { CompactHistoryLine(it) }
+            if (rows.size > 4) Text("외 ${rows.size - 4}건", style = MaterialTheme.typography.bodySmall)
         }
     }
 }
 
 @Composable
-private fun PerformanceTab(
-    performanceRows: List<StrategyPerformanceEntity>,
-    backtestResults: List<BacktestResult>,
-    evolutionLog: List<EvolutionLogEntity>,
-    lastEvolvedAt: Long?,
-    onPerformanceRefresh: () -> Unit,
-    onBacktestRefresh: () -> Unit,
-    onEvolutionRefresh: () -> Unit,
-) {
+private fun CompactHistoryLine(history: StrategyHistoryEntity) {
+    Text("${history.createdAt.toTimeText()} ${history.eventType.toKoreanEventName()} · ${(history.newSummary ?: history.message).toCompactPlan().take(95)}", style = MaterialTheme.typography.bodySmall)
+}
+
+@Composable
+private fun PerformanceTab(performanceRows: List<StrategyPerformanceEntity>, backtestResults: List<BacktestResult>, evolutionLog: List<EvolutionLogEntity>, lastEvolvedAt: Long?, onPerformanceRefresh: () -> Unit, onBacktestRefresh: () -> Unit, onEvolutionRefresh: () -> Unit) {
     val rowsByType = performanceRows.groupBy { it.strategyType.name }
     LazyColumn(modifier = Modifier.fillMaxSize().navigationBarsPadding().padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
         item {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
                 Text("Strategy performance", fontWeight = FontWeight.Bold)
-                OutlinedButton(onClick = {
-                    onPerformanceRefresh()
-                    onBacktestRefresh()
-                    onEvolutionRefresh()
-                }) { Text("Refresh") }
+                OutlinedButton(onClick = { onPerformanceRefresh(); onBacktestRefresh(); onEvolutionRefresh() }) { Text("Refresh") }
             }
         }
         item { EvolutionStatusCard(backtestResults, evolutionLog, lastEvolvedAt) }
@@ -372,9 +351,7 @@ private fun EvolutionStatusCard(backtestResults: List<BacktestResult>, evolution
             Text(lastEvolvedAt?.let { "마지막 조정: ${it.toTimeText()}" } ?: "아직 진화 없음. 전략별 완료 데이터 15건 이상 필요")
             Text("백테스트 전략 수: ${backtestResults.size} | 진화 가능 전략: $eligibleCount | 로그: ${evolutionLog.size}건")
             if (expanded) {
-                if (evolutionLog.isEmpty()) {
-                    Text("최근 파라미터 조정 이력이 없습니다.", style = MaterialTheme.typography.bodySmall)
-                } else {
+                if (evolutionLog.isEmpty()) Text("최근 파라미터 조정 이력이 없습니다.", style = MaterialTheme.typography.bodySmall) else {
                     evolutionLog.take(3).forEach { log ->
                         Card(modifier = Modifier.fillMaxWidth()) {
                             Column(modifier = Modifier.padding(10.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -390,143 +367,37 @@ private fun EvolutionStatusCard(backtestResults: List<BacktestResult>, evolution
 }
 
 @Composable
-private fun BacktestDetailCard(result: BacktestResult) {
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text(result.strategyType.toKoreanStrategyName(), fontWeight = FontWeight.Bold)
-                Text("${result.sampleSize}건")
-            }
-            Text("승률 ${(result.winRate * 100.0).one()}% | 기댓값 ${result.expectancy.percent()} | PF ${result.profitFactor.one()}")
-            Text("60m 평균 ${result.avgReturn60m.percent()} | 240m 평균 ${result.avgReturn240m.percent()} | 평균 MFE ${result.avgMfe.percent()} | 평균 MAE ${result.avgMae.percent()}")
-            Text("손절률 ${(result.stopHitRate * 100.0).one()}% | 1차목표 ${(result.target1HitRate * 100.0).one()}% | 2차목표 ${(result.target2HitRate * 100.0).one()}%")
-            Text("최고 점수구간 ${result.bestScoreRange} | 강한 시간대 ${result.bestTimeOfDay} | 최적보유 ${result.avgHoldMinutes.roundToInt()}분 | 점수상관 ${result.scoreCorrelation.one()}", style = MaterialTheme.typography.bodySmall)
-        }
-    }
-}
+private fun BacktestDetailCard(result: BacktestResult) { Card(modifier = Modifier.fillMaxWidth()) { Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) { Text(result.strategyType.toKoreanStrategyName(), fontWeight = FontWeight.Bold); Text("승률 ${(result.winRate * 100.0).one()}% | 기댓값 ${result.expectancy.percent()} | PF ${result.profitFactor.one()} | ${result.sampleSize}건"); Text("60m ${result.avgReturn60m.percent()} | 240m ${result.avgReturn240m.percent()} | MFE ${result.avgMfe.percent()} | MAE ${result.avgMae.percent()}", style = MaterialTheme.typography.bodySmall) } } }
 
 @Composable
-private fun PerformanceSummaryCard(strategyType: String, rows: List<StrategyPerformanceEntity>) {
-    val completed = rows.count { it.isComplete }
-    val avg5 = rows.mapNotNull { it.return5m }.averageOrNullText()
-    val avg15 = rows.mapNotNull { it.return15m }.averageOrNullText()
-    val avg30 = rows.mapNotNull { it.return30m }.averageOrNullText()
-    val avg60 = rows.mapNotNull { it.return60m }.averageOrNullText()
-    val stopRate = if (rows.isEmpty()) 0.0 else rows.count { it.stopHit }.toDouble() / rows.size * 100.0
-    val targetRate = if (rows.isEmpty()) 0.0 else rows.count { it.target1Hit || it.target2Hit }.toDouble() / rows.size * 100.0
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(strategyType.toKoreanStrategyName(), fontWeight = FontWeight.Bold)
-            Text("Signals: ${rows.size} | Complete: $completed")
-            Text("Avg return: 5m $avg5 / 15m $avg15 / 30m $avg30 / 60m $avg60")
-            Text("Target hit: ${targetRate.one()}% | Stop hit: ${stopRate.one()}%")
-        }
-    }
-}
+private fun PerformanceSummaryCard(strategyType: String, rows: List<StrategyPerformanceEntity>) { Card(modifier = Modifier.fillMaxWidth()) { Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) { val completed = rows.count { it.isComplete }; Text(strategyType.toKoreanStrategyName(), fontWeight = FontWeight.Bold); Text("Signals: ${rows.size} | Complete: $completed"); Text("Avg 5m ${rows.mapNotNull { it.return5m }.averageOrNullText()} / 15m ${rows.mapNotNull { it.return15m }.averageOrNullText()} / 30m ${rows.mapNotNull { it.return30m }.averageOrNullText()} / 60m ${rows.mapNotNull { it.return60m }.averageOrNullText()}") } } }
 
 @Composable
-private fun PerformanceCard(row: StrategyPerformanceEntity) {
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text("${row.symbol} | ${row.strategyType.name.toKoreanStrategyName()} | ${if (row.isComplete) "COMPLETE" else "OPEN"}", fontWeight = FontWeight.Bold)
-            Text("Created: ${row.createdAt.toTimeText()} | Updated: ${row.lastUpdatedAt.toTimeText()}")
-            Text("Entry: ${row.entryPrice.price()} | Latest: ${row.latestPrice.price()} | Score: ${row.score.one()}")
-            Text("Return: 5m ${row.return5m.percentOrDash()} / 15m ${row.return15m.percentOrDash()} / 30m ${row.return30m.percentOrDash()} / 60m ${row.return60m.percentOrDash()}")
-            Text("MFE: ${row.mfePct.percent()} | MAE: ${row.maePct.percent()}")
-            Text("Target1: ${row.target1Hit} | Target2: ${row.target2Hit} | Stop: ${row.stopHit} | Expired: ${row.expired}")
-            Text("Rank by value: ${row.rankByTradeValue}")
-        }
-    }
-}
+private fun PerformanceCard(row: StrategyPerformanceEntity) { Card(modifier = Modifier.fillMaxWidth()) { Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) { Text("${row.symbol} | ${row.strategyType.name.toKoreanStrategyName()} | ${if (row.isComplete) "COMPLETE" else "LOCKED"}", fontWeight = FontWeight.Bold); Text("Entry ${row.entryPrice.price()} | Latest ${row.latestPrice.price()} | Score ${row.score.one()}"); Text("Return 5m ${row.return5m.percentOrDash()} / 15m ${row.return15m.percentOrDash()} / 30m ${row.return30m.percentOrDash()} / 60m ${row.return60m.percentOrDash()}"); Text("MFE ${row.mfePct.percent()} | MAE ${row.maePct.percent()} | Stop ${row.stopHit} | T1 ${row.target1Hit} | T2 ${row.target2Hit}", style = MaterialTheme.typography.bodySmall) } } }
 
 @Composable
-private fun RulesTab(
-    currentRulesText: String,
-    settingsMessage: String?,
-    onRulesRefresh: () -> Unit,
-    onRulesDownload: () -> Unit,
-    onRulesSave: (String) -> Unit,
-) {
+private fun RulesTab(currentRulesText: String, settingsMessage: String?, onRulesRefresh: () -> Unit, onRulesDownload: () -> Unit, onRulesSave: (String) -> Unit) {
     var editableRulesText by rememberSaveable(currentRulesText) { mutableStateOf(currentRulesText) }
     LazyColumn(modifier = Modifier.fillMaxSize().navigationBarsPadding().imePadding().padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
         item { StrategyManualCard() }
         item { Text("Current rules JSON", fontWeight = FontWeight.Bold) }
         item { Text("아래 JSON 조건값을 직접 수정한 뒤 Save local rules를 누르면 다음 스캔부터 로컬 rules가 적용됩니다. Download를 누르면 GitHub rules로 다시 덮어씁니다.", style = MaterialTheme.typography.bodySmall) }
-        item {
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedButton(onClick = onRulesRefresh) { Text("Refresh local") }
-                Button(onClick = { onRulesSave(editableRulesText) }) { Text("Save local rules") }
-                OutlinedButton(onClick = onRulesDownload) { Text("Download") }
-            }
-        }
+        item { Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) { OutlinedButton(onClick = onRulesRefresh) { Text("Refresh local") }; Button(onClick = { onRulesSave(editableRulesText) }) { Text("Save local rules") }; OutlinedButton(onClick = onRulesDownload) { Text("Download") } } }
         settingsMessage?.let { item { Text(it) } }
-        item {
-            OutlinedTextField(
-                value = editableRulesText,
-                onValueChange = { editableRulesText = it },
-                label = { Text("Rules JSON") },
-                modifier = Modifier.fillMaxWidth(),
-                minLines = 18,
-                singleLine = false,
-                textStyle = MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace),
-            )
-        }
+        item { OutlinedTextField(value = editableRulesText, onValueChange = { editableRulesText = it }, label = { Text("Rules JSON") }, modifier = Modifier.fillMaxWidth(), minLines = 18, singleLine = false, textStyle = MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace)) }
     }
 }
 
 @Composable
-private fun StrategyManualCard() {
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
-            Text("현재 전략 설명", fontWeight = FontWeight.Bold)
-            Text("COMPRESSION_BREAKOUT: 15분 박스가 좁아지고 상단에 붙은 상태에서 5분 거래량이 붙으면 돌파 후보로 봅니다.")
-            Text("SWEEP_RECLAIM: 단기 저점을 일부러 깨고 다시 회복하면 가짜 이탈 후 반등 후보로 봅니다.")
-            Text("TREND_PULLBACK: 큰 추세 위에서 눌림 후 이전 고점을 회복할 때만 봅니다.")
-            Text("BEAR_DECOUPLING_BOUNCE: BTC가 약할 때도 거래대금·4시간 거래량이 강한 알트만 예외적으로 봅니다.")
-            Text("PRE_PUMP_ROTATION: +10% 급등 전 후보 탐지용입니다. 거래량 점화, 좁은 박스 상단, 상대강도 개선을 같이 봅니다.")
-            Text("BTC_SHORT_REGIME: KRW-BTC가 15분·240분 평균선 아래에서 하락 모멘텀과 매도 거래량이 붙으면 숏/위험회피 신호로 표시합니다.")
-            Text("성과 탭의 백테스트/자가진화 카드에서 전략별 승률과 기댓값을 확인하세요.")
-        }
-    }
-}
+private fun StrategyManualCard() { Card(modifier = Modifier.fillMaxWidth()) { Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) { Text("현재 전략 설명", fontWeight = FontWeight.Bold); Text("전략은 ACTIVE 이후 손절·목표·트레일링·만료 전까지 고정됩니다. 그래서 Rules는 잦은 변경보다 최초 신호 품질과 기대수익을 우선합니다."); Text("PRE_PUMP_ROTATION: 거래량 점화, 좁은 박스 상단, 상대강도 개선을 같이 봅니다."); Text("BTC_SHORT_REGIME: KRW-BTC가 15분·240분 평균선 아래에서 하락 모멘텀과 매도 거래량이 붙으면 숏/위험회피 신호로 표시합니다.") } } }
 
 @Composable
-private fun SettingsTab(
-    isRunning: Boolean,
-    scanIntervalMs: Long,
-    maxDisplayCount: Int,
-    minimumScore: Double,
-    gitHubSettings: GitHubSettings,
-    settingsMessage: String?,
-    onStart: () -> Unit,
-    onStop: () -> Unit,
-    onIntervalSelected: (Long) -> Unit,
-    onMaxDisplayChanged: (Int) -> Unit,
-    onMinimumScoreChanged: (Double) -> Unit,
-    onGitHubSettingsSaved: (GitHubSettings) -> Unit,
-    onGitHubSettingsTest: (GitHubSettings) -> Unit,
-    onRulesDownload: (GitHubSettings) -> Unit,
-    onReportUpload: (GitHubSettings) -> Unit,
-    onOpenInstallPermissionSettings: () -> Unit,
-    onDownloadAndInstallLatestApk: (GitHubSettings) -> Unit,
-) {
-    var owner by rememberSaveable(gitHubSettings.owner) { mutableStateOf(gitHubSettings.owner) }
-    var repo by rememberSaveable(gitHubSettings.repo) { mutableStateOf(gitHubSettings.repo) }
-    var branch by rememberSaveable(gitHubSettings.branch) { mutableStateOf(gitHubSettings.branch) }
-    var token by rememberSaveable(gitHubSettings.token) { mutableStateOf(gitHubSettings.token) }
-    var rulesPath by rememberSaveable(gitHubSettings.rulesPath) { mutableStateOf(gitHubSettings.rulesPath) }
-    var reportPath by rememberSaveable(gitHubSettings.reportPath) { mutableStateOf(gitHubSettings.reportPath) }
-    var autoUploadReport by rememberSaveable(gitHubSettings.autoUploadReport) { mutableStateOf(gitHubSettings.autoUploadReport) }
+private fun SettingsTab(isRunning: Boolean, scanIntervalMs: Long, maxDisplayCount: Int, minimumScore: Double, gitHubSettings: GitHubSettings, settingsMessage: String?, onStart: () -> Unit, onStop: () -> Unit, onIntervalSelected: (Long) -> Unit, onMaxDisplayChanged: (Int) -> Unit, onMinimumScoreChanged: (Double) -> Unit, onGitHubSettingsSaved: (GitHubSettings) -> Unit, onGitHubSettingsTest: (GitHubSettings) -> Unit, onRulesDownload: (GitHubSettings) -> Unit, onReportUpload: (GitHubSettings) -> Unit, onOpenInstallPermissionSettings: () -> Unit, onDownloadAndInstallLatestApk: (GitHubSettings) -> Unit) {
+    var owner by rememberSaveable(gitHubSettings.owner) { mutableStateOf(gitHubSettings.owner) }; var repo by rememberSaveable(gitHubSettings.repo) { mutableStateOf(gitHubSettings.repo) }; var branch by rememberSaveable(gitHubSettings.branch) { mutableStateOf(gitHubSettings.branch) }; var token by rememberSaveable(gitHubSettings.token) { mutableStateOf(gitHubSettings.token) }; var rulesPath by rememberSaveable(gitHubSettings.rulesPath) { mutableStateOf(gitHubSettings.rulesPath) }; var reportPath by rememberSaveable(gitHubSettings.reportPath) { mutableStateOf(gitHubSettings.reportPath) }; var autoUploadReport by rememberSaveable(gitHubSettings.autoUploadReport) { mutableStateOf(gitHubSettings.autoUploadReport) }
     fun currentSettings() = GitHubSettings(owner = owner, repo = repo, branch = branch, rulesPath = rulesPath, reportPath = reportPath, token = token, autoUploadReport = autoUploadReport)
-
     LazyColumn(modifier = Modifier.fillMaxSize().navigationBarsPadding().imePadding().padding(horizontal = 16.dp), contentPadding = PaddingValues(top = 16.dp, bottom = 32.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
         item { Text("Status: ${if (isRunning) "running" else "stopped"}") }
-        item {
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Button(onClick = onStart, enabled = !isRunning) { Text("Start scanner") }
-                OutlinedButton(onClick = onStop, enabled = isRunning) { Text("Stop") }
-            }
-        }
+        item { Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) { Button(onClick = onStart, enabled = !isRunning) { Text("Start scanner") }; OutlinedButton(onClick = onStop, enabled = isRunning) { Text("Stop") } } }
         item { Text("Scan interval") }
         item { Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) { ScannerStateStore.SUPPORTED_INTERVALS_MS.forEach { interval -> FilterChip(selected = scanIntervalMs == interval, onClick = { onIntervalSelected(interval) }, label = { Text("${interval / 1000}s") }) } } }
         item { Text("Max displayed symbols: $maxDisplayCount") }
@@ -534,9 +405,8 @@ private fun SettingsTab(
         item { Text("Minimum score: ${minimumScore.roundToInt()}") }
         item { Slider(value = minimumScore.toFloat(), onValueChange = { onMinimumScoreChanged(it.toDouble()) }, valueRange = 50f..90f, steps = 7) }
         item { Text("조건값 수정", fontWeight = FontWeight.Bold) }
-        item { Text("세부 전략 조건값은 Rules 탭의 JSON에서 직접 수정합니다. Settings의 minimum score는 화면 표시/스캔 필터이고, Rules JSON은 전략 엔진 파라미터입니다.", style = MaterialTheme.typography.bodySmall) }
+        item { Text("세부 전략 조건값은 Rules 탭의 JSON에서 직접 수정합니다. ACTIVE 전략은 종료 전까지 잠기므로, 신호 수보다 기대수익과 초기 품질을 우선해야 합니다.", style = MaterialTheme.typography.bodySmall) }
         item { Text("App update", fontWeight = FontWeight.Bold) }
-        item { Text("GitHub에 새 APK가 올라간 뒤, 여기서 다운로드와 설치 화면 열기까지 처리합니다. 최종 설치 버튼은 Android 보안상 직접 눌러야 합니다.", style = MaterialTheme.typography.bodySmall) }
         item { OutlinedButton(onClick = onOpenInstallPermissionSettings, modifier = Modifier.fillMaxWidth()) { Text("Open install permission settings") } }
         item { Button(onClick = { onDownloadAndInstallLatestApk(currentSettings()) }, modifier = Modifier.fillMaxWidth()) { Text("Download and install latest APK") } }
         item { Text("GitHub sync", fontWeight = FontWeight.Bold) }
@@ -556,91 +426,19 @@ private fun SettingsTab(
 }
 
 @Composable
-private fun StrategyCard(strategy: TradeStrategy) {
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text("#${strategy.rank} ${strategy.symbol} | ${strategy.strategyType.name.toKoreanStrategyName()}", fontWeight = FontWeight.Bold)
-            Text(strategy.koreanPlanLine())
-            Text("Score: ${strategy.score.one()} | Expected: ${strategy.expectedReturnPct.percent()} | R/R: ${strategy.riskRewardRatio.one()}")
-            Text("Entry: ${strategy.entryLow.price()} - ${strategy.entryHigh.price()}")
-            Text("Stop: ${strategy.stopLoss.price()} | Targets: ${strategy.target1.price()} / ${strategy.target2.price()}")
-            Text("Valid until: ${strategy.validUntil.toTimeText()} | Updated: ${strategy.updatedAt.toTimeText()}")
-            Text(strategy.reason.toKoreanReasonHint())
-        }
-    }
-}
+private fun StrategyCard(strategy: TradeStrategy) { Card(modifier = Modifier.fillMaxWidth()) { Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) { Text("#${strategy.rank} ${strategy.symbol} | ${strategy.strategyType.name.toKoreanStrategyName()}", fontWeight = FontWeight.Bold); Text(strategy.koreanPlanLine()); Text("Score ${strategy.score.one()} | Expected ${strategy.expectedReturnPct.percent()} | R/R ${strategy.riskRewardRatio.one()}"); Text("Entry ${strategy.entryLow.price()} - ${strategy.entryHigh.price()}"); Text("Stop ${strategy.stopLoss.price()} | Targets ${strategy.target1.price()} / ${strategy.target2.price()}"); Text("Valid until ${strategy.validUntil.toTimeText()} | Locked until target/stop/trailing/expiry"); Text(strategy.reason.toKoreanReasonHint(), style = MaterialTheme.typography.bodySmall) } } }
 
 @Composable
-private fun HistoryCard(history: StrategyHistoryEntity) {
-    Card(modifier = Modifier.fillMaxWidth().clickable { }) {
-        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(history.toTimelineLine(), fontWeight = FontWeight.Bold)
-            history.oldSummary?.let { Text("이전: ${it.toCompactPlan()}", style = MaterialTheme.typography.bodySmall) }
-            history.newSummary?.let { Text("현재: ${it.toCompactPlan()}", style = MaterialTheme.typography.bodySmall) }
-            if (history.message.isNotBlank()) Text("메모: ${history.message}", style = MaterialTheme.typography.bodySmall)
-        }
-    }
-}
-
+private fun HistoryCard(history: StrategyHistoryEntity) { Card(modifier = Modifier.fillMaxWidth().clickable { }) { Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) { Text(history.toTimelineLine(), fontWeight = FontWeight.Bold); history.oldSummary?.let { Text("이전: ${it.toCompactPlan()}", style = MaterialTheme.typography.bodySmall) }; history.newSummary?.let { Text("현재: ${it.toCompactPlan()}", style = MaterialTheme.typography.bodySmall) }; if (history.message.isNotBlank()) Text("메모: ${history.message}", style = MaterialTheme.typography.bodySmall) } } }
 @Composable
-private fun EmptyCard(text: String) {
-    Card(modifier = Modifier.fillMaxWidth()) { Text(text = text, modifier = Modifier.padding(12.dp)) }
-}
+private fun EmptyCard(text: String) { Card(modifier = Modifier.fillMaxWidth()) { Text(text = text, modifier = Modifier.padding(12.dp)) } }
 
-private fun TradeStrategy.koreanPlanLine(): String {
-    val direction = if (strategyType.name == "BTC_SHORT_REGIME") "숏/하락" else "롱/상승"
-    return "$direction 전략 | 진입 ${entryLow.price()}~${entryHigh.price()} | 손절 ${stopLoss.price()} | 목표 ${target1.price()}/${target2.price()} | 24h ${changeRate24h.one()}% · 30m ${changeRate30m.one()}% · 5m ${changeRate5m.one()}% · 거래량 ${volumeAcceleration.one()}x"
-}
-
-private fun StrategyHistoryEntity.toTimelineLine(): String {
-    val current = newSummary?.toCompactPlan().orEmpty()
-    val suffix = if (current.isBlank()) message else current
-    return "${createdAt.toTimeText()} ${symbol} ${eventType.toKoreanEventName()} → $suffix"
-}
-
-private fun String.toCompactPlan(): String {
-    return replace("rank=", "순위 ").replace("score=", "점수 ").replace("entry=", "진입 ").replace("stop=", "손절 ").replace("target=", "목표 ").replace("trail=", "추적손절 ").replace("status=", "상태 ").replace("strategy=", "전략 ")
-}
-
-private fun String.toKoreanStrategyName(): String = when (this) {
-    "COMPRESSION_BREAKOUT" -> "압축 돌파"
-    "SWEEP_RECLAIM" -> "저점 훼손 후 회복"
-    "TREND_PULLBACK" -> "추세 눌림 회복"
-    "BEAR_DECOUPLING_BOUNCE" -> "약세장 독립강세"
-    "PRE_PUMP_ROTATION" -> "급등 전 회전 포착"
-    "BTC_SHORT_REGIME" -> "비트코인 숏/위험회피"
-    "MOMENTUM_BREAKOUT" -> "모멘텀 돌파"
-    "PULLBACK_REBOUND" -> "눌림 반등"
-    "VOLUME_EXPANSION" -> "거래량 확장"
-    else -> this
-}
-
-private fun String.toKoreanEventName(): String = when (this) {
-    "NEW_ACTIVE" -> "신규진입"
-    "MANUAL_SEARCH" -> "수동검색"
-    "RANK_UP" -> "순위상승"
-    "PRICE_PLAN_CHANGED" -> "전략변경"
-    "WATCH_ONLY" -> "관찰전환"
-    "INVALIDATED" -> "무효화"
-    "TARGET1_HIT" -> "1차목표도달"
-    "TRAILING_STOP_HIT" -> "추적손절"
-    "HIT_TARGET" -> "최종목표도달"
-    "STOPPED_OUT" -> "손절"
-    "EXPIRED" -> "만료"
-    else -> this
-}
-
-private fun String.toKoreanReasonHint(): String {
-    return replace("PRE_PUMP_ROTATION", "급등 전 회전 포착")
-        .replace("BTC_SHORT_REGIME", "비트코인 숏/위험회피")
-        .replace("COMPRESSION_BREAKOUT", "압축 돌파")
-        .replace("SWEEP_RECLAIM", "저점 훼손 후 회복")
-        .replace("TREND_PULLBACK", "추세 눌림 회복")
-        .replace("BEAR_DECOUPLING_BOUNCE", "약세장 독립강세")
-        .replace("ACTIVE", "활성")
-        .replace("WATCH_ONLY", "관찰")
-}
-
+private fun TradeStrategy.koreanPlanLine(): String { val direction = if (strategyType.name == "BTC_SHORT_REGIME") "숏/하락" else "롱/상승"; return "$direction 전략 | 진입 ${entryLow.price()}~${entryHigh.price()} | 손절 ${stopLoss.price()} | 목표 ${target1.price()}/${target2.price()} | 24h ${changeRate24h.one()}% · 30m ${changeRate30m.one()}% · 5m ${changeRate5m.one()}% · 거래량 ${volumeAcceleration.one()}x" }
+private fun StrategyHistoryEntity.toTimelineLine(): String { val current = newSummary?.toCompactPlan().orEmpty(); val suffix = if (current.isBlank()) message else current; return "${createdAt.toTimeText()} ${symbol} ${eventType.toKoreanEventName()} → $suffix" }
+private fun String.toCompactPlan(): String = replace("rank=", "#").replace("score=", "점수 ").replace("entry=", "진입 ").replace("stop=", "손절 ").replace("target=", "목표 ").replace("trail=", "트레일 ").replace("status=", "").replace("strategy=", "")
+private fun String.toKoreanStrategyName(): String = when (this) { "COMPRESSION_BREAKOUT" -> "압축 돌파"; "SWEEP_RECLAIM" -> "저점 훼손 후 회복"; "TREND_PULLBACK" -> "추세 눌림 회복"; "BEAR_DECOUPLING_BOUNCE" -> "약세장 독립강세"; "PRE_PUMP_ROTATION" -> "급등 전 회전 포착"; "BTC_SHORT_REGIME" -> "비트코인 숏/위험회피"; "MOMENTUM_BREAKOUT" -> "모멘텀 돌파"; "PULLBACK_REBOUND" -> "눌림 반등"; "VOLUME_EXPANSION" -> "거래량 확장"; else -> this }
+private fun String.toKoreanEventName(): String = when (this) { "NEW_ACTIVE" -> "신규"; "MANUAL_SEARCH" -> "검색"; "RANK_UP" -> "순위"; "PRICE_PLAN_CHANGED" -> "변경"; "WATCH_ONLY" -> "관찰"; "INVALIDATED" -> "무효"; "TARGET1_HIT" -> "1차"; "TRAILING_STOP_HIT" -> "트레일"; "HIT_TARGET" -> "목표"; "STOPPED_OUT" -> "손절"; "EXPIRED" -> "만료"; else -> this }
+private fun String.toKoreanReasonHint(): String = replace("PRE_PUMP_ROTATION", "급등 전 회전 포착").replace("BTC_SHORT_REGIME", "비트코인 숏/위험회피").replace("COMPRESSION_BREAKOUT", "압축 돌파").replace("SWEEP_RECLAIM", "저점 훼손 후 회복").replace("TREND_PULLBACK", "추세 눌림 회복").replace("BEAR_DECOUPLING_BOUNCE", "약세장 독립강세").replace("ACTIVE", "활성").replace("WATCH_ONLY", "관찰")
 private fun Double.price(): String = String.format(Locale.US, "%,.2f", this)
 private fun Double.percent(): String = String.format(Locale.US, "%.2f%%", this)
 private fun Double?.percentOrDash(): String = this?.percent() ?: "-"
