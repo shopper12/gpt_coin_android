@@ -94,6 +94,28 @@ class SignalHistoryRepository private constructor(
         )
     }
 
+    suspend fun recordManualSearch(
+        rawSymbol: String,
+        strategy: TradeStrategy?,
+        message: String,
+        now: Long = System.currentTimeMillis(),
+    ) {
+        val symbol = normalizeSymbol(rawSymbol, strategy?.symbol)
+        val summary = strategy?.summary() ?: "검색결과 없음"
+        insertDedupedHistory(
+            StrategyHistoryEntity(
+                strategyId = "MANUAL_SEARCH-$symbol-$now",
+                symbol = symbol,
+                eventType = StrategyEventType.MANUAL_SEARCH,
+                oldSummary = null,
+                newSummary = summary,
+                message = message,
+                createdAt = now,
+            ),
+            now,
+        )
+    }
+
     suspend fun getActiveStrategies(limit: Int = 5): List<TradeStrategy> {
         return dao.getActiveStrategies(limit).map { it.toModel() }
     }
@@ -419,6 +441,20 @@ class SignalHistoryRepository private constructor(
 
     private fun TradeStrategyEntity.summary(): String {
         return "rank=$rank score=${score.one()} entry=${entryLow.price()}-${entryHigh.price()} stop=${stopLoss.price()} target=${target1.price()}/${target2.price()} trail=${trailingStop.price()} status=$status"
+    }
+
+    private fun TradeStrategy.summary(): String {
+        return "rank=$rank score=${score.one()} entry=${entryLow.price()}-${entryHigh.price()} stop=${stopLoss.price()} target=${target1.price()}/${target2.price()} trail=${trailingStop.price()} status=$status strategy=$strategyType"
+    }
+
+    private fun normalizeSymbol(rawSymbol: String, fallback: String?): String {
+        val raw = rawSymbol.trim().uppercase().replace("/", "-")
+        return when {
+            fallback?.isNotBlank() == true -> fallback
+            raw.startsWith("KRW-") -> raw
+            raw.isBlank() -> "UNKNOWN"
+            else -> "KRW-$raw"
+        }
     }
 
     private fun percentChange(from: Double, to: Double): Double {
