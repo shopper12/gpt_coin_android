@@ -1,12 +1,13 @@
 package com.cryptotradecoach.domain
 
 import com.cryptotradecoach.data.local.AppDatabase
+import com.cryptotradecoach.data.local.EvolutionLogEntity
 import com.cryptotradecoach.data.local.MissedSignalEntity
 import com.cryptotradecoach.data.local.MissedSignalReason
 
 /**
  * Converts raw missed-pump rows into auditable diagnosis text and parameter suggestions.
- * This deliberately updates the existing missed_signals table instead of creating a parallel review table.
+ * Results are written back to missed_signals and summarized through evolution_log so the existing Performance UI exposes them.
  */
 class PostMortemEngine(
     private val db: AppDatabase,
@@ -14,7 +15,7 @@ class PostMortemEngine(
     suspend fun analyze(limit: Int = DEFAULT_LIMIT): List<PostMortemResult> {
         val dao = db.signalHistoryDao()
         val rows = dao.getUnanalyzedMissedSignals(limit)
-        return rows.map { row ->
+        val results = rows.map { row ->
             val result = diagnose(row)
             dao.updateMissedSignalPostMortem(
                 id = row.id,
@@ -23,6 +24,33 @@ class PostMortemEngine(
             )
             result
         }
+        if (results.isNotEmpty()) {
+            db.evolutionLogDao().insert(
+                EvolutionLogEntity(
+                    changedAt = System.currentTimeMillis(),
+                    changeLog = buildUiSummary(results),
+                    rulesJson = "{}",
+                ),
+            )
+        }
+        return results
+    }
+
+    private fun buildUiSummary(results: List<PostMortemResult>): String {
+        val grouped = results.groupingBy { it.missedReason }.eachCount().entries
+            .sortedByDescending { it.value }
+            .joinToString { "${it.key}=${it.value}" }
+        val examples = results.sortedByDescending { it.returnPct }
+            .take(5)
+            .joinToString("\n") { r ->
+                "- ${r.market} ${r.returnPct.one()}% | ${r.missedReason} | ${r.suggestedParamAdjust}"
+            }
+        return """
+            === PostMortem missed-signal analysis ===
+            analyzed=${results.size}
+            reasonStats=$grouped
+            $examples
+        """.trimIndent()
     }
 
     private fun diagnose(row: MissedSignalEntity): PostMortemResult {
