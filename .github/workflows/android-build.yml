@@ -11,6 +11,9 @@ permissions:
 jobs:
   assemble-debug:
     runs-on: ubuntu-latest
+    env:
+      CI_VERSION_CODE: ${{ github.run_number }}
+      CI_VERSION_NAME: 1.0.${{ github.run_number }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -33,14 +36,14 @@ jobs:
       - name: Normalize APK name
         run: |
           mkdir -p release
-          cp app/build/outputs/apk/debug/*.apk release/crypto-trade-coach-release.apk
+          cp app/build/outputs/apk/debug/*.apk release/crypto-trade-coach-v${CI_VERSION_CODE}.apk
 
       - name: Upload debug APK artifact
         if: success()
         uses: actions/upload-artifact@v4
         with:
           name: app-debug-apk
-          path: release/crypto-trade-coach-release.apk
+          path: release/crypto-trade-coach-v${{ github.run_number }}.apk
 
       - name: Publish latest-phone-apk release
         if: success()
@@ -50,8 +53,11 @@ jobs:
           name: Latest phone APK
           body: |
             Automated debug APK build for phone installation.
-            Commit: ${{ github.sha }}
-          files: release/crypto-trade-coach-release.apk
+            versionCode: ${{ github.run_number }}
+            versionName: 1.0.${{ github.run_number }}
+            commit: ${{ github.sha }}
+          files: release/crypto-trade-coach-v${{ github.run_number }}.apk
           make_latest: true
+          overwrite_files: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
