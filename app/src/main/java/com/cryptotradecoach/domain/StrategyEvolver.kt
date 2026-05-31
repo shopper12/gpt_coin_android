@@ -5,7 +5,7 @@ import com.cryptotradecoach.data.StrategyRulesRepository
 import com.cryptotradecoach.data.local.AppDatabase
 import com.cryptotradecoach.data.local.EvolutionLogEntity
 
-// Applies conservative rule adjustments from backtest evidence and records every change.
+// Applies conservative rule adjustments from realized backtest and missed-pump evidence.
 class StrategyEvolver(
     private val rulesRepository: StrategyRulesRepository,
     private val db: AppDatabase,
@@ -14,14 +14,17 @@ class StrategyEvolver(
 
     suspend fun maybeEvolve(backtestResults: List<BacktestResult>, now: Long = System.currentTimeMillis()) {
         if (now - lastEvolvedAt < EVOLUTION_INTERVAL_MS) return
-        if (backtestResults.none { it.sampleSize >= MIN_SAMPLES_FOR_EVOLUTION }) return
         val current = rulesRepository.loadLastKnownGood()
         val recentSignalCount = db.signalHistoryDao()
-            .getPerformanceSince(now - 24L * 60L * 60L * 1000L, 5000)
+            .getPerformanceSince(now - DAY_MS, 5000)
             .size
-        val evolved = evolveRules(current, backtestResults, recentSignalCount)
+        val missedPumps = db.signalHistoryDao().getRecentMissedSignals(100)
+            .filter { it.detectedAt >= now - DAY_MS }
+        if (backtestResults.none { it.sampleSize >= MIN_SAMPLES_FOR_EVOLUTION } && missedPumps.size < MIN_MISSED_PUMPS_FOR_EVOLUTION) return
+
+        val evolved = evolveRules(current, backtestResults, recentSignalCount, missedPumps.size)
         if (evolved != current) {
-            val changeLog = generateChangeLog(current, evolved, backtestResults, recentSignalCount, now)
+            val changeLog = generateChangeLog(current, evolved, backtestResults, recentSignalCount, missedPumps.size, now)
             rulesRepository.persistLocal(evolved)
             db.evolutionLogDao().insert(
                 EvolutionLogEntity(
@@ -34,7 +37,12 @@ class StrategyEvolver(
         }
     }
 
-    private fun evolveRules(rules: StrategyRules, results: List<BacktestResult>, recentSignalCount: Int): StrategyRules {
+    private fun evolveRules(
+        rules: StrategyRules,
+        results: List<BacktestResult>,
+        recentSignalCount: Int,
+        recentMissedPumpCount: Int,
+    ): StrategyRules {
         var updated = rules
         results.forEach { result ->
             if (result.sampleSize < MIN_SAMPLES_FOR_EVOLUTION) return@forEach
@@ -65,7 +73,36 @@ class StrategyEvolver(
                 minimumScore = (updated.minimumScore - 3.0).coerceAtLeast(50.0),
                 prePumpRotation = prePump.copy(
                     minVolumeAcceleration = (prePump.minVolumeAcceleration * 0.95).coerceAtLeast(1.10),
-                    maxTradeValueRank = (prePump.maxTradeValueRank + 5).coerceAtMost(60),
+                    maxTradeValueRank = (prePump.maxTradeValueRank + 5).coerceAtMost(75),
+                ),
+            )
+        }
+        if (recentMissedPumpCount >= MIN_MISSED_PUMPS_FOR_EVOLUTION) {
+            val prePump = updated.prePumpRotation
+            val candidates = updated.candidateSelection
+            updated = updated.copy(
+                minimumScore = (updated.minimumScore - 2.0).coerceAtLeast(55.0),
+                maxResults = (updated.maxResults + 1).coerceAtMost(8),
+                candidateSelection = candidates.copy(
+                    maxCandleTargets = (candidates.maxCandleTargets + 10).coerceAtMost(80),
+                    topTradeValueCount = (candidates.topTradeValueCount + 10).coerceAtMost(100),
+                    topChangeRateCount = (candidates.topChangeRateCount + 5).coerceAtMost(80),
+                    volumeBuildupCount = (candidates.volumeBuildupCount + 5).coerceAtMost(80),
+                    quietAccumulationCount = (candidates.quietAccumulationCount + 5).coerceAtMost(80),
+                    medianTradeValueMultiplier = (candidates.medianTradeValueMultiplier * 0.92).coerceAtLeast(0.75),
+                    maxQuietAbsChangeRatePct = (candidates.maxQuietAbsChangeRatePct + 0.3).coerceAtMost(5.0),
+                ),
+                prePumpRotation = prePump.copy(
+                    maxTradeValueRank = (prePump.maxTradeValueRank + 10).coerceAtMost(80),
+                    maxChangeRank = (prePump.maxChangeRank + 10).coerceAtMost(80),
+                    minRotation30mPct = (prePump.minRotation30mPct * 0.85).coerceAtLeast(0.10),
+                    minVolumeAcceleration = (prePump.minVolumeAcceleration * 0.90).coerceAtLeast(1.05),
+                    minFiveMinuteVolumeRatio = (prePump.minFiveMinuteVolumeRatio * 0.90).coerceAtLeast(1.05),
+                    minFifteenMinuteVolumeRatio = (prePump.minFifteenMinuteVolumeRatio * 0.90).coerceAtLeast(1.03),
+                    maxRangePct = (prePump.maxRangePct + 0.8).coerceAtMost(9.0),
+                    minRangePosition = (prePump.minRangePosition - 0.05).coerceAtLeast(0.30),
+                    minHighProximityMultiplier = (prePump.minHighProximityMultiplier - 0.006).coerceAtLeast(0.960),
+                    minCloseStairCount = (prePump.minCloseStairCount - 1).coerceAtLeast(1),
                 ),
             )
         }
@@ -77,17 +114,22 @@ class StrategyEvolver(
         new: StrategyRules,
         results: List<BacktestResult>,
         recentSignalCount: Int,
+        recentMissedPumpCount: Int,
         now: Long,
     ): String {
         val time = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm", java.util.Locale.US).format(java.util.Date(now))
         val lines = mutableListOf<String>()
         lines += "=== 자가진화 로그 $time ==="
         lines += "최근 24시간 신호 수=$recentSignalCount"
+        lines += "최근 24시간 놓친 급등 수=$recentMissedPumpCount"
         results.filter { it.sampleSize >= MIN_SAMPLES_FOR_EVOLUTION }.forEach { r ->
             lines += "${r.strategyType}: winRate=${String.format(java.util.Locale.US, "%.1f", r.winRate * 100.0)}% sample=${r.sampleSize} expectancy=${String.format(java.util.Locale.US, "%.2f", r.expectancy)}%"
         }
         if (old.minimumScore != new.minimumScore) {
             lines += "minimumScore: ${String.format(java.util.Locale.US, "%.1f", old.minimumScore)} -> ${String.format(java.util.Locale.US, "%.1f", new.minimumScore)}"
+        }
+        if (old.candidateSelection != new.candidateSelection) {
+            lines += "candidateSelection widened from missed-pump evidence"
         }
         if (old.prePumpRotation != new.prePumpRotation) {
             lines += "prePumpRotation conditions adjusted"
@@ -106,6 +148,8 @@ class StrategyEvolver(
 
     companion object {
         const val MIN_SAMPLES_FOR_EVOLUTION = 15
+        private const val MIN_MISSED_PUMPS_FOR_EVOLUTION = 2
+        private const val DAY_MS = 24L * 60L * 60L * 1000L
         const val EVOLUTION_INTERVAL_MS = 6L * 60L * 60L * 1000L
     }
 }
