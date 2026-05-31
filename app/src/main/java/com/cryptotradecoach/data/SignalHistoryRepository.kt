@@ -2,12 +2,15 @@ package com.cryptotradecoach.data
 
 import android.content.Context
 import com.cryptotradecoach.data.local.AppDatabase
+import com.cryptotradecoach.data.local.MissedSignalEntity
+import com.cryptotradecoach.data.local.MissedSignalReason
 import com.cryptotradecoach.data.local.STRATEGY_VERSION
 import com.cryptotradecoach.data.local.StrategyEventType
 import com.cryptotradecoach.data.local.StrategyHistoryEntity
 import com.cryptotradecoach.data.local.StrategyPerformanceEntity
 import com.cryptotradecoach.data.local.StrategyScanLogEntity
 import com.cryptotradecoach.data.local.TradeStrategyEntity
+import com.cryptotradecoach.data.local.WatchOnlyEntity
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -22,6 +25,7 @@ class SignalHistoryRepository private constructor(
     private val database: AppDatabase,
 ) {
     private val dao = database.signalHistoryDao()
+    private val watchOnlyDao = database.watchOnlyDao()
 
     suspend fun saveStrategyScanResult(
         scanResult: StrategyScanResult,
@@ -35,8 +39,10 @@ class SignalHistoryRepository private constructor(
 
         if (scanResult.scanLogs.isNotEmpty()) {
             dao.insertScanLogs(scanResult.scanLogs.map { it.toEntity() })
+            recordWatchOnlyCandidates(scanResult.scanLogs, now)
         }
         updateOpenPerformance(currentPrices, now)
+        resolveDueWatchOnly(currentPrices, now)
 
         strategies.forEach { strategy ->
             val previous = dao.getLatestStrategyBySymbol(strategy.symbol)
@@ -104,6 +110,66 @@ class SignalHistoryRepository private constructor(
         now: Long = System.currentTimeMillis(),
     ): List<StrategyPerformanceEntity> {
         return dao.getPerformanceSince(now - windowMs, limit)
+    }
+
+    private suspend fun recordWatchOnlyCandidates(scanLogs: List<StrategyScanLog>, now: Long) {
+        scanLogs
+            .filter { it.strategyStatus == StrategyStatus.WATCH_ONLY }
+            .filter { it.currentPrice > 0.0 }
+            .forEach { log ->
+                if (watchOnlyDao.countRecentForMarket(log.market, now - WATCH_ONLY_DEDUP_MS) > 0) return@forEach
+                watchOnlyDao.insert(
+                    WatchOnlyEntity(
+                        market = log.market,
+                        strategyType = log.strategyType,
+                        createdAt = now,
+                        checkAfterAt = now + WATCH_ONLY_CHECK_AFTER_MS,
+                        entryPrice = log.currentPrice,
+                        score = log.score,
+                        missedReason = log.missedReason,
+                        rankByChangeRate = log.rankByChangeRate,
+                        rankByTradeValue = log.rankByTradeValue,
+                        changeRate24h = log.changeRate24h,
+                        changeRate30m = log.changeRate30m,
+                        changeRate5m = log.changeRate5m,
+                        volumeAcceleration = log.volumeAcceleration,
+                    ),
+                )
+            }
+    }
+
+    private suspend fun resolveDueWatchOnly(currentPrices: Map<String, Double>, now: Long) {
+        if (currentPrices.isEmpty()) return
+        watchOnlyDao.getDue(now).forEach { item ->
+            val currentPrice = currentPrices[item.market] ?: return@forEach
+            if (currentPrice <= 0.0 || item.entryPrice <= 0.0) return@forEach
+            val returnPct = percentChange(item.entryPrice, currentPrice)
+            val pumped = returnPct >= WATCH_ONLY_PUMP_RETURN_PCT
+            watchOnlyDao.markChecked(
+                id = item.id,
+                checkedAt = now,
+                checkedPrice = currentPrice,
+                returnPct = returnPct,
+                pumped = pumped,
+            )
+            if (pumped) {
+                dao.insertMissedSignal(
+                    MissedSignalEntity(
+                        market = item.market,
+                        detectedAt = now,
+                        currentPrice = currentPrice,
+                        previousPrice = item.entryPrice,
+                        changeRate = returnPct,
+                        rankByChangeRate = item.rankByChangeRate,
+                        rankByTradeValue = item.rankByTradeValue,
+                        missedReason = item.missedReason ?: MissedSignalReason.UNKNOWN,
+                        suggestedStrategy = item.strategyType.name,
+                        relatedRuleBefore = "WATCH_ONLY score=${item.score.one()}; reason=${item.missedReason}; rankChange=${item.rankByChangeRate}; rankValue=${item.rankByTradeValue}",
+                        suggestedRuleAfter = "WATCH_ONLY pumped after 30m; promote similar setups to ACTIVE when liquidity and volume confirm.",
+                    ),
+                )
+            }
+        }
     }
 
     private suspend fun ensurePerformanceRow(strategy: TradeStrategy, now: Long) {
@@ -374,6 +440,9 @@ class SignalHistoryRepository private constructor(
         private const val THIRTY_MINUTES_MS = 30 * 60 * 1000L
         private const val SIXTY_MINUTES_MS = 60 * 60 * 1000L
         private const val PERFORMANCE_WINDOW_MS = 24 * 60 * 60 * 1000L
+        private const val WATCH_ONLY_CHECK_AFTER_MS = 30 * 60 * 1000L
+        private const val WATCH_ONLY_DEDUP_MS = 30 * 60 * 1000L
+        private const val WATCH_ONLY_PUMP_RETURN_PCT = 5.0
 
         @Volatile
         private var instance: SignalHistoryRepository? = null
