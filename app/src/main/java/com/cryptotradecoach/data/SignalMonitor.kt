@@ -1,6 +1,7 @@
 package com.cryptotradecoach.data
 
 import com.cryptotradecoach.data.local.AppDatabase
+import com.cryptotradecoach.data.local.PerformanceCheckpointEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -20,6 +21,7 @@ class SignalMonitor(
         val strategy: TradeStrategy,
         val startedAt: Long = System.currentTimeMillis(),
         val priceSnapshots: MutableList<PriceSnapshot> = mutableListOf(),
+        val flushedCheckpoints: MutableSet<Int> = mutableSetOf(),
         var stopHit: Boolean = false,
         var target1Hit: Boolean = false,
         var target2Hit: Boolean = false,
@@ -57,13 +59,12 @@ class SignalMonitor(
                     entry.target2Hit = true
                     entry.exitReason = "TARGET2_HIT"
                 }
-                if (CHECKPOINTS.any { checkpoint -> elapsed in checkpoint..(checkpoint + TICK_INTERVAL_MS) }) {
-                    flushToDb(entry, final = false)
-                }
+                flushReachedCheckpoints(entry, final = false)
             }
             if (entry.exitReason == "MONITORING") {
                 entry.exitReason = "EXPIRED_240M"
             }
+            flushReachedCheckpoints(entry, final = true)
             flushToDb(entry, final = true)
             monitored.remove(strategy.id)
         }
@@ -72,7 +73,46 @@ class SignalMonitor(
     fun stopMonitoring(signalId: String, reason: String = "MANUAL") {
         val entry = monitored.remove(signalId) ?: return
         entry.exitReason = reason
-        scope.launch { flushToDb(entry, final = true) }
+        scope.launch {
+            flushReachedCheckpoints(entry, final = true)
+            flushToDb(entry, final = true)
+        }
+    }
+
+    private suspend fun flushReachedCheckpoints(entry: MonitoredSignal, final: Boolean) {
+        if (entry.priceSnapshots.isEmpty()) return
+        CHECKPOINT_MINUTES.forEach { minutes ->
+            val targetMs = minutes * 60L * 1000L
+            val reached = final || entry.priceSnapshots.any { it.elapsedMs >= targetMs }
+            if (reached && entry.flushedCheckpoints.add(minutes)) {
+                val snapshot = snapshotAt(entry, targetMs) ?: entry.priceSnapshots.last()
+                val entryPrice = entry.strategy.entryHigh.takeIf { it > 0.0 } ?: return@forEach
+                db.performanceCheckpointDao().insert(
+                    PerformanceCheckpointEntity(
+                        strategyId = entry.strategy.id,
+                        symbol = entry.strategy.symbol,
+                        strategyType = entry.strategy.strategyType.name,
+                        createdAt = entry.strategy.createdAt,
+                        checkpointAt = entry.startedAt + snapshot.elapsedMs,
+                        elapsedMinutes = minutes,
+                        entryPrice = entryPrice,
+                        checkpointPrice = snapshot.price,
+                        returnPct = percentChange(entryPrice, snapshot.price),
+                        target1Hit = entry.target1Hit,
+                        target2Hit = entry.target2Hit,
+                        stopHit = entry.stopHit,
+                        exitReason = if (final) entry.exitReason else "CHECKPOINT_${minutes}M",
+                    ),
+                )
+            }
+        }
+        flushToDb(entry, final = final)
+    }
+
+    private fun snapshotAt(entry: MonitoredSignal, targetMs: Long): PriceSnapshot? {
+        return entry.priceSnapshots
+            .filter { it.elapsedMs <= targetMs + TICK_INTERVAL_MS }
+            .maxByOrNull { it.elapsedMs }
     }
 
     private suspend fun flushToDb(entry: MonitoredSignal, final: Boolean) {
@@ -126,13 +166,6 @@ class SignalMonitor(
     companion object {
         private const val TICK_INTERVAL_MS = 30L * 1000L
         private const val MAX_DURATION_MS = 240L * 60L * 1000L
-        private val CHECKPOINTS = listOf(
-            5L * 60L * 1000L,
-            15L * 60L * 1000L,
-            30L * 60L * 1000L,
-            60L * 60L * 1000L,
-            120L * 60L * 1000L,
-            240L * 60L * 1000L,
-        )
+        private val CHECKPOINT_MINUTES = listOf(5, 15, 30, 60, 120, 240)
     }
 }
