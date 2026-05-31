@@ -20,6 +20,7 @@ object SignalEventType {
 
 object StrategyEventType {
     const val NEW_ACTIVE = "NEW_ACTIVE"
+    const val MANUAL_SEARCH = "MANUAL_SEARCH"
     const val RANK_UP = "RANK_UP"
     const val PRICE_PLAN_CHANGED = "PRICE_PLAN_CHANGED"
     const val WATCH_ONLY = "WATCH_ONLY"
@@ -257,41 +258,46 @@ data class MissedSignalEntity(
     ],
 )
 data class StrategyReviewEntity(
-    @PrimaryKey(autoGenerate = true)
-    val id: Long = 0,
-    val reviewedAt: Long,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val strategyName: String,
-    val strategyVersion: String,
-    val totalActiveSignals: Int,
-    val totalMissedSignals: Int,
-    val targetHitCount: Int,
-    val stopHitCount: Int,
-    val expiredCount: Int,
-    val averageMfePercent: Double,
-    val averageMaePercent: Double,
-    val missedMarkets: String,
-    val diagnosis: String,
-    val ruleChangeSuggestion: String,
+    val reviewedAt: Long,
+    val sampleSize: Int,
+    val avgReturn5m: Double,
+    val avgReturn15m: Double,
+    val avgReturn30m: Double,
+    val avgReturn60m: Double,
+    val winRate60m: Double,
+    val stopHitRate: Double,
+    val target1HitRate: Double,
+    val target2HitRate: Double,
+    val avgMfePct: Double,
+    val avgMaePct: Double,
+    val recommendation: String,
+    val beforeRuleJson: String,
+    val suggestedRuleJson: String,
 )
 
 @Entity(
     tableName = "guideline_changes",
     indices = [
         Index(value = ["changedAt"]),
-        Index(value = ["affectedStrategyName", "applied"]),
+        Index(value = ["affectedStrategyName", "changedAt"]),
     ],
 )
 data class GuidelineChangeEntity(
-    @PrimaryKey(autoGenerate = true)
-    val id: Long = 0,
-    val changedAt: Long,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val affectedStrategyName: String,
-    val strategyVersionBefore: String,
-    val strategyVersionAfterSuggestion: String,
+    val changedAt: Long,
+    val reason: String,
     val beforeRule: String,
     val afterRule: String,
-    val reason: String,
-    val evidenceMarkets: String,
-    val expectedEffect: String,
-    val applied: Boolean = false,
+    val applied: Boolean,
+)
+
+@Entity(tableName = "evolution_logs")
+data class EvolutionLogEntity(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val changedAt: Long,
+    val changeLog: String,
+    val rulesJson: String,
 )
