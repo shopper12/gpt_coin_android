@@ -1,6 +1,7 @@
 package com.cryptotradecoach.domain
 
 import com.cryptotradecoach.data.local.AppDatabase
+import com.cryptotradecoach.data.local.PerformanceCheckpointEntity
 import com.cryptotradecoach.data.local.StrategyPerformanceEntity
 import kotlin.math.abs
 import kotlin.math.pow
@@ -34,44 +35,41 @@ class BacktestEngine(private val db: AppDatabase) {
         val rows = db.signalHistoryDao()
             .getPerformanceSince(now - ANALYSIS_WINDOW_MS, ANALYSIS_LIMIT)
             .filter { it.isComplete }
+        val checkpoints = db.performanceCheckpointDao()
+            .getSince(now - ANALYSIS_WINDOW_MS, ANALYSIS_LIMIT * 6)
+            .groupBy { it.strategyId }
         return rows
             .groupBy { it.strategyType.name }
-            .map { (type, items) -> analyze(type, items) }
+            .map { (type, items) -> analyze(type, items, checkpoints) }
             .sortedByDescending { it.expectancy }
     }
 
-    private fun analyze(type: String, rows: List<StrategyPerformanceEntity>): BacktestResult {
+    private fun analyze(
+        type: String,
+        rows: List<StrategyPerformanceEntity>,
+        checkpointsByStrategy: Map<String, List<PerformanceCheckpointEntity>>,
+    ): BacktestResult {
         if (rows.isEmpty()) return emptyResult(type)
-        val wins = rows.filter { (it.return60m ?: 0.0) > 0.0 }
-        val losses = rows.filter { (it.return60m ?: 0.0) <= 0.0 }
+        val returnsForDecision = rows.map { row -> decisionReturn(row, checkpointsByStrategy[row.strategyId].orEmpty()) }
+        val wins = returnsForDecision.filter { it > 0.0 }
+        val losses = returnsForDecision.filter { it <= 0.0 }
         val winRate = wins.size.toDouble() / rows.size
-        val avgWin = wins.mapNotNull { it.return60m }.averageOrZero()
-        val avgLoss = losses.mapNotNull { it.return60m }.map { abs(it) }.averageOrZero()
-        val scoreRanges = rows.groupBy { scoreRange(it.score) }
+        val avgWin = wins.averageOrZero()
+        val avgLoss = losses.map { abs(it) }.averageOrZero()
+        val scoreRanges = rows.zip(returnsForDecision).groupBy { (row, _) -> scoreRange(row.score) }
         val bestRange = scoreRanges.maxByOrNull { (_, values) ->
-            if (values.isEmpty()) 0.0 else values.count { (it.return60m ?: 0.0) > 0.0 }.toDouble() / values.size
+            if (values.isEmpty()) 0.0 else values.count { (_, ret) -> ret > 0.0 }.toDouble() / values.size
         }?.key ?: "N/A"
         val scores = rows.map { it.score }
-        val returns = rows.mapNotNull { it.return60m }
-        val corr = if (returns.size == rows.size) pearsonCorr(scores, returns) else 0.0
-        val avgHoldMins = rows.mapNotNull { row ->
-            when {
-                (row.target2Hit) -> 60.0
-                (row.target1Hit) -> 30.0
-                (row.return60m ?: 0.0) > (row.return30m ?: Double.NEGATIVE_INFINITY) -> 60.0
-                (row.return30m ?: 0.0) > (row.return15m ?: Double.NEGATIVE_INFINITY) -> 30.0
-                (row.return15m ?: 0.0) > (row.return5m ?: Double.NEGATIVE_INFINITY) -> 15.0
-                (row.return5m ?: 0.0) > 0.0 -> 5.0
-                else -> null
-            }
-        }.averageOrZero()
+        val corr = if (returnsForDecision.size == rows.size) pearsonCorr(scores, returnsForDecision) else 0.0
+        val avgHoldMins = rows.map { row -> holdMinutes(row, checkpointsByStrategy[row.strategyId].orEmpty()) }.averageOrZero()
         return BacktestResult(
             strategyType = type,
             totalSignals = rows.size,
             completedSignals = rows.count { it.isComplete },
             winRate = winRate,
-            avgReturn60m = rows.mapNotNull { it.return60m }.averageOrZero(),
-            avgReturn240m = rows.mapNotNull { it.return60m }.averageOrZero(),
+            avgReturn60m = rows.map { row -> checkpointReturn(row, checkpointsByStrategy[row.strategyId].orEmpty(), 60) ?: row.return60m ?: 0.0 }.averageOrZero(),
+            avgReturn240m = rows.map { row -> checkpointReturn(row, checkpointsByStrategy[row.strategyId].orEmpty(), 240) ?: row.return60m ?: 0.0 }.averageOrZero(),
             avgMfe = rows.map { it.mfePct }.averageOrZero(),
             avgMae = rows.map { it.maePct }.averageOrZero(),
             stopHitRate = rows.count { it.stopHit }.toDouble() / rows.size,
@@ -83,14 +81,51 @@ class BacktestEngine(private val db: AppDatabase) {
             sampleSize = rows.size,
             lastUpdated = System.currentTimeMillis(),
             bestScoreRange = bestRange,
-            bestTimeOfDay = bestHourBucket(rows),
+            bestTimeOfDay = bestHourBucket(rows, returnsForDecision),
             avgHoldMinutes = avgHoldMins,
         )
     }
 
-    private fun bestHourBucket(rows: List<StrategyPerformanceEntity>): String {
-        return rows.groupBy { java.text.SimpleDateFormat("HH", java.util.Locale.US).format(java.util.Date(it.createdAt)) }
-            .maxByOrNull { (_, values) -> values.mapNotNull { it.return60m }.averageOrZero() }
+    private fun decisionReturn(row: StrategyPerformanceEntity, checkpoints: List<PerformanceCheckpointEntity>): Double {
+        return checkpointReturn(row, checkpoints, 240)
+            ?: checkpointReturn(row, checkpoints, 120)
+            ?: row.return60m
+            ?: row.return30m
+            ?: row.return15m
+            ?: row.return5m
+            ?: 0.0
+    }
+
+    private fun checkpointReturn(row: StrategyPerformanceEntity, checkpoints: List<PerformanceCheckpointEntity>, minutes: Int): Double? {
+        return checkpoints.firstOrNull { it.elapsedMinutes == minutes }?.returnPct
+            ?: when (minutes) {
+                60 -> row.return60m
+                30 -> row.return30m
+                15 -> row.return15m
+                5 -> row.return5m
+                else -> null
+            }
+    }
+
+    private fun holdMinutes(row: StrategyPerformanceEntity, checkpoints: List<PerformanceCheckpointEntity>): Double {
+        checkpoints.firstOrNull { it.target2Hit || it.stopHit }?.let { return it.elapsedMinutes.toDouble() }
+        return when {
+            row.target2Hit -> 60.0
+            row.stopHit -> 60.0
+            checkpointReturn(row, checkpoints, 240) != null -> 240.0
+            checkpointReturn(row, checkpoints, 120) != null -> 120.0
+            row.return60m != null -> 60.0
+            row.return30m != null -> 30.0
+            row.return15m != null -> 15.0
+            row.return5m != null -> 5.0
+            else -> 0.0
+        }
+    }
+
+    private fun bestHourBucket(rows: List<StrategyPerformanceEntity>, returns: List<Double>): String {
+        return rows.zip(returns)
+            .groupBy { (row, _) -> java.text.SimpleDateFormat("HH", java.util.Locale.US).format(java.util.Date(row.createdAt)) }
+            .maxByOrNull { (_, values) -> values.map { (_, ret) -> ret }.averageOrZero() }
             ?.key
             ?.let { "${it}시" }
             ?: "N/A"
