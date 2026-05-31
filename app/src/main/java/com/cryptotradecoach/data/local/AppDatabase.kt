@@ -15,17 +15,19 @@ import androidx.room.RoomDatabase
         PerformanceCheckpointEntity::class,
         PriceSnapshotEntity::class,
         MissedSignalEntity::class,
+        WatchOnlyEntity::class,
         StrategyReviewEntity::class,
         GuidelineChangeEntity::class,
         EvolutionLogEntity::class,
     ],
-    version = 8,
+    version = 9,
     exportSchema = false,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun signalHistoryDao(): SignalHistoryDao
     abstract fun evolutionLogDao(): EvolutionLogDao
     abstract fun performanceCheckpointDao(): PerformanceCheckpointDao
+    abstract fun watchOnlyDao(): WatchOnlyDao
 
     companion object {
         @Volatile
