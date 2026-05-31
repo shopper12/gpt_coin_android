@@ -4,7 +4,9 @@ import android.content.Context
 import com.cryptotradecoach.data.ScanDiagnostics
 import com.cryptotradecoach.data.Ticker
 import com.cryptotradecoach.data.TradeStrategy
+import com.cryptotradecoach.data.local.EvolutionLogEntity
 import com.cryptotradecoach.data.local.StrategyHistoryEntity
+import com.cryptotradecoach.domain.BacktestResult
 import com.cryptotradecoach.domain.SignalEngine
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -40,6 +42,15 @@ object ScannerStateStore {
     private val _minimumScore = MutableStateFlow(SignalEngine.DEFAULT_MINIMUM_SCORE)
     val minimumScore: StateFlow<Double> = _minimumScore
 
+    private val _backtestResults = MutableStateFlow<List<BacktestResult>>(emptyList())
+    val backtestResults: StateFlow<List<BacktestResult>> = _backtestResults
+
+    private val _ruleChangeLogs = MutableStateFlow<List<EvolutionLogEntity>>(emptyList())
+    val evolutionLog: StateFlow<List<EvolutionLogEntity>> = _ruleChangeLogs
+
+    private val _lastEvolvedAt = MutableStateFlow<Long?>(null)
+    val lastEvolvedAt: StateFlow<Long?> = _lastEvolvedAt
+
     fun setRunning(running: Boolean) {
         _isRunning.value = running
     }
@@ -64,6 +75,15 @@ object ScannerStateStore {
 
     fun pushVolumeAlerts(tickers: List<Ticker>) {
         _volumeAlerts.value = tickers
+    }
+
+    fun updateBacktestResults(results: List<BacktestResult>) {
+        _backtestResults.value = results
+    }
+
+    fun updateEvolutionLog(rows: List<EvolutionLogEntity>) {
+        _ruleChangeLogs.value = rows
+        _lastEvolvedAt.value = rows.maxOfOrNull { it.changedAt }
     }
 
     fun pushScanResult(
