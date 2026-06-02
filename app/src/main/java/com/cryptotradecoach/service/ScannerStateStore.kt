@@ -19,7 +19,7 @@ object ScannerStateStore {
     val activeStrategies: StateFlow<List<TradeStrategy>> = _activeStrategies
 
     private val _historyBySymbol = MutableStateFlow<Map<String, List<StrategyHistoryEntity>>>(emptyMap())
-    val historyBySymbol: StateFlow<Map<String, List<StrategyHistoryEntity>> = _historyBySymbol
+    val historyBySymbol: StateFlow<Map<String, List<StrategyHistoryEntity>>> = _historyBySymbol
 
     private val _lastTickerSnapshot = MutableStateFlow<List<Ticker>>(emptyList())
     val lastTickerSnapshot: StateFlow<List<Ticker>> = _lastTickerSnapshot
