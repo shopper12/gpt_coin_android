@@ -19,7 +19,7 @@ object ScannerStateStore {
     val activeStrategies: StateFlow<List<TradeStrategy>> = _activeStrategies
 
     private val _historyBySymbol = MutableStateFlow<Map<String, List<StrategyHistoryEntity>>>(emptyMap())
-    val historyBySymbol: StateFlow<Map<String, List<StrategyHistoryEntity>>> = _historyBySymbol
+    val historyBySymbol: StateFlow<Map<String, List<StrategyHistoryEntity>> = _historyBySymbol
 
     private val _lastTickerSnapshot = MutableStateFlow<List<Ticker>>(emptyList())
     val lastTickerSnapshot: StateFlow<List<Ticker>> = _lastTickerSnapshot
@@ -136,8 +136,8 @@ object ScannerStateStore {
         return value.takeIf { it > 0L }
     }
 
-    const val DEFAULT_SCAN_INTERVAL_MS = 30_000L
-    val SUPPORTED_INTERVALS_MS = listOf(30_000L, 60_000L, 180_000L)
+    const val DEFAULT_SCAN_INTERVAL_MS = 180_000L
+    val SUPPORTED_INTERVALS_MS = listOf(60_000L, 180_000L, 300_000L, 600_000L)
     private const val PREFS_NAME = "scanner_state"
     private const val KEY_LAST_SCAN_AT = "last_scan_at"
 }
