@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: gpt-coin-scanner
+    env: python
+    rootDir: server
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 4
+    plan: free
+    autoDeploy: true
