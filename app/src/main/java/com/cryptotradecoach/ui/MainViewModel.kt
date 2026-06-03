@@ -30,6 +30,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 
 data class MainUiState(
     val isRunning: Boolean = false,
@@ -107,24 +108,37 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 return@launch
             }
             _uiState.value = _uiState.value.copy(manualMessage = "분석 중: $symbol", manualStrategy = null)
-            val result = withContext(Dispatchers.IO) {
-                runCatching {
-                    val rules = rulesRepository.refreshFromGitHub()
-                    val candidate = manualDataSource.fetchManualMarketCandidate(symbol)
-                        ?: return@runCatching ManualAnalyzeResult(null, manualDataSource.lastError ?: "후보 생성 실패")
-                    val scanResult = manualEngine.scan(
-                        candidates = listOf(candidate),
-                        rules = rules,
-                        maxResults = 1,
-                    )
-                    val strategy = scanResult.activeStrategies.firstOrNull()?.copy(rank = 1)
-                    val message = strategy?.let { "분석 완료: ${it.symbol}" }
-                        ?: scanResult.scanLogs.firstOrNull()?.let { log -> "ACTIVE 전략 조건 없음: ${log.market} score=${String.format(java.util.Locale.US, "%.1f", log.score)} reason=${log.missedReason ?: log.strategyStatus.name}" }
-                        ?: "ACTIVE 전략 조건이 없습니다. 관찰만 권장합니다."
-                    historyRepository.recordManualSearch(symbol, strategy, message)
-                    ManualAnalyzeResult(strategy, message)
+
+            val result = withTimeoutOrNull(MANUAL_ANALYSIS_TIMEOUT_MS) {
+                withContext(Dispatchers.IO) {
+                    runCatching {
+                        val rules = rulesRepository.loadLastKnownGood()
+                        val candidate = manualDataSource.fetchManualMarketCandidate(symbol)
+                            ?: return@runCatching ManualAnalyzeResult(null, manualDataSource.lastError ?: "후보 생성 실패: $symbol")
+                        val scanResult = manualEngine.scan(
+                            candidates = listOf(candidate),
+                            rules = rules,
+                            maxResults = 1,
+                        )
+                        val strategy = scanResult.activeStrategies.firstOrNull()?.copy(rank = 1)
+                        val message = strategy?.let { "분석 완료: ${it.symbol}" }
+                            ?: scanResult.scanLogs.firstOrNull()?.let { log ->
+                                "ACTIVE 전략 조건 없음: ${log.market} score=${String.format(java.util.Locale.US, "%.1f", log.score)} reason=${log.missedReason ?: log.strategyStatus.name}"
+                            }
+                            ?: "ACTIVE 전략 조건이 없습니다. 관찰만 권장합니다."
+                        historyRepository.recordManualSearch(symbol, strategy, message)
+                        ManualAnalyzeResult(strategy, message)
+                    }
                 }
             }
+
+            if (result == null) {
+                val message = "수동 분석 시간 초과: ${symbol}. 네트워크/업비트 응답 지연입니다. 잠시 후 다시 시도하세요."
+                withContext(Dispatchers.IO) { historyRepository.recordManualSearch(symbol, null, message) }
+                _uiState.value = _uiState.value.copy(manualStrategy = null, manualMessage = message)
+                return@launch
+            }
+
             result.fold(
                 onSuccess = { analyzed ->
                     val latestHistory = withContext(Dispatchers.IO) { historyRepository.getHistoryBySymbol() }
@@ -258,5 +272,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private fun currentRulesText(): String = currentRulesText(rulesRepository.loadLastKnownGood())
     private fun currentRulesText(rules: StrategyRules): String = rules.toJson().toString(2)
+
     private data class ManualAnalyzeResult(val strategy: TradeStrategy?, val message: String)
+
+    companion object {
+        private const val MANUAL_ANALYSIS_TIMEOUT_MS = 15_000L
+    }
 }
