@@ -44,8 +44,8 @@ data class MainUiState(
     val scanDiagnostics: ScanDiagnostics = ScanDiagnostics(),
     val lastScanAt: Long? = null,
     val scanIntervalMs: Long = ScannerStateStore.DEFAULT_SCAN_INTERVAL_MS,
-    val maxDisplayCount: Int = 5,
-    val minimumScore: Double = 70.0,
+    val maxDisplayCount: Int = ScannerStateStore.DEFAULT_MAX_DISPLAY_COUNT,
+    val minimumScore: Double = ScannerStateStore.DEFAULT_MINIMUM_SCORE,
     val gitHubSettings: GitHubSettings = GitHubSettings(),
     val settingsMessage: String? = null,
     val currentRulesText: String = "",
@@ -112,7 +112,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                     val rules = rulesRepository.refreshFromGitHub()
                     val candidate = manualDataSource.fetchManualMarketCandidate(symbol)
                         ?: return@runCatching ManualAnalyzeResult(null, manualDataSource.lastError ?: "후보 생성 실패")
-                    val scanResult = manualEngine.scan(listOf(candidate), rules, 0.0, 1)
+                    val scanResult = manualEngine.scan(
+                        candidates = listOf(candidate),
+                        rules = rules,
+                        maxResults = 1,
+                    )
                     val strategy = scanResult.activeStrategies.firstOrNull()?.copy(rank = 1)
                     val message = strategy?.let { "분석 완료: ${it.symbol}" }
                         ?: scanResult.scanLogs.firstOrNull()?.let { log -> "ACTIVE 전략 조건 없음: ${log.market} score=${String.format(java.util.Locale.US, "%.1f", log.score)} reason=${log.missedReason ?: log.strategyStatus.name}" }
