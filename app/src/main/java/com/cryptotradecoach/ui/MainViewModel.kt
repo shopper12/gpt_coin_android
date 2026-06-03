@@ -79,74 +79,25 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             refreshBacktest()
             refreshEvolutionLog()
         }
-        viewModelScope.launch {
-            ScannerStateStore.isRunning.collect { running ->
-                _uiState.value = _uiState.value.copy(isRunning = running)
-            }
-        }
-        viewModelScope.launch {
-            ScannerStateStore.activeStrategies.collect { strategies ->
-                _uiState.value = _uiState.value.copy(activeStrategies = strategies)
-                refreshPerformance()
-            }
-        }
-        viewModelScope.launch {
-            ScannerStateStore.historyBySymbol.collect { history ->
-                _uiState.value = _uiState.value.copy(historyBySymbol = history)
-            }
-        }
-        viewModelScope.launch {
-            ScannerStateStore.scanDiagnostics.collect { diagnostics ->
-                _uiState.value = _uiState.value.copy(scanDiagnostics = diagnostics)
-            }
-        }
-        viewModelScope.launch {
-            ScannerStateStore.lastScanAt.collect { lastScanAt ->
-                _uiState.value = _uiState.value.copy(lastScanAt = lastScanAt)
-                refreshPerformance()
-            }
-        }
-        viewModelScope.launch {
-            ScannerStateStore.scanIntervalMs.collect { interval ->
-                _uiState.value = _uiState.value.copy(scanIntervalMs = interval)
-            }
-        }
-        viewModelScope.launch {
-            ScannerStateStore.maxDisplayCount.collect { count ->
-                _uiState.value = _uiState.value.copy(maxDisplayCount = count)
-            }
-        }
-        viewModelScope.launch {
-            ScannerStateStore.minimumScore.collect { score ->
-                _uiState.value = _uiState.value.copy(minimumScore = score)
-            }
-        }
-        viewModelScope.launch {
-            ScannerStateStore.backtestResults.collect { results ->
-                _uiState.value = _uiState.value.copy(backtestResults = results)
-            }
-        }
+        viewModelScope.launch { ScannerStateStore.isRunning.collect { _uiState.value = _uiState.value.copy(isRunning = it) } }
+        viewModelScope.launch { ScannerStateStore.activeStrategies.collect { _uiState.value = _uiState.value.copy(activeStrategies = it); refreshPerformance() } }
+        viewModelScope.launch { ScannerStateStore.historyBySymbol.collect { _uiState.value = _uiState.value.copy(historyBySymbol = it) } }
+        viewModelScope.launch { ScannerStateStore.scanDiagnostics.collect { _uiState.value = _uiState.value.copy(scanDiagnostics = it) } }
+        viewModelScope.launch { ScannerStateStore.lastScanAt.collect { _uiState.value = _uiState.value.copy(lastScanAt = it); refreshPerformance() } }
+        viewModelScope.launch { ScannerStateStore.scanIntervalMs.collect { _uiState.value = _uiState.value.copy(scanIntervalMs = it) } }
+        viewModelScope.launch { ScannerStateStore.maxDisplayCount.collect { _uiState.value = _uiState.value.copy(maxDisplayCount = it) } }
+        viewModelScope.launch { ScannerStateStore.minimumScore.collect { _uiState.value = _uiState.value.copy(minimumScore = it) } }
+        viewModelScope.launch { ScannerStateStore.backtestResults.collect { _uiState.value = _uiState.value.copy(backtestResults = it) } }
         viewModelScope.launch {
             ScannerStateStore.evolutionLog.collect { rows ->
-                _uiState.value = _uiState.value.copy(
-                    evolutionLog = rows,
-                    lastEvolvedAt = rows.maxOfOrNull { it.changedAt },
-                )
+                _uiState.value = _uiState.value.copy(evolutionLog = rows, lastEvolvedAt = rows.maxOfOrNull { it.changedAt })
             }
         }
     }
 
-    fun setScanInterval(intervalMs: Long) {
-        ScannerStateStore.setScanInterval(intervalMs)
-    }
-
-    fun setMaxDisplayCount(count: Int) {
-        ScannerStateStore.setMaxDisplayCount(count)
-    }
-
-    fun setMinimumScore(score: Double) {
-        ScannerStateStore.setMinimumScore(score)
-    }
+    fun setScanInterval(intervalMs: Long) { ScannerStateStore.setScanInterval(intervalMs) }
+    fun setMaxDisplayCount(count: Int) { ScannerStateStore.setMaxDisplayCount(count) }
+    fun setMinimumScore(score: Double) { ScannerStateStore.setMinimumScore(score) }
 
     fun analyzeManualSymbol(rawSymbol: String) {
         viewModelScope.launch {
@@ -161,20 +112,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                     val rules = rulesRepository.refreshFromGitHub()
                     val candidate = manualDataSource.fetchManualMarketCandidate(symbol)
                         ?: return@runCatching ManualAnalyzeResult(null, manualDataSource.lastError ?: "후보 생성 실패")
-                    val scanResult = manualEngine.scan(
-                        candidates = listOf(candidate),
-                        rules = rules,
-                        minimumScore = 0.0,
-                        maxResults = 1,
-                    )
+                    val scanResult = manualEngine.scan(listOf(candidate), rules, 0.0, 1)
                     val strategy = scanResult.activeStrategies.firstOrNull()?.copy(rank = 1)
-                    val message = if (strategy != null) {
-                        "분석 완료: ${strategy.symbol}"
-                    } else {
-                        scanResult.scanLogs.firstOrNull()?.let { log ->
-                            "ACTIVE 전략 조건 없음: ${log.market} score=${String.format(java.util.Locale.US, "%.1f", log.score)} reason=${log.missedReason ?: log.strategyStatus.name}"
-                        } ?: "ACTIVE 전략 조건이 없습니다. 관찰만 권장합니다."
-                    }
+                    val message = strategy?.let { "분석 완료: ${it.symbol}" }
+                        ?: scanResult.scanLogs.firstOrNull()?.let { log -> "ACTIVE 전략 조건 없음: ${log.market} score=${String.format(java.util.Locale.US, "%.1f", log.score)} reason=${log.missedReason ?: log.strategyStatus.name}" }
+                        ?: "ACTIVE 전략 조건이 없습니다. 관찰만 권장합니다."
                     historyRepository.recordManualSearch(symbol, strategy, message)
                     ManualAnalyzeResult(strategy, message)
                 }
@@ -182,25 +124,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             result.fold(
                 onSuccess = { analyzed ->
                     val latestHistory = withContext(Dispatchers.IO) { historyRepository.getHistoryBySymbol() }
-                    ScannerStateStore.pushScanResult(
-                        activeStrategies = historyRepository.getActiveStrategies(),
-                        historyBySymbol = latestHistory,
-                        diagnostics = _uiState.value.scanDiagnostics,
-                        context = getApplication(),
-                    )
-                    _uiState.value = _uiState.value.copy(
-                        manualStrategy = analyzed.strategy,
-                        manualMessage = analyzed.message,
-                        historyBySymbol = latestHistory,
-                    )
+                    ScannerStateStore.pushScanResult(historyRepository.getActiveStrategies(), latestHistory, _uiState.value.scanDiagnostics, getApplication())
+                    _uiState.value = _uiState.value.copy(manualStrategy = analyzed.strategy, manualMessage = analyzed.message, historyBySymbol = latestHistory)
                 },
                 onFailure = { error ->
                     val message = "수동 분석 실패: ${error.message ?: error::class.java.simpleName}"
                     withContext(Dispatchers.IO) { historyRepository.recordManualSearch(symbol, null, message) }
-                    _uiState.value = _uiState.value.copy(
-                        manualStrategy = null,
-                        manualMessage = message,
-                    )
+                    _uiState.value = _uiState.value.copy(manualStrategy = null, manualMessage = message)
                 },
             )
         }
@@ -213,17 +143,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                historyRepository.saveStrategyScanResult(
-                    scanResult = StrategyScanResult(activeStrategies = listOf(strategy), scanLogs = emptyList()),
-                    currentPrices = mapOf(strategy.symbol to strategy.entryHigh),
-                )
+                historyRepository.saveStrategyScanResult(StrategyScanResult(activeStrategies = listOf(strategy), scanLogs = emptyList()), mapOf(strategy.symbol to strategy.entryHigh))
             }
-            ScannerStateStore.pushScanResult(
-                activeStrategies = historyRepository.getActiveStrategies(),
-                historyBySymbol = historyRepository.getHistoryBySymbol(),
-                diagnostics = _uiState.value.scanDiagnostics,
-                context = getApplication(),
-            )
+            ScannerStateStore.pushScanResult(historyRepository.getActiveStrategies(), historyRepository.getHistoryBySymbol(), _uiState.value.scanDiagnostics, getApplication())
             refreshPerformance()
             _uiState.value = _uiState.value.copy(manualMessage = "저장 완료: ${strategy.symbol}")
         }
@@ -232,10 +154,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun saveGitHubSettings(settings: GitHubSettings) {
         val normalized = settings.normalized()
         val saved = settingsRepository.save(normalized)
-        _uiState.value = _uiState.value.copy(
-            gitHubSettings = normalized,
-            settingsMessage = if (saved) "Settings saved" else "Settings save failed",
-        )
+        _uiState.value = _uiState.value.copy(gitHubSettings = normalized, settingsMessage = if (saved) "Settings saved" else "Settings save failed")
     }
 
     fun testGitHubSettings(settings: GitHubSettings) {
@@ -250,10 +169,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 }
             }.fold(
                 onSuccess = { it },
-                onFailure = { error ->
-                    showGitHubMessage(gitHubFailureMessage("GitHub settings test failed", error))
-                    return@launch
-                },
+                onFailure = { error -> showGitHubMessage(gitHubFailureMessage("GitHub settings test failed", error)); return@launch },
             )
             showGitHubMessage(if (ok) "GitHub settings OK" else "GitHub settings test failed")
         }
@@ -266,72 +182,29 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             val before = withContext(Dispatchers.IO) { rulesRepository.loadLastKnownGood() }
             val after = withContext(Dispatchers.IO) { rulesRepository.refreshFromGitHub() }
             _uiState.value = _uiState.value.copy(currentRulesText = currentRulesText(after))
-            showGitHubMessage(
-                if (after != before) "Latest rules downloaded and applied" else "Rules already up to date",
-            )
+            showGitHubMessage(if (after != before) "Latest rules downloaded and applied" else "Rules already up to date")
         }
     }
 
     fun refreshCurrentRules() {
         viewModelScope.launch {
-            val rulesText = withContext(Dispatchers.IO) { currentRulesText() }
-            _uiState.value = _uiState.value.copy(
-                currentRulesText = rulesText,
-                settingsMessage = "Current rules refreshed",
-            )
+            _uiState.value = _uiState.value.copy(currentRulesText = withContext(Dispatchers.IO) { currentRulesText() }, settingsMessage = "Current rules refreshed")
         }
     }
 
     fun saveRulesText(rawJson: String) {
         viewModelScope.launch {
-            val result = withContext(Dispatchers.IO) {
-                runCatching {
-                    val rules = StrategyRules.fromJson(rawJson)
-                    rulesRepository.persistLocal(rules)
-                    rules.toJson().toString(2)
-                }
-            }
+            val result = withContext(Dispatchers.IO) { runCatching { val rules = StrategyRules.fromJson(rawJson); rulesRepository.persistLocal(rules); rules.toJson().toString(2) } }
             result.fold(
-                onSuccess = { formatted ->
-                    _uiState.value = _uiState.value.copy(
-                        currentRulesText = formatted,
-                        settingsMessage = "Rules saved locally. 다음 스캔부터 적용됩니다.",
-                    )
-                },
-                onFailure = { error ->
-                    _uiState.value = _uiState.value.copy(
-                        settingsMessage = "Rules save failed: ${error.message ?: error::class.java.simpleName}",
-                    )
-                },
+                onSuccess = { _uiState.value = _uiState.value.copy(currentRulesText = it, settingsMessage = "Rules saved locally. 다음 스캔부터 적용됩니다.") },
+                onFailure = { _uiState.value = _uiState.value.copy(settingsMessage = "Rules save failed: ${it.message ?: it::class.java.simpleName}") },
             )
         }
     }
 
-    fun refreshPerformance() {
-        viewModelScope.launch {
-            val rows = withContext(Dispatchers.IO) { historyRepository.getRecentPerformance() }
-            _uiState.value = _uiState.value.copy(performanceRows = rows)
-        }
-    }
-
-    fun refreshBacktest() {
-        viewModelScope.launch {
-            val results = withContext(Dispatchers.IO) { BacktestEngine(db).runAll() }
-            ScannerStateStore.updateBacktestResults(results)
-            _uiState.value = _uiState.value.copy(backtestResults = results)
-        }
-    }
-
-    fun refreshEvolutionLog() {
-        viewModelScope.launch {
-            val rows = withContext(Dispatchers.IO) { db.evolutionLogDao().getRecent() }
-            ScannerStateStore.updateEvolutionLog(rows)
-            _uiState.value = _uiState.value.copy(
-                evolutionLog = rows,
-                lastEvolvedAt = rows.maxOfOrNull { it.changedAt },
-            )
-        }
-    }
+    fun refreshPerformance() { viewModelScope.launch { _uiState.value = _uiState.value.copy(performanceRows = withContext(Dispatchers.IO) { historyRepository.getRecentPerformance() }) } }
+    fun refreshBacktest() { viewModelScope.launch { val results = withContext(Dispatchers.IO) { BacktestEngine(db).runAll() }; ScannerStateStore.updateBacktestResults(results); _uiState.value = _uiState.value.copy(backtestResults = results) } }
+    fun refreshEvolutionLog() { viewModelScope.launch { val rows = withContext(Dispatchers.IO) { db.evolutionLogDao().getRecent() }; ScannerStateStore.updateEvolutionLog(rows); _uiState.value = _uiState.value.copy(evolutionLog = rows, lastEvolvedAt = rows.maxOfOrNull { it.changedAt }) } }
 
     fun uploadLatestReport(settings: GitHubSettings) {
         viewModelScope.launch {
@@ -341,10 +214,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 showGitHubMessage("GitHub token is missing")
                 return@launch
             }
-            val uploaded = withContext(Dispatchers.IO) {
-                reportRepository.generateLatestReport(rulesRepository.loadLastKnownGood())
-                reportRepository.uploadLatestReport()
-            }
+            val uploaded = withContext(Dispatchers.IO) { reportRepository.generateLatestReport(rulesRepository.loadLastKnownGood()); reportRepository.uploadLatestReport() }
             refreshPerformance()
             refreshBacktest()
             showGitHubMessage(if (uploaded) "Latest report uploaded" else "Latest report upload failed")
@@ -353,68 +223,36 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun openInstallPermissionSettings() {
         appUpdateRepository.openUnknownAppSourcesSettings()
-        _uiState.value = _uiState.value.copy(
-            settingsMessage = "설정에서 이 앱의 APK 설치 허용을 켠 뒤 돌아와서 Download and install latest APK를 누르세요.",
-        )
+        _uiState.value = _uiState.value.copy(settingsMessage = "설정에서 이 앱의 APK 설치 허용을 켠 뒤 돌아와서 Download and install latest APK를 누르세요.")
     }
 
     fun downloadAndInstallLatestApk(settings: GitHubSettings) {
         viewModelScope.launch {
             val normalized = settings.normalized()
             saveGitHubSettings(normalized)
-            if (normalized.token.isBlank()) {
-                showGitHubMessage("GitHub token is missing")
-                return@launch
-            }
             if (!appUpdateRepository.canRequestPackageInstalls()) {
-                _uiState.value = _uiState.value.copy(
-                    settingsMessage = "APK 설치 권한이 꺼져 있습니다. Open install permission settings를 먼저 누르세요.",
-                )
+                _uiState.value = _uiState.value.copy(settingsMessage = "APK 설치 권한이 꺼져 있습니다. Open install permission settings를 먼저 누르세요.")
                 return@launch
             }
             _uiState.value = _uiState.value.copy(settingsMessage = "최신 APK 다운로드 중...")
-            val result = withContext(Dispatchers.IO) {
-                runCatching { appUpdateRepository.downloadLatestReleaseApk(normalized) }
-            }
+            val result = withContext(Dispatchers.IO) { runCatching { appUpdateRepository.downloadLatestReleaseApk(normalized) } }
             result.fold(
-                onSuccess = { apkFile ->
-                    _uiState.value = _uiState.value.copy(settingsMessage = "APK 다운로드 완료. 설치 화면을 엽니다.")
-                    appUpdateRepository.openApkInstaller(apkFile)
-                },
-                onFailure = { error ->
-                    showGitHubMessage("APK update failed: ${error.message ?: error::class.java.simpleName}")
-                },
+                onSuccess = { apkFile -> _uiState.value = _uiState.value.copy(settingsMessage = "APK 다운로드 완료. 설치 화면을 엽니다: ${apkFile.name}"); appUpdateRepository.openApkInstaller(apkFile) },
+                onFailure = { error -> showGitHubMessage("APK update failed: ${error.message ?: error::class.java.simpleName}") },
             )
         }
     }
 
     private fun showGitHubMessage(message: String) {
-        ScannerStateStore.setLastError(
-            message.takeIf {
-                it == "GitHub token is missing" ||
-                    it.contains("HTTP ") ||
-                    it.contains("failed", ignoreCase = true)
-            },
-        )
+        ScannerStateStore.setLastError(message.takeIf { it == "GitHub token is missing" || it.contains("HTTP ") || it.contains("failed", ignoreCase = true) })
         _uiState.value = _uiState.value.copy(settingsMessage = message)
     }
 
     private fun gitHubFailureMessage(prefix: String, error: Throwable): String {
-        return if (error is GitHubSyncException) {
-            "$prefix at ${error.syncPoint}: HTTP ${error.statusCode}; endpoint=${error.endpoint}; branch=${error.branch}; path=${error.path}"
-        } else {
-            "$prefix: ${error::class.java.simpleName}"
-        }
+        return if (error is GitHubSyncException) "$prefix at ${error.syncPoint}: HTTP ${error.statusCode}; endpoint=${error.endpoint}; branch=${error.branch}; path=${error.path}" else "$prefix: ${error::class.java.simpleName}"
     }
 
     private fun currentRulesText(): String = currentRulesText(rulesRepository.loadLastKnownGood())
-
-    private fun currentRulesText(rules: StrategyRules): String {
-        return rules.toJson().toString(2)
-    }
-
-    private data class ManualAnalyzeResult(
-        val strategy: TradeStrategy?,
-        val message: String,
-    )
+    private fun currentRulesText(rules: StrategyRules): String = rules.toJson().toString(2)
+    private data class ManualAnalyzeResult(val strategy: TradeStrategy?, val message: String)
 }
