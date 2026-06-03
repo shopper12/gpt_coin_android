@@ -7,7 +7,6 @@ import com.cryptotradecoach.data.TradeStrategy
 import com.cryptotradecoach.data.local.EvolutionLogEntity
 import com.cryptotradecoach.data.local.StrategyHistoryEntity
 import com.cryptotradecoach.domain.BacktestResult
-import com.cryptotradecoach.domain.SignalEngine
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -36,10 +35,10 @@ object ScannerStateStore {
     private val _scanIntervalMs = MutableStateFlow(DEFAULT_SCAN_INTERVAL_MS)
     val scanIntervalMs: StateFlow<Long> = _scanIntervalMs
 
-    private val _maxDisplayCount = MutableStateFlow(SignalEngine.DEFAULT_MAX_RESULTS)
+    private val _maxDisplayCount = MutableStateFlow(DEFAULT_MAX_DISPLAY_COUNT)
     val maxDisplayCount: StateFlow<Int> = _maxDisplayCount
 
-    private val _minimumScore = MutableStateFlow(SignalEngine.DEFAULT_MINIMUM_SCORE)
+    private val _minimumScore = MutableStateFlow(DEFAULT_MINIMUM_SCORE)
     val minimumScore: StateFlow<Double> = _minimumScore
 
     private val _backtestResults = MutableStateFlow<List<BacktestResult>>(emptyList())
@@ -137,6 +136,8 @@ object ScannerStateStore {
     }
 
     const val DEFAULT_SCAN_INTERVAL_MS = 180_000L
+    const val DEFAULT_MAX_DISPLAY_COUNT = 3
+    const val DEFAULT_MINIMUM_SCORE = 74.0
     val SUPPORTED_INTERVALS_MS = listOf(60_000L, 180_000L, 300_000L, 600_000L)
     private const val PREFS_NAME = "scanner_state"
     private const val KEY_LAST_SCAN_AT = "last_scan_at"
