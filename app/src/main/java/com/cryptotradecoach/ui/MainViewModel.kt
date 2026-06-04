@@ -105,10 +105,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             val symbol = rawSymbol.trim().uppercase()
             if (symbol.isBlank()) {
-                _uiState.value = _uiState.value.copy(manualMessage = "종목을 입력하세요.", manualStrategy = null)
+                val message = "종목을 입력하세요. 예: XRP 또는 KRW-XRP"
+                showToast(message)
+                _uiState.value = _uiState.value.copy(manualMessage = message, manualStrategy = null)
                 return@launch
             }
-            _uiState.value = _uiState.value.copy(manualMessage = "분석 중: $symbol", manualStrategy = null)
+            showToast("Analyze 버튼 눌림: $symbol")
+            _uiState.value = _uiState.value.copy(manualMessage = "분석 시작: $symbol", manualStrategy = null)
+            _uiState.value = _uiState.value.copy(manualMessage = "분석 중: $symbol")
 
             val result = withTimeoutOrNull(MANUAL_ANALYSIS_TIMEOUT_MS) {
                 withContext(Dispatchers.IO) {
@@ -136,6 +140,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             if (result == null) {
                 val message = "수동 분석 시간 초과: ${symbol}. 네트워크/업비트 응답 지연입니다. 잠시 후 다시 시도하세요."
                 withContext(Dispatchers.IO) { historyRepository.recordManualSearch(symbol, null, message) }
+                showToast("분석 시간 초과")
                 _uiState.value = _uiState.value.copy(manualStrategy = null, manualMessage = message)
                 return@launch
             }
@@ -144,11 +149,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 onSuccess = { analyzed ->
                     val latestHistory = withContext(Dispatchers.IO) { historyRepository.getHistoryBySymbol() }
                     ScannerStateStore.pushScanResult(historyRepository.getActiveStrategies(), latestHistory, _uiState.value.scanDiagnostics, getApplication())
+                    showToast(analyzed.message.take(90))
                     _uiState.value = _uiState.value.copy(manualStrategy = analyzed.strategy, manualMessage = analyzed.message, historyBySymbol = latestHistory)
                 },
                 onFailure = { error ->
                     val message = "수동 분석 실패: ${error.message ?: error::class.java.simpleName}"
                     withContext(Dispatchers.IO) { historyRepository.recordManualSearch(symbol, null, message) }
+                    showToast(message.take(90))
                     _uiState.value = _uiState.value.copy(manualStrategy = null, manualMessage = message)
                 },
             )
