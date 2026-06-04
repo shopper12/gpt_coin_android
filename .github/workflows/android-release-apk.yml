@@ -2,11 +2,25 @@ name: Build Android release APK
 
 on:
   workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - 'app/**'
+      - 'gradle/**'
+      - 'build.gradle*'
+      - 'settings.gradle*'
+      - 'gradle.properties'
+      - 'gradlew'
+      - '.github/workflows/android-release-apk.yml'
   schedule:
     - cron: '17 3 * * *'
 
 permissions:
   contents: write
+
+concurrency:
+  group: android-release-apk-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build-release-apk:
@@ -55,11 +69,12 @@ jobs:
           mkdir -p apk-output
           echo "Release output files:"
           find app/build/outputs/apk/release -maxdepth 1 -type f -print || true
-          if [ ! -f app/build/outputs/apk/release/app-release.apk ]; then
-            echo "app-release.apk was not produced. The release build is probably unsigned or signing failed."
+          apk_path="$(find app/build/outputs/apk/release -maxdepth 1 -type f -name '*.apk' | head -n 1)"
+          if [ -z "$apk_path" ]; then
+            echo "No release APK was produced. The release build probably failed before packaging."
             exit 1
           fi
-          cp app/build/outputs/apk/release/app-release.apk apk-output/crypto-trade-coach-release.apk
+          cp "$apk_path" apk-output/crypto-trade-coach-release.apk
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
@@ -76,8 +91,12 @@ jobs:
             Android release APK built from `main`.
 
             Download `crypto-trade-coach-release.apk` from Assets on the phone and install/update it.
+            commit: ${{ github.sha }}
+            versionCode: ${{ github.run_number }}
+            versionName: 1.0.${{ github.run_number }}
           files: apk-output/crypto-trade-coach-release.apk
           prerelease: true
           make_latest: false
+          overwrite_files: true
         env:
           GITHUB_TOKEN: ${{ github.token }}
