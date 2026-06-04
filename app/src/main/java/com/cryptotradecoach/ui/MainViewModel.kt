@@ -118,7 +118,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 withContext(Dispatchers.IO) {
                     runCatching {
                         val rules = rulesRepository.loadLastKnownGood()
-                        val candidate = manualDataSource.fetchManualMarketCandidate(symbol)
+                        val candidate = manualDataSource.fetchManualMarketCandidateFast(symbol, rules)
                             ?: return@runCatching ManualAnalyzeResult(null, manualDataSource.lastError ?: "후보 생성 실패: $symbol")
                         val scanResult = manualEngine.scan(
                             candidates = listOf(candidate),
