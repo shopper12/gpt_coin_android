@@ -165,6 +165,33 @@ class UpbitMarketDataSource : MarketDataSource {
         return ticker.toMarketCandidate(changeRanks, tradeValueRanks)
     }
 
+    suspend fun fetchManualMarketCandidateFast(rawSymbol: String, rules: StrategyRules = StrategyRules.DEFAULT): MarketCandidate? {
+        val market = normalizeMarket(rawSymbol)
+        lastError = null
+        if (market.isBlank() || market == "KRW-") {
+            lastError = "Manual search failed: blank market"
+            return null
+        }
+
+        val btcTicker = fetchTickerForFast(listOf("KRW-BTC")).firstOrNull()
+        btcChangeRate24h = btcTicker?.signedChangeRate?.times(100.0) ?: 0.0
+        if (market != "KRW-BTC" && btcChangeRate24h <= rules.scoring.hardBlockBtc24hBelowPct) {
+            lastError = "전체 코인 시장 약세: BTC 24h ${btcChangeRate24h.one()}% <= ${rules.scoring.hardBlockBtc24hBelowPct.one()}%. 수동 알트 분석을 차단합니다. BTC 또는 현금관망만 봅니다."
+            return null
+        }
+
+        val ticker = if (market == "KRW-BTC") {
+            btcTicker ?: fetchTickerForFast(listOf(market)).firstOrNull()
+        } else {
+            fetchTickerForFast(listOf(market)).firstOrNull()
+        } ?: run {
+            lastError = "Manual search failed: unsupported or unreachable Upbit KRW market $market"
+            return null
+        }
+
+        return ticker.toManualMarketCandidate()
+    }
+
     private fun Ticker.toMarketCandidate(
         changeRanks: Map<String, Int>,
         tradeValueRanks: Map<String, Int>,
@@ -173,17 +200,57 @@ class UpbitMarketDataSource : MarketDataSource {
         val rawFiveMinuteCandles = runCatching { fetchMinuteCandles(market, unit = 5, count = 60) }.getOrDefault(emptyList())
         val rawFifteenMinuteCandles = runCatching { fetchMinuteCandles(market, unit = 15, count = 50) }.getOrDefault(emptyList())
         val fourHourCandles = runCatching { fetchMinuteCandles(market, unit = 240, count = 120) }.getOrDefault(emptyList())
+        return buildMarketCandidate(
+            ticker = this,
+            oneMinuteCandles = oneMinuteCandles,
+            rawFiveMinuteCandles = rawFiveMinuteCandles,
+            rawFifteenMinuteCandles = rawFifteenMinuteCandles,
+            fourHourCandles = fourHourCandles,
+            rankByChange = changeRanks[market] ?: Int.MAX_VALUE,
+            rankByValue = tradeValueRanks[market] ?: Int.MAX_VALUE,
+        )
+    }
+
+    private fun Ticker.toManualMarketCandidate(): MarketCandidate? {
+        val rawFiveMinuteCandles = fetchMinuteCandlesFast(market, unit = 5, count = 60)
+        val rawFifteenMinuteCandles = fetchMinuteCandlesFast(market, unit = 15, count = 50)
+        val oneMinuteCandles = if (rawFiveMinuteCandles.size < 25 || rawFifteenMinuteCandles.size < 25) {
+            fetchMinuteCandlesFast(market, unit = 1, count = 60)
+        } else {
+            emptyList()
+        }
+        val fourHourCandles = fetchMinuteCandlesFast(market, unit = 240, count = 40)
+        return buildMarketCandidate(
+            ticker = this,
+            oneMinuteCandles = oneMinuteCandles,
+            rawFiveMinuteCandles = rawFiveMinuteCandles,
+            rawFifteenMinuteCandles = rawFifteenMinuteCandles,
+            fourHourCandles = fourHourCandles,
+            rankByChange = 1,
+            rankByValue = 1,
+        )
+    }
+
+    private fun buildMarketCandidate(
+        ticker: Ticker,
+        oneMinuteCandles: List<Candle>,
+        rawFiveMinuteCandles: List<Candle>,
+        rawFifteenMinuteCandles: List<Candle>,
+        fourHourCandles: List<Candle>,
+        rankByChange: Int,
+        rankByValue: Int,
+    ): MarketCandidate? {
         if (rawFiveMinuteCandles.size < 25 || rawFifteenMinuteCandles.size < 25) {
             if (oneMinuteCandles.size < 3) {
-                lastError = "Candidate skipped: insufficient candle data for $market"
+                lastError = "Candidate skipped: insufficient candle data for ${ticker.market}"
                 return null
             }
         }
         val effectiveFiveMinuteCandles = if (rawFiveMinuteCandles.size >= 25) rawFiveMinuteCandles else oneMinuteCandles
         val effectiveFifteenMinuteCandles = if (rawFifteenMinuteCandles.size >= 25) rawFifteenMinuteCandles else oneMinuteCandles
-        val changeRate30m = effectiveFiveMinuteCandles.takeLast(6).firstOrNull()?.let { percentChange(it.open, tradePrice) }
-            ?: percentChange(effectiveFiveMinuteCandles.first().open, tradePrice)
-        val changeRate5m = effectiveFiveMinuteCandles.lastOrNull()?.let { percentChange(it.open, tradePrice) } ?: 0.0
+        val changeRate30m = effectiveFiveMinuteCandles.takeLast(6).firstOrNull()?.let { percentChange(it.open, ticker.tradePrice) }
+            ?: percentChange(effectiveFiveMinuteCandles.first().open, ticker.tradePrice)
+        val changeRate5m = effectiveFiveMinuteCandles.lastOrNull()?.let { percentChange(it.open, ticker.tradePrice) } ?: 0.0
         val recentTradeValue = effectiveFiveMinuteCandles.takeLast(3).sumOf { it.tradePrice }
         val previousTradeValue = effectiveFiveMinuteCandles.dropLast(3).takeLast(20).sumOf { it.tradePrice } / 6.67
         val fallbackBaseValue = effectiveFiveMinuteCandles.dropLast(1).takeLast(12).sumOf { it.tradePrice }.takeIf { it > 0.0 }
@@ -193,14 +260,14 @@ class UpbitMarketDataSource : MarketDataSource {
             else -> 1.0
         }
         return MarketCandidate(
-            ticker = this,
+            ticker = ticker,
             oneMinuteCandles = oneMinuteCandles,
             fiveMinuteCandles = effectiveFiveMinuteCandles,
             fifteenMinuteCandles = effectiveFifteenMinuteCandles,
             fourHourCandles = fourHourCandles,
             btcChangeRate24h = btcChangeRate24h,
-            rankByChangeRate = changeRanks[market] ?: Int.MAX_VALUE,
-            rankByTradeValue = tradeValueRanks[market] ?: Int.MAX_VALUE,
+            rankByChangeRate = rankByChange,
+            rankByTradeValue = rankByValue,
             changeRate30m = changeRate30m,
             changeRate5m = changeRate5m,
             volumeAcceleration = volumeAcceleration,
@@ -234,26 +301,45 @@ class UpbitMarketDataSource : MarketDataSource {
         val tickers = mutableListOf<Ticker>()
         for (chunk in chunks) {
             val chunkTickers = withRetry("Upbit ticker ${chunk.firstOrNull().orEmpty()}..") {
-                val array = fetchJsonArray("https://api.upbit.com/v1/ticker?markets=${chunk.joinToString(",")}")
-                val out = mutableListOf<Ticker>()
-                for (i in 0 until array.length()) {
-                    val item = array.getJSONObject(i)
-                    out += Ticker(
-                        market = item.optString("market"),
-                        tradePrice = item.optDouble("trade_price", 0.0),
-                        signedChangeRate = item.optDouble("signed_change_rate", 0.0),
-                        accTradePrice24h = item.optDouble("acc_trade_price_24h", 0.0),
-                        accTradeVolume24h = item.optDouble("acc_trade_volume_24h", 0.0),
-                        highPrice24h = item.optDouble("high_price", 0.0),
-                        lowPrice24h = item.optDouble("low_price", 0.0),
-                        prevClosingPrice = item.optDouble("prev_closing_price", 0.0),
-                    )
-                }
-                out
+                parseTickerArray(fetchJsonArray("https://api.upbit.com/v1/ticker?markets=${chunk.joinToString(",")}"))
             }.orEmpty()
             tickers += chunkTickers
         }
         return tickers
+    }
+
+    private fun fetchTickerForFast(markets: List<String>): List<Ticker> {
+        val targets = markets.distinct().filter { it.startsWith("KRW-") }
+        if (targets.isEmpty()) return emptyList()
+        return runCatching {
+            parseTickerArray(
+                fetchJsonArray(
+                    rawUrl = "https://api.upbit.com/v1/ticker?markets=${targets.joinToString(",")}",
+                    connectTimeoutMs = MANUAL_CONNECT_TIMEOUT_MS,
+                    readTimeoutMs = MANUAL_READ_TIMEOUT_MS,
+                ),
+            )
+        }.onFailure { error ->
+            lastError = "Manual ticker ${targets.joinToString(",")} failed: ${error.message ?: error::class.java.simpleName}"
+        }.getOrDefault(emptyList())
+    }
+
+    private fun parseTickerArray(array: JSONArray): List<Ticker> {
+        val out = mutableListOf<Ticker>()
+        for (i in 0 until array.length()) {
+            val item = array.getJSONObject(i)
+            out += Ticker(
+                market = item.optString("market"),
+                tradePrice = item.optDouble("trade_price", 0.0),
+                signedChangeRate = item.optDouble("signed_change_rate", 0.0),
+                accTradePrice24h = item.optDouble("acc_trade_price_24h", 0.0),
+                accTradeVolume24h = item.optDouble("acc_trade_volume_24h", 0.0),
+                highPrice24h = item.optDouble("high_price", 0.0),
+                lowPrice24h = item.optDouble("low_price", 0.0),
+                prevClosingPrice = item.optDouble("prev_closing_price", 0.0),
+            )
+        }
+        return out
     }
 
     fun fetchMinuteCandles(market: String, unit: Int, count: Int): List<Candle> {
@@ -267,33 +353,63 @@ class UpbitMarketDataSource : MarketDataSource {
         return withRetry("Upbit candle market=$market unit=$unit") {
             val array = fetchJsonArray("https://api.upbit.com/v1/candles/minutes/$unit?market=$market&count=$count")
             if (array.length() == 0) throw IOException("empty candle array market=$market unit=$unit")
-            val candles = mutableListOf<Candle>()
-            for (i in 0 until array.length()) {
-                val item = array.getJSONObject(i)
-                candles += Candle(
-                    market = market,
-                    unit = unit,
-                    timestamp = item.optLong("timestamp", 0L),
-                    open = item.optDouble("opening_price", 0.0),
-                    high = item.optDouble("high_price", 0.0),
-                    low = item.optDouble("low_price", 0.0),
-                    close = item.optDouble("trade_price", 0.0),
-                    volume = item.optDouble("candle_acc_trade_volume", 0.0),
-                    tradePrice = item.optDouble("candle_acc_trade_price", 0.0),
-                )
-            }
-            val sorted = candles.sortedBy { it.timestamp }
+            val sorted = parseCandles(market, unit, array)
             candleCache[cacheKey] = CachedCandles(System.currentTimeMillis(), sorted)
             sorted
         }.orEmpty()
     }
 
-    private fun fetchJsonArray(rawUrl: String): JSONArray {
+    private fun fetchMinuteCandlesFast(market: String, unit: Int, count: Int): List<Candle> {
+        require(unit in SUPPORTED_UNITS) { "Unsupported Upbit candle unit: $unit" }
+        val cacheKey = "$market:$unit"
+        val now = System.currentTimeMillis()
+        candleCache[cacheKey]?.let { cached ->
+            if (now - cached.fetchedAt < CANDLE_CACHE_MS) return cached.candles
+        }
+        return runCatching {
+            val array = fetchJsonArray(
+                rawUrl = "https://api.upbit.com/v1/candles/minutes/$unit?market=$market&count=$count",
+                connectTimeoutMs = MANUAL_CONNECT_TIMEOUT_MS,
+                readTimeoutMs = MANUAL_READ_TIMEOUT_MS,
+            )
+            if (array.length() == 0) throw IOException("empty candle array market=$market unit=$unit")
+            val sorted = parseCandles(market, unit, array)
+            candleCache[cacheKey] = CachedCandles(System.currentTimeMillis(), sorted)
+            sorted
+        }.onFailure { error ->
+            lastError = "Manual candle $unit $market failed: ${error.message ?: error::class.java.simpleName}"
+        }.getOrDefault(emptyList())
+    }
+
+    private fun parseCandles(market: String, unit: Int, array: JSONArray): List<Candle> {
+        val candles = mutableListOf<Candle>()
+        for (i in 0 until array.length()) {
+            val item = array.getJSONObject(i)
+            candles += Candle(
+                market = market,
+                unit = unit,
+                timestamp = item.optLong("timestamp", 0L),
+                open = item.optDouble("opening_price", 0.0),
+                high = item.optDouble("high_price", 0.0),
+                low = item.optDouble("low_price", 0.0),
+                close = item.optDouble("trade_price", 0.0),
+                volume = item.optDouble("candle_acc_trade_volume", 0.0),
+                tradePrice = item.optDouble("candle_acc_trade_price", 0.0),
+            )
+        }
+        return candles.sortedBy { it.timestamp }
+    }
+
+    private fun fetchJsonArray(
+        rawUrl: String,
+        connectTimeoutMs: Int = DEFAULT_CONNECT_TIMEOUT_MS,
+        readTimeoutMs: Int = DEFAULT_READ_TIMEOUT_MS,
+    ): JSONArray {
         throttleRequest()
         val connection = (URL(rawUrl).openConnection() as HttpURLConnection).apply {
             requestMethod = "GET"
-            connectTimeout = 10_000
-            readTimeout = 10_000
+            connectTimeout = connectTimeoutMs
+            readTimeout = readTimeoutMs
         }
         try {
             val statusCode = connection.responseCode
@@ -379,6 +495,10 @@ class UpbitMarketDataSource : MarketDataSource {
         private const val MIN_REQUEST_INTERVAL_MS = 130L
         private const val MAX_RETRIES = 3
         private const val INITIAL_RETRY_BACKOFF_MS = 500L
+        private const val DEFAULT_CONNECT_TIMEOUT_MS = 10_000
+        private const val DEFAULT_READ_TIMEOUT_MS = 10_000
+        private const val MANUAL_CONNECT_TIMEOUT_MS = 2_500
+        private const val MANUAL_READ_TIMEOUT_MS = 2_500
         private const val SOFT_RISK_OFF_BTC_24H_PCT = -1.5
         private val SUPPORTED_UNITS = setOf(1, 5, 15, 240)
         private val FORCE_WATCH_MARKETS = setOf(
