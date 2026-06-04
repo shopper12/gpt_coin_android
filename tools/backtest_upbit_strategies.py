@@ -469,6 +469,7 @@ def summarize(outcomes: list[Outcome], days: int, max_markets: int, horizon_bars
         "bottom_outcomes": [asdict(x) for x in bottom],
         "all_outcomes": [asdict(x) for x in outcomes],
         "all_outcomes": [asdict(x) for x in outcomes],
+        "all_outcomes": [asdict(x) for x in outcomes],
     }
 
 
@@ -513,6 +514,7 @@ def main() -> None:
     parser.add_argument("--max-markets", type=int, default=60)
     parser.add_argument("--horizon-bars", type=int, default=DEFAULT_HORIZON_BARS)
     parser.add_argument("--minimum-score", type=float, default=74.0)
+    parser.add_argument("--rules", type=Path, default=Path("rules/strategy-rules.json"))
     parser.add_argument("--rules", type=Path, default=Path("rules/strategy-rules.json"))
     parser.add_argument("--rules", type=Path, default=Path("rules/strategy-rules.json"))
     parser.add_argument("--out-dir", type=Path, default=Path("reports"))
