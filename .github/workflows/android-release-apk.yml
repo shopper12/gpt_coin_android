@@ -76,11 +76,39 @@ jobs:
           fi
           cp "$apk_path" apk-output/crypto-trade-coach-release.apk
 
+      - name: Verify installable APK
+        run: |
+          set -euo pipefail
+          apk="apk-output/crypto-trade-coach-release.apk"
+          test -s "$apk"
+          bytes="$(wc -c < "$apk")"
+          echo "APK bytes: $bytes"
+          if [ "$bytes" -lt 1048576 ]; then
+            echo "APK is too small; it is probably not a real APK."
+            exit 1
+          fi
+          file "$apk" | tee apk-output/file-type.txt
+          unzip -t "$apk" > apk-output/unzip-test.txt
+          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -name apksigner -type f | sort -V | tail -n 1)"
+          AAPT="$(find "$ANDROID_HOME/build-tools" -name aapt -type f | sort -V | tail -n 1)"
+          test -x "$APKSIGNER"
+          test -x "$AAPT"
+          "$APKSIGNER" verify --verbose --print-certs "$apk" | tee apk-output/apksigner-verify.txt
+          "$AAPT" dump badging "$apk" | tee apk-output/badging.txt
+          grep "package: name='com.cryptotradecoach'" apk-output/badging.txt
+          sha256sum "$apk" | tee apk-output/sha256.txt
+
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: crypto-trade-coach-release-apk
-          path: apk-output/crypto-trade-coach-release.apk
+          path: |
+            apk-output/crypto-trade-coach-release.apk
+            apk-output/file-type.txt
+            apk-output/unzip-test.txt
+            apk-output/apksigner-verify.txt
+            apk-output/badging.txt
+            apk-output/sha256.txt
 
       - name: Publish rolling GitHub release
         uses: softprops/action-gh-release@v2
@@ -91,6 +119,9 @@ jobs:
             Android release APK built from `main`.
 
             Download `crypto-trade-coach-release.apk` from Assets on the phone and install/update it.
+
+            If Android says the package is invalid or conflicts with an existing package, uninstall the old `Crypto Trade Coach` app once, then install this release APK again. This usually happens when the old app was installed with a different signing key.
+
             commit: ${{ github.sha }}
             versionCode: ${{ github.run_number }}
             versionName: 1.0.${{ github.run_number }}
