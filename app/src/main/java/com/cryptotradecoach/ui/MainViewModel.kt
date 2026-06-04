@@ -1,6 +1,7 @@
 package com.cryptotradecoach.ui
 
 import android.app.Application
+import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.cryptotradecoach.data.AppUpdateRepository
@@ -59,7 +60,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val historyRepository = SignalHistoryRepository.getInstance(application)
     private val settingsRepository = SettingsRepository.getInstance(application)
     private val rulesRepository = StrategyRulesRepository.getInstance(application)
-    private val reportRepository = StrategyReportRepository.getInstance(application)
+    private val reportRepository = StrategyReportRepository(application)
     private val appUpdateRepository = AppUpdateRepository(application.applicationContext)
     private val manualDataSource = UpbitMarketDataSource()
     private val manualEngine = SignalEngine()
@@ -240,23 +241,38 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun openInstallPermissionSettings() {
+        showToast("APK 설치 권한 화면을 엽니다")
         appUpdateRepository.openUnknownAppSourcesSettings()
         _uiState.value = _uiState.value.copy(settingsMessage = "설정에서 이 앱의 APK 설치 허용을 켠 뒤 돌아와서 Download and install latest APK를 누르세요.")
     }
 
     fun downloadAndInstallLatestApk(settings: GitHubSettings) {
         viewModelScope.launch {
+            showToast("APK 업데이트 버튼 눌림")
+            _uiState.value = _uiState.value.copy(settingsMessage = "APK 업데이트 버튼 눌림. 설치 권한 확인 중...")
             val normalized = settings.normalized()
             saveGitHubSettings(normalized)
             if (!appUpdateRepository.canRequestPackageInstalls()) {
-                _uiState.value = _uiState.value.copy(settingsMessage = "APK 설치 권한이 꺼져 있습니다. Open install permission settings를 먼저 누르세요.")
+                val message = "APK 설치 권한이 꺼져 있습니다. 권한 화면을 엽니다. 이 앱의 APK 설치 허용을 켠 뒤 다시 누르세요."
+                _uiState.value = _uiState.value.copy(settingsMessage = message)
+                showToast("APK 설치 권한 필요")
+                appUpdateRepository.openUnknownAppSourcesSettings()
                 return@launch
             }
-            _uiState.value = _uiState.value.copy(settingsMessage = "최신 APK 다운로드 중...")
+            _uiState.value = _uiState.value.copy(settingsMessage = "최신 APK 다운로드 중... 네트워크 상태에 따라 1분 정도 걸릴 수 있습니다.")
+            showToast("APK 다운로드 시작")
             val result = withContext(Dispatchers.IO) { runCatching { appUpdateRepository.downloadLatestReleaseApk(normalized) } }
             result.fold(
-                onSuccess = { apkFile -> _uiState.value = _uiState.value.copy(settingsMessage = "APK 다운로드 완료. 설치 화면을 엽니다: ${apkFile.name}"); appUpdateRepository.openApkInstaller(apkFile) },
-                onFailure = { error -> showGitHubMessage("APK update failed: ${error.message ?: error::class.java.simpleName}") },
+                onSuccess = { apkFile ->
+                    _uiState.value = _uiState.value.copy(settingsMessage = "APK 다운로드 완료. 설치 화면을 엽니다: ${apkFile.name}")
+                    showToast("APK 다운로드 완료")
+                    appUpdateRepository.openApkInstaller(apkFile)
+                },
+                onFailure = { error ->
+                    val message = "APK update failed: ${error.message ?: error::class.java.simpleName}"
+                    showGitHubMessage(message)
+                    showToast(message.take(90))
+                },
             )
         }
     }
@@ -264,6 +280,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private fun showGitHubMessage(message: String) {
         ScannerStateStore.setLastError(message.takeIf { it == "GitHub token is missing" || it.contains("HTTP ") || it.contains("failed", ignoreCase = true) })
         _uiState.value = _uiState.value.copy(settingsMessage = message)
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(getApplication<Application>().applicationContext, message, Toast.LENGTH_SHORT).show()
     }
 
     private fun gitHubFailureMessage(prefix: String, error: Throwable): String {
