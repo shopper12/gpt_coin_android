@@ -125,7 +125,15 @@ class UpbitMarketDataSource : MarketDataSource {
             .mapIndexed { index, ticker -> ticker.market to index + 1 }
             .toMap()
 
-        val selectedTickers = selectCandleTargets(tickers, boundedLimit, selectionRules)
+        val selectedTickers = if (isHardRiskOff(rules)) {
+            lastError = marketRiskOffMessage(rules, "신규 알트 후보 차단. KRW-BTC 위험회피 신호만 평가합니다.")
+            tickers.filter { it.market == "KRW-BTC" }
+        } else {
+            if (isSoftRiskOff()) {
+                lastError = "전체 코인 시장 약세 경고: BTC 24h ${btcChangeRate24h.one()}%. 알트 신호는 보수적으로 봐야 합니다."
+            }
+            selectCandleTargets(tickers, boundedLimit, selectionRules)
+        }
 
         return selectedTickers.mapNotNull { ticker ->
             ticker.toMarketCandidate(changeRanks, tradeValueRanks)
@@ -136,6 +144,10 @@ class UpbitMarketDataSource : MarketDataSource {
         val market = normalizeMarket(rawSymbol)
         lastError = null
         val allTickers = fetchTickers()
+        if (market != "KRW-BTC" && btcChangeRate24h <= StrategyRules.DEFAULT.scoring.hardBlockBtc24hBelowPct) {
+            lastError = "전체 코인 시장 약세: BTC 24h ${btcChangeRate24h.one()}% <= ${StrategyRules.DEFAULT.scoring.hardBlockBtc24hBelowPct.one()}%. 수동 알트 분석을 차단합니다. BTC 또는 현금관망만 봅니다."
+            return null
+        }
         val ticker = allTickers.firstOrNull { it.market == market }
             ?: fetchTickerFor(listOf(market)).firstOrNull()
             ?: run {
@@ -320,6 +332,18 @@ class UpbitMarketDataSource : MarketDataSource {
         return null
     }
 
+    private fun isHardRiskOff(rules: StrategyRules): Boolean {
+        return btcChangeRate24h <= rules.scoring.hardBlockBtc24hBelowPct
+    }
+
+    private fun isSoftRiskOff(): Boolean {
+        return btcChangeRate24h <= SOFT_RISK_OFF_BTC_24H_PCT
+    }
+
+    private fun marketRiskOffMessage(rules: StrategyRules, action: String): String {
+        return "전체 코인 시장 약세: BTC 24h ${btcChangeRate24h.one()}% <= ${rules.scoring.hardBlockBtc24hBelowPct.one()}%. $action"
+    }
+
     private fun throttleRequest() {
         val now = System.currentTimeMillis()
         val waitMs = MIN_REQUEST_INTERVAL_MS - (now - lastRequestAt)
@@ -347,12 +371,15 @@ class UpbitMarketDataSource : MarketDataSource {
         else -> 50
     }
 
+    private fun Double.one(): String = String.format(java.util.Locale.US, "%.1f", this)
+
     companion object {
         private const val CANDLE_CACHE_MS = 25_000L
         private const val MAX_CANDLE_TARGETS = 100
         private const val MIN_REQUEST_INTERVAL_MS = 130L
         private const val MAX_RETRIES = 3
         private const val INITIAL_RETRY_BACKOFF_MS = 500L
+        private const val SOFT_RISK_OFF_BTC_24H_PCT = -1.5
         private val SUPPORTED_UNITS = setOf(1, 5, 15, 240)
         private val FORCE_WATCH_MARKETS = setOf(
             "KRW-XLM",
