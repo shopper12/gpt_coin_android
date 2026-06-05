@@ -89,13 +89,31 @@ jobs:
           fi
           file "$apk" | tee apk-output/file-type.txt
           unzip -t "$apk" > apk-output/unzip-test.txt
+
           APKSIGNER="$(find "$ANDROID_HOME/build-tools" -name apksigner -type f | sort -V | tail -n 1)"
-          AAPT="$(find "$ANDROID_HOME/build-tools" -name aapt -type f | sort -V | tail -n 1)"
-          test -x "$APKSIGNER"
-          test -x "$AAPT"
+          if [ ! -x "$APKSIGNER" ]; then
+            echo "apksigner not found under ANDROID_HOME/build-tools"
+            exit 1
+          fi
           "$APKSIGNER" verify --verbose --print-certs "$apk" | tee apk-output/apksigner-verify.txt
-          "$AAPT" dump badging "$apk" | tee apk-output/badging.txt
-          grep "package: name='com.cryptotradecoach'" apk-output/badging.txt
+
+          AAPT="$(find "$ANDROID_HOME/build-tools" -name aapt -type f | sort -V | tail -n 1 || true)"
+          AAPT2="$(find "$ANDROID_HOME/build-tools" -name aapt2 -type f | sort -V | tail -n 1 || true)"
+          : > apk-output/badging.txt
+          if [ -x "$AAPT" ]; then
+            "$AAPT" dump badging "$apk" | tee apk-output/badging.txt
+            grep "package: name='com.cryptotradecoach'" apk-output/badging.txt
+          elif command -v apkanalyzer >/dev/null 2>&1; then
+            package_name="$(apkanalyzer manifest application-id "$apk")"
+            echo "package: $package_name" | tee apk-output/badging.txt
+            test "$package_name" = "com.cryptotradecoach"
+          elif [ -x "$AAPT2" ]; then
+            "$AAPT2" dump packagename "$apk" | tee apk-output/badging.txt
+            grep "com.cryptotradecoach" apk-output/badging.txt
+          else
+            echo "No aapt/aapt2/apkanalyzer found; package-name check skipped after unzip and apksigner verification." | tee apk-output/badging.txt
+          fi
+
           sha256sum "$apk" | tee apk-output/sha256.txt
 
       - name: Upload APK artifact
