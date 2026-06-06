@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.cryptotradecoach.data.AppUpdateRepository
+import com.cryptotradecoach.data.Candle
 import com.cryptotradecoach.data.GitHubSyncClient
 import com.cryptotradecoach.data.GitHubSyncException
 import com.cryptotradecoach.data.GitHubSettings
@@ -33,6 +34,14 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 
+data class StrategyChartSnapshot(
+    val strategy: TradeStrategy,
+    val candles: List<Candle>,
+    val performance: StrategyPerformanceEntity?,
+    val message: String,
+    val loadedAt: Long = System.currentTimeMillis(),
+)
+
 data class MainUiState(
     val isRunning: Boolean = false,
     val activeStrategies: List<TradeStrategy> = emptyList(),
@@ -43,6 +52,8 @@ data class MainUiState(
     val lastEvolvedAt: Long? = null,
     val manualStrategy: TradeStrategy? = null,
     val manualMessage: String? = null,
+    val strategyChart: StrategyChartSnapshot? = null,
+    val chartMessage: String? = null,
     val scanDiagnostics: ScanDiagnostics = ScanDiagnostics(),
     val lastScanAt: Long? = null,
     val scanIntervalMs: Long = ScannerStateStore.DEFAULT_SCAN_INTERVAL_MS,
@@ -151,6 +162,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                     ScannerStateStore.pushScanResult(historyRepository.getActiveStrategies(), latestHistory, _uiState.value.scanDiagnostics, getApplication())
                     showToast(analyzed.message.take(90))
                     _uiState.value = _uiState.value.copy(manualStrategy = analyzed.strategy, manualMessage = analyzed.message, historyBySymbol = latestHistory)
+                    analyzed.strategy?.let { loadStrategyChart(it) }
                 },
                 onFailure = { error ->
                     val message = "수동 분석 실패: ${error.message ?: error::class.java.simpleName}"
@@ -175,6 +187,52 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             refreshPerformance()
             _uiState.value = _uiState.value.copy(manualMessage = "저장 완료: ${strategy.symbol}")
         }
+    }
+
+    fun loadStrategyChart(strategy: TradeStrategy) {
+        viewModelScope.launch {
+            val loadingMessage = "차트 불러오는 중: ${strategy.symbol}"
+            _uiState.value = _uiState.value.copy(chartMessage = loadingMessage)
+            val result = withTimeoutOrNull(CHART_LOAD_TIMEOUT_MS) {
+                withContext(Dispatchers.IO) {
+                    runCatching {
+                        val candles = manualDataSource.fetchMinuteCandles(strategy.symbol, unit = 5, count = CHART_CANDLE_COUNT)
+                        val performance = db.signalHistoryDao().getPerformanceByStrategyId(strategy.id)
+                        if (candles.isEmpty()) {
+                            StrategyChartSnapshot(
+                                strategy = strategy,
+                                candles = emptyList(),
+                                performance = performance,
+                                message = "차트 캔들 없음: ${strategy.symbol}",
+                            )
+                        } else {
+                            StrategyChartSnapshot(
+                                strategy = strategy,
+                                candles = candles,
+                                performance = performance,
+                                message = "5분봉 ${candles.size}개 로드 · ${strategy.symbol}",
+                            )
+                        }
+                    }
+                }
+            }
+            if (result == null) {
+                _uiState.value = _uiState.value.copy(chartMessage = "차트 로딩 시간 초과: ${strategy.symbol}")
+                return@launch
+            }
+            result.fold(
+                onSuccess = { snapshot ->
+                    _uiState.value = _uiState.value.copy(strategyChart = snapshot, chartMessage = snapshot.message)
+                },
+                onFailure = { error ->
+                    _uiState.value = _uiState.value.copy(chartMessage = "차트 로딩 실패: ${error.message ?: error::class.java.simpleName}")
+                },
+            )
+        }
+    }
+
+    fun clearStrategyChart() {
+        _uiState.value = _uiState.value.copy(strategyChart = null, chartMessage = null)
     }
 
     fun saveGitHubSettings(settings: GitHubSettings) {
@@ -304,5 +362,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     companion object {
         private const val MANUAL_ANALYSIS_TIMEOUT_MS = 15_000L
+        private const val CHART_LOAD_TIMEOUT_MS = 12_000L
+        private const val CHART_CANDLE_COUNT = 120
     }
 }
