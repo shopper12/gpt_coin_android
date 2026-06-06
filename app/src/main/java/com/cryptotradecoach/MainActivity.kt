@@ -130,7 +130,7 @@ class MainActivity : ComponentActivity() {
     private fun requestNotificationPermissionIfNeeded() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             val granted = ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
-            if (!granted) notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            if (!granted) notificationPermissionLauncher.launch(notificationPermissionLauncher.contract.createIntent(this, Manifest.permission.POST_NOTIFICATIONS).action ?: Manifest.permission.POST_NOTIFICATIONS)
         }
     }
 
@@ -188,14 +188,18 @@ private fun MainScreen(
 ) {
     val tabs = listOf("Current", "Search", "Chart", "History", "Performance", "Rules", "Settings")
     var selectedTab by remember { mutableIntStateOf(0) }
+    val openChart: (TradeStrategy) -> Unit = { strategy ->
+        selectedTab = 2
+        onStrategyChart(strategy)
+    }
     Column(modifier = Modifier.fillMaxSize()) {
         Text("Crypto Trade Coach", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold, modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 8.dp))
         TabRow(selectedTabIndex = selectedTab) {
             tabs.forEachIndexed { index, title -> Tab(selected = selectedTab == index, onClick = { selectedTab = index }, text = { Text(title) }) }
         }
         when (selectedTab) {
-            0 -> CurrentStrategiesTab(activeStrategies, scanDiagnostics, lastScanAt, minimumScore, chartMessage, onStrategyChart)
-            1 -> ManualSearchTab(manualStrategy, manualMessage, chartMessage, onManualAnalyze, onManualSave, onStrategyChart)
+            0 -> CurrentStrategiesTab(activeStrategies, scanDiagnostics, lastScanAt, minimumScore, chartMessage, openChart)
+            1 -> ManualSearchTab(manualStrategy, manualMessage, chartMessage, onManualAnalyze, onManualSave, openChart)
             2 -> ChartTab(strategyChart, chartMessage, onClearChart)
             3 -> StrategyHistoryTab(historyBySymbol)
             4 -> PerformanceTab(performanceRows, backtestResults, evolutionLog, lastEvolvedAt, onPerformanceRefresh, onBacktestRefresh, onEvolutionRefresh)
@@ -286,7 +290,7 @@ private fun ChartTab(snapshot: StrategyChartSnapshot?, chartMessage: String?, on
         }
         chartMessage?.let { item { Text(it, style = MaterialTheme.typography.bodySmall) } }
         if (snapshot == null) {
-            item { EmptyCard("Current/Search 탭에서 전략 카드의 Chart 버튼을 누르면 5분봉 차트 위에 진입·손절·목표·결과가 표시됩니다.") }
+            item { EmptyCard("차트 로딩 전입니다. Current/Search 탭에서 전략 카드의 Chart 버튼을 누르면 이 화면으로 자동 이동하고, Upbit API에서 5분봉을 불러와 전략선을 표시합니다.") }
         } else {
             item { StrategyChartCard(snapshot) }
             item { StrategyCard(snapshot.strategy, onStrategyChart = {}) }
