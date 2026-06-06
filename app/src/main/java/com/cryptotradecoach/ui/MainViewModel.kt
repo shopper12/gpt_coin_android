@@ -212,7 +212,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun loadStrategyChart(strategy: TradeStrategy, timeframe: ChartTimeframe) {
         viewModelScope.launch {
             val loadingMessage = "차트 불러오는 중: ${strategy.symbol} · ${timeframe.label}"
-            _uiState.value = _uiState.value.copy(selectedChartTimeframe = timeframe, chartMessage = loadingMessage)
+            _uiState.value = _uiState.value.copy(
+                selectedChartTimeframe = timeframe,
+                strategyChart = null,
+                chartMessage = loadingMessage,
+            )
             val result = withTimeoutOrNull(CHART_LOAD_TIMEOUT_MS) {
                 withContext(Dispatchers.IO) {
                     runCatching {
@@ -226,7 +230,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                             message = if (candles.isEmpty()) {
                                 "차트 캔들 없음: ${strategy.symbol} · ${timeframe.label}"
                             } else {
-                                "${timeframe.label} ${candles.size}개 로드 · ${strategy.symbol}"
+                                "${timeframe.label} ${candles.size}개 로드 · ${strategy.symbol} · ${candles.first().timestamp.toTimeText()}~${candles.last().timestamp.toTimeText()}"
                             },
                         )
                     }
@@ -408,6 +412,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private fun currentRulesText(): String = currentRulesText(rulesRepository.loadLastKnownGood())
     private fun currentRulesText(rules: StrategyRules): String = rules.toJson().toString(2)
+
+    private fun Long.toTimeText(): String = java.text.SimpleDateFormat("MM-dd HH:mm", java.util.Locale.US).format(java.util.Date(this))
 
     private data class ManualAnalyzeResult(val strategy: TradeStrategy?, val message: String)
 
