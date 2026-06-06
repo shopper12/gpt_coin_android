@@ -17,6 +17,7 @@ data class StrategyRules(
     val prePumpRotation: PrePumpRotationRules,
     val scoring: ScoringRules,
     val risk: RiskRules,
+    val customFlags: Map<String, String> = emptyMap(),
 ) {
     fun toJson(): JSONObject {
         return JSONObject()
@@ -33,7 +34,10 @@ data class StrategyRules(
             .put("prePumpRotation", prePumpRotation.toJson())
             .put("scoring", scoring.toJson())
             .put("risk", risk.toJson())
+            .put("customFlags", JSONObject(customFlags))
     }
+
+    fun withCustomFlag(key: String, value: String): StrategyRules = copy(customFlags = customFlags + (key to value))
 
     companion object {
         val DEFAULT = StrategyRules(
@@ -140,7 +144,19 @@ data class StrategyRules(
                 prePumpRotation = PrePumpRotationRules.fromJson(root.optJSONObject("prePumpRotation")),
                 scoring = ScoringRules.fromJson(root.optJSONObject("scoring")),
                 risk = RiskRules.fromJson(root.optJSONObject("risk")),
+                customFlags = customFlagsFromJson(root.optJSONObject("customFlags")),
             )
+        }
+
+        private fun customFlagsFromJson(json: JSONObject?): Map<String, String> {
+            if (json == null) return emptyMap()
+            val out = mutableMapOf<String, String>()
+            val keys = json.keys()
+            while (keys.hasNext()) {
+                val key = keys.next()
+                out[key] = json.optString(key, "")
+            }
+            return out
         }
     }
 }
