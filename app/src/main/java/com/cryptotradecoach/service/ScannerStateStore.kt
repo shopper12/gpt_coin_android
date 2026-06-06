@@ -119,7 +119,7 @@ object ScannerStateStore {
         _historyBySymbol.value = historyBySymbol.toSortedMap()
         _scanDiagnostics.value = diagnostics.copy(
             validSignals = filtered,
-            lastError = regimeWarning(regime) ?: diagnostics.lastError,
+            lastError = mergeRegimeWarning(regime, diagnostics.lastError),
         )
     }
 
@@ -137,7 +137,7 @@ object ScannerStateStore {
     }
 
     fun setLastError(error: String?) {
-        _scanDiagnostics.value = _scanDiagnostics.value.copy(lastError = error)
+        _scanDiagnostics.value = _scanDiagnostics.value.copy(lastError = mergeRegimeWarning(_currentBtcRegime.value, error))
     }
 
     fun markScanAttempt(context: Context? = null): Long {
@@ -173,8 +173,20 @@ object ScannerStateStore {
     }
 
     private fun applyRegimeWarning(regime: BtcRegime) {
-        val warning = regimeWarning(regime) ?: return
-        _scanDiagnostics.value = _scanDiagnostics.value.copy(lastError = warning)
+        _scanDiagnostics.value = _scanDiagnostics.value.copy(
+            lastError = mergeRegimeWarning(regime, _scanDiagnostics.value.lastError),
+        )
+    }
+
+    private fun mergeRegimeWarning(regime: BtcRegime, error: String?): String? {
+        val warning = regimeWarning(regime)
+        return when {
+            warning == null -> error
+            error.isNullOrBlank() -> warning
+            error == warning -> warning
+            error.startsWith(warning) -> error
+            else -> "$warning | $error"
+        }
     }
 
     private fun regimeWarning(regime: BtcRegime): String? {
