@@ -97,6 +97,7 @@ object ScannerStateStore {
     fun updateBtcRegime(regime: BtcRegime) {
         _currentBtcRegime.value = regime
         _activeStrategies.value = regimeFiltered(_activeStrategies.value)
+        applyRegimeWarning(regime)
     }
 
     fun updateBtcChange1h(value: Double) {
@@ -113,9 +114,13 @@ object ScannerStateStore {
         val filtered = regimeFiltered(activeStrategies)
             .sortedWith(compareByDescending<TradeStrategy> { it.score }.thenBy { it.rank })
             .take(_maxDisplayCount.value)
+        val regime = _currentBtcRegime.value
         _activeStrategies.value = filtered
         _historyBySymbol.value = historyBySymbol.toSortedMap()
-        _scanDiagnostics.value = diagnostics.copy(validSignals = filtered, lastError = null)
+        _scanDiagnostics.value = diagnostics.copy(
+            validSignals = filtered,
+            lastError = regimeWarning(regime) ?: diagnostics.lastError,
+        )
     }
 
     fun loadPersistedState(
@@ -128,6 +133,7 @@ object ScannerStateStore {
             .take(_maxDisplayCount.value)
         _historyBySymbol.value = historyBySymbol.toSortedMap()
         context?.loadLastScanAt()?.let { _lastScanAt.value = it }
+        applyRegimeWarning(_currentBtcRegime.value)
     }
 
     fun setLastError(error: String?) {
@@ -158,10 +164,25 @@ object ScannerStateStore {
             _btcChange1h.value
         }
         _btcChange1h.value = change1h
-        _currentBtcRegime.value = BtcRegimeDetector.detect(
+        val regime = BtcRegimeDetector.detect(
             btcChange24h = btc.signedChangeRate * 100.0,
             btcChange1h = change1h,
         )
+        _currentBtcRegime.value = regime
+        applyRegimeWarning(regime)
+    }
+
+    private fun applyRegimeWarning(regime: BtcRegime) {
+        val warning = regimeWarning(regime) ?: return
+        _scanDiagnostics.value = _scanDiagnostics.value.copy(lastError = warning)
+    }
+
+    private fun regimeWarning(regime: BtcRegime): String? {
+        return when (regime) {
+            BtcRegime.BEAR -> "BTC 하락장: 알트 진입 기준 강화 중(+15점), 허용 전략 제한"
+            BtcRegime.CRASH -> "BTC 급락장: 알트 신호 대부분 차단(+25점), BTC_SHORT_REGIME 우선"
+            else -> null
+        }
     }
 
     private fun Context.persistLastScanAt(scanAt: Long) {
