@@ -196,6 +196,9 @@ interface SignalHistoryDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertMissedSignal(item: MissedSignalEntity): Long
 
+    @Upsert
+    suspend fun upsertMissedSignal(item: MissedSignalEntity)
+
     @Query(
         """
         UPDATE missed_signals
