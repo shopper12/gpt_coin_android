@@ -28,6 +28,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun evolutionLogDao(): EvolutionLogDao
     abstract fun performanceCheckpointDao(): PerformanceCheckpointDao
     abstract fun watchOnlyDao(): WatchOnlyDao
+    abstract fun missedSignalDao(): MissedSignalDao
 
     companion object {
         @Volatile
