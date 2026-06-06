@@ -24,6 +24,7 @@ import com.cryptotradecoach.data.local.StrategyHistoryEntity
 import com.cryptotradecoach.data.local.StrategyPerformanceEntity
 import com.cryptotradecoach.domain.BacktestEngine
 import com.cryptotradecoach.domain.BacktestResult
+import com.cryptotradecoach.domain.BtcRegime
 import com.cryptotradecoach.domain.SignalEngine
 import com.cryptotradecoach.service.ScannerStateStore
 import kotlinx.coroutines.Dispatchers
@@ -74,6 +75,7 @@ data class MainUiState(
     val scanIntervalMs: Long = ScannerStateStore.DEFAULT_SCAN_INTERVAL_MS,
     val maxDisplayCount: Int = ScannerStateStore.DEFAULT_MAX_DISPLAY_COUNT,
     val minimumScore: Double = ScannerStateStore.DEFAULT_MINIMUM_SCORE,
+    val currentBtcRegime: BtcRegime = BtcRegime.NEUTRAL,
     val gitHubSettings: GitHubSettings = GitHubSettings(),
     val settingsMessage: String? = null,
     val currentRulesText: String = "",
@@ -86,7 +88,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val historyRepository = SignalHistoryRepository.getInstance(application)
     private val settingsRepository = SettingsRepository.getInstance(application)
     private val rulesRepository = StrategyRulesRepository.getInstance(application)
-    private val reportRepository = StrategyReportRepository.getInstance(application)
+    private val reportRepository = StrategyReportRepository(application)
     private val appUpdateRepository = AppUpdateRepository(application.applicationContext)
     private val manualDataSource = UpbitMarketDataSource()
     private val manualEngine = SignalEngine()
@@ -115,6 +117,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch { ScannerStateStore.scanIntervalMs.collect { _uiState.value = _uiState.value.copy(scanIntervalMs = it) } }
         viewModelScope.launch { ScannerStateStore.maxDisplayCount.collect { _uiState.value = _uiState.value.copy(maxDisplayCount = it) } }
         viewModelScope.launch { ScannerStateStore.minimumScore.collect { _uiState.value = _uiState.value.copy(minimumScore = it) } }
+        viewModelScope.launch { ScannerStateStore.currentBtcRegime.collect { _uiState.value = _uiState.value.copy(currentBtcRegime = it) } }
         viewModelScope.launch { ScannerStateStore.backtestResults.collect { _uiState.value = _uiState.value.copy(backtestResults = it) } }
         viewModelScope.launch {
             ScannerStateStore.evolutionLog.collect { rows ->
@@ -199,228 +202,63 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun loadStrategyChart(strategy: TradeStrategy) {
-        loadStrategyChart(strategy, _uiState.value.selectedChartTimeframe)
-    }
-
-    fun selectChartTimeframe(timeframe: ChartTimeframe) {
-        val currentStrategy = _uiState.value.strategyChart?.strategy ?: _uiState.value.manualStrategy
-        _uiState.value = _uiState.value.copy(selectedChartTimeframe = timeframe)
-        currentStrategy?.let { loadStrategyChart(it, timeframe) }
-    }
+    fun loadStrategyChart(strategy: TradeStrategy) { loadStrategyChart(strategy, _uiState.value.selectedChartTimeframe) }
+    fun selectChartTimeframe(timeframe: ChartTimeframe) { val currentStrategy = _uiState.value.strategyChart?.strategy ?: _uiState.value.manualStrategy; _uiState.value = _uiState.value.copy(selectedChartTimeframe = timeframe); currentStrategy?.let { loadStrategyChart(it, timeframe) } }
 
     fun loadStrategyChart(strategy: TradeStrategy, timeframe: ChartTimeframe) {
         viewModelScope.launch {
             val loadingMessage = "차트 불러오는 중: ${strategy.symbol} · ${timeframe.label}"
-            _uiState.value = _uiState.value.copy(
-                selectedChartTimeframe = timeframe,
-                strategyChart = null,
-                chartMessage = loadingMessage,
-            )
-            val result = withTimeoutOrNull(CHART_LOAD_TIMEOUT_MS) {
-                withContext(Dispatchers.IO) {
-                    runCatching {
-                        val candles = fetchChartCandles(strategy.symbol, timeframe)
-                        val performance = db.signalHistoryDao().getPerformanceByStrategyId(strategy.id)
-                        StrategyChartSnapshot(
-                            strategy = strategy,
-                            timeframe = timeframe,
-                            candles = candles,
-                            performance = performance,
-                            message = if (candles.isEmpty()) {
-                                "차트 캔들 없음: ${strategy.symbol} · ${timeframe.label}"
-                            } else {
-                                "${timeframe.label} ${candles.size}개 로드 · ${strategy.symbol} · ${candles.first().timestamp.toTimeText()}~${candles.last().timestamp.toTimeText()}"
-                            },
-                        )
-                    }
-                }
-            }
-            if (result == null) {
-                _uiState.value = _uiState.value.copy(chartMessage = "차트 로딩 시간 초과: ${strategy.symbol} · ${timeframe.label}")
-                return@launch
-            }
+            _uiState.value = _uiState.value.copy(selectedChartTimeframe = timeframe, strategyChart = null, chartMessage = loadingMessage)
+            val result = withTimeoutOrNull(CHART_LOAD_TIMEOUT_MS) { withContext(Dispatchers.IO) { runCatching { loadCandles(strategy, timeframe) } } }
+            if (result == null) { _uiState.value = _uiState.value.copy(chartMessage = "차트 로딩 시간 초과: ${strategy.symbol}"); return@launch }
             result.fold(
-                onSuccess = { snapshot -> _uiState.value = _uiState.value.copy(strategyChart = snapshot, chartMessage = snapshot.message) },
-                onFailure = { error -> _uiState.value = _uiState.value.copy(chartMessage = "차트 로딩 실패: ${error.message ?: error::class.java.simpleName}") },
+                onSuccess = { candles ->
+                    val performance = withContext(Dispatchers.IO) { historyRepository.getRecentPerformance(windowMs = 7L * 24L * 60L * 60L * 1000L, limit = 1000).firstOrNull { it.strategyId == strategy.id } }
+                    _uiState.value = _uiState.value.copy(strategyChart = StrategyChartSnapshot(strategy = strategy, timeframe = timeframe, candles = candles, performance = performance, message = "차트 로딩 완료: ${strategy.symbol} · ${timeframe.label} · ${candles.size} candles"), chartMessage = null)
+                },
+                onFailure = { error -> _uiState.value = _uiState.value.copy(strategyChart = null, chartMessage = "차트 로딩 실패: ${error.message ?: error::class.java.simpleName}") },
             )
         }
     }
 
-    fun clearStrategyChart() {
-        _uiState.value = _uiState.value.copy(strategyChart = null, chartMessage = null)
-    }
+    fun clearStrategyChart() { _uiState.value = _uiState.value.copy(strategyChart = null, chartMessage = null) }
 
-    private fun fetchChartCandles(market: String, timeframe: ChartTimeframe): List<Candle> {
-        return timeframe.upbitMinuteUnit?.let { unit ->
-            manualDataSource.fetchMinuteCandles(market, unit = unit, count = timeframe.count)
-        } ?: fetchDayCandles(market, timeframe.count)
+    private fun loadCandles(strategy: TradeStrategy, timeframe: ChartTimeframe): List<Candle> {
+        return if (timeframe.upbitMinuteUnit != null) manualDataSource.fetchMinuteCandles(strategy.symbol, timeframe.upbitMinuteUnit, timeframe.count) else fetchDayCandles(strategy.symbol, timeframe.count)
     }
 
     private fun fetchDayCandles(market: String, count: Int): List<Candle> {
-        val url = "https://api.upbit.com/v1/candles/days?market=$market&count=$count"
-        val connection = (URL(url).openConnection() as HttpURLConnection).apply {
-            requestMethod = "GET"
-            connectTimeout = CHART_CONNECT_TIMEOUT_MS
-            readTimeout = CHART_READ_TIMEOUT_MS
-        }
+        val connection = (URL("https://api.upbit.com/v1/candles/days?market=$market&count=$count").openConnection() as HttpURLConnection).apply { requestMethod = "GET"; connectTimeout = 4_000; readTimeout = 4_000 }
         try {
-            val status = connection.responseCode
-            if (status != HttpURLConnection.HTTP_OK) throw IOException("daily candle HTTP $status")
-            val body = connection.inputStream.bufferedReader().use { it.readText() }
-            val array = JSONArray(body)
-            val candles = mutableListOf<Candle>()
-            for (i in 0 until array.length()) {
-                val item = array.getJSONObject(i)
-                candles += Candle(
-                    market = market,
-                    unit = 1440,
-                    timestamp = item.optLong("timestamp", 0L),
-                    open = item.optDouble("opening_price", 0.0),
-                    high = item.optDouble("high_price", 0.0),
-                    low = item.optDouble("low_price", 0.0),
-                    close = item.optDouble("trade_price", 0.0),
-                    volume = item.optDouble("candle_acc_trade_volume", 0.0),
-                    tradePrice = item.optDouble("candle_acc_trade_price", 0.0),
-                )
-            }
-            return candles.sortedBy { it.timestamp }
-        } finally {
-            connection.disconnect()
-        }
+            if (connection.responseCode != HttpURLConnection.HTTP_OK) throw IOException("HTTP ${connection.responseCode}")
+            val arr = JSONArray(connection.inputStream.bufferedReader().use { it.readText() })
+            return (0 until arr.length()).map { i ->
+                val obj = arr.getJSONObject(i)
+                Candle(market = market, unit = 1440, timestamp = obj.optLong("timestamp", 0L), open = obj.optDouble("opening_price", 0.0), high = obj.optDouble("high_price", 0.0), low = obj.optDouble("low_price", 0.0), close = obj.optDouble("trade_price", 0.0), volume = obj.optDouble("candle_acc_trade_volume", 0.0), tradePrice = obj.optDouble("candle_acc_trade_price", 0.0))
+            }.sortedBy { it.timestamp }
+        } finally { connection.disconnect() }
     }
 
-    fun saveGitHubSettings(settings: GitHubSettings) {
-        val normalized = settings.normalized()
-        val saved = settingsRepository.save(normalized)
-        _uiState.value = _uiState.value.copy(gitHubSettings = normalized, settingsMessage = if (saved) "Settings saved" else "Settings save failed")
-    }
+    fun refreshPerformance() { viewModelScope.launch { _uiState.value = _uiState.value.copy(performanceRows = withContext(Dispatchers.IO) { historyRepository.getRecentPerformance(limit = 500) }) } }
+    fun refreshBacktest() { viewModelScope.launch { val results = withContext(Dispatchers.IO) { BacktestEngine(db).runAll() }; ScannerStateStore.updateBacktestResults(results) } }
+    fun refreshEvolutionLog() { viewModelScope.launch { _uiState.value = _uiState.value.copy(evolutionLog = withContext(Dispatchers.IO) { db.evolutionLogDao().getRecent() }) } }
 
-    fun testGitHubSettings(settings: GitHubSettings) {
-        viewModelScope.launch {
-            val normalized = settings.normalized()
-            saveGitHubSettings(normalized)
-            val ok = withContext(Dispatchers.IO) {
-                runCatching {
-                    val rules = rulesRepository.refreshFromGitHub()
-                    _uiState.value = _uiState.value.copy(currentRulesText = currentRulesText(rules))
-                    true
-                }
-            }.fold(
-                onSuccess = { it },
-                onFailure = { error -> showGitHubMessage(gitHubFailureMessage("GitHub settings test failed", error)); return@launch },
-            )
-            showGitHubMessage(if (ok) "GitHub settings OK" else "GitHub settings test failed")
-        }
-    }
+    fun refreshCurrentRules() { _uiState.value = _uiState.value.copy(currentRulesText = currentRulesText(), settingsMessage = "현재 로컬 규칙을 다시 불러왔습니다.") }
+    fun saveRulesText(text: String) { runCatching { rulesRepository.persistLocal(StrategyRules.fromJson(text)); _uiState.value = _uiState.value.copy(currentRulesText = text, settingsMessage = "규칙 저장 완료") }.onFailure { _uiState.value = _uiState.value.copy(settingsMessage = "규칙 저장 실패: ${it.message}") } }
+    fun downloadLatestRules(settings: GitHubSettings = settingsRepository.load()) { viewModelScope.launch { val result = withContext(Dispatchers.IO) { rulesRepository.refreshFromGitHub(settings) }; _uiState.value = _uiState.value.copy(currentRulesText = result.toJson().toString(2), settingsMessage = "GitHub 규칙 다운로드 완료") } }
+    fun saveGitHubSettings(settings: GitHubSettings) { settingsRepository.save(settings); _uiState.value = _uiState.value.copy(gitHubSettings = settingsRepository.load(), settingsMessage = "GitHub 설정 저장 완료") }
+    fun testGitHubSettings(settings: GitHubSettings) { viewModelScope.launch { _uiState.value = _uiState.value.copy(settingsMessage = "GitHub 연결 테스트 중..."); val message = withContext(Dispatchers.IO) { runCatching { gitHubSyncClient.fetchText(settings.normalized()); "GitHub 연결 성공" }.getOrElse { error -> when (error) { is GitHubSyncException -> "GitHub 연결 실패: ${error.message}" else -> "GitHub 연결 실패: ${error.message ?: error::class.java.simpleName}" } } }; _uiState.value = _uiState.value.copy(settingsMessage = message) } }
+    fun uploadLatestReport(settings: GitHubSettings) { viewModelScope.launch { _uiState.value = _uiState.value.copy(settingsMessage = "리포트 업로드 중..."); val ok = withContext(Dispatchers.IO) { reportRepository.uploadLatestReport(settings) }; _uiState.value = _uiState.value.copy(settingsMessage = if (ok) "리포트 업로드 완료" else "리포트 업로드 실패") } }
+    fun openInstallPermissionSettings() { appUpdateRepository.openInstallPermissionSettings() }
+    fun downloadAndInstallLatestApk(settings: GitHubSettings) { viewModelScope.launch { _uiState.value = _uiState.value.copy(settingsMessage = "APK 다운로드 확인 중..."); val message = withContext(Dispatchers.IO) { appUpdateRepository.downloadAndInstallLatest(settings.normalized()) }; _uiState.value = _uiState.value.copy(settingsMessage = message) } }
 
-    fun downloadLatestRules(settings: GitHubSettings) {
-        viewModelScope.launch {
-            val normalized = settings.normalized()
-            saveGitHubSettings(normalized)
-            val before = withContext(Dispatchers.IO) { rulesRepository.loadLastKnownGood() }
-            val after = withContext(Dispatchers.IO) { rulesRepository.refreshFromGitHub() }
-            _uiState.value = _uiState.value.copy(currentRulesText = currentRulesText(after))
-            showGitHubMessage(if (after != before) "Latest rules downloaded and applied" else "Rules already up to date")
-        }
-    }
-
-    fun refreshCurrentRules() {
-        viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(currentRulesText = withContext(Dispatchers.IO) { currentRulesText() }, settingsMessage = "Current rules refreshed")
-        }
-    }
-
-    fun saveRulesText(rawJson: String) {
-        viewModelScope.launch {
-            val result = withContext(Dispatchers.IO) { runCatching { val rules = StrategyRules.fromJson(rawJson); rulesRepository.persistLocal(rules); rules.toJson().toString(2) } }
-            result.fold(
-                onSuccess = { _uiState.value = _uiState.value.copy(currentRulesText = it, settingsMessage = "Rules saved locally. 다음 스캔부터 적용됩니다.") },
-                onFailure = { _uiState.value = _uiState.value.copy(settingsMessage = "Rules save failed: ${it.message ?: it::class.java.simpleName}") },
-            )
-        }
-    }
-
-    fun refreshPerformance() { viewModelScope.launch { _uiState.value = _uiState.value.copy(performanceRows = withContext(Dispatchers.IO) { historyRepository.getRecentPerformance() }) } }
-    fun refreshBacktest() { viewModelScope.launch { val results = withContext(Dispatchers.IO) { BacktestEngine(db).runAll() }; ScannerStateStore.updateBacktestResults(results); _uiState.value = _uiState.value.copy(backtestResults = results) } }
-    fun refreshEvolutionLog() { viewModelScope.launch { val rows = withContext(Dispatchers.IO) { db.evolutionLogDao().getRecent() }; ScannerStateStore.updateEvolutionLog(rows); _uiState.value = _uiState.value.copy(evolutionLog = rows, lastEvolvedAt = rows.maxOfOrNull { it.changedAt }) } }
-
-    fun uploadLatestReport(settings: GitHubSettings) {
-        viewModelScope.launch {
-            val normalized = settings.normalized()
-            saveGitHubSettings(normalized)
-            if (normalized.token.isBlank()) {
-                showGitHubMessage("GitHub token is missing")
-                return@launch
-            }
-            val uploaded = withContext(Dispatchers.IO) { reportRepository.generateLatestReport(rulesRepository.loadLastKnownGood()); reportRepository.uploadLatestReport() }
-            refreshPerformance()
-            refreshBacktest()
-            showGitHubMessage(if (uploaded) "Latest report uploaded" else "Latest report upload failed")
-        }
-    }
-
-    fun openInstallPermissionSettings() {
-        showToast("APK 설치 권한 화면을 엽니다")
-        appUpdateRepository.openUnknownAppSourcesSettings()
-        _uiState.value = _uiState.value.copy(settingsMessage = "설정에서 이 앱의 APK 설치 허용을 켠 뒤 돌아와서 Download and install latest APK를 누르세요.")
-    }
-
-    fun downloadAndInstallLatestApk(settings: GitHubSettings) {
-        viewModelScope.launch {
-            showToast("APK 업데이트 버튼 눌림")
-            _uiState.value = _uiState.value.copy(settingsMessage = "APK 업데이트 버튼 눌림. 설치 권한 확인 중...")
-            val normalized = settings.normalized()
-            saveGitHubSettings(normalized)
-            if (!appUpdateRepository.canRequestPackageInstalls()) {
-                val message = "APK 설치 권한이 꺼져 있습니다. 권한 화면을 엽니다. 이 앱의 APK 설치 허용을 켠 뒤 다시 누르세요."
-                _uiState.value = _uiState.value.copy(settingsMessage = message)
-                showToast("APK 설치 권한 필요")
-                appUpdateRepository.openUnknownAppSourcesSettings()
-                return@launch
-            }
-            _uiState.value = _uiState.value.copy(settingsMessage = "최신 APK 다운로드 중... 네트워크 상태에 따라 1분 정도 걸릴 수 있습니다.")
-            showToast("APK 다운로드 시작")
-            val result = withContext(Dispatchers.IO) { runCatching { appUpdateRepository.downloadLatestReleaseApk(normalized) } }
-            result.fold(
-                onSuccess = { apkFile ->
-                    _uiState.value = _uiState.value.copy(settingsMessage = "APK 다운로드 완료. 설치 화면을 엽니다: ${apkFile.name}")
-                    showToast("APK 다운로드 완료")
-                    appUpdateRepository.openApkInstaller(apkFile)
-                },
-                onFailure = { error ->
-                    val message = "APK update failed: ${error.message ?: error::class.java.simpleName}"
-                    showGitHubMessage(message)
-                    showToast(message.take(90))
-                },
-            )
-        }
-    }
-
-    private fun showGitHubMessage(message: String) {
-        ScannerStateStore.setLastError(message.takeIf { it == "GitHub token is missing" || it.contains("HTTP ") || it.contains("failed", ignoreCase = true) })
-        _uiState.value = _uiState.value.copy(settingsMessage = message)
-    }
-
-    private fun showToast(message: String) {
-        Toast.makeText(getApplication<Application>().applicationContext, message, Toast.LENGTH_SHORT).show()
-    }
-
-    private fun gitHubFailureMessage(prefix: String, error: Throwable): String {
-        return if (error is GitHubSyncException) "$prefix at ${error.syncPoint}: HTTP ${error.statusCode}; endpoint=${error.endpoint}; branch=${error.branch}; path=${error.path}" else "$prefix: ${error::class.java.simpleName}"
-    }
-
-    private fun currentRulesText(): String = currentRulesText(rulesRepository.loadLastKnownGood())
-    private fun currentRulesText(rules: StrategyRules): String = rules.toJson().toString(2)
-
-    private fun Long.toTimeText(): String = java.text.SimpleDateFormat("MM-dd HH:mm", java.util.Locale.US).format(java.util.Date(this))
-
-    private data class ManualAnalyzeResult(val strategy: TradeStrategy?, val message: String)
+    private fun currentRulesText(): String = rulesRepository.loadLastKnownGood().toJson().toString(2)
+    private fun showToast(message: String) { Toast.makeText(getApplication(), message, Toast.LENGTH_SHORT).show() }
 
     companion object {
-        private const val MANUAL_ANALYSIS_TIMEOUT_MS = 15_000L
-        private const val CHART_LOAD_TIMEOUT_MS = 12_000L
-        private const val CHART_CONNECT_TIMEOUT_MS = 5_000
-        private const val CHART_READ_TIMEOUT_MS = 5_000
+        private const val MANUAL_ANALYSIS_TIMEOUT_MS = 9_000L
+        private const val CHART_LOAD_TIMEOUT_MS = 8_000L
     }
 }
+
+private data class ManualAnalyzeResult(val strategy: TradeStrategy?, val message: String)
