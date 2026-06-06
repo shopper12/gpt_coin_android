@@ -15,6 +15,8 @@ class PostMortemEngine(
     suspend fun analyze(limit: Int = DEFAULT_LIMIT): List<PostMortemResult> {
         val dao = db.signalHistoryDao()
         val rows = dao.getUnanalyzedMissedSignals(limit)
+            .filter { !it.isTracking || it.peakReturnPct >= MIN_PEAK_RETURN_PCT }
+            .sortedByDescending { maxOf(it.peakReturnPct, it.changeRate) }
         val results = rows.map { row ->
             val result = diagnose(row)
             dao.updateMissedSignalPostMortem(
@@ -54,18 +56,21 @@ class PostMortemEngine(
     }
 
     private fun diagnose(row: MissedSignalEntity): PostMortemResult {
+        val effectiveReturn = maxOf(row.peakReturnPct, row.changeRate)
         val marketState = when {
-            row.changeRate >= STRONG_PUMP_PCT -> "STRONG_MISSED_PUMP"
-            row.changeRate >= NORMAL_PUMP_PCT -> "NORMAL_MISSED_PUMP"
+            effectiveReturn >= STRONG_PUMP_PCT -> "STRONG_MISSED_PUMP"
+            effectiveReturn >= NORMAL_PUMP_PCT -> "NORMAL_MISSED_PUMP"
             else -> "MINOR_MISSED_MOVE"
         }
-        val reason = classifyReason(row)
+        val reason = classifyReason(row, effectiveReturn)
         val param = suggestedParam(row, reason)
         val diagnosis = buildString {
             append(marketState)
             append(" | reason=").append(reason)
             append(" | market=").append(row.market)
             append(" | return=").append(row.changeRate.one()).append("%")
+            append(" | peak=").append(effectiveReturn.one()).append("%")
+            append(" | regime=").append(row.btcRegimeAtMiss)
             append(" | rankChange=").append(row.rankByChangeRate)
             append(" | rankValue=").append(row.rankByTradeValue)
             append(" | before=").append(row.relatedRuleBefore.take(140))
@@ -75,19 +80,19 @@ class PostMortemEngine(
             missedReason = reason,
             diagnosis = diagnosis,
             suggestedParamAdjust = param,
-            returnPct = row.changeRate,
+            returnPct = effectiveReturn,
         )
     }
 
-    private fun classifyReason(row: MissedSignalEntity): String {
+    private fun classifyReason(row: MissedSignalEntity, effectiveReturn: Double): String {
         return when {
             row.missedReason == MissedSignalReason.TRADE_VALUE_FILTER_EXCLUDED -> "TRADE_VALUE_UNIVERSE_TOO_NARROW"
             row.missedReason == MissedSignalReason.SCORE_TOO_LOW -> "SCORE_THRESHOLD_TOO_HIGH"
             row.missedReason == MissedSignalReason.VOLUME_SCORE_TOO_LOW -> "VOLUME_ACCELERATION_TOO_STRICT"
             row.rankByTradeValue > 55 && row.rankByChangeRate <= 35 -> "EARLY_ROTATION_LIQUIDITY_FILTERED"
             row.rankByChangeRate > 60 && row.rankByTradeValue <= 45 -> "CHANGE_RANK_FILTER_TOO_NARROW"
-            row.changeRate >= STRONG_PUMP_PCT -> "LATE_REACTION_TO_STRONG_PUMP"
-            row.changeRate >= NORMAL_PUMP_PCT -> "MISSED_MODERATE_PUMP"
+            effectiveReturn >= STRONG_PUMP_PCT -> "LATE_REACTION_TO_STRONG_PUMP"
+            effectiveReturn >= NORMAL_PUMP_PCT -> "MISSED_MODERATE_PUMP"
             else -> row.missedReason.ifBlank { MissedSignalReason.UNKNOWN }
         }
     }
@@ -113,6 +118,7 @@ class PostMortemEngine(
 
     companion object {
         private const val DEFAULT_LIMIT = 50
+        private const val MIN_PEAK_RETURN_PCT = 3.0
         private const val NORMAL_PUMP_PCT = 4.5
         private const val STRONG_PUMP_PCT = 7.0
     }
