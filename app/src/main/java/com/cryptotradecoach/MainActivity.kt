@@ -3,6 +3,7 @@ package com.cryptotradecoach
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Paint
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -48,6 +49,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -63,11 +65,13 @@ import com.cryptotradecoach.data.local.StrategyPerformanceEntity
 import com.cryptotradecoach.domain.BacktestResult
 import com.cryptotradecoach.service.CoinScannerService
 import com.cryptotradecoach.service.ScannerStateStore
+import com.cryptotradecoach.ui.ChartTimeframe
 import com.cryptotradecoach.ui.MainViewModel
 import com.cryptotradecoach.ui.StrategyChartSnapshot
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.roundToInt
 
@@ -90,6 +94,7 @@ class MainActivity : ComponentActivity() {
                     lastEvolvedAt = state.lastEvolvedAt,
                     manualStrategy = state.manualStrategy,
                     manualMessage = state.manualMessage,
+                    selectedChartTimeframe = state.selectedChartTimeframe,
                     strategyChart = state.strategyChart,
                     chartMessage = state.chartMessage,
                     scanDiagnostics = state.scanDiagnostics,
@@ -117,6 +122,7 @@ class MainActivity : ComponentActivity() {
                     onManualAnalyze = viewModel::analyzeManualSymbol,
                     onManualSave = viewModel::saveManualStrategy,
                     onStrategyChart = viewModel::loadStrategyChart,
+                    onChartTimeframeSelected = viewModel::selectChartTimeframe,
                     onClearChart = viewModel::clearStrategyChart,
                     onReportUpload = viewModel::uploadLatestReport,
                     onOpenInstallPermissionSettings = viewModel::openInstallPermissionSettings,
@@ -153,6 +159,7 @@ private fun MainScreen(
     lastEvolvedAt: Long?,
     manualStrategy: TradeStrategy?,
     manualMessage: String?,
+    selectedChartTimeframe: ChartTimeframe,
     strategyChart: StrategyChartSnapshot?,
     chartMessage: String?,
     scanDiagnostics: ScanDiagnostics,
@@ -180,6 +187,7 @@ private fun MainScreen(
     onManualAnalyze: (String) -> Unit,
     onManualSave: () -> Unit,
     onStrategyChart: (TradeStrategy) -> Unit,
+    onChartTimeframeSelected: (ChartTimeframe) -> Unit,
     onClearChart: () -> Unit,
     onReportUpload: (GitHubSettings) -> Unit,
     onOpenInstallPermissionSettings: () -> Unit,
@@ -194,14 +202,12 @@ private fun MainScreen(
     Column(modifier = Modifier.fillMaxSize()) {
         Text("Crypto Trade Coach", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold, modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 8.dp))
         TabRow(selectedTabIndex = selectedTab) {
-            tabs.forEachIndexed { index, title ->
-                Tab(selected = selectedTab == index, onClick = { selectedTab = index }, text = { Text(title) })
-            }
+            tabs.forEachIndexed { index, title -> Tab(selected = selectedTab == index, onClick = { selectedTab = index }, text = { Text(title) }) }
         }
         when (selectedTab) {
             0 -> CurrentStrategiesTab(activeStrategies, scanDiagnostics, lastScanAt, minimumScore, chartMessage, openChart)
             1 -> ManualSearchTab(manualStrategy, manualMessage, chartMessage, onManualAnalyze, onManualSave, openChart)
-            2 -> ChartTab(strategyChart, chartMessage, onClearChart)
+            2 -> ChartTab(strategyChart, selectedChartTimeframe, chartMessage, onChartTimeframeSelected, onClearChart)
             3 -> StrategyHistoryTab(historyBySymbol)
             4 -> PerformanceTab(performanceRows, backtestResults, evolutionLog, lastEvolvedAt, onPerformanceRefresh, onBacktestRefresh, onEvolutionRefresh)
             5 -> RulesTab(currentRulesText, settingsMessage, onRulesRefresh, { onRulesDownload(gitHubSettings) }, onRulesSave)
@@ -217,11 +223,7 @@ private fun CurrentStrategiesTab(activeStrategies: List<TradeStrategy>, scanDiag
         chartMessage?.let { item { Text(it, style = MaterialTheme.typography.bodySmall) } }
         item { CurrentStrategySummaryCard(activeStrategies, scanDiagnostics, minimumScore) }
         item { DiagnosticsCard(scanDiagnostics) }
-        if (activeStrategies.isEmpty()) {
-            item { EmptyCard("No ACTIVE strategy. Settings에서 Minimum score와 Rejections를 확인하세요.") }
-        } else {
-            items(activeStrategies) { StrategyCard(it, onStrategyChart) }
-        }
+        if (activeStrategies.isEmpty()) item { EmptyCard("No ACTIVE strategy. Settings에서 Minimum score와 Rejections를 확인하세요.") } else items(activeStrategies) { StrategyCard(it, onStrategyChart) }
     }
 }
 
@@ -277,7 +279,7 @@ private fun ManualSearchTab(manualStrategy: TradeStrategy?, manualMessage: Strin
 }
 
 @Composable
-private fun ChartTab(snapshot: StrategyChartSnapshot?, chartMessage: String?, onClearChart: () -> Unit) {
+private fun ChartTab(snapshot: StrategyChartSnapshot?, selectedTimeframe: ChartTimeframe, chartMessage: String?, onTimeframeSelected: (ChartTimeframe) -> Unit, onClearChart: () -> Unit) {
     LazyColumn(modifier = Modifier.fillMaxSize().navigationBarsPadding().padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
         item {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -285,9 +287,16 @@ private fun ChartTab(snapshot: StrategyChartSnapshot?, chartMessage: String?, on
                 OutlinedButton(onClick = onClearChart, enabled = snapshot != null) { Text("Clear") }
             }
         }
+        item {
+            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                ChartTimeframe.values().forEach { tf ->
+                    FilterChip(selected = selectedTimeframe == tf, onClick = { onTimeframeSelected(tf) }, label = { Text(tf.label) })
+                }
+            }
+        }
         chartMessage?.let { item { Text(it, style = MaterialTheme.typography.bodySmall) } }
         if (snapshot == null) {
-            item { EmptyCard("전략 카드의 Chart 버튼을 누르면 이 화면으로 자동 이동하고 Upbit API 5분봉을 불러옵니다.") }
+            item { EmptyCard("전략 카드의 Chart 버튼을 누르면 이 화면으로 자동 이동하고 선택한 봉 차트를 불러옵니다.") }
         } else {
             item { StrategyChartCard(snapshot) }
             item { StrategyCard(snapshot.strategy, onStrategyChart = {}) }
@@ -298,14 +307,18 @@ private fun ChartTab(snapshot: StrategyChartSnapshot?, chartMessage: String?, on
 @Composable
 private fun StrategyChartCard(snapshot: StrategyChartSnapshot) {
     val strategy = snapshot.strategy
+    val current = snapshot.candles.lastOrNull()?.close ?: 0.0
+    val baseEntry = strategy.entryMid()
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text("${strategy.symbol} · ${strategy.strategyType.name.toKoreanStrategyName()} · 5분봉", fontWeight = FontWeight.Bold)
+            Text("${strategy.symbol} · ${strategy.strategyType.name.toKoreanStrategyName()} · ${snapshot.timeframe.label}", fontWeight = FontWeight.Bold)
             if (snapshot.candles.isEmpty()) {
                 Text("차트 데이터 없음")
             } else {
-                Box(modifier = Modifier.fillMaxWidth().height(260.dp)) { CandleOverlayChart(snapshot.candles, strategy) }
-                Text("진입 ${strategy.entryLow.price()}~${strategy.entryHigh.price()} | 손절 ${strategy.stopLoss.price()} | 목표 ${strategy.target1.price()} / ${strategy.target2.price()}")
+                Box(modifier = Modifier.fillMaxWidth().height(300.dp)) { CandleOverlayChart(snapshot.candles, strategy) }
+                Text("전략시점 ${strategy.createdAt.toTimeText()} | 현재 ${current.price()} (${baseEntry.toPct(current)})")
+                Text("진입 ${strategy.entryLow.price()}~${strategy.entryHigh.price()} | 손절 ${strategy.stopLoss.price()} (${baseEntry.toPct(strategy.stopLoss)})")
+                Text("목표1 ${strategy.target1.price()} (${baseEntry.toPct(strategy.target1)}) | 목표2 ${strategy.target2.price()} (${baseEntry.toPct(strategy.target2)})")
                 snapshot.performance?.let { row ->
                     Text("결과: 최신 ${row.latestPrice.price()} | 5m ${row.return5m.percentOrDash()} / 15m ${row.return15m.percentOrDash()} / 30m ${row.return30m.percentOrDash()} / 60m ${row.return60m.percentOrDash()}")
                     Text("MFE ${row.mfePct.percent()} | MAE ${row.maePct.percent()} | Stop ${row.stopHit} | T1 ${row.target1Hit} | T2 ${row.target2Hit}", style = MaterialTheme.typography.bodySmall)
@@ -322,14 +335,24 @@ private fun CandleOverlayChart(candles: List<Candle>, strategy: TradeStrategy) {
     val entryColor = Color(0xFF1565C0)
     val stopColor = Color(0xFFC62828)
     val targetColor = Color(0xFF6A1B9A)
+    val strategyTimeColor = Color(0xFFEF6C00)
     val outline = MaterialTheme.colorScheme.outline
     Canvas(modifier = Modifier.fillMaxSize()) {
-        val visible = candles.takeLast(80)
+        val visible = candles.takeLast(90)
         if (visible.isEmpty()) return@Canvas
         val prices = visible.flatMap { listOf(it.high, it.low) } + listOf(strategy.entryLow, strategy.entryHigh, strategy.stopLoss, strategy.target1, strategy.target2)
         val minPrice = prices.minOrNull() ?: return@Canvas
         val maxPrice = prices.maxOrNull() ?: return@Canvas
         val range = (maxPrice - minPrice).takeIf { it > 0.0 } ?: return@Canvas
+        val labelPaint = Paint().apply {
+            color = android.graphics.Color.WHITE
+            textSize = 24f
+            isAntiAlias = true
+        }
+        val bgPaint = Paint().apply {
+            color = android.graphics.Color.argb(170, 0, 0, 0)
+            isAntiAlias = true
+        }
         fun y(price: Double): Float = (size.height - ((price - minPrice) / range).toFloat() * size.height).coerceIn(0f, size.height)
         val candleWidth = size.width / visible.size.toFloat()
         visible.forEachIndexed { index, candle ->
@@ -338,12 +361,34 @@ private fun CandleOverlayChart(candles: List<Candle>, strategy: TradeStrategy) {
             drawLine(color, Offset(x, y(candle.low)), Offset(x, y(candle.high)), strokeWidth = 2f, cap = StrokeCap.Round)
             drawLine(color, Offset(x, y(maxOf(candle.open, candle.close))), Offset(x, y(minOf(candle.open, candle.close))), strokeWidth = max(3f, candleWidth * 0.55f), cap = StrokeCap.Round)
         }
-        fun h(price: Double, color: Color, width: Float) = drawLine(color, Offset(0f, y(price)), Offset(size.width, y(price)), strokeWidth = width)
-        h(strategy.entryLow, entryColor, 3f)
-        h(strategy.entryHigh, entryColor, 3f)
-        h(strategy.stopLoss, stopColor, 3f)
-        h(strategy.target1, targetColor, 2f)
-        h(strategy.target2, targetColor, 3f)
+        fun labeledLine(price: Double, color: Color, text: String, width: Float) {
+            val yy = y(price)
+            drawLine(color, Offset(0f, yy), Offset(size.width, yy), strokeWidth = width)
+            val labelX = 8f
+            val labelY = (yy - 6f).coerceIn(24f, size.height - 8f)
+            drawContext.canvas.nativeCanvas.drawRect(labelX - 4f, labelY - 24f, labelX + labelPaint.measureText(text) + 8f, labelY + 6f, bgPaint)
+            drawContext.canvas.nativeCanvas.drawText(text, labelX, labelY, labelPaint)
+        }
+        val base = strategy.entryMid()
+        labeledLine(strategy.entryLow, entryColor, "진입L ${strategy.entryLow.price()} ${base.toPct(strategy.entryLow)}", 3f)
+        labeledLine(strategy.entryHigh, entryColor, "진입H ${strategy.entryHigh.price()} ${base.toPct(strategy.entryHigh)}", 3f)
+        labeledLine(strategy.stopLoss, stopColor, "손절 ${strategy.stopLoss.price()} ${base.toPct(strategy.stopLoss)}", 3f)
+        labeledLine(strategy.target1, targetColor, "목표1 ${strategy.target1.price()} ${base.toPct(strategy.target1)}", 2f)
+        labeledLine(strategy.target2, targetColor, "목표2 ${strategy.target2.price()} ${base.toPct(strategy.target2)}", 3f)
+        val visibleStart = visible.first().timestamp
+        val visibleEnd = visible.last().timestamp
+        if (strategy.createdAt in visibleStart..visibleEnd) {
+            val nearestIndex = visible.indices.minByOrNull { idx -> abs(visible[idx].timestamp - strategy.createdAt) } ?: 0
+            val x = nearestIndex * candleWidth + candleWidth / 2f
+            drawLine(strategyTimeColor, Offset(x, 0f), Offset(x, size.height), strokeWidth = 3f)
+            val label = "전략 ${strategy.createdAt.toTimeText()}"
+            drawContext.canvas.nativeCanvas.drawRect(x + 4f, 6f, x + labelPaint.measureText(label) + 14f, 36f, bgPaint)
+            drawContext.canvas.nativeCanvas.drawText(label, x + 8f, 30f, labelPaint)
+        } else {
+            val label = "전략시점 ${strategy.createdAt.toTimeText()} 차트범위 밖"
+            drawContext.canvas.nativeCanvas.drawRect(6f, 6f, labelPaint.measureText(label) + 16f, 36f, bgPaint)
+            drawContext.canvas.nativeCanvas.drawText(label, 10f, 30f, labelPaint)
+        }
         drawLine(outline, Offset(0f, size.height - 1f), Offset(size.width, size.height - 1f), strokeWidth = 1f)
     }
 }
@@ -421,7 +466,7 @@ private fun RulesTab(currentRulesText: String, settingsMessage: String?, onRules
 }
 
 @Composable
-private fun StrategyManualCard() { Card(modifier = Modifier.fillMaxWidth()) { Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) { Text("현재 전략 설명", fontWeight = FontWeight.Bold); Text("Chart 탭은 Upbit API 5분봉 위에 진입·손절·목표·성과를 표시합니다."); Text("PRE_PUMP_ROTATION: 거래량 점화, 좁은 박스 상단, 상대강도 개선을 봅니다.") } } }
+private fun StrategyManualCard() { Card(modifier = Modifier.fillMaxWidth()) { Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) { Text("현재 전략 설명", fontWeight = FontWeight.Bold); Text("Chart 탭은 1분·5분·15분·1시간·4시간·일봉 차트 위에 진입·손절·목표·전략시점을 표시합니다."); Text("PRE_PUMP_ROTATION: 거래량 점화, 좁은 박스 상단, 상대강도 개선을 봅니다.") } } }
 
 @Composable
 private fun SettingsTab(isRunning: Boolean, scanIntervalMs: Long, maxDisplayCount: Int, minimumScore: Double, gitHubSettings: GitHubSettings, settingsMessage: String?, onStart: () -> Unit, onStop: () -> Unit, onIntervalSelected: (Long) -> Unit, onMaxDisplayChanged: (Int) -> Unit, onMinimumScoreChanged: (Double) -> Unit, onGitHubSettingsSaved: (GitHubSettings) -> Unit, onGitHubSettingsTest: (GitHubSettings) -> Unit, onRulesDownload: (GitHubSettings) -> Unit, onReportUpload: (GitHubSettings) -> Unit, onOpenInstallPermissionSettings: () -> Unit, onDownloadAndInstallLatestApk: (GitHubSettings) -> Unit) {
@@ -481,7 +526,9 @@ private fun StrategyCard(strategy: TradeStrategy, onStrategyChart: (TradeStrateg
 @Composable
 private fun EmptyCard(text: String) { Card(modifier = Modifier.fillMaxWidth()) { Text(text = text, modifier = Modifier.padding(12.dp)) } }
 
+private fun TradeStrategy.entryMid(): Double = (entryLow + entryHigh) / 2.0
 private fun TradeStrategy.koreanPlanLine(): String { val direction = if (strategyType.name == "BTC_SHORT_REGIME") "숏/하락" else "롱/상승"; return "$direction 전략 | 진입 ${entryLow.price()}~${entryHigh.price()} | 손절 ${stopLoss.price()} | 목표 ${target1.price()}/${target2.price()} | 24h ${changeRate24h.one()}% · 30m ${changeRate30m.one()}% · 5m ${changeRate5m.one()}% · 거래량 ${volumeAcceleration.one()}x" }
+private fun Double.toPct(price: Double): String = if (this <= 0.0) "-" else String.format(Locale.US, "%+.2f%%", ((price - this) / this) * 100.0)
 private fun String.toCompactPlan(): String = replace("rank=", "#").replace("score=", "점수 ").replace("entry=", "진입 ").replace("stop=", "손절 ").replace("target=", "목표 ").replace("trail=", "트레일 ").replace("status=", "").replace("strategy=", "")
 private fun String.toKoreanStrategyName(): String = when (this) { "COMPRESSION_BREAKOUT" -> "압축 돌파"; "SWEEP_RECLAIM" -> "저점 훼손 후 회복"; "TREND_PULLBACK" -> "추세 눌림 회복"; "BEAR_DECOUPLING_BOUNCE" -> "약세장 독립강세"; "PRE_PUMP_ROTATION" -> "급등 전 회전 포착"; "BTC_SHORT_REGIME" -> "비트코인 숏/위험회피"; "MOMENTUM_BREAKOUT" -> "모멘텀 돌파"; "PULLBACK_REBOUND" -> "눌림 반등"; "VOLUME_EXPANSION" -> "거래량 확장"; else -> this }
 private fun String.toKoreanEventName(): String = when (this) { "NEW_ACTIVE" -> "신규"; "MANUAL_SEARCH" -> "검색"; "RANK_UP" -> "순위"; "PRICE_PLAN_CHANGED" -> "변경"; "WATCH_ONLY" -> "관찰"; "INVALIDATED" -> "무효"; "TARGET1_HIT" -> "1차"; "TRAILING_STOP_HIT" -> "트레일"; "HIT_TARGET" -> "목표"; "STOPPED_OUT" -> "손절"; "EXPIRED" -> "만료"; else -> this }
