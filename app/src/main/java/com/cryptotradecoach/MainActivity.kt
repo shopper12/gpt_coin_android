@@ -68,6 +68,7 @@ import com.cryptotradecoach.ui.StrategyChartSnapshot
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlin.math.max
 import kotlin.math.roundToInt
 
 class MainActivity : ComponentActivity() {
