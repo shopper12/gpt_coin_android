@@ -11,6 +11,7 @@ import com.cryptotradecoach.data.local.StrategyPerformanceEntity
 import com.cryptotradecoach.data.local.StrategyScanLogEntity
 import com.cryptotradecoach.data.local.TradeStrategyEntity
 import com.cryptotradecoach.data.local.WatchOnlyEntity
+import com.cryptotradecoach.service.ScannerStateStore
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -186,6 +187,10 @@ class SignalHistoryRepository private constructor(
                         suggestedStrategy = item.strategyType.name,
                         relatedRuleBefore = "WATCH_ONLY score=${item.score.one()}; reason=${item.missedReason}; rankChange=${item.rankByChangeRate}; rankValue=${item.rankByTradeValue}",
                         suggestedRuleAfter = "WATCH_ONLY pumped after 30m; promote similar setups to ACTIVE when liquidity and volume confirm.",
+                        btcRegimeAtMiss = ScannerStateStore.currentBtcRegime.value.name,
+                        peakReturnPct = returnPct,
+                        peakReturnAt = now,
+                        isTracking = false,
                     ),
                 )
             }
@@ -207,6 +212,7 @@ class SignalHistoryRepository private constructor(
                 target1 = strategy.target1,
                 target2 = strategy.target2,
                 stopLoss = strategy.stopLoss,
+                btcRegimeAtSignal = ScannerStateStore.currentBtcRegime.value.name,
                 rankByTradeValue = strategy.rankByTradeValue,
                 score = strategy.score,
                 reason = strategy.reason,
