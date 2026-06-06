@@ -25,6 +25,7 @@ class SignalEngine {
         val tickers = candidates.map { it.ticker }
         val candleData = candidates.associate { candidate ->
             candidate.ticker.market to mapOf(
+                1 to candidate.oneMinuteCandles,
                 5 to candidate.fiveMinuteCandles,
                 15 to candidate.fifteenMinuteCandles,
                 240 to candidate.fourHourCandles,
@@ -117,6 +118,7 @@ class SignalEngine {
         rules: StrategyRules,
         now: Long,
     ): Evaluation? {
+        val one = candles[1].orEmpty().sortedBy { it.timestamp }
         val five = candles[5].orEmpty().sortedBy { it.timestamp }
         val fifteen = candles[15].orEmpty().sortedBy { it.timestamp }
         val fourHour = candles[240].orEmpty().sortedBy { it.timestamp }
@@ -133,6 +135,13 @@ class SignalEngine {
         val recentVolume = five.takeLast(3).sumOf { it.tradePrice }
         val baseVolume = five.dropLast(3).takeLast(20).sumOf { it.tradePrice } / 6.67
         val volumeAcceleration = if (baseVolume > 0.0) recentVolume / baseVolume else 1.0
+        val oneMinuteSpike = volumeSpikeEarly(
+            price = price,
+            changeRate5m = changeRate5m,
+            one = one,
+            five = five,
+            rules = rules,
+        )
 
         val overheatPenalty = overheatPenalty(changeRate24h, changeRate30m, changeRate5m, rules)
         val liquidityPenalty = liquidityPenalty(ticker.accTradePrice24h)
@@ -155,6 +164,7 @@ class SignalEngine {
                 changeRate30m = changeRate30m,
                 changeRate5m = changeRate5m,
                 volumeAcceleration = volumeAcceleration,
+                oneMinuteSpike = oneMinuteSpike,
                 rankByChangeRate = rankByChangeRate,
                 rankByTradeValue = rankByTradeValue,
                 five = five,
@@ -192,15 +202,17 @@ class SignalEngine {
         } else {
             price * (1.0 - max(riskPct * 0.55, rules.risk.minimumRiskPct) / 100.0)
         }
-        val componentScores = listOf(
-            "trendScore=${best.trendScore.one()}",
-            "compressionScore=${best.compressionScore.one()}",
-            "relativeVolumeScore=${best.relativeVolumeScore.one()}",
-            "breakoutProximityScore=${best.breakoutProximityScore.one()}",
-            "reclaimScore=${best.reclaimScore.one()}",
-            "riskRewardScore=${best.riskRewardScore.one()}",
-            "overheatPenalty=${overheatPenalty.one()}",
-            "liquidityPenalty=${liquidityPenalty.one()}",
+        val componentScores = (
+            listOf(
+                "trendScore=${best.trendScore.one()}",
+                "compressionScore=${best.compressionScore.one()}",
+                "relativeVolumeScore=${best.relativeVolumeScore.one()}",
+                "breakoutProximityScore=${best.breakoutProximityScore.one()}",
+                "reclaimScore=${best.reclaimScore.one()}",
+                "riskRewardScore=${best.riskRewardScore.one()}",
+                "overheatPenalty=${overheatPenalty.one()}",
+                "liquidityPenalty=${liquidityPenalty.one()}",
+            ) + best.diagnostics
         ).joinToString(";")
         val missedReason = when {
             status == StrategyStatus.ACTIVE -> null
@@ -505,6 +517,7 @@ class SignalEngine {
         changeRate30m: Double,
         changeRate5m: Double,
         volumeAcceleration: Double,
+        oneMinuteSpike: EarlySpikeSignal,
         rankByChangeRate: Int,
         rankByTradeValue: Int,
         five: List<Candle>,
@@ -527,17 +540,20 @@ class SignalEngine {
         val rotationOk = rankByChangeRate <= r.maxChangeRank || changeRate30m > r.minRotation30mPct
         val volumeIgnition = volumeAcceleration >= r.minVolumeAcceleration ||
             fiveVolumeRatio >= r.minFiveMinuteVolumeRatio ||
-            fifteenVolumeRatio >= r.minFifteenMinuteVolumeRatio
+            fifteenVolumeRatio >= r.minFifteenMinuteVolumeRatio ||
+            oneMinuteSpike.confirmed
         val structureOk = rangePct <= r.maxRangePct &&
             rangePos >= r.minRangePosition &&
             price >= prev20High * r.minHighProximityMultiplier
-        val active = r.enabled && notAlreadyPumped && liquidityOk && rotationOk && volumeIgnition && structureOk && closesUp >= r.minCloseStairCount
+        val closeStairOk = closesUp >= r.minCloseStairCount || oneMinuteSpike.confirmed
+        val active = r.enabled && notAlreadyPumped && liquidityOk && rotationOk && volumeIgnition && structureOk && closeStairOk
         val structureScore = when {
             structureOk -> 22.0
             rangePos >= 0.5 -> 12.0
             else -> 0.0
         }
-        val volumeScore = ((maxOf(volumeAcceleration, fiveVolumeRatio, fifteenVolumeRatio) - 1.0) * 18.0).coerceIn(0.0, 24.0)
+        val baseVolumeScore = ((maxOf(volumeAcceleration, fiveVolumeRatio, fifteenVolumeRatio) - 1.0) * 18.0).coerceIn(0.0, 24.0)
+        val volumeScore = (baseVolumeScore + oneMinuteSpike.score).coerceIn(0.0, 32.0)
         val rotationScore = when {
             rankByChangeRate <= 10 -> 20.0
             rankByChangeRate <= 25 -> 15.0
@@ -572,6 +588,9 @@ class SignalEngine {
                 "volAccel=${volumeAcceleration.one()}x",
                 "5mVolRatio=${fiveVolumeRatio.one()}x",
                 "15mVolRatio=${fifteenVolumeRatio.one()}x",
+                "1mSpike=${oneMinuteSpike.confirmed}",
+                "1mVolRatio=${oneMinuteSpike.volumeRatio.one()}x",
+                "1mMove=${oneMinuteSpike.priceMovePct.one()}%",
                 "rankChange=$rankByChangeRate",
                 "rankValue=$rankByTradeValue",
             ),
@@ -581,9 +600,10 @@ class SignalEngine {
                 if (!rotationOk) "NO_RELATIVE_ROTATION" else null,
                 if (!volumeIgnition) "NO_VOLUME_IGNITION" else null,
                 if (!structureOk) "NO_TIGHT_RANGE_BREAK_SETUP" else null,
-                if (closesUp < r.minCloseStairCount) "NO_5M_CLOSE_STAIR" else null,
+                if (!closeStairOk) "NO_5M_CLOSE_STAIR_OR_1M_SPIKE" else null,
             ),
             penaltySensitiveMultiplier = 0.35,
+            diagnostics = oneMinuteSpike.diagnostics,
         )
     }
 
@@ -685,6 +705,49 @@ class SignalEngine {
         )
     }
 
+    private fun volumeSpikeEarly(
+        price: Double,
+        changeRate5m: Double,
+        one: List<Candle>,
+        five: List<Candle>,
+        rules: StrategyRules,
+    ): EarlySpikeSignal {
+        if (one.size < 21) {
+            return EarlySpikeSignal(
+                confirmed = false,
+                score = 0.0,
+                volumeRatio = 0.0,
+                priceMovePct = 0.0,
+                diagnostics = listOf("1mCandles=${one.size}", "1mSpike=false", "1mReason=INSUFFICIENT_1M_CANDLES"),
+            )
+        }
+        val latest = one.last()
+        val baseTradePrice = one.dropLast(1).takeLast(20).averageTradePrice()
+        val volumeRatio = ratio(latest.tradePrice, baseTradePrice)
+        val priceMovePct = percentChange(latest.open, price)
+        val prev20High = five.dropLast(1).takeLast(20).maxOfOrNull { it.high } ?: price
+        val prev20Low = five.dropLast(1).takeLast(20).minOfOrNull { it.low } ?: price
+        val rangePct = percentChange(prev20Low, prev20High).coerceAtLeast(0.0)
+        val structureOk = rangePct <= rules.prePumpRotation.maxRangePct * 1.35 && price <= prev20High * 1.015
+        val notAlreadyMoved = priceMovePct <= EARLY_SPIKE_MAX_1M_MOVE_PCT && changeRate5m <= rules.prePumpRotation.maxChange5mPct
+        val confirmed = volumeRatio >= EARLY_SPIKE_MIN_VOLUME_RATIO && notAlreadyMoved && structureOk
+        val score = if (confirmed) ((volumeRatio - 1.0) * 5.0).coerceIn(6.0, 16.0) else 0.0
+        return EarlySpikeSignal(
+            confirmed = confirmed,
+            score = score,
+            volumeRatio = volumeRatio,
+            priceMovePct = priceMovePct,
+            diagnostics = listOf(
+                "1mCandles=${one.size}",
+                "1mSpike=$confirmed",
+                "1mVolRatio=${volumeRatio.one()}x",
+                "1mMove=${priceMovePct.one()}%",
+                "1mStructureOk=$structureOk",
+                "1mScore=${score.one()}",
+            ),
+        )
+    }
+
     private fun riskRewardScore(price: Double, stop: Double): Double {
         val riskPct = abs(percentChange(price, stop)).coerceAtLeast(0.1)
         val viable = riskPct in 0.1..4.0
@@ -718,7 +781,8 @@ class SignalEngine {
     private fun buildReason(setup: StrategySetup, score: Double, overheatPenalty: Double, liquidityPenalty: Double): String {
         val state = if (setup.active) "ACTIVE" else "WATCH_ONLY"
         val failed = if (setup.failed.isEmpty()) "none" else setup.failed.joinToString(",")
-        return "${setup.strategyType} $state; passed=${setup.passed.joinToString(",")}; failed=$failed; score=${score.one()}; overheatPenalty=${overheatPenalty.one()}; liquidityPenalty=${liquidityPenalty.one()}"
+        val diagnostics = if (setup.diagnostics.isEmpty()) "none" else setup.diagnostics.joinToString(",")
+        return "${setup.strategyType} $state; passed=${setup.passed.joinToString(",")}; failed=$failed; diagnostics=$diagnostics; score=${score.one()}; overheatPenalty=${overheatPenalty.one()}; liquidityPenalty=${liquidityPenalty.one()}"
     }
 
     private fun percentChange(from: Double, to: Double): Double {
@@ -735,9 +799,10 @@ class SignalEngine {
     private fun List<Double>.averageOrNull(): Double? = if (isEmpty()) null else average()
 
     private fun List<Double>.ema(period: Int): Double? {
-        if (size < period) return null
+        if (period <= 0 || size < period) return null
         val multiplier = 2.0 / (period + 1.0)
-        return drop(1).fold(first()) { acc, close -> (close - acc) * multiplier + acc }
+        val seed = take(period).average()
+        return drop(period).fold(seed) { ema, close -> (close - ema) * multiplier + ema }
     }
 
     private fun Double?.orZero(): Double = this ?: 0.0
@@ -780,6 +845,7 @@ class SignalEngine {
         val passed: List<String>,
         val failed: List<String>,
         val penaltySensitiveMultiplier: Double = 1.0,
+        val diagnostics: List<String> = emptyList(),
     )
 
     private data class ReclaimSetup(
@@ -790,6 +856,14 @@ class SignalEngine {
         val reclaimScore: Double,
     )
 
+    private data class EarlySpikeSignal(
+        val confirmed: Boolean,
+        val score: Double,
+        val volumeRatio: Double,
+        val priceMovePct: Double,
+        val diagnostics: List<String>,
+    )
+
     private data class Evaluation(
         val strategy: TradeStrategy,
         val log: StrategyScanLog,
@@ -798,5 +872,7 @@ class SignalEngine {
     companion object {
         val DEFAULT_MAX_RESULTS: Int = StrategyRules.DEFAULT.maxResults
         val DEFAULT_MINIMUM_SCORE: Double = StrategyRules.DEFAULT.minimumScore
+        private const val EARLY_SPIKE_MIN_VOLUME_RATIO = 2.8
+        private const val EARLY_SPIKE_MAX_1M_MOVE_PCT = 0.9
     }
 }
