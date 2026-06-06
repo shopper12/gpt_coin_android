@@ -28,6 +28,8 @@ data class BacktestResult(
     val bestScoreRange: String,
     val bestTimeOfDay: String,
     val avgHoldMinutes: Double,
+    val bearRegimeLossRate: Double = 0.0,
+    val bearRegimeSampleSize: Int = 0,
 )
 
 class BacktestEngine(private val db: AppDatabase) {
@@ -63,6 +65,8 @@ class BacktestEngine(private val db: AppDatabase) {
         val scores = rows.map { it.score }
         val corr = if (returnsForDecision.size == rows.size) pearsonCorr(scores, returnsForDecision) else 0.0
         val avgHoldMins = rows.map { row -> holdMinutes(row, checkpointsByStrategy[row.strategyId].orEmpty()) }.averageOrZero()
+        val bearPairs = rows.zip(returnsForDecision).filter { (row, _) -> row.btcRegimeAtSignal == "BEAR" || row.btcRegimeAtSignal == "CRASH" }
+        val bearLossRate = if (bearPairs.isEmpty()) 0.0 else bearPairs.count { (_, ret) -> ret <= 0.0 }.toDouble() / bearPairs.size
         return BacktestResult(
             strategyType = type,
             totalSignals = rows.size,
@@ -83,6 +87,8 @@ class BacktestEngine(private val db: AppDatabase) {
             bestScoreRange = bestRange,
             bestTimeOfDay = bestHourBucket(rows, returnsForDecision),
             avgHoldMinutes = avgHoldMins,
+            bearRegimeLossRate = bearLossRate,
+            bearRegimeSampleSize = bearPairs.size,
         )
     }
 
@@ -169,6 +175,8 @@ class BacktestEngine(private val db: AppDatabase) {
         bestScoreRange = "N/A",
         bestTimeOfDay = "N/A",
         avgHoldMinutes = 0.0,
+        bearRegimeLossRate = 0.0,
+        bearRegimeSampleSize = 0,
     )
 
     private fun List<Double>.averageOrZero(): Double = if (isEmpty()) 0.0 else average()
