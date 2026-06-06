@@ -28,6 +28,7 @@ import com.cryptotradecoach.data.local.MissedSignalEntity
 import com.cryptotradecoach.data.local.MissedSignalReason
 import com.cryptotradecoach.data.local.StrategyEventType
 import com.cryptotradecoach.domain.BacktestEngine
+import com.cryptotradecoach.domain.BtcRegime
 import com.cryptotradecoach.domain.SignalEngine
 import com.cryptotradecoach.domain.StrategyEvolver
 import kotlinx.coroutines.CoroutineScope
@@ -131,32 +132,61 @@ class CoinScannerService : Service() {
         val alerts = if (previousByMarket.isNotEmpty()) {
             tickers.mapNotNull { ticker ->
                 val previous = previousByMarket[ticker.market] ?: return@mapNotNull null
-                val volumeChange = if (previous.accTradeVolume24h > 0.0) {
-                    ticker.accTradeVolume24h / previous.accTradeVolume24h
-                } else {
-                    1.0
-                }
-                val valueChange = if (previous.accTradePrice24h > 0.0) {
-                    ticker.accTradePrice24h / previous.accTradePrice24h
-                } else {
-                    1.0
-                }
+                val volumeChange = if (previous.accTradeVolume24h > 0.0) ticker.accTradeVolume24h / previous.accTradeVolume24h else 1.0
+                val valueChange = if (previous.accTradePrice24h > 0.0) ticker.accTradePrice24h / previous.accTradePrice24h else 1.0
                 val volumeOrValueMoved = volumeChange >= 1.015 || valueChange >= 1.012
                 val priceNotExtended = ticker.signedChangeRate in -0.02..0.06
                 val liquidityOk = ticker.accTradePrice24h > medianTradeValue * 0.3
-                if (volumeOrValueMoved && priceNotExtended && liquidityOk) {
-                    ticker to maxOf(volumeChange, valueChange)
-                } else {
-                    null
-                }
+                if (volumeOrValueMoved && priceNotExtended && liquidityOk) ticker to maxOf(volumeChange, valueChange) else null
             }.sortedByDescending { it.second }.take(5).map { it.first }
         } else {
             emptyList()
         }
 
+        trackMissedSignalPeaks(tickers, now)
         recordMissedPumpCandidates(tickers, now, changeRanks, tradeValueRanks)
         ScannerStateStore.updateTickerSnapshot(tickers)
         ScannerStateStore.pushVolumeAlerts(alerts)
+    }
+
+    private suspend fun trackMissedSignalPeaks(tickers: List<Ticker>, now: Long) {
+        if (tickers.isEmpty()) return
+        val priceByMarket = tickers.associate { it.market to it.tradePrice }
+        val recent = db.signalHistoryDao().getRecentMissedSignals(200)
+        val recentlyTracked = recent
+            .filter { it.missedReason == PEAK_TRACKED_REASON && it.detectedAt >= now - MISSED_PEAK_RECORD_DEDUP_MS }
+            .map { it.market }
+            .toSet()
+        recent
+            .filter { it.detectedAt >= now - MISSED_PEAK_TRACKING_MS }
+            .filter { it.missedReason != PEAK_TRACKED_REASON }
+            .filter { it.market !in recentlyTracked }
+            .forEach { entity ->
+                val currentPrice = priceByMarket[entity.market] ?: return@forEach
+                if (entity.previousPrice <= 0.0 || currentPrice <= 0.0) return@forEach
+                val currentReturn = percentChange(entity.previousPrice, currentPrice)
+                val previousPeak = maxOf(entity.peakReturnPct, entity.changeRate)
+                if (currentReturn <= previousPeak || currentReturn < MIN_MISSED_PEAK_RECORD_PCT) return@forEach
+                db.signalHistoryDao().insertMissedSignal(
+                    MissedSignalEntity(
+                        market = entity.market,
+                        detectedAt = now,
+                        currentPrice = currentPrice,
+                        previousPrice = entity.previousPrice,
+                        changeRate = currentReturn,
+                        rankByChangeRate = entity.rankByChangeRate,
+                        rankByTradeValue = entity.rankByTradeValue,
+                        missedReason = PEAK_TRACKED_REASON,
+                        suggestedStrategy = entity.suggestedStrategy,
+                        relatedRuleBefore = "sourceMissedId=${entity.id}; sourceReason=${entity.missedReason}; sourceChange=${entity.changeRate.one()}%; sourcePeak=${previousPeak.one()}%",
+                        suggestedRuleAfter = "Peak-tracked missed move; prioritize high peakReturnPct rows in post-mortem and rescue universe.",
+                        btcRegimeAtMiss = entity.btcRegimeAtMiss,
+                        peakReturnPct = currentReturn,
+                        peakReturnAt = now,
+                        isTracking = false,
+                    ),
+                )
+            }
     }
 
     private suspend fun recordMissedPumpCandidates(
@@ -212,6 +242,10 @@ class CoinScannerService : Service() {
                     suggestedStrategy = "PRE_PUMP_ROTATION",
                     relatedRuleBefore = "maxTradeValueRank=${rules.prePumpRotation.maxTradeValueRank}; maxChangeRank=${rules.prePumpRotation.maxChangeRank}; minVolumeAcceleration=${rules.prePumpRotation.minVolumeAcceleration}; minFiveMinuteVolumeRatio=${rules.prePumpRotation.minFiveMinuteVolumeRatio}; maxRangePct=${rules.prePumpRotation.maxRangePct}; minimumScore=${rules.minimumScore}; missedPumpThreshold=$missedThreshold",
                     suggestedRuleAfter = "Widen candidate universe, lower pre-pump ignition thresholds, prioritize ACTIVE setups over WATCH_ONLY, and force-watch recurring missed markets.",
+                    btcRegimeAtMiss = ScannerStateStore.currentBtcRegime.value.name,
+                    peakReturnPct = movedPct,
+                    peakReturnAt = now,
+                    isTracking = true,
                 ),
             )
             ScannerStateStore.setLastError("Missed pump recorded: ${ticker.market} +${String.format(java.util.Locale.US, "%.1f", movedPct)}% reason=$reason threshold=${String.format(java.util.Locale.US, "%.1f", missedThreshold)}%")
@@ -456,9 +490,15 @@ class CoinScannerService : Service() {
     }
 
     private suspend fun adaptiveRescueMarkets(now: Long): Set<String> {
+        val regime = ScannerStateStore.currentBtcRegime.value
+        if (regime == BtcRegime.CRASH) return emptySet()
         val recent = db.signalHistoryDao().getRecentMissedSignals(80)
             .filter { it.detectedAt >= now - RESCUE_LOOKBACK_MS }
-            .sortedWith(compareByDescending<MissedSignalEntity> { it.changeRate }.thenBy { it.rankByTradeValue })
+            .filter { it.changeRate > 0.0 }
+            .filter { maxOf(it.peakReturnPct, it.changeRate) >= MIN_MISSED_PEAK_RECORD_PCT }
+            .filter { it.btcRegimeAtMiss != BtcRegime.CRASH.name }
+            .filter { regime == BtcRegime.BULL || it.btcRegimeAtMiss != BtcRegime.BEAR.name }
+            .sortedWith(compareByDescending<MissedSignalEntity> { maxOf(it.peakReturnPct, it.changeRate) }.thenBy { it.rankByTradeValue })
             .map { it.market }
             .distinct()
             .take(12)
@@ -468,9 +508,15 @@ class CoinScannerService : Service() {
 
     private fun missedPumpReturnThreshold(rules: StrategyRules): Double {
         val activeCount = ScannerStateStore.activeStrategies.value.size
+        val regimeBase = when (ScannerStateStore.currentBtcRegime.value) {
+            BtcRegime.BULL -> 2.5
+            BtcRegime.NEUTRAL -> 4.0
+            BtcRegime.BEAR -> 6.0
+            BtcRegime.CRASH -> 8.0
+        }
         val scoreAdjustment = when {
-            rules.minimumScore >= 75.0 -> -0.4
-            rules.minimumScore <= 62.0 -> 0.4
+            rules.minimumScore >= 75.0 -> -0.3
+            rules.minimumScore <= 62.0 -> 0.3
             else -> 0.0
         }
         val signalAdjustment = when {
@@ -478,7 +524,7 @@ class CoinScannerService : Service() {
             activeCount >= 5 -> 0.3
             else -> 0.0
         }
-        return (BASE_MISSED_PUMP_RETURN_PCT + scoreAdjustment + signalAdjustment).coerceIn(3.6, 5.4)
+        return (regimeBase + scoreAdjustment + signalAdjustment).coerceIn(2.0, 9.0)
     }
 
     private fun maybeAutoUploadLatestReport(now: Long = System.currentTimeMillis()) {
@@ -564,7 +610,10 @@ class CoinScannerService : Service() {
         private const val MISSED_PUMP_MIN_WINDOW_MS = 3L * 60L * 1000L
         private const val MISSED_PUMP_BASELINE_RESET_MS = 45L * 60L * 1000L
         private const val MISSED_PUMP_DUPLICATE_WINDOW_MS = 6L * 60L * 60L * 1000L
-        private const val BASE_MISSED_PUMP_RETURN_PCT = 4.5
+        private const val MISSED_PEAK_TRACKING_MS = 24L * 60L * 60L * 1000L
+        private const val MISSED_PEAK_RECORD_DEDUP_MS = 30L * 60L * 1000L
+        private const val MIN_MISSED_PEAK_RECORD_PCT = 3.0
+        private const val PEAK_TRACKED_REASON = "PEAK_TRACKED"
         private const val RESCUE_LOOKBACK_MS = 3L * 24L * 60L * 60L * 1000L
         private val FALLBACK_RESCUE_MARKETS = setOf(
             "KRW-XLM",
