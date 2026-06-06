@@ -96,6 +96,7 @@ object ScannerStateStore {
 
     fun updateBtcRegime(regime: BtcRegime) {
         _currentBtcRegime.value = regime
+        _activeStrategies.value = regimeFiltered(_activeStrategies.value)
     }
 
     fun updateBtcChange1h(value: Double) {
@@ -109,11 +110,12 @@ object ScannerStateStore {
         context: Context? = null,
     ) {
         markScanAttempt(context)
-        _activeStrategies.value = activeStrategies
+        val filtered = regimeFiltered(activeStrategies)
             .sortedWith(compareByDescending<TradeStrategy> { it.score }.thenBy { it.rank })
             .take(_maxDisplayCount.value)
+        _activeStrategies.value = filtered
         _historyBySymbol.value = historyBySymbol.toSortedMap()
-        _scanDiagnostics.value = diagnostics.copy(validSignals = activeStrategies, lastError = null)
+        _scanDiagnostics.value = diagnostics.copy(validSignals = filtered, lastError = null)
     }
 
     fun loadPersistedState(
@@ -121,7 +123,7 @@ object ScannerStateStore {
         historyBySymbol: Map<String, List<StrategyHistoryEntity>>,
         context: Context? = null,
     ) {
-        _activeStrategies.value = activeStrategies
+        _activeStrategies.value = regimeFiltered(activeStrategies)
             .sortedWith(compareByDescending<TradeStrategy> { it.score }.thenBy { it.rank })
             .take(_maxDisplayCount.value)
         _historyBySymbol.value = historyBySymbol.toSortedMap()
@@ -137,6 +139,14 @@ object ScannerStateStore {
         _lastScanAt.value = scanAt
         context?.persistLastScanAt(scanAt)
         return scanAt
+    }
+
+    private fun regimeFiltered(strategies: List<TradeStrategy>): List<TradeStrategy> {
+        val regime = _currentBtcRegime.value
+        val minimum = (_minimumScore.value + BtcRegimeDetector.minimumScoreDelta(regime)).coerceAtMost(90.0)
+        return strategies.filter { strategy ->
+            strategy.score >= minimum && BtcRegimeDetector.isStrategyAllowed(strategy.strategyType.name, regime)
+        }
     }
 
     private fun updateBtcRegimeFromTickers(tickers: List<Ticker>) {
