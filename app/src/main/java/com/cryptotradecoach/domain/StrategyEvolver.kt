@@ -4,6 +4,7 @@ import com.cryptotradecoach.data.StrategyRules
 import com.cryptotradecoach.data.StrategyRulesRepository
 import com.cryptotradecoach.data.local.AppDatabase
 import com.cryptotradecoach.data.local.EvolutionLogEntity
+import com.cryptotradecoach.service.ScannerStateStore
 
 // Applies conservative rule adjustments from realized backtest and missed-signal evidence.
 class StrategyEvolver(
@@ -12,7 +13,11 @@ class StrategyEvolver(
 ) {
     private var lastEvolvedAt: Long = 0L
 
-    suspend fun maybeEvolve(backtestResults: List<BacktestResult>, now: Long = System.currentTimeMillis()) {
+    suspend fun maybeEvolve(
+        backtestResults: List<BacktestResult>,
+        now: Long = System.currentTimeMillis(),
+        currentRegime: BtcRegime = ScannerStateStore.currentBtcRegime.value,
+    ) {
         if (now - lastEvolvedAt < EVOLUTION_INTERVAL_MS) return
         val current = rulesRepository.loadLastKnownGood()
         val postMortem = PostMortemEngine(db).analyze()
@@ -29,6 +34,7 @@ class StrategyEvolver(
             recentSignalCount = recentSignalCount,
             recentMissedCount = missedRows.size,
             postMortemTags = postMortem.map { it.missedReason } + missedRows.map { it.postMortemResult },
+            currentRegime = currentRegime,
         )
         if (evolved != current) {
             val changeLog = generateChangeLog(
@@ -58,6 +64,7 @@ class StrategyEvolver(
         recentSignalCount: Int,
         recentMissedCount: Int,
         postMortemTags: List<String>,
+        currentRegime: BtcRegime = BtcRegime.NEUTRAL,
     ): StrategyRules {
         var updated = rules
         results.forEach { result ->
@@ -81,6 +88,22 @@ class StrategyEvolver(
                         minHighProximityMultiplier = (prePump.minHighProximityMultiplier * 0.98).coerceAtLeast(0.90),
                     ),
                 )
+            }
+            if (result.bearRegimeSampleSize >= 5) {
+                val warnKey = "bear_warn_${result.strategyType}"
+                if (result.bearRegimeLossRate > 0.65) {
+                    val warnCount = (updated.customFlags[warnKey]?.toIntOrNull() ?: 0) + 1
+                    updated = updated.withCustomFlag(warnKey, warnCount.toString())
+                    if (warnCount >= 3) {
+                        updated = updated.withStrategyActiveFlag(result.strategyType, false)
+                    }
+                } else if (result.bearRegimeLossRate < 0.35) {
+                    val warnCount = ((updated.customFlags[warnKey]?.toIntOrNull() ?: 0) - 1).coerceAtLeast(0)
+                    updated = updated.withCustomFlag(warnKey, warnCount.toString())
+                    if (warnCount <= 0) {
+                        updated = updated.withStrategyActiveFlag(result.strategyType, true)
+                    }
+                }
             }
         }
         if (recentSignalCount < 3) {
@@ -126,6 +149,10 @@ class StrategyEvolver(
                 ),
             )
         }
+        if (currentRegime.isRisky()) {
+            val delta = BtcRegimeDetector.minimumScoreDelta(currentRegime) * 0.5
+            updated = updated.copy(minimumScore = (updated.minimumScore + delta).coerceAtMost(88.0))
+        }
         return updated
     }
 
@@ -145,7 +172,7 @@ class StrategyEvolver(
         lines += "최근 24시간 누락 신호 수=$recentMissedCount"
         if (postMortemTags.isNotEmpty()) lines += "PostMortem tags=${postMortemTags.joinToString()}"
         results.filter { it.sampleSize >= MIN_SAMPLES_FOR_EVOLUTION }.forEach { r ->
-            lines += "${r.strategyType}: winRate=${String.format(java.util.Locale.US, "%.1f", r.winRate * 100.0)}% sample=${r.sampleSize} expectancy=${String.format(java.util.Locale.US, "%.2f", r.expectancy)}%"
+            lines += "${r.strategyType}: winRate=${String.format(java.util.Locale.US, "%.1f", r.winRate * 100.0)}% sample=${r.sampleSize} expectancy=${String.format(java.util.Locale.US, "%.2f", r.expectancy)}% bearLoss=${String.format(java.util.Locale.US, "%.1f", r.bearRegimeLossRate * 100.0)}% bearN=${r.bearRegimeSampleSize}"
         }
         if (old.minimumScore != new.minimumScore) {
             lines += "minimumScore: ${String.format(java.util.Locale.US, "%.1f", old.minimumScore)} -> ${String.format(java.util.Locale.US, "%.1f", new.minimumScore)}"
@@ -155,6 +182,9 @@ class StrategyEvolver(
         }
         if (old.prePumpRotation != new.prePumpRotation) {
             lines += "prePumpRotation conditions adjusted"
+        }
+        if (old.customFlags != new.customFlags) {
+            lines += "customFlags adjusted=${new.customFlags}"
         }
         return lines.joinToString("\n")
     }
