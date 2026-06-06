@@ -58,6 +58,8 @@ import androidx.core.content.ContextCompat
 import com.cryptotradecoach.data.Candle
 import com.cryptotradecoach.data.GitHubSettings
 import com.cryptotradecoach.data.ScanDiagnostics
+import com.cryptotradecoach.data.StrategyStatus
+import com.cryptotradecoach.data.StrategyType
 import com.cryptotradecoach.data.TradeStrategy
 import com.cryptotradecoach.data.local.EvolutionLogEntity
 import com.cryptotradecoach.data.local.StrategyHistoryEntity
@@ -208,7 +210,7 @@ private fun MainScreen(
             0 -> CurrentStrategiesTab(activeStrategies, scanDiagnostics, lastScanAt, minimumScore, chartMessage, openChart)
             1 -> ManualSearchTab(manualStrategy, manualMessage, chartMessage, onManualAnalyze, onManualSave, openChart)
             2 -> ChartTab(strategyChart, selectedChartTimeframe, chartMessage, onChartTimeframeSelected, onClearChart)
-            3 -> StrategyHistoryTab(historyBySymbol)
+            3 -> StrategyHistoryTab(historyBySymbol, openChart)
             4 -> PerformanceTab(performanceRows, backtestResults, evolutionLog, lastEvolvedAt, onPerformanceRefresh, onBacktestRefresh, onEvolutionRefresh)
             5 -> RulesTab(currentRulesText, settingsMessage, onRulesRefresh, { onRulesDownload(gitHubSettings) }, onRulesSave)
             6 -> SettingsTab(isRunning, scanIntervalMs, maxDisplayCount, minimumScore, gitHubSettings, settingsMessage, onStart, onStop, onIntervalSelected, onMaxDisplayChanged, onMinimumScoreChanged, onGitHubSettingsSaved, onGitHubSettingsTest, onRulesDownload, onReportUpload, onOpenInstallPermissionSettings, onDownloadAndInstallLatestApk)
@@ -289,15 +291,11 @@ private fun ChartTab(snapshot: StrategyChartSnapshot?, selectedTimeframe: ChartT
         }
         item {
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                ChartTimeframe.values().forEach { tf ->
-                    FilterChip(selected = selectedTimeframe == tf, onClick = { onTimeframeSelected(tf) }, label = { Text(tf.label) })
-                }
+                ChartTimeframe.values().forEach { tf -> FilterChip(selected = selectedTimeframe == tf, onClick = { onTimeframeSelected(tf) }, label = { Text(tf.label) }) }
             }
         }
         chartMessage?.let { item { Text(it, style = MaterialTheme.typography.bodySmall) } }
-        if (snapshot == null) {
-            item { EmptyCard("전략 카드의 Chart 버튼을 누르면 이 화면으로 자동 이동하고 선택한 봉 차트를 불러옵니다.") }
-        } else {
+        if (snapshot == null) item { EmptyCard("차트 로딩 중이거나 아직 선택된 전략이 없습니다. 봉 변경 시 이전 차트는 지워지고 새 봉 데이터를 다시 불러옵니다.") } else {
             item { StrategyChartCard(snapshot) }
             item { StrategyCard(snapshot.strategy, onStrategyChart = {}) }
         }
@@ -309,12 +307,13 @@ private fun StrategyChartCard(snapshot: StrategyChartSnapshot) {
     val strategy = snapshot.strategy
     val current = snapshot.candles.lastOrNull()?.close ?: 0.0
     val baseEntry = strategy.entryMid()
+    val firstTime = snapshot.candles.firstOrNull()?.timestamp?.toTimeText() ?: "-"
+    val lastTime = snapshot.candles.lastOrNull()?.timestamp?.toTimeText() ?: "-"
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text("${strategy.symbol} · ${strategy.strategyType.name.toKoreanStrategyName()} · ${snapshot.timeframe.label}", fontWeight = FontWeight.Bold)
-            if (snapshot.candles.isEmpty()) {
-                Text("차트 데이터 없음")
-            } else {
+            Text("${strategy.symbol} · ${strategy.strategyType.name.toKoreanStrategyName()} · ${snapshot.timeframe.label} · ${snapshot.candles.firstOrNull()?.unit ?: "-"}unit", fontWeight = FontWeight.Bold)
+            Text("범위 $firstTime ~ $lastTime · 캔들 ${snapshot.candles.size}개", style = MaterialTheme.typography.bodySmall)
+            if (snapshot.candles.isEmpty()) Text("차트 데이터 없음") else {
                 Box(modifier = Modifier.fillMaxWidth().height(300.dp)) { CandleOverlayChart(snapshot.candles, strategy) }
                 Text("전략시점 ${strategy.createdAt.toTimeText()} | 현재 ${current.price()} (${baseEntry.toPct(current)})")
                 Text("진입 ${strategy.entryLow.price()}~${strategy.entryHigh.price()} | 손절 ${strategy.stopLoss.price()} (${baseEntry.toPct(strategy.stopLoss)})")
@@ -344,15 +343,8 @@ private fun CandleOverlayChart(candles: List<Candle>, strategy: TradeStrategy) {
         val minPrice = prices.minOrNull() ?: return@Canvas
         val maxPrice = prices.maxOrNull() ?: return@Canvas
         val range = (maxPrice - minPrice).takeIf { it > 0.0 } ?: return@Canvas
-        val labelPaint = Paint().apply {
-            color = android.graphics.Color.WHITE
-            textSize = 24f
-            isAntiAlias = true
-        }
-        val bgPaint = Paint().apply {
-            color = android.graphics.Color.argb(170, 0, 0, 0)
-            isAntiAlias = true
-        }
+        val labelPaint = Paint().apply { color = android.graphics.Color.WHITE; textSize = 24f; isAntiAlias = true }
+        val bgPaint = Paint().apply { color = android.graphics.Color.argb(170, 0, 0, 0); isAntiAlias = true }
         fun y(price: Double): Float = (size.height - ((price - minPrice) / range).toFloat() * size.height).coerceIn(0f, size.height)
         val candleWidth = size.width / visible.size.toFloat()
         visible.forEachIndexed { index, candle ->
@@ -394,11 +386,13 @@ private fun CandleOverlayChart(candles: List<Candle>, strategy: TradeStrategy) {
 }
 
 @Composable
-private fun StrategyHistoryTab(historyBySymbol: Map<String, List<StrategyHistoryEntity>>) {
+private fun StrategyHistoryTab(historyBySymbol: Map<String, List<StrategyHistoryEntity>>, onStrategyChart: (TradeStrategy) -> Unit) {
     var selectedSymbol by rememberSaveable { mutableStateOf("ALL") }
+    val allRows = historyBySymbol.values.flatten().sortedByDescending { it.createdAt }
     val symbols = historyBySymbol.keys.sorted()
-    val visible = if (selectedSymbol == "ALL") historyBySymbol.toSortedMap() else historyBySymbol.filterKeys { it == selectedSymbol }
+    val visibleMap = if (selectedSymbol == "ALL") historyBySymbol.toSortedMap() else historyBySymbol.filterKeys { it == selectedSymbol }
     LazyColumn(modifier = Modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        item { HistorySummaryCard(allRows) }
         item {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text("종목별 히스토리", fontWeight = FontWeight.Bold)
@@ -409,15 +403,51 @@ private fun StrategyHistoryTab(historyBySymbol: Map<String, List<StrategyHistory
                 }
             }
         }
-        if (visible.isEmpty()) item { EmptyCard("No matching strategy history.") } else visible.forEach { (symbol, rows) -> item { SymbolHistorySection(symbol, rows) } }
+        if (visibleMap.isEmpty()) item { EmptyCard("No matching strategy history.") } else visibleMap.forEach { (symbol, rows) -> item { SymbolHistorySection(symbol, rows, onStrategyChart) } }
     }
 }
 
 @Composable
-private fun SymbolHistorySection(symbol: String, rows: List<StrategyHistoryEntity>) { Card(modifier = Modifier.fillMaxWidth()) { Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) { Text("$symbol · ${rows.size}건", fontWeight = FontWeight.Bold); rows.take(4).forEach { CompactHistoryLine(it) }; if (rows.size > 4) Text("외 ${rows.size - 4}건", style = MaterialTheme.typography.bodySmall) } } }
+private fun HistorySummaryCard(rows: List<StrategyHistoryEntity>) {
+    val stop = rows.count { it.eventType == "STOPPED_OUT" || it.message.contains("Stop", true) }
+    val fail = rows.count { it.eventType in setOf("EXPIRED", "INVALIDATED", "WATCH_ONLY") || it.message.contains("expired", true) }
+    val profit = rows.count { it.eventType in setOf("TARGET1_HIT", "HIT_TARGET", "TRAILING_STOP_HIT") }
+    val reasons = rows.groupBy { it.message.ifBlank { it.eventType } }.entries.sortedByDescending { it.value.size }.take(3)
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text("History 요약", fontWeight = FontWeight.Bold)
+            Text("성공/수익: $profit | 손절: $stop | 실패/만료: $fail | 전체: ${rows.size}")
+            Text("이유", fontWeight = FontWeight.Bold)
+            reasons.forEach { Text("- ${it.key.toKoreanHistoryReason()} (${it.value.size})", style = MaterialTheme.typography.bodySmall) }
+            Text("보완: 손절 비중이 높으면 진입조건 완화가 아니라 entryHigh 추격 금지, ATR 손절폭, 거래량 점화 지속시간을 먼저 조정해야 합니다.", style = MaterialTheme.typography.bodySmall)
+        }
+    }
+}
 
 @Composable
-private fun CompactHistoryLine(history: StrategyHistoryEntity) { Text("${history.createdAt.toTimeText()} ${history.eventType.toKoreanEventName()} · ${(history.newSummary ?: history.message).toCompactPlan().take(95)}", style = MaterialTheme.typography.bodySmall) }
+private fun SymbolHistorySection(symbol: String, rows: List<StrategyHistoryEntity>, onStrategyChart: (TradeStrategy) -> Unit) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            val sortedRows = rows.sortedByDescending { it.createdAt }
+            Text("$symbol · ${rows.size}건", fontWeight = FontWeight.Bold)
+            sortedRows.take(6).forEach { CompactHistoryLine(it, onStrategyChart) }
+            if (rows.size > 6) Text("외 ${rows.size - 6}건", style = MaterialTheme.typography.bodySmall)
+        }
+    }
+}
+
+@Composable
+private fun CompactHistoryLine(history: StrategyHistoryEntity, onStrategyChart: (TradeStrategy) -> Unit) {
+    val restored = history.toTradeStrategyOrNull()
+    Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
+        Text("${history.createdAt.toTimeText()} ${history.eventType.toKoreanEventName()} · ${history.historyCategory()} · ${history.message.toKoreanHistoryReason()}", style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Bold)
+        Text((history.newSummary ?: history.oldSummary ?: "-").toCompactPlan().take(120), style = MaterialTheme.typography.bodySmall)
+        Text("보완: ${history.improvementHint()}", style = MaterialTheme.typography.bodySmall)
+        if (restored != null) {
+            OutlinedButton(onClick = { onStrategyChart(restored) }, modifier = Modifier.fillMaxWidth()) { Text("이 기록 차트 보기") }
+        }
+    }
+}
 
 @Composable
 private fun PerformanceTab(performanceRows: List<StrategyPerformanceEntity>, backtestResults: List<BacktestResult>, evolutionLog: List<EvolutionLogEntity>, lastEvolvedAt: Long?, onPerformanceRefresh: () -> Unit, onBacktestRefresh: () -> Unit, onEvolutionRefresh: () -> Unit) {
@@ -466,7 +496,7 @@ private fun RulesTab(currentRulesText: String, settingsMessage: String?, onRules
 }
 
 @Composable
-private fun StrategyManualCard() { Card(modifier = Modifier.fillMaxWidth()) { Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) { Text("현재 전략 설명", fontWeight = FontWeight.Bold); Text("Chart 탭은 1분·5분·15분·1시간·4시간·일봉 차트 위에 진입·손절·목표·전략시점을 표시합니다."); Text("PRE_PUMP_ROTATION: 거래량 점화, 좁은 박스 상단, 상대강도 개선을 봅니다.") } } }
+private fun StrategyManualCard() { Card(modifier = Modifier.fillMaxWidth()) { Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) { Text("현재 전략 설명", fontWeight = FontWeight.Bold); Text("Chart 탭은 1분·5분·15분·1시간·4시간·일봉 차트 위에 진입·손절·목표·전략시점을 표시합니다."); Text("History 탭은 실패/손절/이유/보완과 복원 가능한 차트 보기를 제공합니다.") } } }
 
 @Composable
 private fun SettingsTab(isRunning: Boolean, scanIntervalMs: Long, maxDisplayCount: Int, minimumScore: Double, gitHubSettings: GitHubSettings, settingsMessage: String?, onStart: () -> Unit, onStop: () -> Unit, onIntervalSelected: (Long) -> Unit, onMaxDisplayChanged: (Int) -> Unit, onMinimumScoreChanged: (Double) -> Unit, onGitHubSettingsSaved: (GitHubSettings) -> Unit, onGitHubSettingsTest: (GitHubSettings) -> Unit, onRulesDownload: (GitHubSettings) -> Unit, onReportUpload: (GitHubSettings) -> Unit, onOpenInstallPermissionSettings: () -> Unit, onDownloadAndInstallLatestApk: (GitHubSettings) -> Unit) {
@@ -526,16 +556,87 @@ private fun StrategyCard(strategy: TradeStrategy, onStrategyChart: (TradeStrateg
 @Composable
 private fun EmptyCard(text: String) { Card(modifier = Modifier.fillMaxWidth()) { Text(text = text, modifier = Modifier.padding(12.dp)) } }
 
+private fun StrategyHistoryEntity.toTradeStrategyOrNull(): TradeStrategy? {
+    val summary = newSummary ?: oldSummary ?: return null
+    val entry = Regex("entry=([0-9.,]+)-([0-9.,]+)").find(summary) ?: return null
+    val stop = Regex("stop=([0-9.,]+)").find(summary) ?: return null
+    val target = Regex("target=([0-9.,]+)/([0-9.,]+)").find(summary) ?: return null
+    val rank = Regex("rank=([0-9]+)").find(summary)?.groupValues?.getOrNull(1)?.toIntOrNull() ?: 999
+    val score = Regex("score=([0-9.]+)").find(summary)?.groupValues?.getOrNull(1)?.toDoubleOrNull() ?: 0.0
+    val strategyTypeName = Regex("strategy=([A-Z_]+)").find(summary)?.groupValues?.getOrNull(1)
+    val type = strategyTypeName?.let { runCatching { StrategyType.valueOf(it) }.getOrNull() } ?: StrategyType.WATCH_ONLY
+    val status = when (eventType) {
+        "STOPPED_OUT" -> StrategyStatus.STOPPED_OUT
+        "HIT_TARGET" -> StrategyStatus.HIT_TARGET
+        "TARGET1_HIT" -> StrategyStatus.TARGET1_HIT
+        "TRAILING_STOP_HIT" -> StrategyStatus.TRAILING_STOP_HIT
+        "EXPIRED" -> StrategyStatus.EXPIRED
+        else -> StrategyStatus.ACTIVE
+    }
+    val entryLow = entry.groupValues[1].parsePrice()
+    val entryHigh = entry.groupValues[2].parsePrice()
+    val stopLoss = stop.groupValues[1].parsePrice()
+    val target1 = target.groupValues[1].parsePrice()
+    val target2 = target.groupValues[2].parsePrice()
+    val entryMid = (entryLow + entryHigh) / 2.0
+    if (entryLow <= 0.0 || entryHigh <= 0.0 || stopLoss <= 0.0 || target1 <= 0.0) return null
+    return TradeStrategy(
+        id = strategyId,
+        symbol = symbol,
+        strategyType = type,
+        status = status,
+        score = score,
+        rank = rank,
+        entryLow = entryLow,
+        entryHigh = entryHigh,
+        stopLoss = stopLoss,
+        target1 = target1,
+        target2 = target2,
+        trailingStop = stopLoss,
+        expectedReturnPct = entryMid.toPctValue(target1),
+        riskPct = entryMid.toPctValue(stopLoss),
+        riskRewardRatio = if (entryMid > stopLoss) (target1 - entryMid) / (entryMid - stopLoss) else 0.0,
+        componentScores = "restored from history",
+        rankByChangeRate = 0,
+        rankByTradeValue = 0,
+        changeRate24h = 0.0,
+        changeRate30m = 0.0,
+        changeRate5m = 0.0,
+        volumeAcceleration = 0.0,
+        reason = message,
+        invalidationReason = null,
+        createdAt = createdAt,
+        updatedAt = createdAt,
+        validUntil = createdAt + 4 * 60 * 60 * 1000L,
+    )
+}
+
 private fun TradeStrategy.entryMid(): Double = (entryLow + entryHigh) / 2.0
 private fun TradeStrategy.koreanPlanLine(): String { val direction = if (strategyType.name == "BTC_SHORT_REGIME") "숏/하락" else "롱/상승"; return "$direction 전략 | 진입 ${entryLow.price()}~${entryHigh.price()} | 손절 ${stopLoss.price()} | 목표 ${target1.price()}/${target2.price()} | 24h ${changeRate24h.one()}% · 30m ${changeRate30m.one()}% · 5m ${changeRate5m.one()}% · 거래량 ${volumeAcceleration.one()}x" }
+private fun StrategyHistoryEntity.historyCategory(): String = when {
+    eventType == "STOPPED_OUT" || message.contains("Stop", true) -> "손절"
+    eventType in setOf("HIT_TARGET", "TARGET1_HIT", "TRAILING_STOP_HIT") -> "성공"
+    eventType in setOf("EXPIRED", "INVALIDATED", "WATCH_ONLY") -> "실패/만료"
+    else -> "진행/기록"
+}
+private fun StrategyHistoryEntity.improvementHint(): String = when {
+    eventType == "STOPPED_OUT" || message.contains("Stop", true) -> "진입 추격 여부, 손절폭, 거래량 지속성 확인"
+    eventType == "EXPIRED" -> "시간 내 변동성 부족. 기대수익률보다 MFE와 거래대금 조건 재검토"
+    eventType == "WATCH_ONLY" -> "관찰 신호가 실제 펌핑했는지 30분 후 성과와 비교"
+    eventType in setOf("HIT_TARGET", "TARGET1_HIT") -> "동일 조건 반복 가능. 단 목표 도달 후 재진입 금지"
+    else -> "점수 구성요소와 당시 차트 위치를 같이 확인"
+}
+private fun String.parsePrice(): Double = replace(",", "").toDoubleOrNull() ?: 0.0
+private fun Double.toPctValue(price: Double): Double = if (this <= 0.0) 0.0 else ((price - this) / this) * 100.0
 private fun Double.toPct(price: Double): String = if (this <= 0.0) "-" else String.format(Locale.US, "%+.2f%%", ((price - this) / this) * 100.0)
 private fun String.toCompactPlan(): String = replace("rank=", "#").replace("score=", "점수 ").replace("entry=", "진입 ").replace("stop=", "손절 ").replace("target=", "목표 ").replace("trail=", "트레일 ").replace("status=", "").replace("strategy=", "")
-private fun String.toKoreanStrategyName(): String = when (this) { "COMPRESSION_BREAKOUT" -> "압축 돌파"; "SWEEP_RECLAIM" -> "저점 훼손 후 회복"; "TREND_PULLBACK" -> "추세 눌림 회복"; "BEAR_DECOUPLING_BOUNCE" -> "약세장 독립강세"; "PRE_PUMP_ROTATION" -> "급등 전 회전 포착"; "BTC_SHORT_REGIME" -> "비트코인 숏/위험회피"; "MOMENTUM_BREAKOUT" -> "모멘텀 돌파"; "PULLBACK_REBOUND" -> "눌림 반등"; "VOLUME_EXPANSION" -> "거래량 확장"; else -> this }
+private fun String.toKoreanStrategyName(): String = when (this) { "COMPRESSION_BREAKOUT" -> "압축 돌파"; "SWEEP_RECLAIM" -> "저점 훼손 후 회복"; "TREND_PULLBACK" -> "추세 눌림 회복"; "BEAR_DECOUPLING_BOUNCE" -> "약세장 독립강세"; "PRE_PUMP_ROTATION" -> "급등 전 회전 포착"; "BTC_SHORT_REGIME" -> "비트코인 숏/위험회피"; "WATCH_ONLY" -> "관찰"; else -> this }
 private fun String.toKoreanEventName(): String = when (this) { "NEW_ACTIVE" -> "신규"; "MANUAL_SEARCH" -> "검색"; "RANK_UP" -> "순위"; "PRICE_PLAN_CHANGED" -> "변경"; "WATCH_ONLY" -> "관찰"; "INVALIDATED" -> "무효"; "TARGET1_HIT" -> "1차"; "TRAILING_STOP_HIT" -> "트레일"; "HIT_TARGET" -> "목표"; "STOPPED_OUT" -> "손절"; "EXPIRED" -> "만료"; else -> this }
+private fun String.toKoreanHistoryReason(): String = replace("Stop loss was reached.", "손절 도달").replace("Target1 was reached.", "1차 목표 도달").replace("Target2 was reached.", "2차 목표 도달").replace("Strategy valid window expired.", "유효시간 만료").replace("New ACTIVE strategy was created.", "신규 전략 생성")
 private fun String.toKoreanReasonHint(): String = replace("PRE_PUMP_ROTATION", "급등 전 회전 포착").replace("BTC_SHORT_REGIME", "비트코인 숏/위험회피").replace("COMPRESSION_BREAKOUT", "압축 돌파").replace("SWEEP_RECLAIM", "저점 훼손 후 회복").replace("TREND_PULLBACK", "추세 눌림 회복").replace("BEAR_DECOUPLING_BOUNCE", "약세장 독립강세").replace("ACTIVE", "활성").replace("WATCH_ONLY", "관찰")
 private fun Double.price(): String = String.format(Locale.US, "%,.2f", this)
 private fun Double.percent(): String = String.format(Locale.US, "%.2f%%", this)
 private fun Double?.percentOrDash(): String = this?.percent() ?: "-"
 private fun Double.one(): String = String.format(Locale.US, "%.1f", this)
 private fun List<Double>.averageOrNullText(): String = if (isEmpty()) "-" else average().percent()
-private fun Long.toTimeText(): String = SimpleDateFormat("HH:mm:ss", Locale.US).format(Date(this))
+private fun Long.toTimeText(): String = SimpleDateFormat("MM-dd HH:mm", Locale.US).format(Date(this))
