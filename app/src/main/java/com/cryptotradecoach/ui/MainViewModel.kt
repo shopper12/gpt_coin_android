@@ -88,7 +88,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val historyRepository = SignalHistoryRepository.getInstance(application)
     private val settingsRepository = SettingsRepository.getInstance(application)
     private val rulesRepository = StrategyRulesRepository.getInstance(application)
-    private val reportRepository = StrategyReportRepository(application)
+    private val reportRepository = StrategyReportRepository.getInstance(application)
     private val appUpdateRepository = AppUpdateRepository(application.applicationContext)
     private val manualDataSource = UpbitMarketDataSource()
     private val manualEngine = SignalEngine()
