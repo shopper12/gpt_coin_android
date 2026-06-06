@@ -33,9 +33,23 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
+import org.json.JSONArray
+import java.io.IOException
+import java.net.HttpURLConnection
+import java.net.URL
+
+enum class ChartTimeframe(val label: String, val upbitMinuteUnit: Int?, val count: Int) {
+    ONE_MINUTE("1분", 1, 120),
+    FIVE_MINUTE("5분", 5, 120),
+    FIFTEEN_MINUTE("15분", 15, 120),
+    ONE_HOUR("1시간", 60, 120),
+    FOUR_HOUR("4시간", 240, 120),
+    ONE_DAY("일봉", null, 120),
+}
 
 data class StrategyChartSnapshot(
     val strategy: TradeStrategy,
+    val timeframe: ChartTimeframe,
     val candles: List<Candle>,
     val performance: StrategyPerformanceEntity?,
     val message: String,
@@ -52,6 +66,7 @@ data class MainUiState(
     val lastEvolvedAt: Long? = null,
     val manualStrategy: TradeStrategy? = null,
     val manualMessage: String? = null,
+    val selectedChartTimeframe: ChartTimeframe = ChartTimeframe.FIVE_MINUTE,
     val strategyChart: StrategyChartSnapshot? = null,
     val chartMessage: String? = null,
     val scanDiagnostics: ScanDiagnostics = ScanDiagnostics(),
@@ -122,8 +137,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 return@launch
             }
             showToast("Analyze 버튼 눌림: $symbol")
-            _uiState.value = _uiState.value.copy(manualMessage = "분석 시작: $symbol", manualStrategy = null)
-            _uiState.value = _uiState.value.copy(manualMessage = "분석 중: $symbol")
+            _uiState.value = _uiState.value.copy(manualMessage = "분석 중: $symbol", manualStrategy = null)
 
             val result = withTimeoutOrNull(MANUAL_ANALYSIS_TIMEOUT_MS) {
                 withContext(Dispatchers.IO) {
@@ -131,11 +145,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                         val rules = rulesRepository.loadLastKnownGood()
                         val candidate = manualDataSource.fetchManualMarketCandidateFast(symbol, rules)
                             ?: return@runCatching ManualAnalyzeResult(null, manualDataSource.lastError ?: "후보 생성 실패: $symbol")
-                        val scanResult = manualEngine.scan(
-                            candidates = listOf(candidate),
-                            rules = rules,
-                            maxResults = 1,
-                        )
+                        val scanResult = manualEngine.scan(candidates = listOf(candidate), rules = rules, maxResults = 1)
                         val strategy = scanResult.activeStrategies.firstOrNull()?.copy(rank = 1)
                         val message = strategy?.let { "분석 완료: ${it.symbol}" }
                             ?: scanResult.scanLogs.firstOrNull()?.let { log ->
@@ -190,49 +200,90 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun loadStrategyChart(strategy: TradeStrategy) {
+        loadStrategyChart(strategy, _uiState.value.selectedChartTimeframe)
+    }
+
+    fun selectChartTimeframe(timeframe: ChartTimeframe) {
+        val currentStrategy = _uiState.value.strategyChart?.strategy ?: _uiState.value.manualStrategy
+        _uiState.value = _uiState.value.copy(selectedChartTimeframe = timeframe)
+        currentStrategy?.let { loadStrategyChart(it, timeframe) }
+    }
+
+    fun loadStrategyChart(strategy: TradeStrategy, timeframe: ChartTimeframe) {
         viewModelScope.launch {
-            val loadingMessage = "차트 불러오는 중: ${strategy.symbol}"
-            _uiState.value = _uiState.value.copy(chartMessage = loadingMessage)
+            val loadingMessage = "차트 불러오는 중: ${strategy.symbol} · ${timeframe.label}"
+            _uiState.value = _uiState.value.copy(selectedChartTimeframe = timeframe, chartMessage = loadingMessage)
             val result = withTimeoutOrNull(CHART_LOAD_TIMEOUT_MS) {
                 withContext(Dispatchers.IO) {
                     runCatching {
-                        val candles = manualDataSource.fetchMinuteCandles(strategy.symbol, unit = 5, count = CHART_CANDLE_COUNT)
+                        val candles = fetchChartCandles(strategy.symbol, timeframe)
                         val performance = db.signalHistoryDao().getPerformanceByStrategyId(strategy.id)
-                        if (candles.isEmpty()) {
-                            StrategyChartSnapshot(
-                                strategy = strategy,
-                                candles = emptyList(),
-                                performance = performance,
-                                message = "차트 캔들 없음: ${strategy.symbol}",
-                            )
-                        } else {
-                            StrategyChartSnapshot(
-                                strategy = strategy,
-                                candles = candles,
-                                performance = performance,
-                                message = "5분봉 ${candles.size}개 로드 · ${strategy.symbol}",
-                            )
-                        }
+                        StrategyChartSnapshot(
+                            strategy = strategy,
+                            timeframe = timeframe,
+                            candles = candles,
+                            performance = performance,
+                            message = if (candles.isEmpty()) {
+                                "차트 캔들 없음: ${strategy.symbol} · ${timeframe.label}"
+                            } else {
+                                "${timeframe.label} ${candles.size}개 로드 · ${strategy.symbol}"
+                            },
+                        )
                     }
                 }
             }
             if (result == null) {
-                _uiState.value = _uiState.value.copy(chartMessage = "차트 로딩 시간 초과: ${strategy.symbol}")
+                _uiState.value = _uiState.value.copy(chartMessage = "차트 로딩 시간 초과: ${strategy.symbol} · ${timeframe.label}")
                 return@launch
             }
             result.fold(
-                onSuccess = { snapshot ->
-                    _uiState.value = _uiState.value.copy(strategyChart = snapshot, chartMessage = snapshot.message)
-                },
-                onFailure = { error ->
-                    _uiState.value = _uiState.value.copy(chartMessage = "차트 로딩 실패: ${error.message ?: error::class.java.simpleName}")
-                },
+                onSuccess = { snapshot -> _uiState.value = _uiState.value.copy(strategyChart = snapshot, chartMessage = snapshot.message) },
+                onFailure = { error -> _uiState.value = _uiState.value.copy(chartMessage = "차트 로딩 실패: ${error.message ?: error::class.java.simpleName}") },
             )
         }
     }
 
     fun clearStrategyChart() {
         _uiState.value = _uiState.value.copy(strategyChart = null, chartMessage = null)
+    }
+
+    private fun fetchChartCandles(market: String, timeframe: ChartTimeframe): List<Candle> {
+        return timeframe.upbitMinuteUnit?.let { unit ->
+            manualDataSource.fetchMinuteCandles(market, unit = unit, count = timeframe.count)
+        } ?: fetchDayCandles(market, timeframe.count)
+    }
+
+    private fun fetchDayCandles(market: String, count: Int): List<Candle> {
+        val url = "https://api.upbit.com/v1/candles/days?market=$market&count=$count"
+        val connection = (URL(url).openConnection() as HttpURLConnection).apply {
+            requestMethod = "GET"
+            connectTimeout = CHART_CONNECT_TIMEOUT_MS
+            readTimeout = CHART_READ_TIMEOUT_MS
+        }
+        try {
+            val status = connection.responseCode
+            if (status != HttpURLConnection.HTTP_OK) throw IOException("daily candle HTTP $status")
+            val body = connection.inputStream.bufferedReader().use { it.readText() }
+            val array = JSONArray(body)
+            val candles = mutableListOf<Candle>()
+            for (i in 0 until array.length()) {
+                val item = array.getJSONObject(i)
+                candles += Candle(
+                    market = market,
+                    unit = 1440,
+                    timestamp = item.optLong("timestamp", 0L),
+                    open = item.optDouble("opening_price", 0.0),
+                    high = item.optDouble("high_price", 0.0),
+                    low = item.optDouble("low_price", 0.0),
+                    close = item.optDouble("trade_price", 0.0),
+                    volume = item.optDouble("candle_acc_trade_volume", 0.0),
+                    tradePrice = item.optDouble("candle_acc_trade_price", 0.0),
+                )
+            }
+            return candles.sortedBy { it.timestamp }
+        } finally {
+            connection.disconnect()
+        }
     }
 
     fun saveGitHubSettings(settings: GitHubSettings) {
@@ -363,6 +414,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     companion object {
         private const val MANUAL_ANALYSIS_TIMEOUT_MS = 15_000L
         private const val CHART_LOAD_TIMEOUT_MS = 12_000L
-        private const val CHART_CANDLE_COUNT = 120
+        private const val CHART_CONNECT_TIMEOUT_MS = 5_000
+        private const val CHART_READ_TIMEOUT_MS = 5_000
     }
 }
