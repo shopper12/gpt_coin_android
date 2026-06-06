@@ -8,6 +8,7 @@ import com.cryptotradecoach.data.local.EvolutionLogEntity
 import com.cryptotradecoach.data.local.StrategyHistoryEntity
 import com.cryptotradecoach.domain.BacktestResult
 import com.cryptotradecoach.domain.BtcRegime
+import com.cryptotradecoach.domain.BtcRegimeDetector
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -76,6 +77,7 @@ object ScannerStateStore {
     }
 
     fun updateTickerSnapshot(tickers: List<Ticker>) {
+        updateBtcRegimeFromTickers(tickers)
         _lastTickerSnapshot.value = tickers
     }
 
@@ -135,6 +137,21 @@ object ScannerStateStore {
         _lastScanAt.value = scanAt
         context?.persistLastScanAt(scanAt)
         return scanAt
+    }
+
+    private fun updateBtcRegimeFromTickers(tickers: List<Ticker>) {
+        val btc = tickers.firstOrNull { it.market == "KRW-BTC" } ?: return
+        val previous = _lastTickerSnapshot.value.firstOrNull { it.market == "KRW-BTC" }
+        val change1h = if (previous != null && previous.tradePrice > 0.0 && btc.tradePrice > 0.0) {
+            ((btc.tradePrice - previous.tradePrice) / previous.tradePrice) * 100.0
+        } else {
+            _btcChange1h.value
+        }
+        _btcChange1h.value = change1h
+        _currentBtcRegime.value = BtcRegimeDetector.detect(
+            btcChange24h = btc.signedChangeRate * 100.0,
+            btcChange1h = change1h,
+        )
     }
 
     private fun Context.persistLastScanAt(scanAt: Long) {
