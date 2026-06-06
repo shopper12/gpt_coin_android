@@ -7,6 +7,7 @@ import com.cryptotradecoach.data.TradeStrategy
 import com.cryptotradecoach.data.local.EvolutionLogEntity
 import com.cryptotradecoach.data.local.StrategyHistoryEntity
 import com.cryptotradecoach.domain.BacktestResult
+import com.cryptotradecoach.domain.BtcRegime
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -50,6 +51,12 @@ object ScannerStateStore {
     private val _lastEvolvedAt = MutableStateFlow<Long?>(null)
     val lastEvolvedAt: StateFlow<Long?> = _lastEvolvedAt
 
+    private val _currentBtcRegime = MutableStateFlow(BtcRegime.NEUTRAL)
+    val currentBtcRegime: StateFlow<BtcRegime> = _currentBtcRegime
+
+    private val _btcChange1h = MutableStateFlow(0.0)
+    val btcChange1h: StateFlow<Double> = _btcChange1h
+
     fun setRunning(running: Boolean) {
         _isRunning.value = running
     }
@@ -83,6 +90,14 @@ object ScannerStateStore {
     fun updateEvolutionLog(rows: List<EvolutionLogEntity>) {
         _ruleChangeLogs.value = rows
         _lastEvolvedAt.value = rows.maxOfOrNull { it.changedAt }
+    }
+
+    fun updateBtcRegime(regime: BtcRegime) {
+        _currentBtcRegime.value = regime
+    }
+
+    fun updateBtcChange1h(value: Double) {
+        _btcChange1h.value = value
     }
 
     fun pushScanResult(
