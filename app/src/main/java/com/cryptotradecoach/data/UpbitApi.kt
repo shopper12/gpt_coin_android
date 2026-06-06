@@ -135,9 +135,7 @@ class UpbitMarketDataSource : MarketDataSource {
             selectCandleTargets(tickers, boundedLimit, selectionRules)
         }
 
-        return selectedTickers.mapNotNull { ticker ->
-            ticker.toMarketCandidate(changeRanks, tradeValueRanks)
-        }
+        return selectedTickers.mapNotNull { ticker -> ticker.toMarketCandidate(changeRanks, tradeValueRanks) }
     }
 
     suspend fun fetchManualMarketCandidate(rawSymbol: String): MarketCandidate? {
@@ -154,14 +152,8 @@ class UpbitMarketDataSource : MarketDataSource {
                 lastError = "Manual search failed: unsupported Upbit KRW market $market"
                 return null
             }
-        val changeRanks = allTickers
-            .sortedByDescending { it.signedChangeRate }
-            .mapIndexed { index, row -> row.market to index + 1 }
-            .toMap()
-        val tradeValueRanks = allTickers
-            .sortedByDescending { it.accTradePrice24h }
-            .mapIndexed { index, row -> row.market to index + 1 }
-            .toMap()
+        val changeRanks = allTickers.sortedByDescending { it.signedChangeRate }.mapIndexed { index, row -> row.market to index + 1 }.toMap()
+        val tradeValueRanks = allTickers.sortedByDescending { it.accTradePrice24h }.mapIndexed { index, row -> row.market to index + 1 }.toMap()
         return ticker.toMarketCandidate(changeRanks, tradeValueRanks)
     }
 
@@ -312,13 +304,7 @@ class UpbitMarketDataSource : MarketDataSource {
         val targets = markets.distinct().filter { it.startsWith("KRW-") }
         if (targets.isEmpty()) return emptyList()
         return runCatching {
-            parseTickerArray(
-                fetchJsonArray(
-                    rawUrl = "https://api.upbit.com/v1/ticker?markets=${targets.joinToString(",")}",
-                    connectTimeoutMs = MANUAL_CONNECT_TIMEOUT_MS,
-                    readTimeoutMs = MANUAL_READ_TIMEOUT_MS,
-                ),
-            )
+            parseTickerArray(fetchJsonArray(rawUrl = "https://api.upbit.com/v1/ticker?markets=${targets.joinToString(",")}", connectTimeoutMs = MANUAL_CONNECT_TIMEOUT_MS, readTimeoutMs = MANUAL_READ_TIMEOUT_MS))
         }.onFailure { error ->
             lastError = "Manual ticker ${targets.joinToString(",")} failed: ${error.message ?: error::class.java.simpleName}"
         }.getOrDefault(emptyList())
@@ -346,10 +332,7 @@ class UpbitMarketDataSource : MarketDataSource {
         require(unit in SUPPORTED_UNITS) { "Unsupported Upbit candle unit: $unit" }
         val cacheKey = "$market:$unit"
         val now = System.currentTimeMillis()
-        candleCache[cacheKey]?.let { cached ->
-            if (now - cached.fetchedAt < CANDLE_CACHE_MS) return cached.candles
-        }
-
+        candleCache[cacheKey]?.let { cached -> if (now - cached.fetchedAt < CANDLE_CACHE_MS) return cached.candles }
         return withRetry("Upbit candle market=$market unit=$unit") {
             val array = fetchJsonArray("https://api.upbit.com/v1/candles/minutes/$unit?market=$market&count=$count")
             if (array.length() == 0) throw IOException("empty candle array market=$market unit=$unit")
@@ -363,15 +346,9 @@ class UpbitMarketDataSource : MarketDataSource {
         require(unit in SUPPORTED_UNITS) { "Unsupported Upbit candle unit: $unit" }
         val cacheKey = "$market:$unit"
         val now = System.currentTimeMillis()
-        candleCache[cacheKey]?.let { cached ->
-            if (now - cached.fetchedAt < CANDLE_CACHE_MS) return cached.candles
-        }
+        candleCache[cacheKey]?.let { cached -> if (now - cached.fetchedAt < CANDLE_CACHE_MS) return cached.candles }
         return runCatching {
-            val array = fetchJsonArray(
-                rawUrl = "https://api.upbit.com/v1/candles/minutes/$unit?market=$market&count=$count",
-                connectTimeoutMs = MANUAL_CONNECT_TIMEOUT_MS,
-                readTimeoutMs = MANUAL_READ_TIMEOUT_MS,
-            )
+            val array = fetchJsonArray(rawUrl = "https://api.upbit.com/v1/candles/minutes/$unit?market=$market&count=$count", connectTimeoutMs = MANUAL_CONNECT_TIMEOUT_MS, readTimeoutMs = MANUAL_READ_TIMEOUT_MS)
             if (array.length() == 0) throw IOException("empty candle array market=$market unit=$unit")
             val sorted = parseCandles(market, unit, array)
             candleCache[cacheKey] = CachedCandles(System.currentTimeMillis(), sorted)
@@ -400,11 +377,7 @@ class UpbitMarketDataSource : MarketDataSource {
         return candles.sortedBy { it.timestamp }
     }
 
-    private fun fetchJsonArray(
-        rawUrl: String,
-        connectTimeoutMs: Int = DEFAULT_CONNECT_TIMEOUT_MS,
-        readTimeoutMs: Int = DEFAULT_READ_TIMEOUT_MS,
-    ): JSONArray {
+    private fun fetchJsonArray(rawUrl: String, connectTimeoutMs: Int = DEFAULT_CONNECT_TIMEOUT_MS, readTimeoutMs: Int = DEFAULT_READ_TIMEOUT_MS): JSONArray {
         throttleRequest()
         val connection = (URL(rawUrl).openConnection() as HttpURLConnection).apply {
             requestMethod = "GET"
@@ -414,10 +387,7 @@ class UpbitMarketDataSource : MarketDataSource {
         try {
             val statusCode = connection.responseCode
             if (statusCode != HttpURLConnection.HTTP_OK) {
-                val errorBody = runCatching { connection.errorStream?.bufferedReader()?.use { it.readText() } }
-                    .getOrNull()
-                    .orEmpty()
-                    .take(160)
+                val errorBody = runCatching { connection.errorStream?.bufferedReader()?.use { it.readText() } }.getOrNull().orEmpty().take(160)
                 throw IOException("HTTP $statusCode ${errorBody.ifBlank { rawUrl }}")
             }
             val body = connection.inputStream.bufferedReader().use { it.readText() }
@@ -448,24 +418,14 @@ class UpbitMarketDataSource : MarketDataSource {
         return null
     }
 
-    private fun isHardRiskOff(rules: StrategyRules): Boolean {
-        return btcChangeRate24h <= rules.scoring.hardBlockBtc24hBelowPct
-    }
-
-    private fun isSoftRiskOff(): Boolean {
-        return btcChangeRate24h <= SOFT_RISK_OFF_BTC_24H_PCT
-    }
-
-    private fun marketRiskOffMessage(rules: StrategyRules, action: String): String {
-        return "전체 코인 시장 약세: BTC 24h ${btcChangeRate24h.one()}% <= ${rules.scoring.hardBlockBtc24hBelowPct.one()}%. $action"
-    }
+    private fun isHardRiskOff(rules: StrategyRules): Boolean = btcChangeRate24h <= rules.scoring.hardBlockBtc24hBelowPct
+    private fun isSoftRiskOff(): Boolean = btcChangeRate24h <= SOFT_RISK_OFF_BTC_24H_PCT
+    private fun marketRiskOffMessage(rules: StrategyRules, action: String): String = "전체 코인 시장 약세: BTC 24h ${btcChangeRate24h.one()}% <= ${rules.scoring.hardBlockBtc24hBelowPct.one()}%. $action"
 
     private fun throttleRequest() {
         val now = System.currentTimeMillis()
         val waitMs = MIN_REQUEST_INTERVAL_MS - (now - lastRequestAt)
-        if (waitMs > 0) {
-            Thread.sleep(waitMs)
-        }
+        if (waitMs > 0) Thread.sleep(waitMs)
         lastRequestAt = System.currentTimeMillis()
     }
 
@@ -474,15 +434,13 @@ class UpbitMarketDataSource : MarketDataSource {
         return ((to - from) / from) * 100.0
     }
 
-    private data class CachedCandles(
-        val fetchedAt: Long,
-        val candles: List<Candle>,
-    )
+    private data class CachedCandles(val fetchedAt: Long, val candles: List<Candle>)
 
     private fun countForUnit(unit: Int): Int = when (unit) {
         1 -> 60
         5 -> 60
         15 -> 50
+        60 -> 120
         240 -> 120
         else -> 50
     }
@@ -500,21 +458,7 @@ class UpbitMarketDataSource : MarketDataSource {
         private const val MANUAL_CONNECT_TIMEOUT_MS = 2_500
         private const val MANUAL_READ_TIMEOUT_MS = 2_500
         private const val SOFT_RISK_OFF_BTC_24H_PCT = -1.5
-        private val SUPPORTED_UNITS = setOf(1, 5, 15, 240)
-        private val FORCE_WATCH_MARKETS = setOf(
-            "KRW-XLM",
-            "KRW-XRP",
-            "KRW-ADA",
-            "KRW-DOGE",
-            "KRW-SOL",
-            "KRW-LINK",
-            "KRW-AVAX",
-            "KRW-DOT",
-            "KRW-SUI",
-            "KRW-APT",
-            "KRW-ONDO",
-            "KRW-HBAR",
-            "KRW-STX",
-        )
+        private val SUPPORTED_UNITS = setOf(1, 5, 15, 60, 240)
+        private val FORCE_WATCH_MARKETS = setOf("KRW-XLM", "KRW-XRP", "KRW-ADA", "KRW-DOGE", "KRW-SOL", "KRW-LINK", "KRW-AVAX", "KRW-DOT", "KRW-SUI", "KRW-APT", "KRW-ONDO", "KRW-HBAR", "KRW-STX")
     }
 }
