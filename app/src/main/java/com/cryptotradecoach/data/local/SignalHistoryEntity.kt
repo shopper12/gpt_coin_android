@@ -164,6 +164,7 @@ data class StrategyPerformanceEntity(
     val expired: Boolean = false,
     val isComplete: Boolean = false,
     val btcChangeRate24h: Double = 0.0,
+    val btcRegimeAtSignal: String = "NEUTRAL",
     val rankByTradeValue: Int,
     val score: Double,
     val reason: String,
@@ -234,6 +235,7 @@ data class PriceSnapshotEntity(
         Index(value = ["market", "detectedAt"]),
         Index(value = ["missedReason", "detectedAt"]),
         Index(value = ["isAnalyzed", "detectedAt"]),
+        Index(value = ["isTracking", "detectedAt"]),
     ],
 )
 data class MissedSignalEntity(
@@ -253,6 +255,10 @@ data class MissedSignalEntity(
     val postMortemResult: String = "",
     val suggestedParamAdjust: String = "",
     val isAnalyzed: Boolean = false,
+    val btcRegimeAtMiss: String = "NEUTRAL",
+    val peakReturnPct: Double = 0.0,
+    val peakReturnAt: Long = 0L,
+    val isTracking: Boolean = true,
 )
 
 @Entity(
