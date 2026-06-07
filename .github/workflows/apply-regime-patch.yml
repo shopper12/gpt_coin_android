@@ -1,6 +1,11 @@
 name: Apply Regime Patch
 
 on:
+  push:
+    branches: [ main ]
+    paths:
+      - tools/apply_regime_patch.py
+      - .github/workflows/apply-regime-patch.yml
   workflow_dispatch:
 
 permissions:
