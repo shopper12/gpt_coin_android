@@ -41,6 +41,7 @@ class SignalHistoryRepository private constructor(
         if (scanResult.scanLogs.isNotEmpty()) {
             dao.insertScanLogs(scanResult.scanLogs.map { it.toEntity() })
             recordWatchOnlyCandidates(scanResult.scanLogs, now)
+            recordTopScanMissHistory(scanResult.scanLogs, now, events)
         }
         updateOpenPerformance(currentPrices, now)
         resolveDueWatchOnly(currentPrices, now)
@@ -55,7 +56,6 @@ class SignalHistoryRepository private constructor(
                     now = now,
                 )
                 if (terminalStatus == null) {
-                    // Strategy lock: once ACTIVE, keep original entry/stop/targets until profit, stop, trailing stop, or expiry.
                     return@forEach
                 }
                 closeTerminalStrategy(previous, terminalStatus, now, events)
@@ -156,6 +156,34 @@ class SignalHistoryRepository private constructor(
                         volumeAcceleration = log.volumeAcceleration,
                     ),
                 )
+            }
+    }
+
+    private suspend fun recordTopScanMissHistory(
+        scanLogs: List<StrategyScanLog>,
+        now: Long,
+        events: MutableList<StrategyHistoryEntity>,
+    ) {
+        scanLogs
+            .filter { it.currentPrice > 0.0 }
+            .filter { it.selectedOrMissed == "MISSED" || it.strategyStatus == StrategyStatus.WATCH_ONLY }
+            .sortedWith(
+                compareByDescending<StrategyScanLog> { it.score }
+                    .thenBy { it.rankByChangeRate }
+                    .thenBy { it.rankByTradeValue },
+            )
+            .take(MAX_SCAN_MISS_HISTORY_ROWS)
+            .forEach { log ->
+                val event = StrategyHistoryEntity(
+                    strategyId = "SCAN_MISS-${log.market}-${log.strategyType.name}-$now",
+                    symbol = log.market,
+                    eventType = StrategyEventType.WATCH_ONLY,
+                    oldSummary = null,
+                    newSummary = "rank=0 score=${log.score.one()} status=${log.strategyStatus} strategy=${log.strategyType} reason=${log.missedReason ?: "-"}",
+                    message = "Scanned but not selected. change24h=${log.changeRate24h.one()}% change30m=${log.changeRate30m.one()}% change5m=${log.changeRate5m.one()}% rankChange=${log.rankByChangeRate} rankValue=${log.rankByTradeValue}",
+                    createdAt = now,
+                )
+                insertDedupedHistory(event, now)?.let { events += it }
             }
     }
 
@@ -510,6 +538,7 @@ class SignalHistoryRepository private constructor(
         private const val WATCH_ONLY_CHECK_AFTER_MS = 30 * 60 * 1000L
         private const val WATCH_ONLY_DEDUP_MS = 30 * 60 * 1000L
         private const val WATCH_ONLY_PUMP_RETURN_PCT = 5.0
+        private const val MAX_SCAN_MISS_HISTORY_ROWS = 8
 
         @Volatile
         private var instance: SignalHistoryRepository? = null
