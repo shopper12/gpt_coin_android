@@ -284,6 +284,7 @@ class CoinScannerService : Service() {
             rules = rules,
             minimumScore = minimumScore,
             maxResults = maxDisplayCount,
+            btcRegime = ScannerStateStore.currentBtcRegime.value,
         )
         val scanResult = rescueMissedPrePumpCandidates(
             base = baseScanResult,

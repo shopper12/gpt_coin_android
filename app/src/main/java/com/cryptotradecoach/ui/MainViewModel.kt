@@ -145,7 +145,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                         val rules = rulesRepository.loadLastKnownGood()
                         val candidate = manualDataSource.fetchManualMarketCandidateFast(symbol, rules)
                             ?: return@runCatching ManualAnalyzeResult(null, manualDataSource.lastError ?: "후보 생성 실패: $symbol")
-                        val scanResult = manualEngine.scan(candidates = listOf(candidate), rules = rules, maxResults = 1)
+                        val scanResult = manualEngine.scan(candidates = listOf(candidate), rules = rules, maxResults = 1, btcRegime = ScannerStateStore.currentBtcRegime.value)
                         val active = scanResult.activeStrategies.firstOrNull()?.copy(rank = 1)
                         val log = scanResult.scanLogs.firstOrNull()
                         val strategy = active ?: log?.toWatchOnlyStrategy(now = System.currentTimeMillis())

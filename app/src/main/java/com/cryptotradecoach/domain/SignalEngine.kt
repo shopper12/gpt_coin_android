@@ -21,6 +21,7 @@ class SignalEngine {
         now: Long = System.currentTimeMillis(),
         minimumScore: Double = rules.minimumScore,
         maxResults: Int = rules.maxResults,
+        btcRegime: BtcRegime = BtcRegime.NEUTRAL,
     ): StrategyScanResult {
         val tickers = candidates.map { it.ticker }
         val candleData = candidates.associate { candidate ->
@@ -32,6 +33,11 @@ class SignalEngine {
             )
         }
         val candidateBtcChange = candidates.firstOrNull { it.btcChangeRate24h != 0.0 }?.btcChangeRate24h
+        val effectiveRegime = if (btcRegime == BtcRegime.NEUTRAL && candidateBtcChange != null) {
+            BtcRegimeDetector.detect(candidateBtcChange)
+        } else {
+            btcRegime
+        }
         return scan(
             tickers = tickers,
             candleData = candleData,
@@ -40,6 +46,7 @@ class SignalEngine {
             minimumScore = minimumScore,
             maxResults = maxResults,
             btcChangeRateOverride = candidateBtcChange,
+            btcRegime = effectiveRegime,
         )
     }
 
@@ -51,18 +58,26 @@ class SignalEngine {
         minimumScore: Double = rules.minimumScore,
         maxResults: Int = rules.maxResults,
         btcChangeRateOverride: Double? = null,
+        btcRegime: BtcRegime = BtcRegime.NEUTRAL,
     ): StrategyScanResult {
         val rejectionSummary = mutableMapOf<String, Int>()
         val ranks = CandidateRanks.from(tickers)
         val btcChangeRate24h = btcChangeRateOverride
             ?: tickers.firstOrNull { it.market == "KRW-BTC" }?.signedChangeRate?.times(100.0)
             ?: 0.0
+        val effectiveRegime = if (btcRegime == BtcRegime.NEUTRAL && btcChangeRate24h != 0.0) {
+            BtcRegimeDetector.detect(btcChangeRate24h)
+        } else {
+            btcRegime
+        }
+        val effectiveMinScore = (minimumScore + BtcRegimeDetector.minimumScoreDelta(effectiveRegime)).coerceAtMost(90.0)
         val evaluations = tickers.mapNotNull { ticker ->
             evaluateTicker(
                 ticker = ticker,
                 candles = candleData[ticker.market].orEmpty(),
                 ranks = ranks,
                 btcChangeRate24h = btcChangeRate24h,
+                btcRegime = effectiveRegime,
                 rules = rules,
                 now = now,
             ).also { evaluation ->
@@ -73,7 +88,7 @@ class SignalEngine {
         val rankedActive = evaluations
             .mapNotNull { evaluation ->
                 evaluation.strategy.takeIf { strategy ->
-                    strategy.status == StrategyStatus.ACTIVE && strategy.score >= minimumScore
+                    strategy.status == StrategyStatus.ACTIVE && strategy.score >= effectiveMinScore
                 }
             }
             .sortedWith(compareByDescending<TradeStrategy> { it.score }.thenBy { it.riskPct })
@@ -87,7 +102,7 @@ class SignalEngine {
             val missedReason = when {
                 selected -> null
                 evaluation.log.missedReason != null -> evaluation.log.missedReason
-                evaluation.strategy.score < minimumScore -> "SCORE_TOO_LOW"
+                evaluation.strategy.score < effectiveMinScore -> "SCORE_TOO_LOW_REGIME_${effectiveRegime.name}"
                 else -> "NOT_TOP_RANKED"
             }
             if (!selected) rejectionSummary.increment(missedReason ?: "REJECTED")
@@ -106,7 +121,11 @@ class SignalEngine {
             candidateCount = evaluations.size,
             rejectedCount = (tickers.size - rankedActive.size).coerceAtLeast(0),
             rejectionSummary = rejectionSummary.toSortedMap(),
-            lastError = null,
+            lastError = if (effectiveRegime.isRisky()) {
+                "BTC ${effectiveRegime.name}: SignalEngine regime gate active; effectiveMinScore=${effectiveMinScore.one()}"
+            } else {
+                null
+            },
         )
     }
 
@@ -115,6 +134,7 @@ class SignalEngine {
         candles: Map<Int, List<Candle>>,
         ranks: CandidateRanks,
         btcChangeRate24h: Double,
+        btcRegime: BtcRegime,
         rules: StrategyRules,
         now: Long,
     ): Evaluation? {
@@ -143,7 +163,7 @@ class SignalEngine {
             rules = rules,
         )
 
-        val overheatPenalty = overheatPenalty(changeRate24h, changeRate30m, changeRate5m, rules)
+        val overheatPenalty = overheatPenalty(changeRate24h, changeRate30m, changeRate5m, rules, btcRegime)
         val liquidityPenalty = liquidityPenalty(ticker.accTradePrice24h)
         val setups = listOf(
             compressionBreakout(price, changeRate24h, volumeAcceleration, five, fifteen, rules),
@@ -184,18 +204,52 @@ class SignalEngine {
                 rules = rules,
             ),
         )
-        val best = setups.maxByOrNull { it.rawScore - it.penaltySensitiveMultiplier * (overheatPenalty + liquidityPenalty) } ?: return null
+        val filteredSetups = setups.map { setup ->
+            if (BtcRegimeDetector.isStrategyAllowed(setup.strategyType.name, btcRegime)) {
+                setup
+            } else {
+                setup.copy(
+                    active = false,
+                    failed = setup.failed + "REGIME_BLOCKED_${btcRegime.name}",
+                    diagnostics = setup.diagnostics + "btcRegime=$btcRegime",
+                )
+            }
+        }
+        val best = filteredSetups.maxWithOrNull(
+            compareBy<StrategySetup> { if (it.active) 1 else 0 }
+                .thenBy { it.rawScore - it.penaltySensitiveMultiplier * (overheatPenalty + liquidityPenalty) },
+        ) ?: return null
         val score = (best.rawScore - best.penaltySensitiveMultiplier * (overheatPenalty + liquidityPenalty)).coerceIn(0.0, 100.0)
         val status = if (best.active) StrategyStatus.ACTIVE else StrategyStatus.WATCH_ONLY
         val isShort = best.strategyType == StrategyType.BTC_SHORT_REGIME
-        val stopLoss = if (isShort) {
+        val rawStopLoss = if (isShort) {
             max(best.stopLoss.takeIf { it > 0.0 } ?: price * 1.012, price * 1.001)
         } else {
             min(best.stopLoss.takeIf { it > 0.0 } ?: price * rules.risk.defaultStopMultiplier, price * 0.999)
         }
+        val stopLoss = if (!isShort && btcRegime.isRisky()) {
+            val tightMultiplier = when (btcRegime) {
+                BtcRegime.BEAR -> 0.985
+                BtcRegime.CRASH -> 0.990
+                else -> rawStopLoss / price
+            }
+            max(rawStopLoss, price * tightMultiplier)
+        } else {
+            rawStopLoss
+        }
         val riskPct = abs(percentChange(price, stopLoss)).coerceAtLeast(rules.risk.minimumRiskPct)
-        val target1 = if (isShort) price * (1.0 - riskPct * 1.5 / 100.0) else price * (1.0 + riskPct * 1.5 / 100.0)
-        val target2 = if (isShort) price * (1.0 - riskPct * 2.4 / 100.0) else price * (1.0 + riskPct * 2.4 / 100.0)
+        val target1Multiplier = when {
+            btcRegime == BtcRegime.CRASH && !isShort -> 1.2
+            btcRegime == BtcRegime.BEAR && !isShort -> 1.3
+            else -> 1.5
+        }
+        val target2Multiplier = when {
+            btcRegime == BtcRegime.CRASH && !isShort -> 1.8
+            btcRegime == BtcRegime.BEAR && !isShort -> 2.0
+            else -> 2.4
+        }
+        val target1 = if (isShort) price * (1.0 - riskPct * target1Multiplier / 100.0) else price * (1.0 + riskPct * target1Multiplier / 100.0)
+        val target2 = if (isShort) price * (1.0 - riskPct * target2Multiplier / 100.0) else price * (1.0 + riskPct * target2Multiplier / 100.0)
         val expectedReturnPct = abs(percentChange(price, target2)).coerceAtLeast(rules.risk.minimumExpectedReturnPct)
         val trailingStop = if (isShort) {
             price * (1.0 + max(riskPct * 0.55, rules.risk.minimumRiskPct) / 100.0)
@@ -204,6 +258,7 @@ class SignalEngine {
         }
         val componentScores = (
             listOf(
+                "btcRegime=$btcRegime",
                 "trendScore=${best.trendScore.one()}",
                 "compressionScore=${best.compressionScore.one()}",
                 "relativeVolumeScore=${best.relativeVolumeScore.one()}",
@@ -214,8 +269,10 @@ class SignalEngine {
                 "liquidityPenalty=${liquidityPenalty.one()}",
             ) + best.diagnostics
         ).joinToString(";")
+        val regimeBlocked = best.failed.firstOrNull { it.startsWith("REGIME_BLOCKED_") }
         val missedReason = when {
             status == StrategyStatus.ACTIVE -> null
+            regimeBlocked != null -> regimeBlocked
             best.strategyType == StrategyType.COMPRESSION_BREAKOUT -> "NO_COMPRESSION_BREAKOUT"
             best.strategyType == StrategyType.SWEEP_RECLAIM -> "NO_SWEEP_RECLAIM"
             best.strategyType == StrategyType.TREND_PULLBACK -> "NO_TREND_PULLBACK"
@@ -535,7 +592,10 @@ class SignalEngine {
         val r = rules.prePumpRotation
         val notAlreadyPumped = changeRate24h in r.minChange24hPct..r.maxChange24hPct &&
             changeRate30m < r.maxChange30mPct &&
-            changeRate5m < r.maxChange5mPct
+            changeRate5m < r.maxChange5mPct &&
+            changeRate24h > -8.0
+        val recentDropThenBounce = recentDropThenBounce(five)
+        val notDeadCat = !recentDropThenBounce
         val liquidityOk = rankByTradeValue <= r.maxTradeValueRank
         val rotationOk = rankByChangeRate <= r.maxChangeRank || changeRate30m > r.minRotation30mPct
         val volumeIgnition = volumeAcceleration >= r.minVolumeAcceleration ||
@@ -546,7 +606,7 @@ class SignalEngine {
             rangePos >= r.minRangePosition &&
             price >= prev20High * r.minHighProximityMultiplier
         val closeStairOk = closesUp >= r.minCloseStairCount || oneMinuteSpike.confirmed
-        val active = r.enabled && notAlreadyPumped && liquidityOk && rotationOk && volumeIgnition && structureOk && closeStairOk
+        val active = r.enabled && notAlreadyPumped && liquidityOk && rotationOk && volumeIgnition && structureOk && closeStairOk && notDeadCat
         val structureScore = when {
             structureOk -> 22.0
             rangePos >= 0.5 -> 12.0
@@ -579,7 +639,7 @@ class SignalEngine {
             reclaimScore = notPumpedScore,
             riskRewardScore = riskRewardScore(price, stop),
             passed = listOf(
-                "prePump=notYet10pct",
+                "prePump=notYetExtendedOrDeadCat",
                 "24h=${changeRate24h.one()}%",
                 "30m=${changeRate30m.one()}%",
                 "5m=${changeRate5m.one()}%",
@@ -593,9 +653,11 @@ class SignalEngine {
                 "1mMove=${oneMinuteSpike.priceMovePct.one()}%",
                 "rankChange=$rankByChangeRate",
                 "rankValue=$rankByTradeValue",
+                "deadCat=$recentDropThenBounce",
             ),
             failed = listOfNotNull(
                 if (!notAlreadyPumped) "ALREADY_PUMPED_OR_TOO_WEAK" else null,
+                if (!notDeadCat) "DEAD_CAT_BOUNCE_SUSPECTED" else null,
                 if (!liquidityOk) "TRADE_VALUE_RANK_OVER_${r.maxTradeValueRank}" else null,
                 if (!rotationOk) "NO_RELATIVE_ROTATION" else null,
                 if (!volumeIgnition) "NO_VOLUME_IGNITION" else null,
@@ -754,7 +816,7 @@ class SignalEngine {
         return if (viable) (18.0 - riskPct * 2.0).coerceIn(6.0, 18.0) else 2.0
     }
 
-    private fun overheatPenalty(change24h: Double, change30m: Double, change5m: Double, rules: StrategyRules): Double {
+    private fun overheatPenalty(change24h: Double, change30m: Double, change5m: Double, rules: StrategyRules, btcRegime: BtcRegime): Double {
         var penalty = 0.0
         if (change24h > rules.scoring.overheat24hBasePct) {
             penalty += (change24h - rules.scoring.overheat24hBasePct) * rules.scoring.overheat24hWeight
@@ -765,7 +827,25 @@ class SignalEngine {
         if (change5m > rules.scoring.overheat5mBasePct) {
             penalty += (change5m - rules.scoring.overheat5mBasePct) * rules.scoring.overheat5mWeight
         }
-        return penalty.coerceIn(0.0, rules.scoring.overheatMax)
+        if (btcRegime.isRisky()) {
+            if (change30m > 1.0 && change24h < -5.0) penalty += 18.0
+            penalty += when (btcRegime) {
+                BtcRegime.BEAR -> 8.0
+                BtcRegime.CRASH -> 20.0
+                else -> 0.0
+            }
+        }
+        return penalty.coerceIn(0.0, rules.scoring.overheatMax + 20.0)
+    }
+
+    private fun recentDropThenBounce(five: List<Candle>): Boolean {
+        val recent = five.takeLast(12)
+        if (recent.size < 12) return false
+        val drops = recent.take(8).count { it.close < it.open }
+        val lastClose = recent.last().close
+        val bottomPrice = recent.dropLast(2).minOfOrNull { it.low } ?: lastClose
+        val bounceFromBottom = percentChange(bottomPrice, lastClose)
+        return drops >= 5 && bounceFromBottom > 2.0
     }
 
     private fun liquidityPenalty(accTradePrice24h: Double): Double {
