@@ -37,6 +37,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -58,6 +59,7 @@ import androidx.core.content.ContextCompat
 import com.cryptotradecoach.data.Candle
 import com.cryptotradecoach.data.GitHubSettings
 import com.cryptotradecoach.data.ScanDiagnostics
+import com.cryptotradecoach.data.StrategyRules
 import com.cryptotradecoach.data.StrategyStatus
 import com.cryptotradecoach.data.StrategyType
 import com.cryptotradecoach.data.TradeStrategy
@@ -195,20 +197,18 @@ private fun MainScreen(
     onOpenInstallPermissionSettings: () -> Unit,
     onDownloadAndInstallLatestApk: (GitHubSettings) -> Unit,
 ) {
-    val tabs = listOf("Current", "Search", "Chart", "History", "Performance", "Rules", "Settings")
+    val tabs = listOf("Current", "Search", "History", "Rules", "Settings")
     var selectedTab by remember { mutableIntStateOf(0) }
-    val openChart: (TradeStrategy) -> Unit = { strategy -> selectedTab = 2; onStrategyChart(strategy) }
+    val openChart: (TradeStrategy) -> Unit = { strategy -> selectedTab = 1; onStrategyChart(strategy) }
     Column(modifier = Modifier.fillMaxSize()) {
         Text("Crypto Trade Coach", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold, modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 8.dp))
         TabRow(selectedTabIndex = selectedTab) { tabs.forEachIndexed { index, title -> Tab(selected = selectedTab == index, onClick = { selectedTab = index }, text = { Text(title) }) } }
         when (selectedTab) {
             0 -> CurrentStrategiesTab(activeStrategies, scanDiagnostics, lastScanAt, minimumScore, chartMessage, openChart)
-            1 -> ManualSearchTab(manualStrategy, manualMessage, chartMessage, onManualAnalyze, onManualSave, openChart)
-            2 -> ChartTab(strategyChart, selectedChartTimeframe, chartMessage, onChartTimeframeSelected, onClearChart)
-            3 -> StrategyHistoryTab(historyBySymbol, openChart)
-            4 -> PerformanceTab(performanceRows, backtestResults, evolutionLog, lastEvolvedAt, onPerformanceRefresh, onBacktestRefresh, onEvolutionRefresh)
-            5 -> RulesTab(currentRulesText, settingsMessage, onRulesRefresh, { onRulesDownload(gitHubSettings) }, onRulesSave)
-            6 -> SettingsTab(isRunning, scanIntervalMs, maxDisplayCount, minimumScore, gitHubSettings, settingsMessage, onStart, onStop, onIntervalSelected, onMaxDisplayChanged, onMinimumScoreChanged, onGitHubSettingsSaved, onGitHubSettingsTest, onRulesDownload, onReportUpload, onOpenInstallPermissionSettings, onDownloadAndInstallLatestApk)
+            1 -> ManualSearchTab(manualStrategy, manualMessage, selectedChartTimeframe, strategyChart, chartMessage, onManualAnalyze, onManualSave, openChart, onChartTimeframeSelected, onClearChart)
+            2 -> StrategyHistoryTab(historyBySymbol, performanceRows, backtestResults, evolutionLog, lastEvolvedAt, onPerformanceRefresh, onBacktestRefresh, onEvolutionRefresh, openChart)
+            3 -> RulesTab(currentRulesText, settingsMessage, onRulesRefresh, { onRulesDownload(gitHubSettings) }, onRulesSave)
+            4 -> SettingsTab(isRunning, scanIntervalMs, maxDisplayCount, minimumScore, gitHubSettings, settingsMessage, onStart, onStop, onIntervalSelected, onMaxDisplayChanged, onMinimumScoreChanged, onGitHubSettingsSaved, onGitHubSettingsTest, onRulesDownload, onReportUpload, onOpenInstallPermissionSettings, onDownloadAndInstallLatestApk)
         }
     }
 }
@@ -252,19 +252,34 @@ private fun DiagnosticsCard(scanDiagnostics: ScanDiagnostics) {
 }
 
 @Composable
-private fun ManualSearchTab(manualStrategy: TradeStrategy?, manualMessage: String?, chartMessage: String?, onManualAnalyze: (String) -> Unit, onManualSave: () -> Unit, onStrategyChart: (TradeStrategy) -> Unit) {
+private fun ManualSearchTab(
+    manualStrategy: TradeStrategy?,
+    manualMessage: String?,
+    selectedTimeframe: ChartTimeframe,
+    chartSnapshot: StrategyChartSnapshot?,
+    chartMessage: String?,
+    onManualAnalyze: (String) -> Unit,
+    onManualSave: () -> Unit,
+    onStrategyChart: (TradeStrategy) -> Unit,
+    onTimeframeSelected: (ChartTimeframe) -> Unit,
+    onClearChart: () -> Unit,
+) {
     var symbol by rememberSaveable { mutableStateOf("") }
+    LaunchedEffect(manualStrategy?.id) { manualStrategy?.let(onStrategyChart) }
     LazyColumn(modifier = Modifier.fillMaxSize().navigationBarsPadding().imePadding().padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
         item {
             Card(modifier = Modifier.fillMaxWidth()) {
                 Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("수동 종목 분석", fontWeight = FontWeight.Bold)
-                    Text("업비트 KRW 종목을 입력하면 전략과 차트를 계산합니다. 예: XRP 또는 KRW-XRP", style = MaterialTheme.typography.bodySmall)
-                    OutlinedTextField(value = symbol, onValueChange = { symbol = it }, label = { Text("Symbol") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                    Text("Search: 종목 분석 + 실시간 차트", fontWeight = FontWeight.Bold)
+                    Text("아래 칸에 업비트 KRW 종목을 입력하세요. 예: XRP, KRW-XRP, BTC. 분석 결과와 전략선 차트를 같은 화면에 표시합니다.", style = MaterialTheme.typography.bodySmall)
+                    OutlinedTextField(value = symbol, onValueChange = { symbol = it }, label = { Text("종목 입력: XRP 또는 KRW-XRP") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Button(onClick = { onManualAnalyze(symbol) }) { Text("Analyze") }
+                        Button(onClick = { onManualAnalyze(symbol) }) { Text("Search") }
                         OutlinedButton(onClick = onManualSave, enabled = manualStrategy != null) { Text("Save") }
-                        OutlinedButton(onClick = { manualStrategy?.let(onStrategyChart) }, enabled = manualStrategy != null) { Text("Chart") }
+                        OutlinedButton(onClick = onClearChart, enabled = chartSnapshot != null) { Text("Clear chart") }
+                    }
+                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        listOf("BTC", "ETH", "XRP", "SOL").forEach { quick -> FilterChip(selected = symbol.equals(quick, true) || symbol.equals("KRW-$quick", true), onClick = { symbol = quick; onManualAnalyze(quick) }, label = { Text(quick) }) }
                     }
                     manualMessage?.let { Text(it) }
                     chartMessage?.let { Text(it, style = MaterialTheme.typography.bodySmall) }
@@ -272,16 +287,15 @@ private fun ManualSearchTab(manualStrategy: TradeStrategy?, manualMessage: Strin
             }
         }
         manualStrategy?.let { item { StrategyCard(it, onStrategyChart) } }
-    }
-}
-
-@Composable
-private fun ChartTab(snapshot: StrategyChartSnapshot?, selectedTimeframe: ChartTimeframe, chartMessage: String?, onTimeframeSelected: (ChartTimeframe) -> Unit, onClearChart: () -> Unit) {
-    LazyColumn(modifier = Modifier.fillMaxSize().navigationBarsPadding().padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        item { Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) { Text("Strategy chart", fontWeight = FontWeight.Bold); OutlinedButton(onClick = onClearChart, enabled = snapshot != null) { Text("Clear") } } }
-        item { Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) { ChartTimeframe.values().forEach { tf -> FilterChip(selected = selectedTimeframe == tf, onClick = { onTimeframeSelected(tf) }, label = { Text(tf.label) }) } } }
-        chartMessage?.let { item { Text(it, style = MaterialTheme.typography.bodySmall) } }
-        if (snapshot == null) item { EmptyCard("차트 로딩 중이거나 아직 선택된 전략이 없습니다. 봉 변경 시 이전 차트는 지워지고 새 봉 데이터를 다시 불러옵니다.") } else { item { StrategyChartCard(snapshot) }; item { StrategyCard(snapshot.strategy, onStrategyChart = {}) } }
+        item {
+            Card(modifier = Modifier.fillMaxWidth()) {
+                Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text("차트 봉 선택", fontWeight = FontWeight.Bold)
+                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) { ChartTimeframe.values().forEach { tf -> FilterChip(selected = selectedTimeframe == tf, onClick = { onTimeframeSelected(tf) }, label = { Text(tf.label) }) } }
+                }
+            }
+        }
+        if (chartSnapshot == null) item { EmptyCard("차트 없음. 위 종목 입력칸에 XRP 또는 KRW-XRP를 입력하고 Search를 누르세요.") } else item { StrategyChartCard(chartSnapshot) }
     }
 }
 
@@ -356,7 +370,17 @@ private fun CandleOverlayChart(candles: List<Candle>, strategy: TradeStrategy) {
 }
 
 @Composable
-private fun StrategyHistoryTab(historyBySymbol: Map<String, List<StrategyHistoryEntity>>, onStrategyChart: (TradeStrategy) -> Unit) {
+private fun StrategyHistoryTab(
+    historyBySymbol: Map<String, List<StrategyHistoryEntity>>,
+    performanceRows: List<StrategyPerformanceEntity>,
+    backtestResults: List<BacktestResult>,
+    evolutionLog: List<EvolutionLogEntity>,
+    lastEvolvedAt: Long?,
+    onPerformanceRefresh: () -> Unit,
+    onBacktestRefresh: () -> Unit,
+    onEvolutionRefresh: () -> Unit,
+    onStrategyChart: (TradeStrategy) -> Unit,
+) {
     var selectedSymbol by rememberSaveable { mutableStateOf("ALL") }
     var symbolInput by rememberSaveable { mutableStateOf("") }
     var selectedCategory by rememberSaveable { mutableStateOf("ALL") }
@@ -365,27 +389,21 @@ private fun StrategyHistoryTab(historyBySymbol: Map<String, List<StrategyHistory
     val symbolRows = if (selectedSymbol == "ALL") allRows else allRows.filter { it.symbol == selectedSymbol }
     val visibleRows = if (selectedCategory == "ALL") symbolRows else symbolRows.filter { it.historyCategoryKey() == selectedCategory }
     val visibleMap = visibleRows.groupBy { it.symbol }.toSortedMap()
+    val rowsByType = performanceRows.groupBy { it.strategyType.name }
     fun applySymbolInput() { selectedSymbol = symbolInput.toHistorySymbolFilter() }
-    LazyColumn(modifier = Modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+    LazyColumn(modifier = Modifier.fillMaxSize().navigationBarsPadding().imePadding().padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        item { Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) { Text("History + Performance", fontWeight = FontWeight.Bold); OutlinedButton(onClick = { onPerformanceRefresh(); onBacktestRefresh(); onEvolutionRefresh() }) { Text("Refresh") } } }
         item { HistorySummaryCard(visibleRows.ifEmpty { allRows }) }
+        item { EvolutionStatusCard(backtestResults, evolutionLog, lastEvolvedAt) }
+        if (backtestResults.isNotEmpty()) { item { Text("Backtest ranking", fontWeight = FontWeight.Bold) }; items(backtestResults.sortedByDescending { it.expectancy }) { BacktestDetailCard(it) } }
+        if (performanceRows.isNotEmpty()) { rowsByType.forEach { (strategyType, rows) -> item { PerformanceSummaryCard(strategyType, rows) } }; items(performanceRows.sortedByDescending { it.createdAt }.take(20)) { PerformanceCard(it) } } else item { EmptyCard("No performance data yet. 성과가 없으면 History에 검색/저장 기록만 표시됩니다.") }
         item {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text("선택 옵션", fontWeight = FontWeight.Bold)
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    listOf("ALL" to "전체", "PROFIT" to "성공", "STOP" to "손절", "FAIL" to "실패/만료", "OPEN" to "진행").forEach { (key, label) ->
-                        FilterChip(selected = selectedCategory == key, onClick = { selectedCategory = key }, label = { Text(label) })
-                    }
-                }
-                Text("Symbol filter", fontWeight = FontWeight.Bold)
-                OutlinedTextField(value = symbolInput, onValueChange = { symbolInput = it }, label = { Text("XRP 또는 KRW-XRP") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Button(onClick = { applySymbolInput() }) { Text("Apply") }
-                    OutlinedButton(onClick = { selectedSymbol = "ALL"; symbolInput = "" }) { Text("Clear") }
-                    FilterChip(selected = selectedSymbol == "ALL", onClick = { selectedSymbol = "ALL"; symbolInput = "" }, label = { Text("ALL") })
-                }
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    symbols.take(4).forEach { s -> FilterChip(selected = selectedSymbol == s, onClick = { selectedSymbol = s; symbolInput = s.removePrefix("KRW-") }, label = { Text(s.removePrefix("KRW-")) }) }
-                }
+                Text("History 선택 옵션", fontWeight = FontWeight.Bold)
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) { listOf("ALL" to "전체", "PROFIT" to "성공", "STOP" to "손절", "FAIL" to "실패/만료", "OPEN" to "진행").forEach { (key, label) -> FilterChip(selected = selectedCategory == key, onClick = { selectedCategory = key }, label = { Text(label) }) } }
+                OutlinedTextField(value = symbolInput, onValueChange = { symbolInput = it }, label = { Text("종목 필터: XRP 또는 KRW-XRP") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) { Button(onClick = { applySymbolInput() }) { Text("Apply") }; OutlinedButton(onClick = { selectedSymbol = "ALL"; symbolInput = "" }) { Text("Clear") }; FilterChip(selected = selectedSymbol == "ALL", onClick = { selectedSymbol = "ALL"; symbolInput = "" }, label = { Text("ALL") }) }
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) { symbols.take(4).forEach { s -> FilterChip(selected = selectedSymbol == s, onClick = { selectedSymbol = s; symbolInput = s.removePrefix("KRW-") }, label = { Text(s.removePrefix("KRW-")) }) } }
                 Text("현재 선택: 종목 ${if (selectedSymbol == "ALL") "전체" else selectedSymbol} / 분류 ${selectedCategory.toKoreanHistoryCategoryLabel()}", style = MaterialTheme.typography.bodySmall)
             }
         }
@@ -429,18 +447,7 @@ private fun CompactHistoryLine(history: StrategyHistoryEntity, onStrategyChart: 
         Text("${history.createdAt.toTimeText()} ${history.eventType.toKoreanEventName()} · ${history.historyCategory()} · ${history.message.toKoreanHistoryReason()}", style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Bold)
         Text((history.newSummary ?: history.oldSummary ?: "-").toCompactPlan().take(120), style = MaterialTheme.typography.bodySmall)
         Text("보완: ${history.improvementHint()}", style = MaterialTheme.typography.bodySmall)
-        if (restored != null) OutlinedButton(onClick = { onStrategyChart(restored) }, modifier = Modifier.fillMaxWidth()) { Text("이 기록 차트 보기") }
-    }
-}
-
-@Composable
-private fun PerformanceTab(performanceRows: List<StrategyPerformanceEntity>, backtestResults: List<BacktestResult>, evolutionLog: List<EvolutionLogEntity>, lastEvolvedAt: Long?, onPerformanceRefresh: () -> Unit, onBacktestRefresh: () -> Unit, onEvolutionRefresh: () -> Unit) {
-    val rowsByType = performanceRows.groupBy { it.strategyType.name }
-    LazyColumn(modifier = Modifier.fillMaxSize().navigationBarsPadding().padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        item { Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) { Text("Strategy performance", fontWeight = FontWeight.Bold); OutlinedButton(onClick = { onPerformanceRefresh(); onBacktestRefresh(); onEvolutionRefresh() }) { Text("Refresh") } } }
-        item { EvolutionStatusCard(backtestResults, evolutionLog, lastEvolvedAt) }
-        if (backtestResults.isNotEmpty()) { item { Text("Backtest ranking", fontWeight = FontWeight.Bold) }; items(backtestResults.sortedByDescending { it.expectancy }) { BacktestDetailCard(it) } }
-        if (performanceRows.isEmpty()) item { EmptyCard("No performance data yet.") } else { rowsByType.forEach { (strategyType, rows) -> item { PerformanceSummaryCard(strategyType, rows) } }; items(performanceRows.sortedByDescending { it.createdAt }) { PerformanceCard(it) } }
+        if (restored != null) OutlinedButton(onClick = { onStrategyChart(restored) }, modifier = Modifier.fillMaxWidth()) { Text("이 기록 Search 차트로 보기") }
     }
 }
 
@@ -469,18 +476,118 @@ private fun PerformanceCard(row: StrategyPerformanceEntity) { Card(modifier = Mo
 
 @Composable
 private fun RulesTab(currentRulesText: String, settingsMessage: String?, onRulesRefresh: () -> Unit, onRulesDownload: () -> Unit, onRulesSave: (String) -> Unit) {
-    var editableRulesText by rememberSaveable(currentRulesText) { mutableStateOf(currentRulesText) }
+    val parsed = remember(currentRulesText) { runCatching { StrategyRules.fromJson(currentRulesText) }.getOrDefault(StrategyRules.DEFAULT) }
+    var version by rememberSaveable(currentRulesText) { mutableStateOf(parsed.version) }
+    var minimumScore by rememberSaveable(currentRulesText) { mutableStateOf(parsed.minimumScore.toString()) }
+    var maxResults by rememberSaveable(currentRulesText) { mutableStateOf(parsed.maxResults.toString()) }
+    var validForMinutes by rememberSaveable(currentRulesText) { mutableStateOf(parsed.validForMinutes.toString()) }
+    var entryBandPct by rememberSaveable(currentRulesText) { mutableStateOf(parsed.entryBandPct.toString()) }
+    var maxCandleTargets by rememberSaveable(currentRulesText) { mutableStateOf(parsed.candidateSelection.maxCandleTargets.toString()) }
+    var topTradeValueCount by rememberSaveable(currentRulesText) { mutableStateOf(parsed.candidateSelection.topTradeValueCount.toString()) }
+    var topChangeRateCount by rememberSaveable(currentRulesText) { mutableStateOf(parsed.candidateSelection.topChangeRateCount.toString()) }
+    var volumeBuildupCount by rememberSaveable(currentRulesText) { mutableStateOf(parsed.candidateSelection.volumeBuildupCount.toString()) }
+    var quietAccumulationCount by rememberSaveable(currentRulesText) { mutableStateOf(parsed.candidateSelection.quietAccumulationCount.toString()) }
+    var medianTradeValueMultiplier by rememberSaveable(currentRulesText) { mutableStateOf(parsed.candidateSelection.medianTradeValueMultiplier.toString()) }
+    var minBuildupChangeRatePct by rememberSaveable(currentRulesText) { mutableStateOf(parsed.candidateSelection.minBuildupChangeRatePct.toString()) }
+    var maxBuildupChangeRatePct by rememberSaveable(currentRulesText) { mutableStateOf(parsed.candidateSelection.maxBuildupChangeRatePct.toString()) }
+    var maxQuietAbsChangeRatePct by rememberSaveable(currentRulesText) { mutableStateOf(parsed.candidateSelection.maxQuietAbsChangeRatePct.toString()) }
+    var compressionEnabled by rememberSaveable(currentRulesText) { mutableStateOf(parsed.compressionBreakout.enabled) }
+    var rangeCompressionRatio by rememberSaveable(currentRulesText) { mutableStateOf(parsed.compressionBreakout.rangeCompressionRatio.toString()) }
+    var maxDistanceTo15mHighPct by rememberSaveable(currentRulesText) { mutableStateOf(parsed.compressionBreakout.maxDistanceTo15mHighPct.toString()) }
+    var compressionMinVolumeAcceleration by rememberSaveable(currentRulesText) { mutableStateOf(parsed.compressionBreakout.minVolumeAcceleration.toString()) }
+    var compressionMinFiveMinuteVolumeRatio by rememberSaveable(currentRulesText) { mutableStateOf(parsed.compressionBreakout.minFiveMinuteVolumeRatio.toString()) }
+    var sweepEnabled by rememberSaveable(currentRulesText) { mutableStateOf(parsed.sweepReclaim.enabled) }
+    var fiveMinuteLookback by rememberSaveable(currentRulesText) { mutableStateOf(parsed.sweepReclaim.fiveMinuteLookback.toString()) }
+    var fifteenMinuteLookback by rememberSaveable(currentRulesText) { mutableStateOf(parsed.sweepReclaim.fifteenMinuteLookback.toString()) }
+    var requireVolumeAboveAverage by rememberSaveable(currentRulesText) { mutableStateOf(parsed.sweepReclaim.requireVolumeAboveAverage) }
+    var trendEnabled by rememberSaveable(currentRulesText) { mutableStateOf(parsed.trendPullback.enabled) }
+    var higherTimeframeMaPeriod by rememberSaveable(currentRulesText) { mutableStateOf(parsed.trendPullback.higherTimeframeMaPeriod.toString()) }
+    var fifteenMinuteMaPeriod by rememberSaveable(currentRulesText) { mutableStateOf(parsed.trendPullback.fifteenMinuteMaPeriod.toString()) }
+    var min15mMaMultiplier by rememberSaveable(currentRulesText) { mutableStateOf(parsed.trendPullback.min15mMaMultiplier.toString()) }
+    var minPriorLowMultiplier by rememberSaveable(currentRulesText) { mutableStateOf(parsed.trendPullback.minPriorLowMultiplier.toString()) }
+    var pullbackLookback by rememberSaveable(currentRulesText) { mutableStateOf(parsed.trendPullback.pullbackLookback.toString()) }
+    var reclaimLookback by rememberSaveable(currentRulesText) { mutableStateOf(parsed.trendPullback.reclaimLookback.toString()) }
+    var bearEnabled by rememberSaveable(currentRulesText) { mutableStateOf(parsed.bearDecouplingBounce.enabled) }
+    var btcWeakBelowPct by rememberSaveable(currentRulesText) { mutableStateOf(parsed.bearDecouplingBounce.btcWeakBelowPct.toString()) }
+    var altStrongAbovePct by rememberSaveable(currentRulesText) { mutableStateOf(parsed.bearDecouplingBounce.altStrongAbovePct.toString()) }
+    var bearMaxTradeValueRank by rememberSaveable(currentRulesText) { mutableStateOf(parsed.bearDecouplingBounce.maxTradeValueRank.toString()) }
+    var minFourHourVolumeMultiple by rememberSaveable(currentRulesText) { mutableStateOf(parsed.bearDecouplingBounce.minFourHourVolumeMultiple.toString()) }
+    var maxPreviousFourHourVolumeMultiple by rememberSaveable(currentRulesText) { mutableStateOf(parsed.bearDecouplingBounce.maxPreviousFourHourVolumeMultiple.toString()) }
+    var maxPriceOver240mMa20Pct by rememberSaveable(currentRulesText) { mutableStateOf(parsed.bearDecouplingBounce.maxPriceOver240mMa20Pct.toString()) }
+    var maxBearishUpperWickPct by rememberSaveable(currentRulesText) { mutableStateOf(parsed.bearDecouplingBounce.maxBearishUpperWickPct.toString()) }
+    var decouplingScoreCap by rememberSaveable(currentRulesText) { mutableStateOf(parsed.bearDecouplingBounce.decouplingScoreCap.toString()) }
+    var wickPenalty by rememberSaveable(currentRulesText) { mutableStateOf(parsed.bearDecouplingBounce.wickPenalty.toString()) }
+    var prePumpEnabled by rememberSaveable(currentRulesText) { mutableStateOf(parsed.prePumpRotation.enabled) }
+    var minChange24hPct by rememberSaveable(currentRulesText) { mutableStateOf(parsed.prePumpRotation.minChange24hPct.toString()) }
+    var maxChange24hPct by rememberSaveable(currentRulesText) { mutableStateOf(parsed.prePumpRotation.maxChange24hPct.toString()) }
+    var maxChange30mPct by rememberSaveable(currentRulesText) { mutableStateOf(parsed.prePumpRotation.maxChange30mPct.toString()) }
+    var maxChange5mPct by rememberSaveable(currentRulesText) { mutableStateOf(parsed.prePumpRotation.maxChange5mPct.toString()) }
+    var prePumpMaxTradeValueRank by rememberSaveable(currentRulesText) { mutableStateOf(parsed.prePumpRotation.maxTradeValueRank.toString()) }
+    var maxChangeRank by rememberSaveable(currentRulesText) { mutableStateOf(parsed.prePumpRotation.maxChangeRank.toString()) }
+    var minRotation30mPct by rememberSaveable(currentRulesText) { mutableStateOf(parsed.prePumpRotation.minRotation30mPct.toString()) }
+    var prePumpMinVolumeAcceleration by rememberSaveable(currentRulesText) { mutableStateOf(parsed.prePumpRotation.minVolumeAcceleration.toString()) }
+    var minFiveMinuteVolumeRatio by rememberSaveable(currentRulesText) { mutableStateOf(parsed.prePumpRotation.minFiveMinuteVolumeRatio.toString()) }
+    var minFifteenMinuteVolumeRatio by rememberSaveable(currentRulesText) { mutableStateOf(parsed.prePumpRotation.minFifteenMinuteVolumeRatio.toString()) }
+    var maxRangePct by rememberSaveable(currentRulesText) { mutableStateOf(parsed.prePumpRotation.maxRangePct.toString()) }
+    var minRangePosition by rememberSaveable(currentRulesText) { mutableStateOf(parsed.prePumpRotation.minRangePosition.toString()) }
+    var minHighProximityMultiplier by rememberSaveable(currentRulesText) { mutableStateOf(parsed.prePumpRotation.minHighProximityMultiplier.toString()) }
+    var minCloseStairCount by rememberSaveable(currentRulesText) { mutableStateOf(parsed.prePumpRotation.minCloseStairCount.toString()) }
+    var overheat24hBasePct by rememberSaveable(currentRulesText) { mutableStateOf(parsed.scoring.overheat24hBasePct.toString()) }
+    var overheat24hWeight by rememberSaveable(currentRulesText) { mutableStateOf(parsed.scoring.overheat24hWeight.toString()) }
+    var overheat30mBasePct by rememberSaveable(currentRulesText) { mutableStateOf(parsed.scoring.overheat30mBasePct.toString()) }
+    var overheat30mWeight by rememberSaveable(currentRulesText) { mutableStateOf(parsed.scoring.overheat30mWeight.toString()) }
+    var overheat5mBasePct by rememberSaveable(currentRulesText) { mutableStateOf(parsed.scoring.overheat5mBasePct.toString()) }
+    var overheat5mWeight by rememberSaveable(currentRulesText) { mutableStateOf(parsed.scoring.overheat5mWeight.toString()) }
+    var overheatMax by rememberSaveable(currentRulesText) { mutableStateOf(parsed.scoring.overheatMax.toString()) }
+    var hardBlockBtc24hBelowPct by rememberSaveable(currentRulesText) { mutableStateOf(parsed.scoring.hardBlockBtc24hBelowPct.toString()) }
+    var hardBlock30mPumpPct by rememberSaveable(currentRulesText) { mutableStateOf(parsed.scoring.hardBlock30mPumpPct.toString()) }
+    var hardBlock5mPumpPct by rememberSaveable(currentRulesText) { mutableStateOf(parsed.scoring.hardBlock5mPumpPct.toString()) }
+    var hardBlockRedUpperWickPct by rememberSaveable(currentRulesText) { mutableStateOf(parsed.scoring.hardBlockRedUpperWickPct.toString()) }
+    var defaultStopMultiplier by rememberSaveable(currentRulesText) { mutableStateOf(parsed.risk.defaultStopMultiplier.toString()) }
+    var minimumRiskPct by rememberSaveable(currentRulesText) { mutableStateOf(parsed.risk.minimumRiskPct.toString()) }
+    var minimumExpectedReturnPct by rememberSaveable(currentRulesText) { mutableStateOf(parsed.risk.minimumExpectedReturnPct.toString()) }
+
+    fun editedRules(): StrategyRules = parsed.copy(
+        version = version.ifBlank { parsed.version },
+        minimumScore = minimumScore.doubleOr(parsed.minimumScore),
+        maxResults = maxResults.intOr(parsed.maxResults),
+        validForMinutes = validForMinutes.intOr(parsed.validForMinutes),
+        entryBandPct = entryBandPct.doubleOr(parsed.entryBandPct),
+        candidateSelection = parsed.candidateSelection.copy(maxCandleTargets = maxCandleTargets.intOr(parsed.candidateSelection.maxCandleTargets), topTradeValueCount = topTradeValueCount.intOr(parsed.candidateSelection.topTradeValueCount), topChangeRateCount = topChangeRateCount.intOr(parsed.candidateSelection.topChangeRateCount), volumeBuildupCount = volumeBuildupCount.intOr(parsed.candidateSelection.volumeBuildupCount), quietAccumulationCount = quietAccumulationCount.intOr(parsed.candidateSelection.quietAccumulationCount), medianTradeValueMultiplier = medianTradeValueMultiplier.doubleOr(parsed.candidateSelection.medianTradeValueMultiplier), minBuildupChangeRatePct = minBuildupChangeRatePct.doubleOr(parsed.candidateSelection.minBuildupChangeRatePct), maxBuildupChangeRatePct = maxBuildupChangeRatePct.doubleOr(parsed.candidateSelection.maxBuildupChangeRatePct), maxQuietAbsChangeRatePct = maxQuietAbsChangeRatePct.doubleOr(parsed.candidateSelection.maxQuietAbsChangeRatePct)),
+        compressionBreakout = parsed.compressionBreakout.copy(enabled = compressionEnabled, rangeCompressionRatio = rangeCompressionRatio.doubleOr(parsed.compressionBreakout.rangeCompressionRatio), maxDistanceTo15mHighPct = maxDistanceTo15mHighPct.doubleOr(parsed.compressionBreakout.maxDistanceTo15mHighPct), minVolumeAcceleration = compressionMinVolumeAcceleration.doubleOr(parsed.compressionBreakout.minVolumeAcceleration), minFiveMinuteVolumeRatio = compressionMinFiveMinuteVolumeRatio.doubleOr(parsed.compressionBreakout.minFiveMinuteVolumeRatio)),
+        sweepReclaim = parsed.sweepReclaim.copy(enabled = sweepEnabled, fiveMinuteLookback = fiveMinuteLookback.intOr(parsed.sweepReclaim.fiveMinuteLookback), fifteenMinuteLookback = fifteenMinuteLookback.intOr(parsed.sweepReclaim.fifteenMinuteLookback), requireVolumeAboveAverage = requireVolumeAboveAverage),
+        trendPullback = parsed.trendPullback.copy(enabled = trendEnabled, higherTimeframeMaPeriod = higherTimeframeMaPeriod.intOr(parsed.trendPullback.higherTimeframeMaPeriod), fifteenMinuteMaPeriod = fifteenMinuteMaPeriod.intOr(parsed.trendPullback.fifteenMinuteMaPeriod), min15mMaMultiplier = min15mMaMultiplier.doubleOr(parsed.trendPullback.min15mMaMultiplier), minPriorLowMultiplier = minPriorLowMultiplier.doubleOr(parsed.trendPullback.minPriorLowMultiplier), pullbackLookback = pullbackLookback.intOr(parsed.trendPullback.pullbackLookback), reclaimLookback = reclaimLookback.intOr(parsed.trendPullback.reclaimLookback)),
+        bearDecouplingBounce = parsed.bearDecouplingBounce.copy(enabled = bearEnabled, btcWeakBelowPct = btcWeakBelowPct.doubleOr(parsed.bearDecouplingBounce.btcWeakBelowPct), altStrongAbovePct = altStrongAbovePct.doubleOr(parsed.bearDecouplingBounce.altStrongAbovePct), maxTradeValueRank = bearMaxTradeValueRank.intOr(parsed.bearDecouplingBounce.maxTradeValueRank), minFourHourVolumeMultiple = minFourHourVolumeMultiple.doubleOr(parsed.bearDecouplingBounce.minFourHourVolumeMultiple), maxPreviousFourHourVolumeMultiple = maxPreviousFourHourVolumeMultiple.doubleOr(parsed.bearDecouplingBounce.maxPreviousFourHourVolumeMultiple), maxPriceOver240mMa20Pct = maxPriceOver240mMa20Pct.doubleOr(parsed.bearDecouplingBounce.maxPriceOver240mMa20Pct), maxBearishUpperWickPct = maxBearishUpperWickPct.doubleOr(parsed.bearDecouplingBounce.maxBearishUpperWickPct), decouplingScoreCap = decouplingScoreCap.doubleOr(parsed.bearDecouplingBounce.decouplingScoreCap), wickPenalty = wickPenalty.doubleOr(parsed.bearDecouplingBounce.wickPenalty)),
+        prePumpRotation = parsed.prePumpRotation.copy(enabled = prePumpEnabled, minChange24hPct = minChange24hPct.doubleOr(parsed.prePumpRotation.minChange24hPct), maxChange24hPct = maxChange24hPct.doubleOr(parsed.prePumpRotation.maxChange24hPct), maxChange30mPct = maxChange30mPct.doubleOr(parsed.prePumpRotation.maxChange30mPct), maxChange5mPct = maxChange5mPct.doubleOr(parsed.prePumpRotation.maxChange5mPct), maxTradeValueRank = prePumpMaxTradeValueRank.intOr(parsed.prePumpRotation.maxTradeValueRank), maxChangeRank = maxChangeRank.intOr(parsed.prePumpRotation.maxChangeRank), minRotation30mPct = minRotation30mPct.doubleOr(parsed.prePumpRotation.minRotation30mPct), minVolumeAcceleration = prePumpMinVolumeAcceleration.doubleOr(parsed.prePumpRotation.minVolumeAcceleration), minFiveMinuteVolumeRatio = minFiveMinuteVolumeRatio.doubleOr(parsed.prePumpRotation.minFiveMinuteVolumeRatio), minFifteenMinuteVolumeRatio = minFifteenMinuteVolumeRatio.doubleOr(parsed.prePumpRotation.minFifteenMinuteVolumeRatio), maxRangePct = maxRangePct.doubleOr(parsed.prePumpRotation.maxRangePct), minRangePosition = minRangePosition.doubleOr(parsed.prePumpRotation.minRangePosition), minHighProximityMultiplier = minHighProximityMultiplier.doubleOr(parsed.prePumpRotation.minHighProximityMultiplier), minCloseStairCount = minCloseStairCount.intOr(parsed.prePumpRotation.minCloseStairCount)),
+        scoring = parsed.scoring.copy(overheat24hBasePct = overheat24hBasePct.doubleOr(parsed.scoring.overheat24hBasePct), overheat24hWeight = overheat24hWeight.doubleOr(parsed.scoring.overheat24hWeight), overheat30mBasePct = overheat30mBasePct.doubleOr(parsed.scoring.overheat30mBasePct), overheat30mWeight = overheat30mWeight.doubleOr(parsed.scoring.overheat30mWeight), overheat5mBasePct = overheat5mBasePct.doubleOr(parsed.scoring.overheat5mBasePct), overheat5mWeight = overheat5mWeight.doubleOr(parsed.scoring.overheat5mWeight), overheatMax = overheatMax.doubleOr(parsed.scoring.overheatMax), hardBlockBtc24hBelowPct = hardBlockBtc24hBelowPct.doubleOr(parsed.scoring.hardBlockBtc24hBelowPct), hardBlock30mPumpPct = hardBlock30mPumpPct.doubleOr(parsed.scoring.hardBlock30mPumpPct), hardBlock5mPumpPct = hardBlock5mPumpPct.doubleOr(parsed.scoring.hardBlock5mPumpPct), hardBlockRedUpperWickPct = hardBlockRedUpperWickPct.doubleOr(parsed.scoring.hardBlockRedUpperWickPct)),
+        risk = parsed.risk.copy(defaultStopMultiplier = defaultStopMultiplier.doubleOr(parsed.risk.defaultStopMultiplier), minimumRiskPct = minimumRiskPct.doubleOr(parsed.risk.minimumRiskPct), minimumExpectedReturnPct = minimumExpectedReturnPct.doubleOr(parsed.risk.minimumExpectedReturnPct)),
+    )
+
     LazyColumn(modifier = Modifier.fillMaxSize().navigationBarsPadding().imePadding().padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
         item { StrategyManualCard() }
-        item { Text("Current rules JSON", fontWeight = FontWeight.Bold) }
-        item { Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) { OutlinedButton(onClick = onRulesRefresh) { Text("Refresh") }; Button(onClick = { onRulesSave(editableRulesText) }) { Text("Save local") }; OutlinedButton(onClick = onRulesDownload) { Text("Download") } } }
+        item { Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) { OutlinedButton(onClick = onRulesRefresh) { Text("Refresh") }; Button(onClick = { onRulesSave(editedRules().toJson().toString(2)) }) { Text("Save local") }; OutlinedButton(onClick = onRulesDownload) { Text("Download") } } }
         settingsMessage?.let { item { Text(it) } }
-        item { OutlinedTextField(value = editableRulesText, onValueChange = { editableRulesText = it }, label = { Text("Rules JSON") }, modifier = Modifier.fillMaxWidth(), minLines = 18, singleLine = false, textStyle = MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace)) }
+        item { RuleSection("기본") { RuleTextField("버전", version, { version = it }); RuleTextField("최소 점수", minimumScore, { minimumScore = it }); RuleTextField("최대 결과 수", maxResults, { maxResults = it }); RuleTextField("유효 시간(분)", validForMinutes, { validForMinutes = it }); RuleTextField("진입 밴드 %", entryBandPct, { entryBandPct = it }) } }
+        item { RuleSection("후보 선정") { RuleTextField("캔들 후보 수", maxCandleTargets, { maxCandleTargets = it }); RuleTextField("거래대금 상위 수", topTradeValueCount, { topTradeValueCount = it }); RuleTextField("등락률 상위 수", topChangeRateCount, { topChangeRateCount = it }); RuleTextField("거래량 빌드업 수", volumeBuildupCount, { volumeBuildupCount = it }); RuleTextField("조용한 매집 수", quietAccumulationCount, { quietAccumulationCount = it }); RuleTextField("중앙 거래대금 배수", medianTradeValueMultiplier, { medianTradeValueMultiplier = it }); RuleTextField("빌드업 최소 등락률 %", minBuildupChangeRatePct, { minBuildupChangeRatePct = it }); RuleTextField("빌드업 최대 등락률 %", maxBuildupChangeRatePct, { maxBuildupChangeRatePct = it }); RuleTextField("조용한 매집 최대 절대등락 %", maxQuietAbsChangeRatePct, { maxQuietAbsChangeRatePct = it }) } }
+        item { RuleSection("압축 돌파") { RuleSwitchField("사용", compressionEnabled, { compressionEnabled = it }); RuleTextField("압축 비율", rangeCompressionRatio, { rangeCompressionRatio = it }); RuleTextField("15분 고점 근접 %", maxDistanceTo15mHighPct, { maxDistanceTo15mHighPct = it }); RuleTextField("최소 거래량 가속", compressionMinVolumeAcceleration, { compressionMinVolumeAcceleration = it }); RuleTextField("최소 5분 거래량 비율", compressionMinFiveMinuteVolumeRatio, { compressionMinFiveMinuteVolumeRatio = it }) } }
+        item { RuleSection("저점 훼손 후 회복") { RuleSwitchField("사용", sweepEnabled, { sweepEnabled = it }); RuleTextField("5분 룩백", fiveMinuteLookback, { fiveMinuteLookback = it }); RuleTextField("15분 룩백", fifteenMinuteLookback, { fifteenMinuteLookback = it }); RuleSwitchField("평균 이상 거래량 요구", requireVolumeAboveAverage, { requireVolumeAboveAverage = it }) } }
+        item { RuleSection("추세 눌림") { RuleSwitchField("사용", trendEnabled, { trendEnabled = it }); RuleTextField("상위 MA 기간", higherTimeframeMaPeriod, { higherTimeframeMaPeriod = it }); RuleTextField("15분 MA 기간", fifteenMinuteMaPeriod, { fifteenMinuteMaPeriod = it }); RuleTextField("15분 MA 배수", min15mMaMultiplier, { min15mMaMultiplier = it }); RuleTextField("이전 저점 배수", minPriorLowMultiplier, { minPriorLowMultiplier = it }); RuleTextField("눌림 룩백", pullbackLookback, { pullbackLookback = it }); RuleTextField("회복 룩백", reclaimLookback, { reclaimLookback = it }) } }
+        item { RuleSection("약세장 독립강세") { RuleSwitchField("사용", bearEnabled, { bearEnabled = it }); RuleTextField("BTC 약세 기준 %", btcWeakBelowPct, { btcWeakBelowPct = it }); RuleTextField("알트 강세 기준 %", altStrongAbovePct, { altStrongAbovePct = it }); RuleTextField("최대 거래대금 순위", bearMaxTradeValueRank, { bearMaxTradeValueRank = it }); RuleTextField("최소 4시간 거래량 배수", minFourHourVolumeMultiple, { minFourHourVolumeMultiple = it }); RuleTextField("이전 4시간 거래량 최대", maxPreviousFourHourVolumeMultiple, { maxPreviousFourHourVolumeMultiple = it }); RuleTextField("240m MA20 과열 %", maxPriceOver240mMa20Pct, { maxPriceOver240mMa20Pct = it }); RuleTextField("상단꼬리 최대 %", maxBearishUpperWickPct, { maxBearishUpperWickPct = it }); RuleTextField("디커플링 점수 상한", decouplingScoreCap, { decouplingScoreCap = it }); RuleTextField("꼬리 패널티", wickPenalty, { wickPenalty = it }) } }
+        item { RuleSection("급등 전 회전") { RuleSwitchField("사용", prePumpEnabled, { prePumpEnabled = it }); RuleTextField("24h 최소 등락 %", minChange24hPct, { minChange24hPct = it }); RuleTextField("24h 최대 등락 %", maxChange24hPct, { maxChange24hPct = it }); RuleTextField("30m 최대 등락 %", maxChange30mPct, { maxChange30mPct = it }); RuleTextField("5m 최대 등락 %", maxChange5mPct, { maxChange5mPct = it }); RuleTextField("최대 거래대금 순위", prePumpMaxTradeValueRank, { prePumpMaxTradeValueRank = it }); RuleTextField("최대 등락률 순위", maxChangeRank, { maxChangeRank = it }); RuleTextField("30m 최소 회전 %", minRotation30mPct, { minRotation30mPct = it }); RuleTextField("최소 거래량 가속", prePumpMinVolumeAcceleration, { prePumpMinVolumeAcceleration = it }); RuleTextField("최소 5분 거래량 비율", minFiveMinuteVolumeRatio, { minFiveMinuteVolumeRatio = it }); RuleTextField("최소 15분 거래량 비율", minFifteenMinuteVolumeRatio, { minFifteenMinuteVolumeRatio = it }); RuleTextField("최대 박스폭 %", maxRangePct, { maxRangePct = it }); RuleTextField("최소 박스 위치", minRangePosition, { minRangePosition = it }); RuleTextField("고점 근접 배수", minHighProximityMultiplier, { minHighProximityMultiplier = it }); RuleTextField("종가 계단 수", minCloseStairCount, { minCloseStairCount = it }) } }
+        item { RuleSection("과열/차단 점수") { RuleTextField("24h 과열 기준 %", overheat24hBasePct, { overheat24hBasePct = it }); RuleTextField("24h 과열 가중치", overheat24hWeight, { overheat24hWeight = it }); RuleTextField("30m 과열 기준 %", overheat30mBasePct, { overheat30mBasePct = it }); RuleTextField("30m 과열 가중치", overheat30mWeight, { overheat30mWeight = it }); RuleTextField("5m 과열 기준 %", overheat5mBasePct, { overheat5mBasePct = it }); RuleTextField("5m 과열 가중치", overheat5mWeight, { overheat5mWeight = it }); RuleTextField("과열 최대 감점", overheatMax, { overheatMax = it }); RuleTextField("BTC 24h 하락 차단 %", hardBlockBtc24hBelowPct, { hardBlockBtc24hBelowPct = it }); RuleTextField("30m 펌핑 차단 %", hardBlock30mPumpPct, { hardBlock30mPumpPct = it }); RuleTextField("5m 펌핑 차단 %", hardBlock5mPumpPct, { hardBlock5mPumpPct = it }); RuleTextField("음봉 상단꼬리 차단 %", hardBlockRedUpperWickPct, { hardBlockRedUpperWickPct = it }) } }
+        item { RuleSection("리스크") { RuleTextField("기본 손절 배수", defaultStopMultiplier, { defaultStopMultiplier = it }); RuleTextField("최소 손절폭 %", minimumRiskPct, { minimumRiskPct = it }); RuleTextField("최소 기대수익 %", minimumExpectedReturnPct, { minimumExpectedReturnPct = it }) } }
     }
 }
 
 @Composable
-private fun StrategyManualCard() { Card(modifier = Modifier.fillMaxWidth()) { Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) { Text("현재 전략 설명", fontWeight = FontWeight.Bold); Text("Chart 탭은 1분·5분·15분·1시간·4시간·일봉 차트 위에 진입·손절·목표·전략시점을 표시합니다."); Text("History 탭은 실패/손절/이유/보완과 복원 가능한 차트 보기를 제공합니다.") } } }
+private fun RuleSection(title: String, content: @Composable Column.() -> Unit) { Card(modifier = Modifier.fillMaxWidth()) { Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) { Text(title, fontWeight = FontWeight.Bold); content() } } }
+@Composable
+private fun RuleTextField(label: String, value: String, onValueChange: (String) -> Unit) { OutlinedTextField(value = value, onValueChange = onValueChange, label = { Text(label) }, modifier = Modifier.fillMaxWidth(), singleLine = true) }
+@Composable
+private fun RuleSwitchField(label: String, checked: Boolean, onCheckedChange: (Boolean) -> Unit) { Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) { Text("$label: ${if (checked) "ON" else "OFF"}"); Switch(checked = checked, onCheckedChange = onCheckedChange) } }
+
+@Composable
+private fun StrategyManualCard() { Card(modifier = Modifier.fillMaxWidth()) { Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) { Text("현재 전략 설명", fontWeight = FontWeight.Bold); Text("Search 탭에서 종목 입력, 전략 분석, 실시간 차트를 한 번에 봅니다."); Text("History 탭은 기존 Performance 기능까지 포함해서 실패/손절/이유/성과/백테스트를 같이 봅니다."); Text("Rules 탭은 JSON을 직접 만지는 대신 각 조건을 입력칸으로 수정합니다.") } } }
 
 @Composable
 private fun SettingsTab(isRunning: Boolean, scanIntervalMs: Long, maxDisplayCount: Int, minimumScore: Double, gitHubSettings: GitHubSettings, settingsMessage: String?, onStart: () -> Unit, onStop: () -> Unit, onIntervalSelected: (Long) -> Unit, onMaxDisplayChanged: (Int) -> Unit, onMinimumScoreChanged: (Double) -> Unit, onGitHubSettingsSaved: (GitHubSettings) -> Unit, onGitHubSettingsTest: (GitHubSettings) -> Unit, onRulesDownload: (GitHubSettings) -> Unit, onReportUpload: (GitHubSettings) -> Unit, onOpenInstallPermissionSettings: () -> Unit, onDownloadAndInstallLatestApk: (GitHubSettings) -> Unit) {
@@ -516,7 +623,7 @@ private fun SettingsTab(isRunning: Boolean, scanIntervalMs: Long, maxDisplayCoun
 }
 
 @Composable
-private fun StrategyCard(strategy: TradeStrategy, onStrategyChart: (TradeStrategy) -> Unit) { Card(modifier = Modifier.fillMaxWidth()) { Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) { Text("#${strategy.rank} ${strategy.symbol} | ${strategy.strategyType.name.toKoreanStrategyName()}", fontWeight = FontWeight.Bold); Text(strategy.koreanPlanLine()); Text("Score ${strategy.score.one()} | Expected ${strategy.expectedReturnPct.percent()} | R/R ${strategy.riskRewardRatio.one()}"); Text("Entry ${strategy.entryLow.price()} - ${strategy.entryHigh.price()}"); Text("Stop ${strategy.stopLoss.price()} | Targets ${strategy.target1.price()} / ${strategy.target2.price()}"); Text("Valid until ${strategy.validUntil.toTimeText()}"); Text(strategy.reason.toKoreanReasonHint(), style = MaterialTheme.typography.bodySmall); OutlinedButton(onClick = { onStrategyChart(strategy) }, modifier = Modifier.fillMaxWidth()) { Text("Open chart with strategy lines") } } } }
+private fun StrategyCard(strategy: TradeStrategy, onStrategyChart: (TradeStrategy) -> Unit) { Card(modifier = Modifier.fillMaxWidth()) { Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) { Text("#${strategy.rank} ${strategy.symbol} | ${strategy.strategyType.name.toKoreanStrategyName()}", fontWeight = FontWeight.Bold); Text(strategy.koreanPlanLine()); Text("Score ${strategy.score.one()} | Expected ${strategy.expectedReturnPct.percent()} | R/R ${strategy.riskRewardRatio.one()}"); Text("Entry ${strategy.entryLow.price()} - ${strategy.entryHigh.price()}"); Text("Stop ${strategy.stopLoss.price()} | Targets ${strategy.target1.price()} / ${strategy.target2.price()}"); Text("Valid until ${strategy.validUntil.toTimeText()}"); Text(strategy.reason.toKoreanReasonHint(), style = MaterialTheme.typography.bodySmall); OutlinedButton(onClick = { onStrategyChart(strategy) }, modifier = Modifier.fillMaxWidth()) { Text("Search 차트에서 보기") } } } }
 @Composable private fun EmptyCard(text: String) { Card(modifier = Modifier.fillMaxWidth()) { Text(text = text, modifier = Modifier.padding(12.dp)) } }
 
 private fun StrategyHistoryEntity.toTradeStrategyOrNull(): TradeStrategy? {
@@ -542,6 +649,8 @@ private fun String.toKoreanHistoryCategoryLabel(): String = when (this) { "ALL" 
 private fun String.toHistorySymbolFilter(): String { val upper = trim().uppercase().replace("/", "-"); return when { upper.isBlank() || upper == "ALL" -> "ALL"; upper.startsWith("KRW-") -> upper; else -> "KRW-$upper" } }
 private fun StrategyHistoryEntity.improvementHint(): String = when { eventType == "STOPPED_OUT" || message.contains("Stop", true) -> "진입 추격 여부, 손절폭, 거래량 지속성 확인"; eventType == "EXPIRED" -> "시간 내 변동성 부족. 기대수익률보다 MFE와 거래대금 조건 재검토"; eventType == "WATCH_ONLY" -> "관찰 신호가 실제 펌핑했는지 30분 후 성과와 비교"; eventType in setOf("HIT_TARGET", "TARGET1_HIT") -> "동일 조건 반복 가능. 단 목표 도달 후 재진입 금지"; else -> "점수 구성요소와 당시 차트 위치를 같이 확인" }
 private fun String.parsePrice(): Double = replace(",", "").toDoubleOrNull() ?: 0.0
+private fun String.doubleOr(default: Double): Double = toDoubleOrNull() ?: default
+private fun String.intOr(default: Int): Int = toIntOrNull() ?: default
 private fun Double.toPctValue(price: Double): Double = if (this <= 0.0) 0.0 else ((price - this) / this) * 100.0
 private fun Double.toPct(price: Double): String = if (this <= 0.0) "-" else String.format(Locale.US, "%+.2f%%", ((price - this) / this) * 100.0)
 private fun String.toCompactPlan(): String = replace("rank=", "#").replace("score=", "점수 ").replace("entry=", "진입 ").replace("stop=", "손절 ").replace("target=", "목표 ").replace("trail=", "트레일 ").replace("status=", "").replace("strategy=", "")
