@@ -5,8 +5,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.cryptotradecoach.data.AppUpdateRepository
 import com.cryptotradecoach.data.Candle
-import com.cryptotradecoach.data.GitHubSyncClient
-import com.cryptotradecoach.data.GitHubSyncException
 import com.cryptotradecoach.data.GitHubSettings
 import com.cryptotradecoach.data.ScanDiagnostics
 import com.cryptotradecoach.data.SettingsRepository
@@ -95,7 +93,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val appUpdateRepository = AppUpdateRepository(application.applicationContext)
     private val manualDataSource = UpbitMarketDataSource()
     private val manualEngine = SignalEngine()
-    private val gitHubSyncClient = GitHubSyncClient()
 
     init {
         _uiState.value = _uiState.value.copy(
@@ -261,12 +258,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun refreshCurrentRules() { _uiState.value = _uiState.value.copy(currentRulesText = currentRulesText(), settingsMessage = "현재 로컬 규칙을 다시 불러왔습니다.") }
     fun saveRulesText(text: String) { runCatching { rulesRepository.persistLocal(StrategyRules.fromJson(text)); _uiState.value = _uiState.value.copy(currentRulesText = text, settingsMessage = "규칙 저장 완료") }.onFailure { _uiState.value = _uiState.value.copy(settingsMessage = "규칙 저장 실패: ${it.message}") } }
-    fun downloadLatestRules(settings: GitHubSettings = settingsRepository.load()) { viewModelScope.launch { val result = withContext(Dispatchers.IO) { rulesRepository.refreshFromGitHub(settings) }; _uiState.value = _uiState.value.copy(currentRulesText = result.toJson().toString(2), settingsMessage = "GitHub 규칙 다운로드 완료") } }
+    fun downloadLatestRules(settings: GitHubSettings = settingsRepository.load()) { viewModelScope.launch { val result = withContext(Dispatchers.IO) { rulesRepository.refreshFromGitHub() }; _uiState.value = _uiState.value.copy(currentRulesText = result.toJson().toString(2), settingsMessage = "GitHub 규칙 다운로드 완료") } }
     fun saveGitHubSettings(settings: GitHubSettings) { settingsRepository.save(settings); _uiState.value = _uiState.value.copy(gitHubSettings = settingsRepository.load(), settingsMessage = "GitHub 설정 저장 완료") }
-    fun testGitHubSettings(settings: GitHubSettings) { viewModelScope.launch { _uiState.value = _uiState.value.copy(settingsMessage = "GitHub 연결 테스트 중..."); val message = withContext(Dispatchers.IO) { runCatching { gitHubSyncClient.fetchText(settings.normalized()); "GitHub 연결 성공" }.getOrElse { error -> when (error) { is GitHubSyncException -> "GitHub 연결 실패: ${error.message}" else -> "GitHub 연결 실패: ${error.message ?: error::class.java.simpleName}" } } }; _uiState.value = _uiState.value.copy(settingsMessage = message) } }
+    fun testGitHubSettings(settings: GitHubSettings) { viewModelScope.launch { settingsRepository.save(settings); val result = withContext(Dispatchers.IO) { runCatching { rulesRepository.refreshFromGitHub(); true }.getOrDefault(false) }; _uiState.value = _uiState.value.copy(gitHubSettings = settingsRepository.load(), currentRulesText = currentRulesText(), settingsMessage = if (result) "GitHub 연결 성공" else "GitHub 연결 실패 또는 설정 미완성") } }
     fun uploadLatestReport(settings: GitHubSettings) { viewModelScope.launch { _uiState.value = _uiState.value.copy(settingsMessage = "리포트 업로드 중..."); val ok = withContext(Dispatchers.IO) { reportRepository.uploadLatestReport() }; _uiState.value = _uiState.value.copy(settingsMessage = if (ok) "리포트 업로드 완료" else "리포트 업로드 실패") } }
-    fun openInstallPermissionSettings() { appUpdateRepository.openInstallPermissionSettings() }
-    fun downloadAndInstallLatestApk(settings: GitHubSettings) { viewModelScope.launch { _uiState.value = _uiState.value.copy(settingsMessage = "APK 다운로드 확인 중..."); val message = withContext(Dispatchers.IO) { appUpdateRepository.downloadAndInstallLatest(settings.normalized()) }; _uiState.value = _uiState.value.copy(settingsMessage = message) } }
+    fun openInstallPermissionSettings() { appUpdateRepository.openUnknownAppSourcesSettings() }
+    fun downloadAndInstallLatestApk(settings: GitHubSettings) { viewModelScope.launch { _uiState.value = _uiState.value.copy(settingsMessage = "APK 다운로드 확인 중..."); if (!appUpdateRepository.canRequestPackageInstalls()) { appUpdateRepository.openUnknownAppSourcesSettings(); _uiState.value = _uiState.value.copy(settingsMessage = "알 수 없는 앱 설치 권한을 먼저 허용하세요."); return@launch }; val result = withContext(Dispatchers.IO) { runCatching { appUpdateRepository.downloadLatestReleaseApk(settings.normalized()) } }; result.fold(onSuccess = { file -> appUpdateRepository.openApkInstaller(file); _uiState.value = _uiState.value.copy(settingsMessage = "APK 설치 화면 열기: ${file.name}") }, onFailure = { error -> _uiState.value = _uiState.value.copy(settingsMessage = "APK 다운로드 실패: ${error.message ?: error::class.java.simpleName}") }) } }
 
     private fun StrategyScanLog.toWatchOnlyStrategy(now: Long): TradeStrategy {
         val price = currentPrice.takeIf { it > 0.0 } ?: entryPrice
