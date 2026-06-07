@@ -1,7 +1,6 @@
 package com.cryptotradecoach.ui
 
 import android.app.Application
-import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.cryptotradecoach.data.AppUpdateRepository
@@ -15,7 +14,10 @@ import com.cryptotradecoach.data.SignalHistoryRepository
 import com.cryptotradecoach.data.StrategyReportRepository
 import com.cryptotradecoach.data.StrategyRules
 import com.cryptotradecoach.data.StrategyRulesRepository
+import com.cryptotradecoach.data.StrategyScanLog
 import com.cryptotradecoach.data.StrategyScanResult
+import com.cryptotradecoach.data.StrategyStatus
+import com.cryptotradecoach.data.StrategyType
 import com.cryptotradecoach.data.TradeStrategy
 import com.cryptotradecoach.data.UpbitMarketDataSource
 import com.cryptotradecoach.data.local.AppDatabase
@@ -38,6 +40,7 @@ import org.json.JSONArray
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
+import kotlin.math.abs
 
 enum class ChartTimeframe(val label: String, val upbitMinuteUnit: Int?, val count: Int) {
     ONE_MINUTE("1분", 1, 120),
@@ -132,15 +135,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun analyzeManualSymbol(rawSymbol: String) {
         viewModelScope.launch {
-            val symbol = rawSymbol.trim().uppercase()
-            if (symbol.isBlank()) {
-                val message = "종목을 입력하세요. 예: XRP 또는 KRW-XRP"
-                showToast(message)
-                _uiState.value = _uiState.value.copy(manualMessage = message, manualStrategy = null)
+            val symbol = normalizeMarket(rawSymbol)
+            if (symbol.isBlank() || symbol == "KRW-") {
+                _uiState.value = _uiState.value.copy(manualMessage = "종목을 입력하세요. 예: XRP 또는 KRW-XRP")
                 return@launch
             }
-            showToast("Analyze 버튼 눌림: $symbol")
-            _uiState.value = _uiState.value.copy(manualMessage = "분석 중: $symbol", manualStrategy = null)
+            _uiState.value = _uiState.value.copy(manualMessage = "분석 중: $symbol", chartMessage = null)
 
             val result = withTimeoutOrNull(MANUAL_ANALYSIS_TIMEOUT_MS) {
                 withContext(Dispatchers.IO) {
@@ -149,12 +149,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                         val candidate = manualDataSource.fetchManualMarketCandidateFast(symbol, rules)
                             ?: return@runCatching ManualAnalyzeResult(null, manualDataSource.lastError ?: "후보 생성 실패: $symbol")
                         val scanResult = manualEngine.scan(candidates = listOf(candidate), rules = rules, maxResults = 1)
-                        val strategy = scanResult.activeStrategies.firstOrNull()?.copy(rank = 1)
-                        val message = strategy?.let { "분석 완료: ${it.symbol}" }
-                            ?: scanResult.scanLogs.firstOrNull()?.let { log ->
-                                "ACTIVE 전략 조건 없음: ${log.market} score=${String.format(java.util.Locale.US, "%.1f", log.score)} reason=${log.missedReason ?: log.strategyStatus.name}"
-                            }
-                            ?: "ACTIVE 전략 조건이 없습니다. 관찰만 권장합니다."
+                        val active = scanResult.activeStrategies.firstOrNull()?.copy(rank = 1)
+                        val log = scanResult.scanLogs.firstOrNull()
+                        val strategy = active ?: log?.toWatchOnlyStrategy(now = System.currentTimeMillis())
+                        val message = when {
+                            active != null -> "ACTIVE 분석 완료: ${active.symbol} score=${active.score.one()}"
+                            log != null -> "관찰 기록: ${log.market} score=${log.score.one()} status=${log.strategyStatus} reason=${log.missedReason ?: log.strategyStatus.name}"
+                            else -> "ACTIVE 전략 조건이 없습니다. 관찰 로그도 생성되지 않았습니다."
+                        }
                         historyRepository.recordManualSearch(symbol, strategy, message)
                         ManualAnalyzeResult(strategy, message)
                     }
@@ -162,10 +164,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             }
 
             if (result == null) {
-                val message = "수동 분석 시간 초과: ${symbol}. 네트워크/업비트 응답 지연입니다. 잠시 후 다시 시도하세요."
-                withContext(Dispatchers.IO) { historyRepository.recordManualSearch(symbol, null, message) }
-                showToast("분석 시간 초과")
-                _uiState.value = _uiState.value.copy(manualStrategy = null, manualMessage = message)
+                val message = "수동 분석 시간 초과: $symbol. 네트워크/업비트 응답 지연입니다. 잠시 후 다시 시도하세요."
+                val latestHistory = withContext(Dispatchers.IO) {
+                    historyRepository.recordManualSearch(symbol, null, message)
+                    historyRepository.getHistoryBySymbol()
+                }
+                ScannerStateStore.pushScanResult(historyRepository.getActiveStrategies(), latestHistory, _uiState.value.scanDiagnostics, getApplication())
+                _uiState.value = _uiState.value.copy(manualMessage = message, historyBySymbol = latestHistory)
                 return@launch
             }
 
@@ -173,15 +178,16 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 onSuccess = { analyzed ->
                     val latestHistory = withContext(Dispatchers.IO) { historyRepository.getHistoryBySymbol() }
                     ScannerStateStore.pushScanResult(historyRepository.getActiveStrategies(), latestHistory, _uiState.value.scanDiagnostics, getApplication())
-                    showToast(analyzed.message.take(90))
                     _uiState.value = _uiState.value.copy(manualStrategy = analyzed.strategy, manualMessage = analyzed.message, historyBySymbol = latestHistory)
-                    analyzed.strategy?.let { loadStrategyChart(it) }
                 },
                 onFailure = { error ->
                     val message = "수동 분석 실패: ${error.message ?: error::class.java.simpleName}"
-                    withContext(Dispatchers.IO) { historyRepository.recordManualSearch(symbol, null, message) }
-                    showToast(message.take(90))
-                    _uiState.value = _uiState.value.copy(manualStrategy = null, manualMessage = message)
+                    val latestHistory = withContext(Dispatchers.IO) {
+                        historyRepository.recordManualSearch(symbol, null, message)
+                        historyRepository.getHistoryBySymbol()
+                    }
+                    ScannerStateStore.pushScanResult(historyRepository.getActiveStrategies(), latestHistory, _uiState.value.scanDiagnostics, getApplication())
+                    _uiState.value = _uiState.value.copy(manualMessage = message, historyBySymbol = latestHistory)
                 },
             )
         }
@@ -189,16 +195,25 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun saveManualStrategy() {
         val strategy = _uiState.value.manualStrategy ?: run {
-            _uiState.value = _uiState.value.copy(manualMessage = "저장할 전략이 없습니다.")
+            _uiState.value = _uiState.value.copy(manualMessage = "저장할 분석 결과가 없습니다.")
             return
         }
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                historyRepository.saveStrategyScanResult(StrategyScanResult(activeStrategies = listOf(strategy), scanLogs = emptyList()), mapOf(strategy.symbol to strategy.entryHigh))
+            val latestHistory = withContext(Dispatchers.IO) {
+                if (strategy.status == StrategyStatus.ACTIVE) {
+                    historyRepository.saveStrategyScanResult(StrategyScanResult(activeStrategies = listOf(strategy), scanLogs = emptyList()), mapOf(strategy.symbol to strategy.entryHigh))
+                    historyRepository.recordManualSearch(strategy.symbol, strategy, "ACTIVE 저장 완료: ${strategy.symbol}")
+                } else {
+                    historyRepository.recordManualSearch(strategy.symbol, strategy, "관찰 기록 저장 완료: ${strategy.symbol}. ACTIVE가 아니므로 성과 추적에는 넣지 않았습니다.")
+                }
+                historyRepository.getHistoryBySymbol()
             }
-            ScannerStateStore.pushScanResult(historyRepository.getActiveStrategies(), historyRepository.getHistoryBySymbol(), _uiState.value.scanDiagnostics, getApplication())
+            ScannerStateStore.pushScanResult(historyRepository.getActiveStrategies(), latestHistory, _uiState.value.scanDiagnostics, getApplication())
             refreshPerformance()
-            _uiState.value = _uiState.value.copy(manualMessage = "저장 완료: ${strategy.symbol}")
+            _uiState.value = _uiState.value.copy(
+                manualMessage = if (strategy.status == StrategyStatus.ACTIVE) "ACTIVE 저장 완료: ${strategy.symbol}" else "관찰 기록 저장 완료: ${strategy.symbol}",
+                historyBySymbol = latestHistory,
+            )
         }
     }
 
@@ -228,7 +243,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private fun fetchDayCandles(market: String, count: Int): List<Candle> {
-        val connection = (URL("https://api.upbit.com/v1/candles/days?market=$market&count=$count").openConnection() as HttpURLConnection).apply { requestMethod = "GET"; connectTimeout = 4_000; readTimeout = 4_000 }
+        val base = "https" + "://" + "api.upbit.com"
+        val connection = (URL("$base/v1/candles/days?market=$market&count=$count").openConnection() as HttpURLConnection).apply { requestMethod = "GET"; connectTimeout = 4_000; readTimeout = 4_000 }
         try {
             if (connection.responseCode != HttpURLConnection.HTTP_OK) throw IOException("HTTP ${connection.responseCode}")
             val arr = JSONArray(connection.inputStream.bufferedReader().use { it.readText() })
@@ -252,8 +268,61 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun openInstallPermissionSettings() { appUpdateRepository.openInstallPermissionSettings() }
     fun downloadAndInstallLatestApk(settings: GitHubSettings) { viewModelScope.launch { _uiState.value = _uiState.value.copy(settingsMessage = "APK 다운로드 확인 중..."); val message = withContext(Dispatchers.IO) { appUpdateRepository.downloadAndInstallLatest(settings.normalized()) }; _uiState.value = _uiState.value.copy(settingsMessage = message) } }
 
+    private fun StrategyScanLog.toWatchOnlyStrategy(now: Long): TradeStrategy {
+        val price = currentPrice.takeIf { it > 0.0 } ?: entryPrice
+        val stop = stopLossPrice.takeIf { it > 0.0 } ?: price * 0.986
+        val t1 = target1.takeIf { it > 0.0 } ?: price * 1.012
+        val t2 = target2.takeIf { it > 0.0 } ?: price * 1.024
+        val riskPct = abs(percentChange(price, stop)).coerceAtLeast(0.32)
+        val expectedReturn = abs(percentChange(price, t2)).coerceAtLeast(0.90)
+        return TradeStrategy(
+            id = "$market-MANUAL_WATCH",
+            symbol = market,
+            strategyType = strategyType.takeIf { it != StrategyType.BTC_SHORT_REGIME || market == "KRW-BTC" } ?: StrategyType.WATCH_ONLY,
+            status = StrategyStatus.WATCH_ONLY,
+            score = score,
+            rank = 1,
+            entryLow = price * 0.999,
+            entryHigh = price * 1.001,
+            stopLoss = stop,
+            target1 = t1,
+            target2 = t2,
+            trailingStop = trailingStop.takeIf { it > 0.0 } ?: price * 0.995,
+            expectedReturnPct = expectedReturn,
+            riskPct = riskPct,
+            riskRewardRatio = expectedReturn / riskPct,
+            componentScores = componentScores,
+            rankByChangeRate = rankByChangeRate,
+            rankByTradeValue = rankByTradeValue,
+            changeRate24h = changeRate24h,
+            changeRate30m = changeRate30m,
+            changeRate5m = changeRate5m,
+            volumeAcceleration = volumeAcceleration,
+            reason = "MANUAL WATCH_ONLY; reason=${missedReason ?: strategyStatus.name}; score=${score.one()}; $componentScores",
+            invalidationReason = missedReason,
+            createdAt = now,
+            updatedAt = now,
+            validUntil = now + 240L * 60L * 1000L,
+        )
+    }
+
+    private fun normalizeMarket(raw: String): String {
+        val upper = raw.trim().uppercase().replace("/", "-")
+        return when {
+            upper.isBlank() -> ""
+            upper.startsWith("KRW-") -> upper
+            else -> "KRW-$upper"
+        }
+    }
+
+    private fun percentChange(from: Double, to: Double): Double {
+        if (from <= 0.0) return 0.0
+        return ((to - from) / from) * 100.0
+    }
+
+    private fun Double.one(): String = String.format(java.util.Locale.US, "%.1f", this)
+
     private fun currentRulesText(): String = rulesRepository.loadLastKnownGood().toJson().toString(2)
-    private fun showToast(message: String) { Toast.makeText(getApplication(), message, Toast.LENGTH_SHORT).show() }
 
     companion object {
         private const val MANUAL_ANALYSIS_TIMEOUT_MS = 9_000L
