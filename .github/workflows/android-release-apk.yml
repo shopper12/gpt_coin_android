@@ -66,7 +66,11 @@ jobs:
 
       - name: Copy APK
         run: |
+          set -euo pipefail
           mkdir -p apk-output
+          short_sha="${GITHUB_SHA::7}"
+          versioned_apk="crypto-trade-coach-release-v${{ github.run_number }}-${short_sha}.apk"
+          echo "VERSIONED_APK=$versioned_apk" >> "$GITHUB_ENV"
           echo "Release output files:"
           find app/build/outputs/apk/release -maxdepth 1 -type f -print || true
           apk_path="$(find app/build/outputs/apk/release -maxdepth 1 -type f -name '*.apk' | head -n 1)"
@@ -75,7 +79,7 @@ jobs:
             exit 1
           fi
           cp "$apk_path" "apk-output/$APK_FILE_NAME"
-          cp "$apk_path" "apk-output/crypto-trade-coach-release-v${{ github.run_number }}-${GITHUB_SHA::7}.apk"
+          cp "$apk_path" "apk-output/$versioned_apk"
 
       - name: Verify APK structure
         run: |
@@ -151,7 +155,7 @@ jobs:
             versionName: 1.0.${{ github.run_number }}
           files: |
             apk-output/crypto-trade-coach-release.apk
-            apk-output/crypto-trade-coach-release-v${{ github.run_number }}-${{ github.sha }}.apk
+            apk-output/${{ env.VERSIONED_APK }}
           prerelease: true
           make_latest: true
           overwrite_files: true
