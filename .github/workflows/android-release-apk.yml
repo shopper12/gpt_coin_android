@@ -1,28 +1,19 @@
 name: Build Android release APK
 
+run-name: APK for ${{ github.sha }}
+
 on:
   workflow_dispatch:
   push:
     branches: [ main ]
-    paths:
-      - 'app/**'
-      - 'rules/**'
-      - 'tools/**'
-      - 'gradle/**'
-      - 'build.gradle*'
-      - 'settings.gradle*'
-      - 'gradle.properties'
-      - 'gradlew'
-      - '.github/workflows/android-release-apk.yml'
   schedule:
     - cron: '17 3 * * *'
 
 permissions:
   contents: write
 
-concurrency:
-  group: android-release-apk-${{ github.ref }}
-  cancel-in-progress: true
+env:
+  APK_FILE_NAME: crypto-trade-coach-release.apk
 
 jobs:
   build-release-apk:
@@ -83,12 +74,13 @@ jobs:
             echo "No release APK was produced. The release build probably failed before packaging."
             exit 1
           fi
-          cp "$apk_path" apk-output/crypto-trade-coach-release.apk
+          cp "$apk_path" "apk-output/$APK_FILE_NAME"
+          cp "$apk_path" "apk-output/crypto-trade-coach-release-v${{ github.run_number }}-${GITHUB_SHA::7}.apk"
 
       - name: Verify APK structure
         run: |
           set -euo pipefail
-          apk="apk-output/crypto-trade-coach-release.apk"
+          apk="apk-output/$APK_FILE_NAME"
           test -s "$apk"
           bytes="$(wc -c < "$apk")"
           echo "APK bytes: $bytes"
@@ -104,7 +96,7 @@ jobs:
         continue-on-error: true
         run: |
           set +e
-          apk="apk-output/crypto-trade-coach-release.apk"
+          apk="apk-output/$APK_FILE_NAME"
           : > apk-output/apksigner-verify.txt
           : > apk-output/badging.txt
 
@@ -131,9 +123,9 @@ jobs:
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: crypto-trade-coach-release-apk
+          name: crypto-trade-coach-release-apk-${{ github.run_number }}-${{ github.sha }}
           path: |
-            apk-output/crypto-trade-coach-release.apk
+            apk-output/*.apk
             apk-output/file-type.txt
             apk-output/unzip-test.txt
             apk-output/apksigner-verify.txt
@@ -146,18 +138,22 @@ jobs:
           tag_name: latest-phone-apk
           name: Latest phone APK
           body: |
-            Android release APK built from `main`.
+            Android release APK built automatically from every commit pushed to `main`.
 
             Download `crypto-trade-coach-release.apk` from Assets on the phone and install/update it.
+
+            This Release is rolling: every successful commit build overwrites the APK asset with the newest APK.
 
             If Android says the package is invalid or conflicts with an existing package, uninstall the old `Crypto Trade Coach` app once, then install this release APK again. This usually happens when the old app was installed with a different signing key.
 
             commit: ${{ github.sha }}
             versionCode: ${{ github.run_number }}
             versionName: 1.0.${{ github.run_number }}
-          files: apk-output/crypto-trade-coach-release.apk
+          files: |
+            apk-output/crypto-trade-coach-release.apk
+            apk-output/crypto-trade-coach-release-v${{ github.run_number }}-${{ github.sha }}.apk
           prerelease: true
-          make_latest: false
+          make_latest: true
           overwrite_files: true
         env:
           GITHUB_TOKEN: ${{ github.token }}
