@@ -42,6 +42,7 @@ jobs:
           set -euo pipefail
           python tools/patch_manual_search_speed.py
           python tools/patch_manual_search_watchdog.py
+          python tools/patch_low_churn_strategy.py
 
       - name: Validate release signing inputs
         env:
