@@ -17,10 +17,22 @@ data class GitHubSyncSettings(
         get() = normalized().let { it.owner.isNotBlank() && it.repo.isNotBlank() && it.branch.isNotBlank() }
 
     fun normalized(): GitHubSyncSettings {
+        val cleanOwner = owner.trim().ifBlank { DEFAULT_OWNER }
+        val cleanRepo = repo.trim().ifBlank { DEFAULT_REPO }
+        val cleanBranch = branch.trim()
+        val normalizedBranch = if (
+            cleanOwner == DEFAULT_OWNER &&
+            cleanRepo == DEFAULT_REPO &&
+            (cleanBranch.isBlank() || cleanBranch == LEGACY_RUNTIME_BRANCH)
+        ) {
+            DEFAULT_BRANCH
+        } else {
+            cleanBranch.ifBlank { DEFAULT_BRANCH }
+        }
         return copy(
-            owner = owner.trim().ifBlank { DEFAULT_OWNER },
-            repo = repo.trim().ifBlank { DEFAULT_REPO },
-            branch = branch.trim().ifBlank { DEFAULT_BRANCH },
+            owner = cleanOwner,
+            repo = cleanRepo,
+            branch = normalizedBranch,
             rulesPath = rulesPath.trim().ifBlank { DEFAULT_RULES_PATH },
             reportPath = reportPath.trim().ifBlank { DEFAULT_REPORT_PATH },
         )
@@ -29,7 +41,8 @@ data class GitHubSyncSettings(
     companion object {
         const val DEFAULT_OWNER = "shopper12"
         const val DEFAULT_REPO = "gpt_coin_android"
-        const val DEFAULT_BRANCH = "fix/runtime-phone-error"
+        const val DEFAULT_BRANCH = "main"
+        const val LEGACY_RUNTIME_BRANCH = "fix/runtime-phone-error"
         const val DEFAULT_RULES_PATH = "rules/strategy-rules.json"
         const val DEFAULT_REPORT_PATH = "reports/latest.json"
     }
@@ -63,7 +76,7 @@ class SettingsRepository private constructor(context: Context) {
             reportPath = publicPrefs.getString(KEY_REPORT_PATH, GitHubSyncSettings.DEFAULT_REPORT_PATH).orEmpty().ifBlank { GitHubSyncSettings.DEFAULT_REPORT_PATH },
             token = securePrefs.getString(KEY_TOKEN, "").orEmpty(),
             autoUploadReport = publicPrefs.getBoolean(KEY_AUTO_UPLOAD_REPORT, false),
-        )
+        ).normalized()
     }
 
     fun save(settings: GitHubSyncSettings): Boolean {
@@ -97,12 +110,12 @@ class SettingsRepository private constructor(context: Context) {
         val owner = publicPrefs.getString(KEY_OWNER, GitHubSyncSettings.DEFAULT_OWNER).orEmpty().ifBlank { GitHubSyncSettings.DEFAULT_OWNER }
         val repo = publicPrefs.getString(KEY_REPO, GitHubSyncSettings.DEFAULT_REPO).orEmpty().ifBlank { GitHubSyncSettings.DEFAULT_REPO }
         val branch = publicPrefs.getString(KEY_BRANCH, "").orEmpty()
-        val shouldReplaceLegacyMain = owner == GitHubSyncSettings.DEFAULT_OWNER &&
+        val shouldReplaceLegacyBranch = owner == GitHubSyncSettings.DEFAULT_OWNER &&
             repo == GitHubSyncSettings.DEFAULT_REPO &&
-            (branch.isBlank() || branch == LEGACY_DEFAULT_BRANCH)
+            (branch.isBlank() || branch == LEGACY_DEFAULT_BRANCH || branch == GitHubSyncSettings.LEGACY_RUNTIME_BRANCH)
 
         publicPrefs.edit().apply {
-            if (shouldReplaceLegacyMain) {
+            if (shouldReplaceLegacyBranch) {
                 putString(KEY_BRANCH, GitHubSyncSettings.DEFAULT_BRANCH)
             }
             if (publicPrefs.getString(KEY_RULES_PATH, "").orEmpty().isBlank()) {
