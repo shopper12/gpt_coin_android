@@ -58,6 +58,14 @@ class BacktestEngine(private val db: AppDatabase) {
         val winRate = wins.size.toDouble() / rows.size
         val avgWin = wins.averageOrZero()
         val avgLoss = losses.map { abs(it) }.averageOrZero()
+        val totalWin = wins.sum()
+        val totalLoss = losses.sumOf { abs(it) }
+        val profitFactor = when {
+            totalLoss <= 0.0 && totalWin > 0.0 -> 99.0
+            totalLoss <= 0.0 -> 0.0
+            totalWin <= 0.0 -> 0.0
+            else -> totalWin / totalLoss
+        }
         val scoreRanges = rows.zip(returnsForDecision).groupBy { (row, _) -> scoreRange(row.score) }
         val bestRange = scoreRanges.maxByOrNull { (_, values) ->
             if (values.isEmpty()) 0.0 else values.count { (_, ret) -> ret > 0.0 }.toDouble() / values.size
@@ -80,7 +88,7 @@ class BacktestEngine(private val db: AppDatabase) {
             target1HitRate = rows.count { it.target1Hit }.toDouble() / rows.size,
             target2HitRate = rows.count { it.target2Hit }.toDouble() / rows.size,
             expectancy = winRate * avgWin - (1.0 - winRate) * avgLoss,
-            profitFactor = if (avgLoss > 0.0 && winRate < 1.0) avgWin * winRate / (avgLoss * (1.0 - winRate)) else 99.0,
+            profitFactor = profitFactor,
             scoreCorrelation = corr,
             sampleSize = rows.size,
             lastUpdated = System.currentTimeMillis(),
@@ -93,6 +101,24 @@ class BacktestEngine(private val db: AppDatabase) {
     }
 
     private fun decisionReturn(row: StrategyPerformanceEntity, checkpoints: List<PerformanceCheckpointEntity>): Double {
+        if (row.stopHit) {
+            return checkpoints.firstOrNull { it.stopHit }?.returnPct
+                ?: row.return60m
+                ?: percentChange(row.entryPrice, row.stopLoss).takeIf { it != 0.0 }
+                ?: -row.riskPct.coerceAtLeast(DEFAULT_STOP_FALLBACK_PCT)
+        }
+        if (row.target2Hit) {
+            return checkpoints.firstOrNull { it.target2Hit }?.returnPct
+                ?: row.return60m
+                ?: percentChange(row.entryPrice, row.target2).takeIf { it != 0.0 }
+                ?: row.riskPct * 2.4
+        }
+        if (row.target1Hit) {
+            return checkpoints.firstOrNull { it.target1Hit }?.returnPct
+                ?: row.return60m
+                ?: percentChange(row.entryPrice, row.target1).takeIf { it != 0.0 }
+                ?: row.riskPct * 1.5
+        }
         return checkpointReturn(row, checkpoints, 240)
             ?: checkpointReturn(row, checkpoints, 120)
             ?: row.return60m
@@ -168,7 +194,7 @@ class BacktestEngine(private val db: AppDatabase) {
         target1HitRate = 0.0,
         target2HitRate = 0.0,
         expectancy = 0.0,
-        profitFactor = 99.0,
+        profitFactor = 0.0,
         scoreCorrelation = 0.0,
         sampleSize = 0,
         lastUpdated = System.currentTimeMillis(),
@@ -179,10 +205,16 @@ class BacktestEngine(private val db: AppDatabase) {
         bearRegimeSampleSize = 0,
     )
 
+    private fun percentChange(from: Double, to: Double): Double {
+        if (from <= 0.0 || to <= 0.0) return 0.0
+        return ((to - from) / from) * 100.0
+    }
+
     private fun List<Double>.averageOrZero(): Double = if (isEmpty()) 0.0 else average()
 
     companion object {
         private const val ANALYSIS_WINDOW_MS = 14L * 24L * 60L * 60L * 1000L
         private const val ANALYSIS_LIMIT = 5000
+        private const val DEFAULT_STOP_FALLBACK_PCT = 1.5
     }
 }
