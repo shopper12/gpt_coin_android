@@ -105,19 +105,19 @@ class BacktestEngine(private val db: AppDatabase) {
             return checkpoints.firstOrNull { it.stopHit }?.returnPct
                 ?: row.return60m
                 ?: percentChange(row.entryPrice, row.stopLoss).takeIf { it != 0.0 }
-                ?: -row.riskPct.coerceAtLeast(DEFAULT_STOP_FALLBACK_PCT)
+                ?: -DEFAULT_STOP_FALLBACK_PCT
         }
         if (row.target2Hit) {
             return checkpoints.firstOrNull { it.target2Hit }?.returnPct
                 ?: row.return60m
                 ?: percentChange(row.entryPrice, row.target2).takeIf { it != 0.0 }
-                ?: row.riskPct * 2.4
+                ?: DEFAULT_TARGET2_FALLBACK_PCT
         }
         if (row.target1Hit) {
             return checkpoints.firstOrNull { it.target1Hit }?.returnPct
                 ?: row.return60m
                 ?: percentChange(row.entryPrice, row.target1).takeIf { it != 0.0 }
-                ?: row.riskPct * 1.5
+                ?: DEFAULT_TARGET1_FALLBACK_PCT
         }
         return checkpointReturn(row, checkpoints, 240)
             ?: checkpointReturn(row, checkpoints, 120)
@@ -216,5 +216,7 @@ class BacktestEngine(private val db: AppDatabase) {
         private const val ANALYSIS_WINDOW_MS = 14L * 24L * 60L * 60L * 1000L
         private const val ANALYSIS_LIMIT = 5000
         private const val DEFAULT_STOP_FALLBACK_PCT = 1.5
+        private const val DEFAULT_TARGET1_FALLBACK_PCT = 2.25
+        private const val DEFAULT_TARGET2_FALLBACK_PCT = 3.6
     }
 }
