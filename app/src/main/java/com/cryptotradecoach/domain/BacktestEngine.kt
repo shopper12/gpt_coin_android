@@ -170,7 +170,7 @@ class BacktestEngine(private val db: AppDatabase) {
         val numerator = x.zip(y).sumOf { (a, b) -> (a - mx) * (b - my) }
         val dx = sqrt(x.sumOf { (it - mx).pow(2) })
         val dy = sqrt(y.sumOf { (it - my).pow(2) })
-        return if (dx * dy == 0.0) 0.0 else numerator / (dx * dy)
+        return if (dx * dy == 0.0) 0.0 else numerator / dy / dx
     }
 
     private fun scoreRange(score: Double): String = when {
@@ -213,8 +213,8 @@ class BacktestEngine(private val db: AppDatabase) {
     private fun List<Double>.averageOrZero(): Double = if (isEmpty()) 0.0 else average()
 
     companion object {
-        private const val ANALYSIS_WINDOW_MS = 14L * 24L * 60L * 60L * 1000L
-        private const val ANALYSIS_LIMIT = 5000
+        private const val ANALYSIS_WINDOW_MS = 90L * 24L * 60L * 60L * 1000L
+        private const val ANALYSIS_LIMIT = 20000
         private const val DEFAULT_STOP_FALLBACK_PCT = 1.5
         private const val DEFAULT_TARGET1_FALLBACK_PCT = 2.25
         private const val DEFAULT_TARGET2_FALLBACK_PCT = 3.6
