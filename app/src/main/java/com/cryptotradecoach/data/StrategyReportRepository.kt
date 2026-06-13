@@ -29,7 +29,7 @@ class StrategyReportRepository private constructor(
         val summaryByType = summaries.associateBy { it.strategyType }
         val failedSignals = logs
             .filter { it.selectedOrMissed == "MISSED" || it.strategyStatus != StrategyStatus.ACTIVE }
-            .take(100)
+            .take(300)
             .map { log -> log.toFailedSignalReport(summaryByType) }
         return StrategyReport(
             generatedAt = now,
@@ -136,7 +136,7 @@ class StrategyReportRepository private constructor(
 
     companion object {
         private const val TAG = "StrategyReportRepo"
-        private const val REPORT_WINDOW_MS = 24 * 60 * 60 * 1000L
+        private const val REPORT_WINDOW_MS = 14L * 24L * 60L * 60L * 1000L
 
         @Volatile
         private var instance: StrategyReportRepository? = null
