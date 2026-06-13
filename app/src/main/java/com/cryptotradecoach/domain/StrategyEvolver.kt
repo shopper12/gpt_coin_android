@@ -67,25 +67,33 @@ class StrategyEvolver(
         currentRegime: BtcRegime = BtcRegime.NEUTRAL,
     ): StrategyRules {
         var updated = rules
+        val matureResults = results.filter { it.sampleSize >= MIN_SAMPLES_FOR_EVOLUTION }
+        val poorRealizedPerformance = matureResults.any { result ->
+            result.expectancy <= 0.0 || result.profitFactor < 1.0 || result.winRate < 0.45 || result.stopHitRate > 0.45
+        }
         results.forEach { result ->
             if (result.sampleSize < MIN_SAMPLES_FOR_EVOLUTION) return@forEach
             if (result.winRate < 0.35 && result.sampleSize >= 20) {
                 updated = updated.withStrategyActiveFlag(result.strategyType, false)
             }
-            if (result.winRate > 0.65 && result.expectancy > 0.0) {
+            if (result.winRate > 0.65 && result.expectancy > 0.0 && result.profitFactor >= 1.2) {
                 updated = updated.withStrategyActiveFlag(result.strategyType, true)
             }
-            if (result.scoreCorrelation < 0.20 && result.winRate < 0.50) {
-                updated = updated.copy(minimumScore = (updated.minimumScore * 0.90).coerceAtLeast(50.0))
-            }
-            if (result.scoreCorrelation > 0.50 && result.winRate > 0.60) {
-                updated = updated.copy(minimumScore = (updated.minimumScore * 1.10).coerceAtMost(85.0))
+            if (result.sampleSize >= MIN_CORRELATION_SAMPLES) {
+                if (result.scoreCorrelation < 0.20 && result.winRate < 0.50) {
+                    updated = updated.copy(minimumScore = (updated.minimumScore * 0.92).coerceAtLeast(55.0))
+                }
+                if (result.scoreCorrelation > 0.50 && result.winRate > 0.60 && result.expectancy > 0.0) {
+                    updated = updated.copy(minimumScore = (updated.minimumScore * 1.08).coerceAtMost(85.0))
+                }
             }
             if (result.stopHitRate > 0.50) {
                 val prePump = updated.prePumpRotation
                 updated = updated.copy(
+                    minimumScore = (updated.minimumScore + 2.0).coerceAtMost(90.0),
                     prePumpRotation = prePump.copy(
-                        minHighProximityMultiplier = (prePump.minHighProximityMultiplier * 0.98).coerceAtLeast(0.90),
+                        minHighProximityMultiplier = (prePump.minHighProximityMultiplier * 0.99).coerceAtLeast(0.95),
+                        minVolumeAcceleration = (prePump.minVolumeAcceleration * 1.03).coerceAtMost(2.0),
                     ),
                 )
             }
@@ -97,7 +105,7 @@ class StrategyEvolver(
                     if (warnCount >= 3) {
                         updated = updated.withStrategyActiveFlag(result.strategyType, false)
                     }
-                } else if (result.bearRegimeLossRate < 0.35) {
+                } else if (result.bearRegimeLossRate < 0.35 && result.expectancy > 0.0 && result.profitFactor >= 1.2) {
                     val warnCount = ((updated.customFlags[warnKey]?.toIntOrNull() ?: 0) - 1).coerceAtLeast(0)
                     updated = updated.withCustomFlag(warnKey, warnCount.toString())
                     if (warnCount <= 0) {
@@ -106,17 +114,22 @@ class StrategyEvolver(
                 }
             }
         }
-        if (recentSignalCount < 3) {
+        if (poorRealizedPerformance) {
+            updated = updated.copy(
+                minimumScore = (updated.minimumScore + 4.0).coerceAtMost(90.0),
+                maxResults = (updated.maxResults - 1).coerceAtLeast(1),
+            )
+        } else if (recentSignalCount < 5 && matureResults.isEmpty()) {
             val prePump = updated.prePumpRotation
             updated = updated.copy(
-                minimumScore = (updated.minimumScore - 3.0).coerceAtLeast(50.0),
+                minimumScore = (updated.minimumScore - 1.5).coerceAtLeast(55.0),
                 prePumpRotation = prePump.copy(
-                    minVolumeAcceleration = (prePump.minVolumeAcceleration * 0.95).coerceAtLeast(1.10),
-                    maxTradeValueRank = (prePump.maxTradeValueRank + 5).coerceAtMost(75),
+                    minVolumeAcceleration = (prePump.minVolumeAcceleration * 0.97).coerceAtLeast(1.10),
+                    maxTradeValueRank = (prePump.maxTradeValueRank + 3).coerceAtMost(60),
                 ),
             )
         }
-        if (recentMissedCount >= MIN_MISSED_FOR_EVOLUTION) {
+        if (!poorRealizedPerformance && recentMissedCount >= MIN_MISSED_FOR_EVOLUTION) {
             val prePump = updated.prePumpRotation
             val candidates = updated.candidateSelection
             val liquidityMiss = postMortemTags.any { it.contains("TRADE_VALUE") || it.contains("LIQUIDITY") }
@@ -124,28 +137,28 @@ class StrategyEvolver(
             val volumeMiss = postMortemTags.any { it.contains("VOLUME_ACCELERATION") }
             val changeRankMiss = postMortemTags.any { it.contains("CHANGE_RANK") }
             updated = updated.copy(
-                minimumScore = (updated.minimumScore - if (scoreMiss) 2.5 else 1.0).coerceAtLeast(55.0),
-                maxResults = (updated.maxResults + 1).coerceAtMost(8),
+                minimumScore = (updated.minimumScore - if (scoreMiss) 1.5 else 0.5).coerceAtLeast(65.0),
+                maxResults = (updated.maxResults + 1).coerceAtMost(4),
                 candidateSelection = candidates.copy(
-                    maxCandleTargets = (candidates.maxCandleTargets + 10).coerceAtMost(80),
-                    topTradeValueCount = (candidates.topTradeValueCount + if (liquidityMiss) 15 else 5).coerceAtMost(100),
-                    topChangeRateCount = (candidates.topChangeRateCount + if (changeRankMiss) 10 else 5).coerceAtMost(80),
-                    volumeBuildupCount = (candidates.volumeBuildupCount + 5).coerceAtMost(80),
-                    quietAccumulationCount = (candidates.quietAccumulationCount + 5).coerceAtMost(80),
-                    medianTradeValueMultiplier = (candidates.medianTradeValueMultiplier * if (liquidityMiss) 0.90 else 0.96).coerceAtLeast(0.75),
-                    maxQuietAbsChangeRatePct = (candidates.maxQuietAbsChangeRatePct + 0.3).coerceAtMost(5.0),
+                    maxCandleTargets = (candidates.maxCandleTargets + 8).coerceAtMost(80),
+                    topTradeValueCount = (candidates.topTradeValueCount + if (liquidityMiss) 10 else 3).coerceAtMost(90),
+                    topChangeRateCount = (candidates.topChangeRateCount + if (changeRankMiss) 8 else 3).coerceAtMost(70),
+                    volumeBuildupCount = (candidates.volumeBuildupCount + 3).coerceAtMost(70),
+                    quietAccumulationCount = (candidates.quietAccumulationCount + 3).coerceAtMost(50),
+                    medianTradeValueMultiplier = (candidates.medianTradeValueMultiplier * if (liquidityMiss) 0.95 else 0.98).coerceAtLeast(0.85),
+                    maxQuietAbsChangeRatePct = (candidates.maxQuietAbsChangeRatePct + 0.2).coerceAtMost(3.0),
                 ),
                 prePumpRotation = prePump.copy(
-                    maxTradeValueRank = (prePump.maxTradeValueRank + if (liquidityMiss) 12 else 6).coerceAtMost(80),
-                    maxChangeRank = (prePump.maxChangeRank + if (changeRankMiss) 12 else 6).coerceAtMost(80),
-                    minRotation30mPct = (prePump.minRotation30mPct * if (scoreMiss) 0.82 else 0.92).coerceAtLeast(0.10),
-                    minVolumeAcceleration = (prePump.minVolumeAcceleration * if (volumeMiss) 0.88 else 0.94).coerceAtLeast(1.05),
-                    minFiveMinuteVolumeRatio = (prePump.minFiveMinuteVolumeRatio * if (volumeMiss) 0.88 else 0.94).coerceAtLeast(1.05),
-                    minFifteenMinuteVolumeRatio = (prePump.minFifteenMinuteVolumeRatio * if (volumeMiss) 0.90 else 0.96).coerceAtLeast(1.03),
-                    maxRangePct = (prePump.maxRangePct + 0.6).coerceAtMost(9.0),
-                    minRangePosition = (prePump.minRangePosition - 0.04).coerceAtLeast(0.30),
-                    minHighProximityMultiplier = (prePump.minHighProximityMultiplier - 0.004).coerceAtLeast(0.960),
-                    minCloseStairCount = (prePump.minCloseStairCount - 1).coerceAtLeast(1),
+                    maxTradeValueRank = (prePump.maxTradeValueRank + if (liquidityMiss) 6 else 3).coerceAtMost(65),
+                    maxChangeRank = (prePump.maxChangeRank + if (changeRankMiss) 6 else 3).coerceAtMost(65),
+                    minRotation30mPct = (prePump.minRotation30mPct * if (scoreMiss) 0.90 else 0.96).coerceAtLeast(0.20),
+                    minVolumeAcceleration = (prePump.minVolumeAcceleration * if (volumeMiss) 0.94 else 0.98).coerceAtLeast(1.10),
+                    minFiveMinuteVolumeRatio = (prePump.minFiveMinuteVolumeRatio * if (volumeMiss) 0.94 else 0.98).coerceAtLeast(1.08),
+                    minFifteenMinuteVolumeRatio = (prePump.minFifteenMinuteVolumeRatio * if (volumeMiss) 0.96 else 0.98).coerceAtLeast(1.05),
+                    maxRangePct = (prePump.maxRangePct + 0.4).coerceAtMost(8.0),
+                    minRangePosition = (prePump.minRangePosition - 0.02).coerceAtLeast(0.35),
+                    minHighProximityMultiplier = (prePump.minHighProximityMultiplier - 0.002).coerceAtLeast(0.970),
+                    minCloseStairCount = prePump.minCloseStairCount,
                 ),
             )
         }
@@ -200,6 +213,7 @@ class StrategyEvolver(
 
     companion object {
         const val MIN_SAMPLES_FOR_EVOLUTION = 15
+        private const val MIN_CORRELATION_SAMPLES = 30
         private const val MIN_MISSED_FOR_EVOLUTION = 2
         private const val DAY_MS = 24L * 60L * 60L * 1000L
         const val EVOLUTION_INTERVAL_MS = 6L * 60L * 60L * 1000L
