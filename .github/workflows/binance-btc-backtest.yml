@@ -1,0 +1,74 @@
+name: Binance BTC backtest
+
+on:
+  workflow_dispatch:
+    inputs:
+      symbol:
+        description: Binance symbol
+        required: false
+        default: BTCUSDT
+      market:
+        description: Binance market type: futures or spot
+        required: false
+        default: futures
+      interval:
+        description: Kline interval
+        required: false
+        default: 5m
+      start:
+        description: UTC start date
+        required: false
+        default: "2025-06-22"
+      end:
+        description: UTC end date. Empty means today UTC.
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install "numpy>=1.26" "pandas>=2.2"
+
+      - name: Run Binance BTC backtest
+        run: |
+          END_DATE="${{ github.event.inputs.end }}"
+          if [ -z "$END_DATE" ]; then
+            END_DATE="$(date -u +%F)"
+          fi
+          python tools/binance_btc_backtest.py \
+            --symbol "${{ github.event.inputs.symbol || 'BTCUSDT' }}" \
+            --market "${{ github.event.inputs.market || 'futures' }}" \
+            --interval "${{ github.event.inputs.interval || '5m' }}" \
+            --start "${{ github.event.inputs.start || '2025-06-22' }}" \
+            --end "$END_DATE" \
+            --data runtime_data/binance_klines.csv \
+            --output-dir reports
+
+      - name: Upload Binance BTC backtest artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: binance-btc-backtest
+          path: |
+            runtime_data/binance_klines.csv
+            reports/binance_btc_results.csv
+            reports/binance_btc_best.json
+            reports/binance_btc_best_trades.csv
+            reports/binance_btc_backtest_latest.md
+          if-no-files-found: error
