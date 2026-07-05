@@ -78,9 +78,9 @@ private fun UnifiedHomeScreen(
         Card(modifier = Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text("통합 백테스트/전략 진화", fontWeight = FontWeight.Bold)
-                Text("Unified strategy monitor가 코인·주식·BTC/Binance 연구 백테스트를 같은 루프에서 검증하고, 가드레일을 통과한 룰만 갱신합니다.")
+                Text("Unified strategy monitor는 코인·주식 룰을 검증합니다. BTC/Binance 연구 백테스트는 별도 Binance BTC backtest workflow에서 실행합니다.")
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedButton(onClick = onWorkflow) { Text("자가검증 실행") }
+                    OutlinedButton(onClick = onWorkflow) { Text("코인·주식 자가검증 실행") }
                 }
             }
         }
