@@ -1,0 +1,194 @@
+name: Unified strategy monitor
+
+on:
+  workflow_dispatch:
+    inputs:
+      coin_days:
+        description: Upbit backtest historical days
+        required: false
+        default: "30"
+      coin_max_markets:
+        description: Upbit max KRW markets
+        required: false
+        default: "80"
+      stock_max_symbols:
+        description: Stock KR short max symbols
+        required: false
+        default: "80"
+      apply_coin_rules:
+        description: Apply accepted coin rule proposal
+        required: false
+        default: "true"
+      apply_stock_rules:
+        description: Apply accepted stock rule proposal
+        required: false
+        default: "true"
+  schedule:
+    - cron: "0 21 * * *"  # KST 06:00 daily
+
+permissions:
+  contents: write
+
+env:
+  TIMEZONE: Asia/Seoul
+  USE_MOCK_DATA: "false"
+  ALLOW_DATA_FALLBACK: "1"
+  GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+  GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-1.5-flash' }}
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout unified app repository
+        uses: actions/checkout@v4
+        with:
+          path: app
+          persist-credentials: true
+
+      - name: Checkout historical stock scanner source
+        uses: actions/checkout@v4
+        with:
+          repository: shopper12/stock_scanner
+          path: stock_scanner
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install Python dependencies
+        working-directory: app
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install "numpy>=1.26" "pandas>=2.2" requests yfinance pykrx python-dotenv ta schedule
+
+      - name: Seed stock rules from unified repository
+        working-directory: app
+        run: |
+          mkdir -p ../stock_scanner/rules reports/stock reports/coin
+          if [ -f rules/stock-strategy-rules.json ]; then
+            cp rules/stock-strategy-rules.json ../stock_scanner/rules/kr_short_rules.json
+          fi
+
+      - name: Run stock scanner and KR short evolution
+        working-directory: stock_scanner
+        env:
+          ACCOUNT_EQUITY_KRW: "10000000"
+          RETIREMENT_TOTAL_KRW: "10000000"
+          US_MONTHLY_BUDGET_KRW: "1000000"
+          RISK_PER_TRADE_PCT: "1.0"
+        run: |
+          python scan_once.py
+          if [ "${{ github.event.inputs.apply_stock_rules || 'true' }}" = "true" ]; then
+            python tools/kr_short_check.py --apply --max-symbols "${{ github.event.inputs.stock_max_symbols || '80' }}" --no-ai
+          else
+            python tools/kr_short_check.py --max-symbols "${{ github.event.inputs.stock_max_symbols || '80' }}" --no-ai
+          fi
+
+      - name: Collect stock artifacts into app repository
+        working-directory: app
+        run: |
+          mkdir -p reports/stock rules
+          cp ../stock_scanner/reports/latest.json reports/stock/latest.json || true
+          cp ../stock_scanner/reports/recommendation_history.json reports/stock/recommendation_history.json || true
+          cp ../stock_scanner/reports/kr_short_evolution_latest.json reports/stock/kr_short_evolution_latest.json || true
+          if [ -f ../stock_scanner/rules/kr_short_rules.json ]; then
+            cp ../stock_scanner/rules/kr_short_rules.json rules/stock-strategy-rules.json
+          fi
+
+      - name: Run coin backtest and rule proposal
+        working-directory: app
+        run: |
+          python tools/backtest_upbit_strategies.py \
+            --days "${{ github.event.inputs.coin_days || '30' }}" \
+            --max-markets "${{ github.event.inputs.coin_max_markets || '80' }}" \
+            --minimum-score "65" \
+            --rules rules/strategy-rules.json \
+            --out-dir reports/coin
+          python tools/analyze_missed_pumps.py \
+            --days "${{ github.event.inputs.coin_days || '30' }}" \
+            --max-markets "${{ github.event.inputs.coin_max_markets || '80' }}" \
+            --pump-threshold-pct 8.0 \
+            --backtest reports/coin/backtest_latest.json \
+            --out-dir reports/coin
+          python tools/auto_tune_rules.py \
+            --backtest reports/coin/backtest_latest.json \
+            --rules rules/strategy-rules.json \
+            --out-rules reports/coin/proposed_strategy_rules.json \
+            --out-plan reports/coin/rules_update_plan.md \
+            --out-env reports/coin/auto_tune_decision.env
+          . reports/coin/auto_tune_decision.env
+          if [ "${{ github.event.inputs.apply_coin_rules || 'true' }}" = "true" ] && [ "${RULES_CHANGED}" = "true" ]; then
+            cp reports/coin/proposed_strategy_rules.json rules/strategy-rules.json
+            python -m json.tool rules/strategy-rules.json >/dev/null
+          else
+            echo "No accepted coin rule update."
+          fi
+
+      - name: Build unified monitor summary
+        working-directory: app
+        run: |
+          python - <<'PY'
+          import json
+          from datetime import datetime, timezone
+          from pathlib import Path
+          def load(path):
+              p = Path(path)
+              if not p.exists():
+                  return None
+              try:
+                  return json.loads(p.read_text(encoding='utf-8'))
+              except Exception as exc:
+                  return {"error": type(exc).__name__, "path": str(p)}
+          out = {
+              "schema_version": 1,
+              "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+              "app_repo": "shopper12/gpt_coin_android",
+              "stock_source_repo": "shopper12/stock_scanner",
+              "coin": {
+                  "backtest": load("reports/coin/backtest_latest.json"),
+                  "missed": load("reports/coin/missed_pumps_latest.json"),
+                  "auto_tune_env_exists": Path("reports/coin/auto_tune_decision.env").exists(),
+              },
+              "stock": {
+                  "latest_scan": load("reports/stock/latest.json"),
+                  "evolution": load("reports/stock/kr_short_evolution_latest.json"),
+              },
+          }
+          Path("reports").mkdir(exist_ok=True)
+          Path("reports/unified_strategy_monitor_latest.json").write_text(json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8")
+          print(json.dumps({"generated_at_utc": out["generated_at_utc"], "has_coin": out["coin"]["backtest"] is not None, "has_stock": out["stock"]["latest_scan"] is not None}, ensure_ascii=False))
+          PY
+
+      - name: Verify Android debug build
+        working-directory: app
+        run: bash ./gradlew :app:assembleDebug --stacktrace
+
+      - name: Commit accepted unified rule and report updates
+        working-directory: app
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add rules/strategy-rules.json rules/stock-strategy-rules.json reports/unified_strategy_monitor_latest.json reports/coin reports/stock || true
+          if git diff --cached --quiet; then
+            echo "No unified strategy monitor changes to commit."
+          else
+            git commit -m "Update unified strategy monitor outputs"
+            git push
+          fi
+
+      - name: Upload unified strategy artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: unified-strategy-monitor
+          path: |
+            app/reports/unified_strategy_monitor_latest.json
+            app/reports/coin/**
+            app/reports/stock/**
+            app/rules/strategy-rules.json
+            app/rules/stock-strategy-rules.json
+          if-no-files-found: ignore
