@@ -55,12 +55,13 @@ private fun UnifiedHomeScreen(
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Text("Unified Trading Coach", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
-        Text("코인·주식·백테스트 검증을 한 앱에서 분리해서 봅니다.", style = MaterialTheme.typography.bodyMedium)
+        Text("앱은 하나로 통합하고, 코인·주식 전략은 메뉴와 룰 파일을 분리해서 운용합니다.", style = MaterialTheme.typography.bodyMedium)
 
         Card(modifier = Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text("코인 메뉴", fontWeight = FontWeight.Bold)
-                Text("업비트 KRW 코인 스캔, ACTIVE 전략, 차트, 성과 추적, 룰 편집, 코인 백테스트 진화 로그를 봅니다.")
+                Text("Upbit KRW 코인 스캔, ACTIVE 신호, 차트, 성과 추적, 룰 편집, 코인 백테스트 진화 로그를 봅니다.")
+                Text("룰 파일: rules/strategy-rules.json", style = MaterialTheme.typography.bodySmall)
                 Button(onClick = onCoin, modifier = Modifier.fillMaxWidth()) { Text("코인 전략 열기") }
             }
         }
@@ -68,7 +69,8 @@ private fun UnifiedHomeScreen(
         Card(modifier = Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text("주식 메뉴", fontWeight = FontWeight.Bold)
-                Text("한국 단기 주식, 퇴직연금 ETF, 미국 장기 ETF, 환전 판단과 주식 백테스트 진화 상태를 봅니다.")
+                Text("stock_scanner 서버의 한국 단기 후보, 추천 성과, 주식 백테스트, 단일 종목 전략을 앱 안에서 봅니다.")
+                Text("룰 파일: rules/stock-strategy-rules.json", style = MaterialTheme.typography.bodySmall)
                 Button(onClick = onStock, modifier = Modifier.fillMaxWidth()) { Text("주식 전략 열기") }
             }
         }
@@ -76,9 +78,9 @@ private fun UnifiedHomeScreen(
         Card(modifier = Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text("통합 백테스트/전략 진화", fontWeight = FontWeight.Bold)
-                Text("GitHub Actions의 Unified strategy monitor가 코인과 주식 전략을 같은 루프에서 백테스트하고 룰 변경을 검증합니다.")
+                Text("Unified strategy monitor가 코인·주식·BTC/Binance 연구 백테스트를 같은 루프에서 검증하고, 가드레일을 통과한 룰만 갱신합니다.")
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedButton(onClick = onWorkflow) { Text("모니터 열기") }
+                    OutlinedButton(onClick = onWorkflow) { Text("자가검증 실행") }
                 }
             }
         }
