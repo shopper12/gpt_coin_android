@@ -68,9 +68,36 @@ jobs:
       - name: Seed stock rules from unified repository
         working-directory: app
         run: |
-          mkdir -p ../stock_scanner/rules reports/stock reports/coin
+          mkdir -p ../stock_scanner/rules reports/stock reports/coin rules
           if [ -f rules/stock-strategy-rules.json ]; then
             cp rules/stock-strategy-rules.json ../stock_scanner/rules/kr_short_rules.json
+          fi
+          if [ ! -f ../stock_scanner/rules/kr_short_rules.json ]; then
+            cat > ../stock_scanner/rules/kr_short_rules.json <<'JSON'
+          {
+            "version": 1,
+            "score_threshold": 55.0,
+            "min_risk_pct": 1.5,
+            "max_risk_pct": 12.0,
+            "max_entry_gap_pct": 3.5,
+            "max_gap_ma20_pct": 12.0,
+            "surge_threshold_pct": 12.0,
+            "surge_lookahead_days": 20,
+            "hold_days": 10,
+            "min_backtest_trades": 15,
+            "min_surge_precision": 0.15,
+            "min_avg_return_pct": 0.3,
+            "min_profit_factor": 1.05,
+            "min_win_rate": 0.45,
+            "min_improvement_score": 0.05,
+            "last_evolution": null,
+            "last_summary": {
+              "source": "unified-strategy-monitor bootstrap",
+              "strategy": "KR_SHORT_STOCK"
+            }
+          }
+          JSON
+            cp ../stock_scanner/rules/kr_short_rules.json rules/stock-strategy-rules.json
           fi
 
       - name: Run stock scanner and KR short evolution
@@ -172,7 +199,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add rules/strategy-rules.json rules/stock-strategy-rules.json reports/unified_strategy_monitor_latest.json reports/coin reports/stock || true
+          git add -f rules/strategy-rules.json rules/stock-strategy-rules.json reports/unified_strategy_monitor_latest.json reports/coin reports/stock || true
           if git diff --cached --quiet; then
             echo "No unified strategy monitor changes to commit."
           else
