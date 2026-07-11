@@ -2,13 +2,13 @@ name: Refactor pre-pump rules
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - 'tools/patch_signal_engine_pre_pump.py'
-      - '.github/workflows/refactor-pre-pump-rules.yml'
 
 permissions:
   contents: write
+
+concurrency:
+  group: refactor-pre-pump-rules
+  cancel-in-progress: true
 
 jobs:
   refactor:
@@ -24,6 +24,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+          cache: pip
 
       - name: Patch SignalEngine pre-pump thresholds
         run: python tools/patch_signal_engine_pre_pump.py

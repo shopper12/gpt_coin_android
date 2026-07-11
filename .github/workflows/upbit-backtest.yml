@@ -15,11 +15,13 @@ on:
         description: 'Minimum strategy score'
         required: true
         default: '65'
-  schedule:
-    - cron: '15 21 * * *'
 
 permissions:
   contents: write
+
+concurrency:
+  group: upbit-strategy-backtest
+  cancel-in-progress: true
 
 jobs:
   backtest:
@@ -35,6 +37,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+          cache: pip
 
       - name: Align backtest with live rules
         run: |
@@ -133,3 +136,4 @@ jobs:
             reports/rules_update_plan.md
             reports/auto_tune_decision.env
           if-no-files-found: error
+          retention-days: 14
