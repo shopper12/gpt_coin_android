@@ -1,16 +1,19 @@
 name: Android Build
 
 on:
-  push:
-    branches: [ main ]
   workflow_dispatch:
 
 permissions:
   contents: read
 
+concurrency:
+  group: android-debug-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   assemble-debug:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     env:
       CI_VERSION_CODE: ${{ github.run_number }}
       CI_VERSION_NAME: 1.0.${{ github.run_number }}
@@ -41,6 +44,7 @@ jobs:
         with:
           name: build-debug-log
           path: build-debug.log
+          retention-days: 7
 
       - name: Normalize APK name
         run: |
@@ -53,3 +57,4 @@ jobs:
         with:
           name: app-debug-apk
           path: debug-output/crypto-trade-coach-debug-v${{ github.run_number }}.apk
+          retention-days: 7
