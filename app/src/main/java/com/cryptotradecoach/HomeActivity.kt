@@ -29,6 +29,7 @@ class HomeActivity : ComponentActivity() {
                 UnifiedHomeScreen(
                     onCoin = { startActivity(Intent(this, MainActivity::class.java)) },
                     onStock = { startActivity(Intent(this, StockActivity::class.java)) },
+                    onRecommendationHistory = { startActivity(Intent(this, RecommendationHistoryActivity::class.java)) },
                     onWorkflow = { openUrl(UNIFIED_WORKFLOW_URL) },
                 )
             }
@@ -48,6 +49,7 @@ class HomeActivity : ComponentActivity() {
 private fun UnifiedHomeScreen(
     onCoin: () -> Unit,
     onStock: () -> Unit,
+    onRecommendationHistory: () -> Unit,
     onWorkflow: () -> Unit,
 ) {
     Column(
@@ -72,6 +74,14 @@ private fun UnifiedHomeScreen(
                 Text("stock_scanner 서버의 한국 단기 후보, 추천 성과, 주식 백테스트, 단일 종목 전략을 앱 안에서 봅니다.")
                 Text("룰 파일: rules/stock-strategy-rules.json", style = MaterialTheme.typography.bodySmall)
                 Button(onClick = onStock, modifier = Modifier.fillMaxWidth()) { Text("주식 전략 열기") }
+            }
+        }
+
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text("과거 추천·현재 수익률", fontWeight = FontWeight.Bold)
+                Text("최근 6개월 이상 ChatGPT 최종 추천의 원래 매매전략, 기준가, 손절·목표와 현재 기준 수익률을 종목별로 확인합니다.")
+                Button(onClick = onRecommendationHistory, modifier = Modifier.fillMaxWidth()) { Text("추천 이력 열기") }
             }
         }
 
