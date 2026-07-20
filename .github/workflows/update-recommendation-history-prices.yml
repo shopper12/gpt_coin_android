@@ -9,20 +9,32 @@ permissions:
   contents: write
 
 concurrency:
-  group: recommendation-history-price-refresh
+  group: recommendation-history-price-refresh-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Checkout main
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+
       - name: Backfill reference prices and refresh latest closes
-        run: python tools/update_recommendation_history_prices.py
+        env:
+          PYTHONUNBUFFERED: '1'
+        run: |
+          if [ ! -f reports/chatgpt_recommendation_history.json ]; then
+            echo "::warning::reports/chatgpt_recommendation_history.json missing; skipping price refresh"
+            exit 0
+          fi
+          python tools/update_recommendation_history_prices.py
+
       - name: Commit updated recommendation performance
         run: |
           if git diff --quiet -- reports/chatgpt_recommendation_history.json; then
@@ -31,6 +43,6 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add reports/chatgpt_recommendation_history.json
+          git add -f reports/chatgpt_recommendation_history.json
           git commit -m "Update recommendation history prices"
           git push
