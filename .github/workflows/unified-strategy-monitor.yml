@@ -14,7 +14,7 @@ on:
       stock_max_symbols:
         description: Stock KR short max symbols
         required: false
-        default: "80"
+        default: "25"
       apply_coin_rules:
         description: Apply accepted coin rule proposal
         required: false
@@ -103,17 +103,33 @@ jobs:
       - name: Run stock scanner and KR short evolution
         working-directory: stock_scanner
         env:
+          PYTHONUNBUFFERED: "1"
           ACCOUNT_EQUITY_KRW: "10000000"
           RETIREMENT_TOTAL_KRW: "10000000"
           US_MONTHLY_BUDGET_KRW: "1000000"
           RISK_PER_TRADE_PCT: "1.0"
+          MIN_KR_TRADE_VALUE_KRW: ${{ vars.MIN_KR_TRADE_VALUE_KRW || '5000000000' }}
+          KR_UNIVERSE_TOP_N: ${{ github.event.inputs.stock_max_symbols || '25' }}
+          KR_UNIVERSE_TOP_N_BULL: ${{ github.event.inputs.stock_max_symbols || '25' }}
         run: |
-          python scan_once.py
-          if [ "${{ github.event.inputs.apply_stock_rules || 'true' }}" = "true" ]; then
-            python tools/kr_short_check.py --apply --max-symbols "${{ github.event.inputs.stock_max_symbols || '80' }}" --no-ai
-          else
-            python tools/kr_short_check.py --max-symbols "${{ github.event.inputs.stock_max_symbols || '80' }}" --no-ai
+          set +e
+          STOCK_MAX_SYMBOLS="${{ github.event.inputs.stock_max_symbols || '25' }}"
+          echo "Running stock scan with KR_UNIVERSE_TOP_N=${KR_UNIVERSE_TOP_N}, max_symbols=${STOCK_MAX_SYMBOLS}"
+          timeout 25m python scan_once.py
+          SCAN_STATUS=$?
+          if [ "$SCAN_STATUS" -ne 0 ]; then
+            echo "::warning::stock scan skipped after status ${SCAN_STATUS}; continuing so coin backtest and Android build can run"
           fi
+          if [ "${{ github.event.inputs.apply_stock_rules || 'true' }}" = "true" ]; then
+            timeout 25m python tools/kr_short_check.py --apply --max-symbols "$STOCK_MAX_SYMBOLS" --no-ai
+          else
+            timeout 25m python tools/kr_short_check.py --max-symbols "$STOCK_MAX_SYMBOLS" --no-ai
+          fi
+          EVOLVE_STATUS=$?
+          if [ "$EVOLVE_STATUS" -ne 0 ]; then
+            echo "::warning::KR short evolution skipped after status ${EVOLVE_STATUS}; continuing with available artifacts"
+          fi
+          exit 0
 
       - name: Collect stock artifacts into app repository
         working-directory: app
