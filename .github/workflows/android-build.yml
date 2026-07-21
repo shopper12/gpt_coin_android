@@ -1,4 +1,4 @@
-name: Android Build
+name: Android Debug Verification
 
 on:
   workflow_dispatch:
@@ -14,9 +14,6 @@ jobs:
   assemble-debug:
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    env:
-      CI_VERSION_CODE: ${{ github.run_number }}
-      CI_VERSION_NAME: 1.0.${{ github.run_number }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -30,10 +27,15 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
 
+      - name: Set debug version
+        run: |
+          echo "CI_VERSION_CODE=$(date -u +%s)" >> "$GITHUB_ENV"
+          echo "CI_VERSION_NAME=debug-${GITHUB_RUN_NUMBER}" >> "$GITHUB_ENV"
+
       - name: Make Gradle wrapper executable
         run: chmod +x ./gradlew || true
 
-      - name: Build debug APK
+      - name: Build debug APK for compile verification only
         run: |
           set -o pipefail
           ./gradlew :app:assembleDebug --stacktrace 2>&1 | tee build-debug.log
@@ -46,15 +48,7 @@ jobs:
           path: build-debug.log
           retention-days: 7
 
-      - name: Normalize APK name
+      - name: Explain phone APK source
         run: |
-          mkdir -p debug-output
-          cp app/build/outputs/apk/debug/*.apk debug-output/crypto-trade-coach-debug-v${CI_VERSION_CODE}.apk
-
-      - name: Upload debug APK artifact
-        if: success()
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-debug-apk
-          path: debug-output/crypto-trade-coach-debug-v${{ github.run_number }}.apk
-          retention-days: 7
+          echo "Debug APK is not published because GitHub-hosted debug signing keys are temporary."
+          echo "Install the signed APK from Releases > Latest phone APK instead."
