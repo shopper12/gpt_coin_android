@@ -40,6 +40,12 @@ android {
     }
 
     buildTypes {
+        getByName("debug") {
+            // Debug APKs use a different package so they never block installation
+            // of the persistent-key signed phone release APK.
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
+        }
         release {
             isMinifyEnabled = false
             if (hasCiSigning) {
