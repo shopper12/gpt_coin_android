@@ -1,13 +1,11 @@
 package com.cryptotradecoach
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -17,31 +15,31 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.cryptotradecoach.data.WorkflowDispatchRepository
+import kotlinx.coroutines.launch
 
 class HomeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val workflowRepository = WorkflowDispatchRepository(this)
         setContent {
             MaterialTheme {
                 UnifiedHomeScreen(
                     onCoin = { startActivity(Intent(this, MainActivity::class.java)) },
                     onStock = { startActivity(Intent(this, StockActivity::class.java)) },
                     onRecommendationHistory = { startActivity(Intent(this, RecommendationHistoryActivity::class.java)) },
-                    onWorkflow = { openUrl(UNIFIED_WORKFLOW_URL) },
+                    onWorkflow = { workflowRepository.dispatchUnifiedStrategyMonitor() },
                 )
             }
         }
-    }
-
-    private fun openUrl(url: String) {
-        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
-    }
-
-    private companion object {
-        private const val UNIFIED_WORKFLOW_URL = "https://github.com/shopper12/gpt_coin_android/actions/workflows/unified-strategy-monitor.yml"
     }
 }
 
@@ -50,8 +48,24 @@ private fun UnifiedHomeScreen(
     onCoin: () -> Unit,
     onStock: () -> Unit,
     onRecommendationHistory: () -> Unit,
-    onWorkflow: () -> Unit,
+    onWorkflow: suspend () -> String,
 ) {
+    val scope = rememberCoroutineScope()
+    var workflowRunning by remember { mutableStateOf(false) }
+    var workflowMessage by remember { mutableStateOf<String?>(null) }
+
+    fun runWorkflow() {
+        if (workflowRunning) return
+        scope.launch {
+            workflowRunning = true
+            workflowMessage = null
+            runCatching { onWorkflow() }
+                .onSuccess { workflowMessage = it }
+                .onFailure { workflowMessage = "실행 요청 실패: ${(it.message ?: it.javaClass.simpleName).take(180)}" }
+            workflowRunning = false
+        }
+    }
+
     Column(
         modifier = Modifier.fillMaxSize().padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -80,7 +94,7 @@ private fun UnifiedHomeScreen(
         Card(modifier = Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text("과거 추천·현재 수익률", fontWeight = FontWeight.Bold)
-                Text("최근 6개월 이상 ChatGPT 최종 추천의 원래 매매전략, 기준가, 손절·목표와 현재 기준 수익률을 종목별로 확인합니다.")
+                Text("ChatGPT 최종 추천의 원래 매매전략, 기준가, 손절·목표와 현재 기준 수익률을 종목별로 확인합니다.")
                 Button(onClick = onRecommendationHistory, modifier = Modifier.fillMaxWidth()) { Text("추천 이력 열기") }
             }
         }
@@ -88,9 +102,16 @@ private fun UnifiedHomeScreen(
         Card(modifier = Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text("통합 백테스트/전략 진화", fontWeight = FontWeight.Bold)
-                Text("Unified strategy monitor는 코인·주식 룰을 검증합니다. BTC/Binance 연구 백테스트는 별도 Binance BTC backtest workflow에서 실행합니다.")
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedButton(onClick = onWorkflow) { Text("코인·주식 자가검증 실행") }
+                Text("버튼을 누르면 GitHub 웹페이지를 열지 않고 코인·주식 자가검증 workflow를 즉시 요청합니다.")
+                OutlinedButton(
+                    onClick = { runWorkflow() },
+                    enabled = !workflowRunning,
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(if (workflowRunning) "실행 요청 중" else "코인·주식 자가검증 실행")
+                }
+                if (workflowMessage != null) {
+                    Text(workflowMessage ?: "", style = MaterialTheme.typography.bodySmall)
                 }
             }
         }
