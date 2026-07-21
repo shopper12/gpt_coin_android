@@ -63,6 +63,46 @@ class GitHubSyncClient {
         return true
     }
 
+    fun dispatchWorkflow(
+        settings: GitHubSyncSettings,
+        workflowFile: String,
+        inputs: Map<String, String> = emptyMap(),
+    ): Boolean {
+        val normalized = settings.normalized()
+        require(normalized.isConfigured) { "GitHub 저장소 설정이 필요합니다." }
+        require(normalized.token.isNotBlank()) { "GitHub 토큰을 앱 설정에 저장하세요. Actions write 권한이 필요합니다." }
+        require(workflowFile.isNotBlank()) { "workflow file is required" }
+
+        val encodedWorkflow = encodePathSegment(workflowFile.trim())
+        val url = URL("https://api.github.com/repos/${normalized.owner}/${normalized.repo}/actions/workflows/$encodedWorkflow/dispatches")
+        val inputJson = JSONObject()
+        inputs.forEach { (key, value) -> inputJson.put(key, value) }
+        val body = JSONObject()
+            .put("ref", normalized.branch)
+            .put("inputs", inputJson)
+
+        val connection = openConnection(url, normalized.token, "POST")
+        connection.doOutput = true
+        return try {
+            connection.outputStream.use { stream ->
+                stream.write(body.toString().toByteArray(Charsets.UTF_8))
+            }
+            val statusCode = connection.responseCode
+            if (statusCode != HttpURLConnection.HTTP_NO_CONTENT) {
+                throw GitHubSyncException(
+                    statusCode = statusCode,
+                    syncPoint = "workflow_dispatch",
+                    endpoint = url.toString(),
+                    branch = normalized.branch,
+                    path = workflowFile,
+                )
+            }
+            true
+        } finally {
+            connection.disconnect()
+        }
+    }
+
     private fun existingSha(settings: GitHubSyncSettings, path: String): String? {
         val encodedPath = path.trim('/').split("/").joinToString("/") { encodePathSegment(it) }
         val url = URL("https://api.github.com/repos/${settings.owner}/${settings.repo}/contents/$encodedPath?ref=${encodePathSegment(settings.branch)}")
@@ -82,7 +122,7 @@ class GitHubSyncClient {
         return (url.openConnection() as HttpURLConnection).apply {
             requestMethod = method
             connectTimeout = 10_000
-            readTimeout = 10_000
+            readTimeout = 20_000
             setRequestProperty("Accept", "application/vnd.github+json")
             setRequestProperty("X-GitHub-Api-Version", "2022-11-28")
             setRequestProperty("User-Agent", "CryptoTradeCoach")
