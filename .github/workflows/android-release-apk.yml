@@ -26,7 +26,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  APK_FILE_NAME: crypto-trade-coach-release.apk
+  APK_FILE_NAME: unified-trading-coach-release.apk
 
 jobs:
   build-release-apk:
@@ -41,6 +41,14 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
+
+      - name: Set release version
+        run: |
+          version_code="$(date -u +%s)"
+          version_name="1.0.${GITHUB_RUN_NUMBER}"
+          echo "CI_VERSION_CODE=$version_code" >> "$GITHUB_ENV"
+          echo "CI_VERSION_NAME=$version_name" >> "$GITHUB_ENV"
+          echo "Release versionCode=$version_code versionName=$version_name"
 
       - name: Validate release signing inputs
         env:
@@ -61,14 +69,12 @@ jobs:
           echo "$SIGNING_KEY_B64_VALUE" | base64 --decode > "$RUNNER_TEMP/release-key.jks"
           test -s "$RUNNER_TEMP/release-key.jks"
 
-      - name: Build release APK
+      - name: Build signed release APK
         env:
           CI_KEYSTORE_FILE: ${{ runner.temp }}/release-key.jks
           CI_KEYSTORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASS }}
           CI_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
           CI_KEY_PASSWORD: ${{ secrets.SIGNING_STORE_PASS }}
-          CI_VERSION_CODE: ${{ github.run_number }}
-          CI_VERSION_NAME: 1.0.${{ github.run_number }}
         run: bash ./gradlew :app:assembleRelease --stacktrace
 
       - name: Copy APK
@@ -76,10 +82,8 @@ jobs:
           set -euo pipefail
           mkdir -p apk-output
           short_sha="${GITHUB_SHA::7}"
-          versioned_apk="crypto-trade-coach-release-v${{ github.run_number }}-${short_sha}.apk"
+          versioned_apk="unified-trading-coach-release-v${CI_VERSION_CODE}-${short_sha}.apk"
           echo "VERSIONED_APK=$versioned_apk" >> "$GITHUB_ENV"
-          echo "Release output files:"
-          find app/build/outputs/apk/release -maxdepth 1 -type f -print || true
           apk_path="$(find app/build/outputs/apk/release -maxdepth 1 -type f -name '*.apk' | head -n 1)"
           if [ -z "$apk_path" ]; then
             echo "No release APK was produced."
@@ -88,7 +92,7 @@ jobs:
           cp "$apk_path" "apk-output/$APK_FILE_NAME"
           cp "$apk_path" "apk-output/$versioned_apk"
 
-      - name: Verify APK structure
+      - name: Verify APK file and signature
         run: |
           set -euo pipefail
           apk="apk-output/$APK_FILE_NAME"
@@ -102,39 +106,42 @@ jobs:
           file "$apk" | tee apk-output/file-type.txt
           unzip -t "$apk" | tee apk-output/unzip-test.txt
           sha256sum "$apk" | tee apk-output/sha256.txt
-
-      - name: Inspect APK metadata best effort
-        continue-on-error: true
-        run: |
-          set +e
-          apk="apk-output/$APK_FILE_NAME"
-          : > apk-output/apksigner-verify.txt
-          : > apk-output/badging.txt
           APKSIGNER="$(find "$ANDROID_HOME/build-tools" -name apksigner -type f | sort -V | tail -n 1)"
-          if [ -x "$APKSIGNER" ]; then
-            "$APKSIGNER" verify --verbose --print-certs "$apk" | tee apk-output/apksigner-verify.txt
-          else
-            echo "apksigner not found; skipped" | tee apk-output/apksigner-verify.txt
-          fi
+          test -x "$APKSIGNER"
+          "$APKSIGNER" verify --verbose --print-certs "$apk" | tee apk-output/apksigner-verify.txt
+
+      - name: Inspect APK package metadata
+        run: |
+          set -euo pipefail
+          apk="apk-output/$APK_FILE_NAME"
           AAPT="$(find "$ANDROID_HOME/build-tools" -name aapt -type f | sort -V | tail -n 1 || true)"
-          AAPT2="$(find "$ANDROID_HOME/build-tools" -name aapt2 -type f | sort -V | tail -n 1 || true)"
+          : > apk-output/badging.txt
           if [ -x "$AAPT" ]; then
             "$AAPT" dump badging "$apk" | tee apk-output/badging.txt
-          elif command -v apkanalyzer >/dev/null 2>&1; then
-            apkanalyzer manifest application-id "$apk" | tee apk-output/badging.txt
-          elif [ -x "$AAPT2" ]; then
-            "$AAPT2" dump packagename "$apk" | tee apk-output/badging.txt
+            grep -q "package: name='com.cryptotradecoach'" apk-output/badging.txt
+            grep -q "sdkVersion:'26'" apk-output/badging.txt
           else
-            echo "No aapt/aapt2/apkanalyzer found; package-name check skipped." | tee apk-output/badging.txt
+            echo "aapt not found; package metadata check skipped" | tee apk-output/badging.txt
           fi
-          exit 0
+
+      - name: Write phone installation guide
+        run: |
+          cat > apk-output/INSTALL.txt <<'EOF'
+          PHONE INSTALLATION
+          1. Download unified-trading-coach-release.apk from GitHub Releases, not the Android Debug Verification artifact.
+          2. If an older debug build is already installed, uninstall that app once. Its temporary debug signature cannot be updated by this release signature.
+          3. Allow installation from the browser or file manager used to open the APK.
+          4. Android 8.0 or newer is required.
+          5. Future release APKs from this workflow use the persistent release signing key and can update normally.
+          EOF
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: crypto-trade-coach-release-apk-${{ github.run_number }}-${{ github.sha }}
+          name: unified-trading-coach-release-apk-${{ github.run_number }}-${{ github.sha }}
           path: |
             apk-output/*.apk
+            apk-output/INSTALL.txt
             apk-output/file-type.txt
             apk-output/unzip-test.txt
             apk-output/apksigner-verify.txt
@@ -148,16 +155,21 @@ jobs:
           tag_name: latest-phone-apk
           name: Latest phone APK
           body: |
-            Android release APK built from Android source or build-configuration changes on `main`.
+            Signed Android release APK for the unified coin/stock app.
 
-            Download `crypto-trade-coach-release.apk` from Assets on the phone and install/update it.
+            Download `unified-trading-coach-release.apk` from Assets and install it directly.
 
+            Important: if a previous debug APK is already installed, uninstall it once before installing this release. The old debug APK used a different temporary signing key. After this one-time cleanup, later release APKs can update normally.
+
+            Android 8.0 or newer is required.
+            package: `com.cryptotradecoach`
             commit: ${{ github.sha }}
-            versionCode: ${{ github.run_number }}
-            versionName: 1.0.${{ github.run_number }}
+            versionCode: ${{ env.CI_VERSION_CODE }}
+            versionName: ${{ env.CI_VERSION_NAME }}
           files: |
-            apk-output/crypto-trade-coach-release.apk
+            apk-output/unified-trading-coach-release.apk
             apk-output/${{ env.VERSIONED_APK }}
+            apk-output/INSTALL.txt
           prerelease: true
           make_latest: true
           overwrite_files: true
