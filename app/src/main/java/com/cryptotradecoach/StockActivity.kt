@@ -29,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.cryptotradecoach.data.WorkflowDispatchRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -45,11 +46,12 @@ private const val STOCK_STRATEGY_URL = "$STOCK_API_BASE_URL/api/kr-stock-strateg
 class StockActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val workflowRepository = WorkflowDispatchRepository(this)
         setContent {
             MaterialTheme {
                 StockMenuScreen(
                     onBack = { finish() },
-                    onWorkflow = { openUrl(UNIFIED_WORKFLOW_URL) },
+                    onWorkflow = { workflowRepository.dispatchUnifiedStrategyMonitor() },
                     onDocs = { openUrl(DOCS_URL) },
                     onStockRepo = { openUrl(STOCK_REPO_URL) },
                 )
@@ -62,7 +64,6 @@ class StockActivity : ComponentActivity() {
     }
 
     private companion object {
-        private const val UNIFIED_WORKFLOW_URL = "https://github.com/shopper12/gpt_coin_android/actions/workflows/unified-strategy-monitor.yml"
         private const val DOCS_URL = "https://github.com/shopper12/gpt_coin_android/blob/main/docs/unified-trading-app.md"
         private const val STOCK_REPO_URL = "https://github.com/shopper12/stock_scanner"
     }
@@ -71,7 +72,7 @@ class StockActivity : ComponentActivity() {
 @Composable
 private fun StockMenuScreen(
     onBack: () -> Unit,
-    onWorkflow: () -> Unit,
+    onWorkflow: suspend () -> String,
     onDocs: () -> Unit,
     onStockRepo: () -> Unit,
 ) {
@@ -80,6 +81,7 @@ private fun StockMenuScreen(
     var query by remember { mutableStateOf("") }
     var strategy by remember { mutableStateOf<StockStrategy?>(null) }
     var searching by remember { mutableStateOf(false) }
+    var workflowRunning by remember { mutableStateOf(false) }
 
     fun refresh() {
         scope.launch {
@@ -98,6 +100,18 @@ private fun StockMenuScreen(
             }.onFailure { error ->
                 uiState = uiState.copy(loading = false, error = compactError(error))
             }
+        }
+    }
+
+    fun runWorkflow() {
+        if (workflowRunning) return
+        scope.launch {
+            workflowRunning = true
+            uiState = uiState.copy(error = null, message = "자가검증 실행을 요청하는 중입니다.")
+            runCatching { onWorkflow() }
+                .onSuccess { uiState = uiState.copy(message = it) }
+                .onFailure { uiState = uiState.copy(error = compactError(it), message = null) }
+            workflowRunning = false
         }
     }
 
@@ -129,7 +143,9 @@ private fun StockMenuScreen(
         item {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedButton(onClick = onBack) { Text("← 홈") }
-                OutlinedButton(onClick = onWorkflow) { Text("자가검증 실행") }
+                OutlinedButton(onClick = { runWorkflow() }, enabled = !workflowRunning) {
+                    Text(if (workflowRunning) "요청 중" else "자가검증 실행")
+                }
                 OutlinedButton(onClick = onDocs) { Text("문서") }
             }
         }
@@ -145,6 +161,7 @@ private fun StockMenuScreen(
                     Text("KR_RETIREMENT_ETF: 퇴직연금 ETF")
                     Text("US_LONG_ETF: 미국 장기 ETF 분할매수")
                     Text("FX_CONVERSION: USD/KRW 환전 판단")
+                    Text("섹터명은 참고 분류만 표시하며 추천 점수·순위에는 사용하지 않습니다.", style = MaterialTheme.typography.bodySmall)
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         Button(onClick = { refresh() }, enabled = !uiState.loading) { Text(if (uiState.loading) "Loading" else "새로고침") }
                         OutlinedButton(onClick = onStockRepo) { Text("원본 엔진") }
@@ -156,7 +173,7 @@ private fun StockMenuScreen(
         if (uiState.message != null) item { InfoCard(uiState.message ?: "") }
         item { StockSummaryCard(uiState.snapshot) }
         item { PerformanceCard(uiState.performance) }
-        item { BacktestCard(uiState.backtest, onWorkflow) }
+        item { BacktestCard(uiState.backtest, workflowRunning) { runWorkflow() } }
         item {
             Card(modifier = Modifier.fillMaxWidth()) {
                 Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -195,7 +212,7 @@ private fun StockSummaryCard(snapshot: StockSnapshot?) {
             Text("생성: ${snapshot.createdAtKst} / mode=${snapshot.mode}")
             Text("후보 ${snapshot.stocks.size}개 / 시세 확인 ${snapshot.quoteOk}/${snapshot.total} (${formatRatio(snapshot.quoteOkRate)})")
             val topSectors = snapshot.sectors.take(4).joinToString(" · ") { "${it.sector} ${it.selectedCount}개" }
-            if (topSectors.isNotBlank()) Text("섹터: $topSectors")
+            if (topSectors.isNotBlank()) Text("참고 섹터 분포: $topSectors")
         }
     }
 }
@@ -218,18 +235,20 @@ private fun PerformanceCard(performance: RecommendationPerformance?) {
 }
 
 @Composable
-private fun BacktestCard(backtest: StockBacktest?, onWorkflow: () -> Unit) {
+private fun BacktestCard(backtest: StockBacktest?, workflowRunning: Boolean, onWorkflow: () -> Unit) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Text("주식 백테스트/자가진화", fontWeight = FontWeight.Bold)
             if (backtest == null) {
-                Text("서버 백테스트 리포트가 아직 없습니다. 통합 자가검증 workflow를 실행하세요.")
+                Text("서버 백테스트 리포트가 아직 없습니다. 통합 자가검증을 실행하세요.")
             } else {
                 Text("생성: ${backtest.createdAtKst} / 채택=${if (backtest.accepted) "예" else "아니오"} / 개선 ${formatNumber(backtest.improvement)}")
                 Text("기준: 거래 ${backtest.baseTrades}건 / 평균 ${formatSignedPercent(backtest.baseAvgReturnPct)} / 승률 ${formatRatio(backtest.baseWinRate)} / PF ${formatNumber(backtest.baseProfitFactor)}")
                 Text("최선: 거래 ${backtest.bestTrades}건 / 평균 ${formatSignedPercent(backtest.bestAvgReturnPct)} / 승률 ${formatRatio(backtest.bestWinRate)} / PF ${formatNumber(backtest.bestProfitFactor)}")
             }
-            Button(onClick = onWorkflow) { Text("통합 백테스트/룰 진화 실행") }
+            Button(onClick = onWorkflow, enabled = !workflowRunning) {
+                Text(if (workflowRunning) "실행 요청 중" else "통합 백테스트/룰 진화 실행")
+            }
         }
     }
 }
