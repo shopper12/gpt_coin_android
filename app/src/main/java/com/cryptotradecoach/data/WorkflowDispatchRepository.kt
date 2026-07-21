@@ -24,7 +24,17 @@ class WorkflowDispatchRepository(context: Context) {
         "코인·주식 자가검증과 룰 진화 실행을 요청했습니다."
     }
 
+    suspend fun dispatchRecommendationPriceRefresh(): String = withContext(Dispatchers.IO) {
+        val settings = settingsRepository.load()
+        client.dispatchWorkflow(
+            settings = settings,
+            workflowFile = RECOMMENDATION_PRICE_WORKFLOW_FILE,
+        )
+        "추천 이력 현재가·오늘 등락률 갱신을 요청했습니다. 완료 후 다시 불러오세요."
+    }
+
     private companion object {
         const val UNIFIED_WORKFLOW_FILE = "unified-strategy-monitor.yml"
+        const val RECOMMENDATION_PRICE_WORKFLOW_FILE = "update-recommendation-history-prices.yml"
     }
 }
