@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
@@ -118,49 +119,61 @@ private fun BtcMonitorScreen(
 
     LaunchedEffect(Unit) { refresh() }
 
-    Column(
+    LazyColumn(
         modifier = Modifier.fillMaxSize().padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            OutlinedButton(onClick = onBack) { Text("← 홈") }
-            Button(onClick = { refresh() }, enabled = !loading) { Text(if (loading) "불러오는 중" else "결과 새로고침") }
+        item {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedButton(onClick = onBack) { Text("← 홈") }
+                Button(onClick = { refresh() }, enabled = !loading) { Text(if (loading) "불러오는 중" else "결과 새로고침") }
+            }
         }
-        Text("BTC 24시간 백테스트 모니터", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
-        Text("시간당 라이브 5분봉 모니터와 일 1회 최적화 백테스트 결과를 같은 화면에서 확인합니다.")
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Button(onClick = { runAction(onRunMonitor) }, enabled = !actionRunning) { Text("지금 모니터 실행") }
-            OutlinedButton(onClick = { runAction(onRunBacktest) }, enabled = !actionRunning) { Text("백테스트 갱신") }
+        item {
+            Text("BTC 24시간 백테스트 모니터", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+            Text("시간당 라이브 5분봉 모니터와 일 1회 최적화 백테스트 결과를 같은 화면에서 확인합니다.")
         }
-        message?.let { InfoMonitorCard(it) }
-        error?.let { InfoMonitorCard("오류: $it") }
+        item {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Button(onClick = { runAction(onRunMonitor) }, enabled = !actionRunning) { Text("지금 모니터 실행") }
+                OutlinedButton(onClick = { runAction(onRunBacktest) }, enabled = !actionRunning) { Text("백테스트 갱신") }
+            }
+        }
+        message?.let { item { InfoMonitorCard(it) } }
+        error?.let { item { InfoMonitorCard("오류: $it") } }
         val current = report
         if (current == null) {
-            InfoMonitorCard("모니터 결과를 아직 읽지 못했습니다.")
+            item { InfoMonitorCard("모니터 결과를 아직 읽지 못했습니다.") }
         } else {
-            Card(modifier = Modifier.fillMaxWidth()) {
-                Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
-                    Text("${current.symbol} ${current.market}/${current.interval}", fontWeight = FontWeight.Bold)
-                    Text("신호: ${current.signal}", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                    Text(current.summary)
-                    Text("현재가 ${current.currentPrice?.let { "%,.2f".format(it) } ?: "미확인"} / 마지막 캔들 ${current.lastCandleKst.ifBlank { "미확인" }}")
-                    Text("리포트 생성 ${current.generatedAtKst.ifBlank { "첫 실행 대기" }}")
-                    BtcSparkline(current.recentCloses)
+            item {
+                Card(modifier = Modifier.fillMaxWidth()) {
+                    Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
+                        Text("${current.symbol} ${current.market}/${current.interval}", fontWeight = FontWeight.Bold)
+                        Text("신호: ${current.signal}", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                        Text(if (current.ok) current.summary else "대기 상태: ${current.summary}")
+                        Text("현재가 ${current.currentPrice?.let { "%,.2f".format(it) } ?: "미확인"} / 마지막 캔들 ${current.lastCandleKst.ifBlank { "미확인" }}")
+                        Text("리포트 생성 ${current.generatedAtKst.ifBlank { "첫 실행 대기" }}")
+                        BtcSparkline(current.recentCloses)
+                    }
                 }
             }
-            Card(modifier = Modifier.fillMaxWidth()) {
-                Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text("현재 진입 조건", fontWeight = FontWeight.Bold)
-                    Text("상위시간 문맥 ${yesNo(current.contextActive)} / 기본 setup ${current.baseScore}/${current.baseRequired} / 확인 ${current.confirmationScore}/${current.confirmationRequired}")
-                    Text("VWAP 상단 ${yesNo(current.aboveVwap)} / 거래량 ${yesNo(current.volumeOk)}")
-                    Text("RSI ${number(current.rsi)} / ADX ${number(current.adx)} / VWAP ${price(current.vwap)} / 거래량배수 ${number(current.volumeMultiple)}x")
+            item {
+                Card(modifier = Modifier.fillMaxWidth()) {
+                    Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Text("현재 진입 조건", fontWeight = FontWeight.Bold)
+                        Text("상위시간 문맥 ${yesNo(current.contextActive)} / 기본 setup ${current.baseScore}/${current.baseRequired} / 확인 ${current.confirmationScore}/${current.confirmationRequired}")
+                        Text("VWAP 상단 ${yesNo(current.aboveVwap)} / 거래량 ${yesNo(current.volumeOk)}")
+                        Text("RSI ${number(current.rsi)} / ADX ${number(current.adx)} / VWAP ${price(current.vwap)} / 거래량배수 ${number(current.volumeMultiple)}x")
+                    }
                 }
             }
-            Card(modifier = Modifier.fillMaxWidth()) {
-                Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text("최적화 백테스트", fontWeight = FontWeight.Bold)
-                    Text("거래 ${current.backtestTrades}건 / 승률 ${percent(current.backtestWinRate)} / PF ${number(current.backtestProfitFactor)} / 누적 ${percent(current.backtestNetPnlPct)}")
-                    Text("백테스트는 일 1회, 라이브 조건 모니터는 매시간 실행됩니다.", style = MaterialTheme.typography.bodySmall)
+            item {
+                Card(modifier = Modifier.fillMaxWidth()) {
+                    Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Text("최적화 백테스트", fontWeight = FontWeight.Bold)
+                        Text("거래 ${current.backtestTrades}건 / 승률 ${percent(current.backtestWinRate)} / PF ${number(current.backtestProfitFactor)} / 누적 ${percent(current.backtestNetPnlPct)}")
+                        Text("백테스트는 일 1회, 라이브 조건 모니터는 매시간 실행됩니다.", style = MaterialTheme.typography.bodySmall)
+                    }
                 }
             }
         }
