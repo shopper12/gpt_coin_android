@@ -4,6 +4,11 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '20 22 * * 1-5'
+  push:
+    branches: [ main ]
+    paths:
+      - 'tools/update_recommendation_history_prices.py'
+      - '.github/workflows/update-recommendation-history-prices.yml'
 
 permissions:
   contents: write
@@ -15,10 +20,12 @@ concurrency:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - name: Checkout main
         uses: actions/checkout@v4
+        with:
+          ref: main
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -37,6 +44,7 @@ jobs:
 
       - name: Commit updated recommendation performance
         run: |
+          set -euo pipefail
           if git diff --quiet -- reports/chatgpt_recommendation_history.json; then
             echo "No price changes"
             exit 0
@@ -44,5 +52,6 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -f reports/chatgpt_recommendation_history.json
-          git commit -m "Update recommendation history prices"
-          git push
+          git commit -m "Update recommendation history prices and sparklines"
+          git pull --rebase origin main
+          git push origin HEAD:main
