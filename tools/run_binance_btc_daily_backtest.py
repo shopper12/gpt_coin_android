@@ -62,11 +62,9 @@ def main() -> int:
         result_rows.append({**params, **summary, "accepted": accepted})
         evaluated.append((params, summary, trades, accepted))
 
-    valid = [item for item in evaluated if item[1].get("trades", 0) > 0]
-    if not valid:
-        raise SystemExit("No strategy combination generated a completed trade.")
-    guarded = [item for item in valid if item[3]]
-    pool = guarded or valid
+    guarded = [item for item in evaluated if item[3]]
+    with_trades = [item for item in evaluated if item[1].get("trades", 0) > 0]
+    pool = guarded or with_trades or evaluated
     best_params, best_summary, best_trades, accepted = max(
         pool,
         key=lambda item: (
@@ -99,11 +97,13 @@ def main() -> int:
         "rows_tested": int(len(frame)),
         "parameter_sets_tested": len(result_rows),
         "accepted": accepted,
+        "diagnostic_status": "GUARD_ACCEPTED" if accepted else "BEST_AVAILABLE_NOT_ACCEPTED",
         "guard": {
             "min_trades": 30,
             "min_profit_factor_exclusive": 1.0,
             "max_drawdown_pct_exclusive": 15.0,
             "guarded_candidate_count": len(guarded),
+            "candidate_count_with_trades": len(with_trades),
         },
         "best_params": best_params,
         "best_summary": best_summary,
