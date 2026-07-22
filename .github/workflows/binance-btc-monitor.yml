@@ -4,6 +4,12 @@ on:
   schedule:
     - cron: '7 * * * *'
   workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - 'tools/binance_btc_monitor.py'
+      - '.github/workflows/binance-btc-monitor.yml'
+      - 'reports/binance_btc_best.json'
 
 permissions:
   contents: write
