@@ -3,16 +3,17 @@ package com.cryptotradecoach
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -29,6 +30,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -67,26 +70,16 @@ private data class RecommendationRecord(
     val id: String,
     val date: String,
     val assetClass: String,
-    val market: String,
     val ticker: String,
     val name: String,
     val direction: String,
     val strategy: String,
     val referencePrice: Double?,
-    val referencePriceMethod: String,
-    val entry: String,
-    val stop: String,
-    val target1: String,
-    val target2: String,
     val currentPrice: Double?,
-    val currentPriceDate: String,
     val todayChangePct: Double?,
-    val todayChangeDate: String,
+    val recentCloses: List<Double>,
     val currency: String,
-    val source: String,
     val status: String,
-    val note: String,
-    val recoveryConfidence: String,
 ) {
     val isExecuted: Boolean
         get() = status.uppercase() !in setOf("CONDITIONAL", "UNTRIGGERED", "SOURCE_REVIEW_REQUIRED", "WATCH")
@@ -157,7 +150,7 @@ private fun RecommendationHistoryScreen(
         if (priceRefreshRunning) return
         scope.launch {
             priceRefreshRunning = true
-            state = state.copy(error = null, message = "현재가 갱신 실행을 요청하는 중입니다.")
+            state = state.copy(error = null, message = "현재가와 간략차트 갱신을 요청하는 중입니다.")
             runCatching { onPriceRefresh() }
                 .onSuccess { state = state.copy(message = it) }
                 .onFailure { state = state.copy(error = it.message ?: it.javaClass.simpleName, message = null) }
@@ -166,6 +159,7 @@ private fun RecommendationHistoryScreen(
     }
 
     LaunchedEffect(Unit) { refresh() }
+
     val filtered = state.records.filter { record ->
         val assetOk = assetFilter == "ALL" || record.assetClass == assetFilter
         val statusOk = when (statusFilter) {
@@ -178,7 +172,7 @@ private fun RecommendationHistoryScreen(
     val sorted = sortRecords(filtered, sortKey, sortDescending)
     val measurable = filtered.mapNotNull { it.returnPct }
     val winners = measurable.count { it > 0.0 }
-    val avg = if (measurable.isEmpty()) null else measurable.average()
+    val avg = measurable.takeIf { it.isNotEmpty() }?.average()
 
     LazyColumn(
         modifier = Modifier.fillMaxSize().padding(16.dp),
@@ -191,13 +185,13 @@ private fun RecommendationHistoryScreen(
                     Text(if (state.loading) "불러오는 중" else "이력 다시 불러오기")
                 }
                 OutlinedButton(onClick = { requestPriceRefresh() }, enabled = !priceRefreshRunning) {
-                    Text(if (priceRefreshRunning) "요청 중" else "현재가 갱신 실행")
+                    Text(if (priceRefreshRunning) "요청 중" else "현재가·차트 갱신")
                 }
             }
         }
         item {
-            Text("ChatGPT 과거 추천·수익률", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
-            Text("모든 저장 추천을 엑셀형 한 줄 표로 표시하고 수익률·날짜·이름·오늘 등락률로 정렬합니다.")
+            Text("추천 이력·현재 수익률", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+            Text("종목·현재가·추천가·추천가부터 수익률·간략차트를 한 줄로 보고 옆으로 스크롤합니다.")
         }
         item {
             Card(modifier = Modifier.fillMaxWidth()) {
@@ -206,7 +200,6 @@ private fun RecommendationHistoryScreen(
                     Text("기간 ${state.coverageStart.ifBlank { "미확인" }} ~ ${state.coverageEnd.ifBlank { "미확인" }}")
                     Text("아카이브 ${state.declaredCount}건 / 현재 표시 ${filtered.size}건 / 수익률 계산 가능 ${measurable.size}건")
                     Text("평균 ${avg?.let { signed(it) } ?: "계산 불가"} / 승률 ${if (measurable.isEmpty()) "계산 불가" else "%.1f%%".format(winners * 100.0 / measurable.size)}")
-                    Text("조건부·원문 재검토 기록은 체결 확인 전 성과 계산에서 제외합니다.", style = MaterialTheme.typography.bodySmall)
                 }
             }
         }
@@ -259,26 +252,28 @@ private fun RecommendationHistoryScreen(
         if (state.message != null) item { InfoHistoryCard(state.message ?: "") }
         if (!state.loading && sorted.isEmpty()) item { InfoHistoryCard("표시할 추천 이력이 없습니다.") }
         if (sorted.isNotEmpty()) {
-            item { RecommendationTableHeader(tableScrollState) }
-            items(sorted, key = { it.id }) { record ->
-                RecommendationTableRow(record, tableScrollState)
+            item {
+                Column(
+                    modifier = Modifier.fillMaxWidth().horizontalScroll(tableScrollState),
+                ) {
+                    RecommendationTableHeader()
+                    sorted.forEach { record -> RecommendationTableRow(record) }
+                }
             }
         }
     }
 }
 
 @Composable
-private fun RecommendationTableHeader(scrollState: androidx.compose.foundation.ScrollState) {
-    Row(
-        modifier = Modifier.horizontalScroll(scrollState).padding(vertical = 8.dp),
-    ) {
-        TableCell("수익률", 90.dp, true)
-        TableCell("날짜", 105.dp, true)
-        TableCell("이름", 170.dp, true)
-        TableCell("오늘 등락", 100.dp, true)
-        TableCell("티커", 100.dp, true)
-        TableCell("현재가", 125.dp, true)
-        TableCell("기준가", 125.dp, true)
+private fun RecommendationTableHeader() {
+    Row(modifier = Modifier.padding(vertical = 8.dp)) {
+        TableCell("종목", 180.dp, true)
+        TableCell("현재가", 130.dp, true)
+        TableCell("추천가", 130.dp, true)
+        TableCell("추천가부터 수익률", 150.dp, true)
+        TableCell("간략차트", 170.dp, true)
+        TableCell("추천일", 110.dp, true)
+        TableCell("오늘 등락", 105.dp, true)
         TableCell("방향", 85.dp, true)
         TableCell("상태", 155.dp, true)
         TableCell("전략", 360.dp, true)
@@ -287,20 +282,15 @@ private fun RecommendationTableHeader(scrollState: androidx.compose.foundation.S
 }
 
 @Composable
-private fun RecommendationTableRow(
-    record: RecommendationRecord,
-    scrollState: androidx.compose.foundation.ScrollState,
-) {
-    Row(
-        modifier = Modifier.horizontalScroll(scrollState).padding(vertical = 8.dp),
-    ) {
-        TableCell(record.returnPct?.let { signed(it) } ?: if (record.isExecuted) "계산 불가" else "미체결", 90.dp, true)
-        TableCell(record.date, 105.dp)
-        TableCell(record.name, 170.dp, true)
-        TableCell(record.todayChangePct?.let { signed(it) } ?: "미확인", 100.dp)
-        TableCell(record.ticker, 100.dp)
-        TableCell(price(record.currentPrice, record.currency), 125.dp)
-        TableCell(price(record.referencePrice, record.currency), 125.dp)
+private fun RecommendationTableRow(record: RecommendationRecord) {
+    Row(modifier = Modifier.padding(vertical = 6.dp)) {
+        TableCell("${record.name} (${record.ticker})", 180.dp, true)
+        TableCell(price(record.currentPrice, record.currency), 130.dp)
+        TableCell(price(record.referencePrice, record.currency), 130.dp)
+        TableCell(record.returnPct?.let { signed(it) } ?: if (record.isExecuted) "계산 불가" else "미체결", 150.dp, true)
+        SparklineCell(record.recentCloses, 170.dp)
+        TableCell(record.date, 110.dp)
+        TableCell(record.todayChangePct?.let { signed(it) } ?: "미확인", 105.dp)
         TableCell(record.direction, 85.dp)
         TableCell(record.status, 155.dp)
         TableCell(record.strategy, 360.dp)
@@ -316,6 +306,30 @@ private fun TableCell(text: String, width: Dp, bold: Boolean = false) {
         fontWeight = if (bold) FontWeight.Bold else FontWeight.Normal,
         maxLines = 1,
     )
+}
+
+@Composable
+private fun SparklineCell(values: List<Double>, width: Dp) {
+    if (values.size < 2) {
+        TableCell("갱신 필요", width)
+        return
+    }
+    val minValue = values.minOrNull() ?: return
+    val maxValue = values.maxOrNull() ?: return
+    val range = (maxValue - minValue).takeIf { it > 0.0 } ?: 1.0
+    val lineColor = if (values.last() >= values.first()) Color(0xFF2E7D32) else Color(0xFFC62828)
+    Canvas(
+        modifier = Modifier.width(width).height(42.dp).padding(horizontal = 8.dp, vertical = 6.dp),
+    ) {
+        val step = if (values.size <= 1) 0f else size.width / (values.size - 1)
+        for (index in 1 until values.size) {
+            val previousX = (index - 1) * step
+            val currentX = index * step
+            val previousY = size.height - ((values[index - 1] - minValue) / range).toFloat() * size.height
+            val currentY = size.height - ((values[index] - minValue) / range).toFloat() * size.height
+            drawLine(lineColor, Offset(previousX, previousY), Offset(currentX, currentY), strokeWidth = 3f)
+        }
+    }
 }
 
 @Composable
@@ -366,32 +380,29 @@ private fun parseHistory(text: String): HistoryPayload {
     val rows = root.optJSONArray("recommendations") ?: JSONArray()
     val records = buildList {
         for (i in 0 until rows.length()) {
-            val item = rows.getJSONObject(i)
+            val item = rows.optJSONObject(i) ?: continue
+            val recent = item.optJSONArray("recentCloses") ?: JSONArray()
+            val closes = buildList {
+                for (index in 0 until recent.length()) {
+                    val value = recent.optDouble(index, Double.NaN)
+                    if (value.isFinite()) add(value)
+                }
+            }
             add(
                 RecommendationRecord(
                     id = item.optString("id", "row-$i"),
                     date = item.optString("date"),
                     assetClass = item.optString("assetClass", "UNKNOWN"),
-                    market = item.optString("market"),
                     ticker = item.optString("ticker"),
                     name = item.optString("name", item.optString("ticker")),
                     direction = item.optString("direction", "LONG"),
                     strategy = item.optString("strategy"),
                     referencePrice = item.optNullableDouble("referencePrice"),
-                    referencePriceMethod = item.optString("referencePriceMethod"),
-                    entry = item.optString("entry", "기록 없음"),
-                    stop = item.optString("stop", "기록 없음"),
-                    target1 = item.optString("target1", "기록 없음"),
-                    target2 = item.optString("target2", "기록 없음"),
                     currentPrice = item.optNullableDouble("currentPrice"),
-                    currentPriceDate = item.optString("currentPriceDate"),
                     todayChangePct = item.optNullableDouble("todayChangePct"),
-                    todayChangeDate = item.optString("todayChangeDate"),
+                    recentCloses = closes,
                     currency = item.optString("currency"),
-                    source = item.optString("source", "ChatGPT conversation archive"),
                     status = item.optString("status", "ARCHIVED"),
-                    note = item.optString("note"),
-                    recoveryConfidence = item.optString("recoveryConfidence", "UNKNOWN"),
                 )
             )
         }
