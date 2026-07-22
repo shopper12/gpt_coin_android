@@ -1,6 +1,8 @@
 name: Binance BTC backtest
 
 on:
+  schedule:
+    - cron: '25 0 * * *'
   workflow_dispatch:
     inputs:
       symbol:
@@ -25,7 +27,11 @@ on:
         default: ""
 
 permissions:
-  contents: read
+  contents: write
+
+concurrency:
+  group: binance-btc-backtest
+  cancel-in-progress: true
 
 jobs:
   backtest:
@@ -34,6 +40,8 @@ jobs:
     steps:
       - name: Checkout main
         uses: actions/checkout@v4
+        with:
+          ref: main
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -60,6 +68,21 @@ jobs:
             --end "$END_DATE" \
             --data runtime_data/binance_klines.csv \
             --output-dir reports
+
+      - name: Commit best backtest summary
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f reports/binance_btc_best.json
+          git add reports/binance_btc_backtest_latest.md
+          if git diff --cached --quiet; then
+            echo "No backtest summary change."
+          else
+            git commit -m "Update daily Binance BTC backtest summary"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
 
       - name: Upload Binance BTC backtest artifacts
         uses: actions/upload-artifact@v4
