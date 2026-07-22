@@ -21,7 +21,7 @@ NON_EXECUTED_STATUSES = {
 def yahoo_chart(symbol: str, period1: int | None = None, period2: int | None = None) -> dict:
     params = {"interval": "1d", "events": "history"}
     if period1 is None:
-        params["range"] = "10d"
+        params["range"] = "3mo"
     else:
         params["period1"] = str(period1)
         params["period2"] = str(period2)
@@ -35,7 +35,7 @@ def yahoo_chart(symbol: str, period1: int | None = None, period2: int | None = N
     return result[0]
 
 
-def latest_session(symbol: str) -> tuple[float, str, float | None, float | None]:
+def latest_session(symbol: str) -> tuple[float, str, float | None, float | None, list[float]]:
     result = yahoo_chart(symbol)
     closes = result["indicators"]["quote"][0]["close"]
     timestamps = result["timestamp"]
@@ -50,7 +50,8 @@ def latest_session(symbol: str) -> tuple[float, str, float | None, float | None]
     current_date = datetime.fromtimestamp(current_ts, tz=timezone.utc).astimezone(KST).date().isoformat()
     previous = valid[-2][1] if len(valid) >= 2 else None
     change_pct = ((current / previous) - 1.0) * 100.0 if previous and previous > 0 else None
-    return current, current_date, previous, change_pct
+    recent_closes = [round(value, 6) for _, value in valid[-30:]]
+    return current, current_date, previous, change_pct, recent_closes
 
 
 def date_close(symbol: str, date_text: str) -> tuple[float, str]:
@@ -114,13 +115,14 @@ def main() -> None:
                     row["referencePriceDate"] = used_date
                     row["referencePriceMethod"] = "recommendation_date_or_next_session_close_proxy"
 
-            current, current_date, previous, change_pct = latest_session(symbol)
+            current, current_date, previous, change_pct, recent_closes = latest_session(symbol)
             row["currentPrice"] = round(current, 6)
             row["currentPriceDate"] = current_date
             row["currentPriceMethod"] = "yahoo_daily_close"
             row["previousClose"] = round(previous, 6) if previous is not None else None
             row["todayChangePct"] = round(change_pct, 4) if change_pct is not None else None
             row["todayChangeDate"] = current_date
+            row["recentCloses"] = recent_closes
             updated += 1
         except Exception as exc:
             errors.append(f"{ticker}/{symbol}: {exc}")
