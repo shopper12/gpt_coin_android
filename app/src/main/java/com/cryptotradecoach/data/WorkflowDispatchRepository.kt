@@ -30,11 +30,31 @@ class WorkflowDispatchRepository(context: Context) {
             settings = settings,
             workflowFile = RECOMMENDATION_PRICE_WORKFLOW_FILE,
         )
-        "추천 이력 현재가·오늘 등락률 갱신을 요청했습니다. 완료 후 다시 불러오세요."
+        "추천 이력 현재가·오늘 등락률·간략차트 갱신을 요청했습니다. 완료 후 다시 불러오세요."
+    }
+
+    suspend fun dispatchBinanceBtcMonitor(): String = withContext(Dispatchers.IO) {
+        val settings = settingsRepository.load()
+        client.dispatchWorkflow(
+            settings = settings,
+            workflowFile = BINANCE_MONITOR_WORKFLOW_FILE,
+        )
+        "BTC 24시간 모니터 즉시 갱신을 요청했습니다. 완료 후 결과를 다시 불러오세요."
+    }
+
+    suspend fun dispatchBinanceBtcBacktest(): String = withContext(Dispatchers.IO) {
+        val settings = settingsRepository.load()
+        client.dispatchWorkflow(
+            settings = settings,
+            workflowFile = BINANCE_BACKTEST_WORKFLOW_FILE,
+        )
+        "BTC 백테스트와 최적 파라미터 갱신을 요청했습니다."
     }
 
     private companion object {
         const val UNIFIED_WORKFLOW_FILE = "unified-strategy-monitor.yml"
         const val RECOMMENDATION_PRICE_WORKFLOW_FILE = "update-recommendation-history-prices.yml"
+        const val BINANCE_MONITOR_WORKFLOW_FILE = "binance-btc-monitor.yml"
+        const val BINANCE_BACKTEST_WORKFLOW_FILE = "binance-btc-backtest.yml"
     }
 }
