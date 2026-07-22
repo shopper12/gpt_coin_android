@@ -175,3 +175,45 @@ jobs:
           overwrite_files: true
         env:
           GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Record successful Android build
+        run: |
+          set -euo pipefail
+          mkdir -p reports
+          apk_bytes="$(wc -c < "apk-output/$APK_FILE_NAME" | tr -d ' ')"
+          apk_sha256="$(cut -d' ' -f1 apk-output/sha256.txt)"
+          python - <<'PY'
+          import datetime as dt
+          import json
+          import os
+          from pathlib import Path
+
+          payload = {
+              "ok": True,
+              "generated_at_utc": dt.datetime.now(dt.timezone.utc).isoformat(),
+              "built_commit": os.environ["GITHUB_SHA"],
+              "workflow_run_id": os.environ["GITHUB_RUN_ID"],
+              "workflow_run_number": int(os.environ["GITHUB_RUN_NUMBER"]),
+              "version_code": os.environ["CI_VERSION_CODE"],
+              "version_name": os.environ["CI_VERSION_NAME"],
+              "package_name": "com.cryptotradecoach",
+              "apk_file": os.environ["APK_FILE_NAME"],
+              "apk_bytes": int(os.environ["APK_BYTES"]),
+              "apk_sha256": os.environ["APK_SHA256"],
+              "signature_verified": True,
+              "release_tag": "latest-phone-apk",
+          }
+          Path("reports/android_build_status.json").write_text(
+              json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
+              encoding="utf-8",
+          )
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f reports/android_build_status.json
+          git commit -m "Record successful Android release build"
+          git pull --rebase origin main
+          git push origin HEAD:main
+        env:
+          APK_BYTES: ${{ env.APK_BYTES }}
+          APK_SHA256: ${{ env.APK_SHA256 }}
