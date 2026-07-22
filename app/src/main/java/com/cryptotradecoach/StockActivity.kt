@@ -29,6 +29,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.cryptotradecoach.data.IctAnalysis
+import com.cryptotradecoach.data.IctCandle
+import com.cryptotradecoach.data.IctChartAnalyzer
 import com.cryptotradecoach.data.WorkflowDispatchRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -42,6 +45,7 @@ private const val STOCK_LATEST_URL = "$STOCK_API_BASE_URL/api/latest"
 private const val STOCK_PERFORMANCE_URL = "$STOCK_API_BASE_URL/api/recommendation-performance"
 private const val STOCK_BACKTEST_URL = "$STOCK_API_BASE_URL/api/kr-backtest"
 private const val STOCK_STRATEGY_URL = "$STOCK_API_BASE_URL/api/kr-stock-strategy"
+private const val STOCK_CHART_URL = "$STOCK_API_BASE_URL/api/kr-stock-chart"
 
 class StockActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -123,13 +127,17 @@ private fun StockMenuScreen(
         }
         scope.launch {
             searching = true
-            uiState = uiState.copy(error = null, message = null)
-            runCatching { fetchStockStrategy(trimmed) }
-                .onSuccess {
-                    strategy = it
-                    uiState = uiState.copy(message = "종목 분석 완료: ${it.name.ifBlank { it.code }} ${it.action}")
-                }
-                .onFailure { uiState = uiState.copy(error = compactError(it)) }
+            uiState = uiState.copy(error = null, message = "기본 전략과 ICT 차트 구조를 함께 분석하는 중입니다.")
+            runCatching {
+                val base = fetchStockStrategy(trimmed)
+                val ict = fetchStockIctAnalysis(base.code)
+                applyIctToStrategy(base, ict)
+            }.onSuccess {
+                strategy = it
+                uiState = uiState.copy(message = "종목 분석 완료: ${it.name.ifBlank { it.code }} ${it.action} / ICT ${it.ict.bias}")
+            }.onFailure {
+                uiState = uiState.copy(error = compactError(it), message = null)
+            }
             searching = false
         }
     }
@@ -151,7 +159,7 @@ private fun StockMenuScreen(
         }
         item {
             Text("Stock Strategy", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
-            Text("주식 기능은 코인 기능과 분리된 메뉴에서 stock_scanner 서버와 통합 모니터 결과를 읽습니다.", style = MaterialTheme.typography.bodyMedium)
+            Text("기본 추세·수급 점수와 ICT 차트 구조를 분리 계산한 뒤 최종 매매 판단에서 함께 사용합니다.")
         }
         item {
             Card(modifier = Modifier.fillMaxWidth()) {
@@ -177,8 +185,8 @@ private fun StockMenuScreen(
         item {
             Card(modifier = Modifier.fillMaxWidth()) {
                 Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("종목 직접 검색", fontWeight = FontWeight.Bold)
-                    Text("종목명 또는 코드를 입력하면 stock_scanner의 단일 종목 전략 API로 진입·손절·목표가를 계산합니다.")
+                    Text("종목 직접 검색 + ICT", fontWeight = FontWeight.Bold)
+                    Text("종목명 또는 코드를 입력하면 진입·손절·목표가와 함께 BOS/CHOCH, 유동성 스윕, FVG, 프리미엄·디스카운트를 계산합니다.")
                     OutlinedTextField(
                         value = query,
                         onValueChange = { query = it },
@@ -186,7 +194,7 @@ private fun StockMenuScreen(
                         label = { Text("예: 삼성전자 또는 005930") },
                         singleLine = true,
                     )
-                    Button(onClick = { search() }, enabled = !searching) { Text(if (searching) "분석 중" else "종목 분석") }
+                    Button(onClick = { search() }, enabled = !searching) { Text(if (searching) "ICT 분석 중" else "종목 분석") }
                 }
             }
         }
@@ -269,14 +277,20 @@ private fun StockCandidateCard(stock: StockCandidate) {
 @Composable
 private fun StrategyCard(strategy: StockStrategy) {
     Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
             Text("${strategy.name.ifBlank { strategy.code }}(${strategy.code}) | ${strategy.sector}/${strategy.setup}", fontWeight = FontWeight.Bold)
-            Text("판단: ${strategy.action} / 점수 ${formatNumber(strategy.score)} 기준 ${formatNumber(strategy.threshold)}")
+            Text("판단: ${strategy.action} / ICT 반영점수 ${formatNumber(strategy.score)} 기준 ${formatNumber(strategy.threshold)}")
             if (strategy.actionReason.isNotBlank()) Text("판단근거: ${strategy.actionReason}")
             Text("현재가 ${formatPrice(strategy.currentPrice)} / 진입 ${formatPrice(strategy.entry)} / 손절 ${formatPrice(strategy.stopLoss)}")
             Text("목표 ${formatPrice(strategy.target1)} → ${formatPrice(strategy.target2)} / 포지션 ${formatPrice(strategy.positionSizeKrw)}원")
             Text("RSI ${formatNumber(strategy.rsi14)} / MA20 괴리 ${formatSignedPercent(strategy.gapMa20Pct)} / 20일 모멘텀 ${formatSignedPercent(strategy.momentum20dPct)}")
-            if (strategy.reason.isNotBlank()) Text("근거: ${strategy.reason}")
+            Text("ICT: ${strategy.ict.summary}", fontWeight = FontWeight.Bold)
+            Text("구조 ${strategy.ict.structure} / 이벤트 ${strategy.ict.structureEvent}")
+            Text("유동성 ${strategy.ict.liquidityEvent} / FVG ${strategy.ict.fairValueGap} / 위치 ${strategy.ict.dealingRangeLocation}")
+            if (strategy.ict.preferredEntryLow != null && strategy.ict.preferredEntryHigh != null) {
+                Text("ICT 선호 진입 ${formatPrice(strategy.ict.preferredEntryLow)} ~ ${formatPrice(strategy.ict.preferredEntryHigh)} / 무효화 ${strategy.ict.invalidation?.let(::formatPrice) ?: "-"}")
+            }
+            if (strategy.reason.isNotBlank()) Text("기본 근거: ${strategy.reason}")
             if (strategy.failureCondition.isNotBlank()) Text("무효화: ${strategy.failureCondition}")
         }
     }
@@ -303,11 +317,49 @@ private suspend fun fetchStockStrategy(query: String): StockStrategy = withConte
     parseStockStrategy(JSONObject(httpJson("POST", STOCK_STRATEGY_URL, JSONObject().put("query", query).toString())))
 }
 
+private suspend fun fetchStockIctAnalysis(code: String): IctAnalysis = withContext(Dispatchers.IO) {
+    val json = JSONObject(httpJson("GET", "$STOCK_CHART_URL?code=$code&days=160", null))
+    val array = json.optJSONArray("candles")
+    val candles = buildList {
+        if (array != null) {
+            for (index in 0 until array.length()) {
+                val item = array.optJSONObject(index) ?: continue
+                add(
+                    IctCandle(
+                        date = item.optString("date"),
+                        open = item.optDouble("open", 0.0),
+                        high = item.optDouble("high", 0.0),
+                        low = item.optDouble("low", 0.0),
+                        close = item.optDouble("close", 0.0),
+                    )
+                )
+            }
+        }
+    }
+    IctChartAnalyzer.analyze(candles)
+}
+
+private fun applyIctToStrategy(base: StockStrategy, ict: IctAnalysis): StockStrategy {
+    val adjustedScore = (base.score + ict.scoreAdjustment).coerceIn(0.0, 100.0)
+    var action = base.action
+    var actionReason = base.actionReason
+    if (ict.bias == "BEARISH" && action.contains("매수")) {
+        action = "조건부 대기"
+        actionReason += " ICT 약세 구조가 기본 매수 신호와 충돌하여 즉시 진입을 보류합니다."
+    } else if (ict.bias == "BULLISH" && action == "조건부 매수" && adjustedScore >= base.threshold + 10.0) {
+        action = "매수 후보"
+        actionReason += " ICT 상승 구조·유동성 조건이 기본 신호를 확인했습니다."
+    } else {
+        actionReason += " ICT ${ict.bias} 조정 ${formatSignedPercent(ict.scoreAdjustment)}를 반영했습니다."
+    }
+    return base.copy(score = adjustedScore, action = action, actionReason = actionReason.trim(), ict = ict)
+}
+
 private fun httpJson(method: String, url: String, body: String?): String {
     val connection = (URL(url).openConnection() as HttpURLConnection).apply {
         requestMethod = method
         connectTimeout = 15_000
-        readTimeout = if (method == "POST") 120_000 else 20_000
+        readTimeout = if (method == "POST") 120_000 else 30_000
         setRequestProperty("Accept", "application/json")
         setRequestProperty("User-Agent", "UnifiedTradingCoach-Android")
         if (method == "POST") {
@@ -431,6 +483,7 @@ private fun parseStockStrategy(json: JSONObject): StockStrategy {
         rsi14 = metrics.optDouble("rsi14", 0.0),
         gapMa20Pct = metrics.optDouble("gap_ma20_pct", 0.0),
         momentum20dPct = metrics.optDouble("momentum_20d_pct", 0.0),
+        ict = IctChartAnalyzer.analyze(emptyList()),
     )
 }
 
@@ -518,6 +571,7 @@ private data class StockStrategy(
     val rsi14: Double,
     val gapMa20Pct: Double,
     val momentum20dPct: Double,
+    val ict: IctAnalysis,
 )
 
 private fun compactError(error: Throwable): String = (error.message ?: error::class.java.simpleName).take(220)
