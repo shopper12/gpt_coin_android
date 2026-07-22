@@ -182,7 +182,7 @@ jobs:
           mkdir -p reports
           apk_bytes="$(wc -c < "apk-output/$APK_FILE_NAME" | tr -d ' ')"
           apk_sha256="$(cut -d' ' -f1 apk-output/sha256.txt)"
-          python - <<'PY'
+          APK_BYTES="$apk_bytes" APK_SHA256="$apk_sha256" python - <<'PY'
           import datetime as dt
           import json
           import os
@@ -214,6 +214,3 @@ jobs:
           git commit -m "Record successful Android release build"
           git pull --rebase origin main
           git push origin HEAD:main
-        env:
-          APK_BYTES: ${{ env.APK_BYTES }}
-          APK_SHA256: ${{ env.APK_SHA256 }}
