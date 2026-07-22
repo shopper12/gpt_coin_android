@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import datetime as dt
 import json
+import urllib.error
 import urllib.parse
 import urllib.request
 from pathlib import Path
@@ -14,8 +15,12 @@ import pandas as pd
 from binance_btc_backtest import grid, prepare
 
 KST = dt.timezone(dt.timedelta(hours=9))
-SPOT_ENDPOINT = "https://api.binance.com/api/v3/klines"
 FUTURES_ENDPOINT = "https://fapi.binance.com/fapi/v1/klines"
+SPOT_ENDPOINTS = [
+    "https://data-api.binance.vision/api/v3/klines",
+    "https://api1.binance.com/api/v3/klines",
+    "https://api.binance.com/api/v3/klines",
+]
 
 
 def interval_milliseconds(interval: str) -> int:
@@ -26,23 +31,45 @@ def interval_milliseconds(interval: str) -> int:
     return int(interval[:-1]) * units[unit]
 
 
-def fetch_klines(symbol: str, market: str, interval: str, rows: int) -> pd.DataFrame:
-    endpoint = FUTURES_ENDPOINT if market == "futures" else SPOT_ENDPOINT
+def fetch_klines(symbol: str, market: str, interval: str, rows: int) -> tuple[pd.DataFrame, str, str, list[str]]:
+    candidates: list[tuple[str, str, int]] = []
+    if market == "futures":
+        candidates.append((FUTURES_ENDPOINT, "futures", 1500))
+    candidates.extend((endpoint, "spot_fallback" if market == "futures" else "spot", 1000) for endpoint in SPOT_ENDPOINTS)
+
+    errors: list[str] = []
+    for endpoint, source_market, max_limit in candidates:
+        try:
+            frame = _fetch_from_endpoint(symbol, interval, rows, endpoint, max_limit)
+            return frame, source_market, endpoint, errors
+        except Exception as exc:
+            message = f"{endpoint}: {exc.__class__.__name__}: {str(exc)[:180]}"
+            print(f"market data source failed: {message}")
+            errors.append(message)
+    raise RuntimeError("all Binance kline endpoints failed: " + " | ".join(errors))
+
+
+def _fetch_from_endpoint(symbol: str, interval: str, rows: int, endpoint: str, max_limit: int) -> pd.DataFrame:
     interval_ms = interval_milliseconds(interval)
-    remaining = max(500, min(int(rows), 12_000))
+    target_rows = max(500, min(int(rows), 12_000))
+    remaining = target_rows
     end_time: int | None = None
     collected: list[list[Any]] = []
 
     while remaining > 0:
-        limit = min(1500, remaining)
+        limit = min(max_limit, remaining)
         params = {"symbol": symbol.upper(), "interval": interval, "limit": str(limit)}
         if end_time is not None:
             params["endTime"] = str(end_time)
         url = f"{endpoint}?{urllib.parse.urlencode(params)}"
         request = urllib.request.Request(url, headers={"User-Agent": "UnifiedTradingCoach/1.0"})
-        with urllib.request.urlopen(request, timeout=30) as response:
-            batch = json.load(response)
-        if not batch:
+        try:
+            with urllib.request.urlopen(request, timeout=30) as response:
+                batch = json.load(response)
+        except urllib.error.HTTPError as exc:
+            body = exc.read().decode("utf-8", errors="replace")[:220]
+            raise RuntimeError(f"HTTP {exc.code} {body}") from exc
+        if not isinstance(batch, list) or not batch:
             break
         collected = batch + collected
         earliest = int(batch[0][0])
@@ -51,10 +78,10 @@ def fetch_klines(symbol: str, market: str, interval: str, rows: int) -> pd.DataF
         if len(batch) < limit:
             break
 
-    by_open_time = {int(row[0]): row for row in collected}
-    ordered = [by_open_time[key] for key in sorted(by_open_time)][-rows:]
+    by_open_time = {int(row[0]): row for row in collected if isinstance(row, list) and len(row) >= 6}
+    ordered = [by_open_time[key] for key in sorted(by_open_time)][-target_rows:]
     if len(ordered) < 500:
-        raise RuntimeError(f"insufficient live Binance rows: {len(ordered)}")
+        raise RuntimeError(f"insufficient live rows: {len(ordered)}")
 
     frame = pd.DataFrame(
         {
@@ -70,17 +97,17 @@ def fetch_klines(symbol: str, market: str, interval: str, rows: int) -> pd.DataF
     return frame.set_index("open_time")
 
 
-def load_best(path: Path) -> tuple[dict[str, Any], dict[str, Any]]:
+def load_best(path: Path) -> tuple[dict[str, Any], dict[str, Any], str]:
     if path.exists():
         try:
             payload = json.loads(path.read_text(encoding="utf-8"))
             params = payload.get("best_params") or {}
             summary = payload.get("best_summary") or {}
             if params:
-                return params, summary
+                return params, summary, "daily_backtest_best"
         except Exception as exc:
             print(f"best report read failed: {exc}")
-    return grid()[0], {}
+    return grid()[0], {}, "default_grid_first"
 
 
 def event_condition(row: pd.Series, params: dict[str, Any]) -> bool:
@@ -145,6 +172,9 @@ def evaluate(df: pd.DataFrame, params: dict[str, Any]) -> dict[str, Any]:
 
     closes = [round(float(value), 2) for value in prepared.close.tail(96).tolist()]
     last_timestamp = prepared.index[-1].to_pydatetime()
+    volume_multiple = None
+    if pd.notna(latest.vol_sma) and float(latest.vol_sma) > 0:
+        volume_multiple = round(float(latest.volume / latest.vol_sma), 3)
     return {
         "signal": signal,
         "summary": summary,
@@ -178,7 +208,7 @@ def evaluate(df: pd.DataFrame, params: dict[str, Any]) -> dict[str, Any]:
             "vwap": round(float(latest.vwap), 2),
             "ema20": round(float(latest.ema20), 2),
             "ema50": round(float(latest.ema50), 2),
-            "volume_multiple": round(float(latest.volume / latest.vol_sma), 3) if latest.vol_sma else None,
+            "volume_multiple": volume_multiple,
         },
     }
 
@@ -193,12 +223,12 @@ def main() -> int:
     parser.add_argument("--output", type=Path, default=Path("reports/binance_btc_monitor_latest.json"))
     args = parser.parse_args()
 
-    params, backtest_summary = load_best(args.best_report)
-    frame = fetch_klines(args.symbol, args.market, args.interval, args.rows)
+    params, backtest_summary, parameter_source = load_best(args.best_report)
+    frame, data_market, data_endpoint, source_errors = fetch_klines(args.symbol, args.market, args.interval, args.rows)
     result = evaluate(frame, params)
     now = dt.datetime.now(dt.timezone.utc)
     payload = {
-        "schema_version": 1,
+        "schema_version": 2,
         "ok": True,
         "monitoring_mode": "hourly_24x7",
         "source_repository": "shopper12/gpt_coin_android",
@@ -206,13 +236,17 @@ def main() -> int:
         "generated_at_utc": now.isoformat(),
         "generated_at_kst": now.astimezone(KST).isoformat(),
         "symbol": args.symbol.upper(),
-        "market": args.market,
+        "requested_market": args.market,
+        "market": data_market,
+        "data_endpoint": data_endpoint,
+        "data_source_errors": source_errors,
         "interval": args.interval,
         "rows_loaded": int(len(frame)),
+        "parameter_source": parameter_source,
         "strategy_parameters": params,
         "backtest_summary": backtest_summary,
         **result,
-        "guardrail": "Research monitor only. A ready signal is not an execution guarantee.",
+        "guardrail": "Research monitor only. Spot fallback may be used when the futures API is unavailable; a ready signal is not an execution guarantee.",
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
