@@ -25,6 +25,11 @@ on:
         description: UTC end date. Empty means today UTC.
         required: false
         default: ""
+  push:
+    branches: [ main ]
+    paths:
+      - 'tools/binance_btc_backtest.py'
+      - '.github/workflows/binance-btc-backtest.yml'
 
 permissions:
   contents: write
