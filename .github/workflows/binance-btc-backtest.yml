@@ -17,10 +17,10 @@ on:
         description: Kline interval
         required: false
         default: 5m
-      start:
-        description: UTC start date
+      lookback_days:
+        description: Rolling historical window in days
         required: false
-        default: "2025-06-22"
+        default: "180"
       end:
         description: UTC end date. Empty means today UTC.
         required: false
@@ -29,6 +29,7 @@ on:
     branches: [ main ]
     paths:
       - 'tools/binance_btc_backtest.py'
+      - 'tools/run_binance_btc_daily_backtest.py'
       - '.github/workflows/binance-btc-backtest.yml'
 
 permissions:
@@ -41,7 +42,7 @@ concurrency:
 jobs:
   backtest:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 45
     steps:
       - name: Checkout main
         uses: actions/checkout@v4
@@ -59,18 +60,14 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install "numpy>=1.26" "pandas>=2.2"
 
-      - name: Run Binance BTC backtest
+      - name: Run rolling Binance BTC backtest
         run: |
-          END_DATE="${{ github.event.inputs.end }}"
-          if [ -z "$END_DATE" ]; then
-            END_DATE="$(date -u +%F)"
-          fi
-          python tools/binance_btc_backtest.py \
+          python tools/run_binance_btc_daily_backtest.py \
             --symbol "${{ github.event.inputs.symbol || 'BTCUSDT' }}" \
             --market "${{ github.event.inputs.market || 'futures' }}" \
             --interval "${{ github.event.inputs.interval || '5m' }}" \
-            --start "${{ github.event.inputs.start || '2025-06-22' }}" \
-            --end "$END_DATE" \
+            --lookback-days "${{ github.event.inputs.lookback_days || '180' }}" \
+            --end "${{ github.event.inputs.end }}" \
             --data runtime_data/binance_klines.csv \
             --output-dir reports
 
