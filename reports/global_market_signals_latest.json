@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-07-24T01:03:56.589778+09:00",
+  "generatedAtKst": "2026-07-24T02:49:18.750460+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
@@ -22,24 +22,24 @@
     {
       "ticker": "DBC",
       "name": "Invesco DB Commodity Index",
-      "dailyScore": 95.0,
+      "dailyScore": 87.0,
       "relativeStrengthPercentile": 1.0,
       "trigger": {
         "ready": false,
-        "breakout": false,
+        "breakout": true,
         "reclaim": false,
-        "volumeRatio": 0.318,
-        "ema20": 30.233694,
-        "ema50": 29.952786,
-        "lastTimestamp": "2026-07-23T16:00:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.32x; ICT=BULLISH/NONE/SELL_SIDE_SWEEP",
+        "volumeRatio": 0.153,
+        "ema20": 30.346791,
+        "ema50": 30.074973,
+        "lastTimestamp": "2026-07-23T17:45:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=0.15x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
           "bias": "BULLISH",
-          "structure": "BULLISH_HH_HL",
-          "event": "NONE",
-          "liquidity": "SELL_SIDE_SWEEP",
-          "fvg": "BULLISH 29.8900~30.3750",
-          "score": 5
+          "structure": "RANGE",
+          "event": "BOS_UP",
+          "liquidity": "NONE",
+          "fvg": "BULLISH 30.5000~30.5100",
+          "score": 3
         }
       }
     },
@@ -52,17 +52,17 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.062,
-        "ema20": 99.514066,
-        "ema50": 99.987307,
-        "lastTimestamp": "2026-07-23T16:00:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.06x; ICT=NEUTRAL/NONE/NONE",
+        "volumeRatio": 0.12,
+        "ema20": 99.399676,
+        "ema50": 99.821968,
+        "lastTimestamp": "2026-07-23T17:45:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.12x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BEARISH 99.2000~99.7700",
+          "fvg": "BEARISH 99.3400~99.4700",
           "score": -1
         }
       }
@@ -70,24 +70,24 @@
     {
       "ticker": "DFTX",
       "name": "Definium Therapeutics, Inc.  - Common Shares",
-      "dailyScore": 84.9,
-      "relativeStrengthPercentile": 0.957983193277311,
+      "dailyScore": 85.11,
+      "relativeStrengthPercentile": 0.9621848739495799,
       "trigger": {
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.137,
-        "ema20": 43.648508,
-        "ema50": 43.835512,
-        "lastTimestamp": "2026-07-23T16:00:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.14x; ICT=NEUTRAL/NONE/NONE",
+        "volumeRatio": 0.034,
+        "ema20": 43.684842,
+        "ema50": 43.808042,
+        "lastTimestamp": "2026-07-23T17:45:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.03x; ICT=BULLISH/NONE/NONE",
         "ict": {
-          "bias": "NEUTRAL",
+          "bias": "BULLISH",
           "structure": "BULLISH_HH_HL",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BEARISH 43.5900~43.9600",
-          "score": 1
+          "fvg": "BULLISH 43.4900~43.5600",
+          "score": 3
         }
       }
     },
@@ -100,17 +100,41 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.062,
-        "ema20": 104.950385,
-        "ema50": 104.491116,
-        "lastTimestamp": "2026-07-23T16:00:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.06x; ICT=NEUTRAL/NONE/NONE",
+        "volumeRatio": 0.053,
+        "ema20": 105.51128,
+        "ema50": 104.879274,
+        "lastTimestamp": "2026-07-23T17:45:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.05x; ICT=NEUTRAL/NONE/NONE",
+        "ict": {
+          "bias": "NEUTRAL",
+          "structure": "BULLISH_HH_HL",
+          "event": "NONE",
+          "liquidity": "NONE",
+          "fvg": "BEARISH 105.9900~106.1300",
+          "score": 1
+        }
+      }
+    },
+    {
+      "ticker": "BTSG",
+      "name": "BrightSpring Health Services, Inc. - Common Stock",
+      "dailyScore": 81.54,
+      "relativeStrengthPercentile": 0.8907563025210085,
+      "trigger": {
+        "ready": false,
+        "breakout": false,
+        "reclaim": false,
+        "volumeRatio": 0.091,
+        "ema20": 69.230673,
+        "ema50": 70.106114,
+        "lastTimestamp": "2026-07-23T17:45:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.09x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BULLISH 105.3100~105.7500",
+          "fvg": "BULLISH 68.6000~68.6400",
           "score": 1
         }
       }
@@ -118,48 +142,24 @@
     {
       "ticker": "VSXY",
       "name": "Victorias Secret & Co. Common Stock",
-      "dailyScore": 81.54,
-      "relativeStrengthPercentile": 0.8907563025210085,
+      "dailyScore": 81.12,
+      "relativeStrengthPercentile": 0.8823529411764706,
       "trigger": {
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.107,
-        "ema20": 85.946828,
-        "ema50": 86.643877,
-        "lastTimestamp": "2026-07-23T16:00:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.11x; ICT=NEUTRAL/NONE/NONE",
-        "ict": {
-          "bias": "NEUTRAL",
-          "structure": "RANGE",
-          "event": "NONE",
-          "liquidity": "NONE",
-          "fvg": "BEARISH 86.3050~87.2800",
-          "score": -1
-        }
-      }
-    },
-    {
-      "ticker": "BTSG",
-      "name": "BrightSpring Health Services, Inc. - Common Stock",
-      "dailyScore": 81.33,
-      "relativeStrengthPercentile": 0.8865546218487395,
-      "trigger": {
-        "ready": false,
-        "breakout": false,
-        "reclaim": false,
-        "volumeRatio": 0.343,
-        "ema20": 69.623446,
-        "ema50": 70.513485,
-        "lastTimestamp": "2026-07-23T16:00:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.34x; ICT=BEARISH/BOS_DOWN/NONE",
+        "volumeRatio": 0.095,
+        "ema20": 84.747681,
+        "ema50": 85.907631,
+        "lastTimestamp": "2026-07-23T17:45:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.09x; ICT=BEARISH/BOS_DOWN/NONE",
         "ict": {
           "bias": "BEARISH",
-          "structure": "BEARISH_LH_LL",
+          "structure": "RANGE",
           "event": "BOS_DOWN",
           "liquidity": "NONE",
-          "fvg": "BEARISH 68.6800~68.8100",
-          "score": -5
+          "fvg": "BEARISH 82.9400~83.3300",
+          "score": -3
         }
       }
     },
@@ -172,18 +172,18 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.128,
-        "ema20": 35.179403,
-        "ema50": 34.986812,
-        "lastTimestamp": "2026-07-23T16:00:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.13x; ICT=NEUTRAL/NONE/NONE",
+        "volumeRatio": 0.123,
+        "ema20": 35.311214,
+        "ema50": 35.098364,
+        "lastTimestamp": "2026-07-23T17:45:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.12x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BEARISH 35.3400~35.4200",
-          "score": -1
+          "fvg": "BULLISH 35.3700~35.3800",
+          "score": 1
         }
       }
     },
@@ -196,17 +196,17 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.05,
-        "ema20": 406.689826,
-        "ema50": 419.741916,
-        "lastTimestamp": "2026-07-23T16:00:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.05x; ICT=NEUTRAL/NONE/NONE",
+        "volumeRatio": 0.044,
+        "ema20": 402.329581,
+        "ema50": 414.490845,
+        "lastTimestamp": "2026-07-23T17:45:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.04x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BULLISH 392.9900~393.0900",
+          "fvg": "BULLISH 395.1855~398.0000",
           "score": 1
         }
       }
@@ -220,18 +220,18 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.031,
-        "ema20": 5.288186,
-        "ema50": 5.240311,
-        "lastTimestamp": "2026-07-23T16:00:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.03x; ICT=NEUTRAL/NONE/NONE",
+        "volumeRatio": 0.147,
+        "ema20": 5.327484,
+        "ema50": 5.271256,
+        "lastTimestamp": "2026-07-23T17:45:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.15x; ICT=BULLISH/NONE/NONE",
         "ict": {
-          "bias": "NEUTRAL",
-          "structure": "RANGE",
+          "bias": "BULLISH",
+          "structure": "BULLISH_HH_HL",
           "event": "NONE",
           "liquidity": "NONE",
           "fvg": "BULLISH 5.3321~5.3450",
-          "score": 1
+          "score": 3
         }
       }
     }
