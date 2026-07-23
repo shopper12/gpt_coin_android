@@ -204,10 +204,31 @@ def download_yahoo(instruments: list[Instrument], *, period: str, interval: str,
     return frames
 
 
-def upbit_history(instrument: Instrument, *, intraday: bool) -> pd.DataFrame:
+def _upbit_candle_rows(instrument: Instrument, *, intraday: bool) -> list[dict[str, Any]]:
     endpoint = UPBIT_MINUTE15 if intraday else UPBIT_DAY
-    query = urllib.parse.urlencode({"market": instrument.ticker, "count": 200})
-    rows = _http_json(f"{endpoint}?{query}")
+    target = 200 if intraday else 320
+    rows: list[dict[str, Any]] = []
+    to_value: str | None = None
+    while len(rows) < target:
+        params: dict[str, Any] = {"market": instrument.ticker, "count": min(200, target - len(rows))}
+        if to_value:
+            params["to"] = to_value
+        batch = _http_json(f"{endpoint}?{urllib.parse.urlencode(params)}")
+        if not isinstance(batch, list) or not batch:
+            break
+        rows.extend(batch)
+        oldest = batch[-1]
+        utc_text = str(oldest.get("candle_date_time_utc") or "")
+        if not utc_text or len(batch) < int(params["count"]):
+            break
+        to_value = f"{utc_text}Z"
+        time.sleep(0.12)
+    by_timestamp = {int(row.get("timestamp") or 0): row for row in rows if row.get("timestamp")}
+    return [by_timestamp[key] for key in sorted(by_timestamp, reverse=True)]
+
+
+def upbit_history(instrument: Instrument, *, intraday: bool) -> pd.DataFrame:
+    rows = _upbit_candle_rows(instrument, intraday=intraday)
     frame = pd.DataFrame(
         {
             "timestamp": [row.get("timestamp") for row in rows],
@@ -218,5 +239,7 @@ def upbit_history(instrument: Instrument, *, intraday: bool) -> pd.DataFrame:
             "volume": [row.get("candle_acc_trade_volume") for row in rows],
         }
     )
+    if frame.empty:
+        return frame
     frame["timestamp"] = pd.to_datetime(frame["timestamp"], unit="ms", utc=True)
     return frame.set_index("timestamp").sort_index().apply(pd.to_numeric, errors="coerce").dropna(subset=["close"])
