@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-07-24T08:05:01.154788+09:00",
+  "generatedAtKst": "2026-07-24T08:31:27.974301+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
     "shortlistCount": 378,
     "dailyMetricsCount": 367,
-    "dailyCandidateCount": 8,
-    "intradayEvaluatedCount": 8,
-    "signalCount": 0
+    "dailyCandidateCount": 12,
+    "intradayEvaluatedCount": 12,
+    "signalCount": 1
   },
   "marketRegime": {
     "panic": false,
@@ -17,37 +17,134 @@
     "realizedVolatility20Annualized": 0.2308,
     "reason": "광의 추세와 변동성 정상"
   },
-  "signals": [],
+  "signals": [
+    {
+      "id": "2026-07-24-COGT-LONG-EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
+      "date": "2026-07-24",
+      "generatedAtKst": "2026-07-24T08:31:27.974301+09:00",
+      "signalTimestamp": "2026-07-23T19:45:00+00:00",
+      "assetClass": "US_STOCK",
+      "market": "US",
+      "ticker": "COGT",
+      "name": "Cogent Biosciences, Inc. - Common Stock",
+      "direction": "LONG",
+      "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM: 절대추세+상대모멘텀+15분 트리거+변동성 목표",
+      "strategyType": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
+      "referencePrice": 40.240002,
+      "currentPrice": 40.240002,
+      "previousClose": 39.540001,
+      "todayChangePct": 1.77,
+      "recentCloses": [
+        31.379999,
+        32.619999,
+        33.099998,
+        33.169998,
+        33.07,
+        33.669998,
+        34.540001,
+        35.84,
+        36.310001,
+        37.529999,
+        38.009998,
+        38.099998,
+        38.740002,
+        38.700001,
+        38.48,
+        38.689999,
+        39.439999,
+        40.009998,
+        39.970001,
+        40.509998,
+        38.869999,
+        37.459999,
+        38.509998,
+        39.299999,
+        37.939999,
+        39.080002,
+        38.299999,
+        39.639999,
+        39.540001,
+        40.240002
+      ],
+      "currency": "USD",
+      "status": "ACTIVE_SIGNAL",
+      "score": 80.2,
+      "confidence": 8.0,
+      "relativeStrengthPercentile": 0.825,
+      "entryLow": 39.837602,
+      "entryHigh": 40.582848,
+      "stopLoss": 36.468688,
+      "target1": 47.78263,
+      "target2": 52.308207,
+      "riskPct": 9.37,
+      "volatilityTargetExposurePct": 35.2,
+      "regime": {
+        "panic": false,
+        "riskOff": false,
+        "equityBelow200Count": 0,
+        "realizedVolatility20Annualized": 0.2308,
+        "reason": "광의 추세와 변동성 정상"
+      },
+      "ict": {
+        "bias": "NEUTRAL",
+        "structure": "BEARISH_LH_LL",
+        "event": "CHOCH_UP",
+        "liquidity": "NONE",
+        "fvg": "BULLISH 40.0000~40.0200",
+        "score": 1
+      },
+      "trigger": {
+        "ready": true,
+        "breakout": true,
+        "reclaim": false,
+        "volumeRatio": 3.879,
+        "ema20": 39.878739,
+        "ema50": 39.639749,
+        "lastTimestamp": "2026-07-23T19:45:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=3.88x; ICT=NEUTRAL/CHOCH_UP/NONE",
+        "ict": {
+          "bias": "NEUTRAL",
+          "structure": "BEARISH_LH_LL",
+          "event": "CHOCH_UP",
+          "liquidity": "NONE",
+          "fvg": "BULLISH 40.0000~40.0200",
+          "score": 1
+        }
+      },
+      "reason": "3/6/12개월 절대 모멘텀 양수, 200일선 상단, 자산군 상대강도 82백분위, breakout=True; reclaim=False; volume=3.88x; ICT=NEUTRAL/CHOCH_UP/NONE",
+      "guardrail": "자동 추천은 주문이 아니다. 실시간 호가·슬리피지·공시·거래 가능 여부를 확인한다."
+    }
+  ],
   "topEvaluated": [
     {
-      "ticker": "DBC",
-      "name": "Invesco DB Commodity Index",
-      "dailyScore": 95.0,
-      "relativeStrengthPercentile": 1.0,
+      "ticker": "CORT",
+      "name": "Corcept Therapeutics Incorporated - Common Stock",
+      "dailyScore": 89.58,
+      "relativeStrengthPercentile": 0.8916666666666667,
       "trigger": {
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 13.302,
-        "ema20": 30.360999,
-        "ema50": 30.158871,
+        "volumeRatio": 8.202,
+        "ema20": 95.992098,
+        "ema50": 95.075128,
         "lastTimestamp": "2026-07-23T19:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=13.30x; ICT=BEARISH/BOS_DOWN/NONE",
+        "reason": "breakout=False; reclaim=False; volume=8.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
-          "bias": "BEARISH",
+          "bias": "NEUTRAL",
           "structure": "RANGE",
-          "event": "BOS_DOWN",
+          "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BEARISH 30.3650~30.3750",
-          "score": -3
+          "fvg": "BEARISH 96.2300~96.4700",
+          "score": -1
         }
       }
     },
     {
       "ticker": "SYRE",
       "name": "Spyre Therapeutics, Inc. - Common Stock",
-      "dailyScore": 85.74,
-      "relativeStrengthPercentile": 0.9747899159663865,
+      "dailyScore": 85.54,
+      "relativeStrengthPercentile": 0.9708333333333333,
       "trigger": {
         "ready": false,
         "breakout": false,
@@ -70,8 +167,8 @@
     {
       "ticker": "DFTX",
       "name": "Definium Therapeutics, Inc.  - Common Shares",
-      "dailyScore": 84.9,
-      "relativeStrengthPercentile": 0.957983193277311,
+      "dailyScore": 84.71,
+      "relativeStrengthPercentile": 0.9541666666666667,
       "trigger": {
         "ready": false,
         "breakout": false,
@@ -94,8 +191,8 @@
     {
       "ticker": "DNTH",
       "name": "Dianthus Therapeutics, Inc. - Common Stock",
-      "dailyScore": 84.48,
-      "relativeStrengthPercentile": 0.9495798319327731,
+      "dailyScore": 84.5,
+      "relativeStrengthPercentile": 0.95,
       "trigger": {
         "ready": false,
         "breakout": false,
@@ -116,34 +213,10 @@
       }
     },
     {
-      "ticker": "BTSG",
-      "name": "BrightSpring Health Services, Inc. - Common Stock",
-      "dailyScore": 81.54,
-      "relativeStrengthPercentile": 0.8907563025210085,
-      "trigger": {
-        "ready": false,
-        "breakout": true,
-        "reclaim": false,
-        "volumeRatio": 8.006,
-        "ema20": 69.284202,
-        "ema50": 69.883479,
-        "lastTimestamp": "2026-07-23T19:45:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=8.01x; ICT=NEUTRAL/NONE/NONE",
-        "ict": {
-          "bias": "NEUTRAL",
-          "structure": "RANGE",
-          "event": "NONE",
-          "liquidity": "NONE",
-          "fvg": "BULLISH 69.1600~69.2400",
-          "score": 1
-        }
-      }
-    },
-    {
       "ticker": "VSXY",
       "name": "Victorias Secret & Co. Common Stock",
-      "dailyScore": 81.33,
-      "relativeStrengthPercentile": 0.8865546218487395,
+      "dailyScore": 82.42,
+      "relativeStrengthPercentile": 0.9083333333333333,
       "trigger": {
         "ready": false,
         "breakout": false,
@@ -166,8 +239,8 @@
     {
       "ticker": "ROIV",
       "name": "Roivant Sciences Ltd. - Common Shares",
-      "dailyScore": 79.02,
-      "relativeStrengthPercentile": 0.8403361344537815,
+      "dailyScore": 80.75,
+      "relativeStrengthPercentile": 0.875,
       "trigger": {
         "ready": false,
         "breakout": false,
@@ -188,10 +261,130 @@
       }
     },
     {
+      "ticker": "TIGO",
+      "name": "Millicom International Cellular S.A. - Common Stock",
+      "dailyScore": 79.71,
+      "relativeStrengthPercentile": 0.8541666666666666,
+      "trigger": {
+        "ready": false,
+        "breakout": false,
+        "reclaim": false,
+        "volumeRatio": 5.006,
+        "ema20": 96.600823,
+        "ema50": 97.216612,
+        "lastTimestamp": "2026-07-23T19:45:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=5.01x; ICT=NEUTRAL/NONE/NONE",
+        "ict": {
+          "bias": "NEUTRAL",
+          "structure": "RANGE",
+          "event": "NONE",
+          "liquidity": "NONE",
+          "fvg": "BULLISH 96.3150~96.4400",
+          "score": 1
+        }
+      }
+    },
+    {
+      "ticker": "DVA",
+      "name": "DaVita Inc. Common Stock",
+      "dailyScore": 79.5,
+      "relativeStrengthPercentile": 0.85,
+      "trigger": {
+        "ready": false,
+        "breakout": false,
+        "reclaim": false,
+        "volumeRatio": 7.98,
+        "ema20": 233.26484,
+        "ema50": 233.565554,
+        "lastTimestamp": "2026-07-23T19:45:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=7.98x; ICT=BULLISH/BOS_UP/NONE",
+        "ict": {
+          "bias": "BULLISH",
+          "structure": "BULLISH_HH_HL",
+          "event": "BOS_UP",
+          "liquidity": "NONE",
+          "fvg": "BULLISH 233.2000~233.3300",
+          "score": 5
+        }
+      }
+    },
+    {
+      "ticker": "OSCR",
+      "name": "Oscar Health, Inc. Class A Common Stock",
+      "dailyScore": 79.29,
+      "relativeStrengthPercentile": 0.8458333333333333,
+      "trigger": {
+        "ready": false,
+        "breakout": false,
+        "reclaim": false,
+        "volumeRatio": 6.873,
+        "ema20": 28.993597,
+        "ema50": 29.305602,
+        "lastTimestamp": "2026-07-23T19:45:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=6.87x; ICT=BULLISH/NONE/NONE",
+        "ict": {
+          "bias": "BULLISH",
+          "structure": "BULLISH_HH_HL",
+          "event": "NONE",
+          "liquidity": "NONE",
+          "fvg": "BULLISH 28.8650~28.8900",
+          "score": 3
+        }
+      }
+    },
+    {
+      "ticker": "PTGX",
+      "name": "Protagonist Therapeutics, Inc. - Common Stock",
+      "dailyScore": 79.08,
+      "relativeStrengthPercentile": 0.8416666666666667,
+      "trigger": {
+        "ready": false,
+        "breakout": false,
+        "reclaim": false,
+        "volumeRatio": 6.748,
+        "ema20": 135.941576,
+        "ema50": 136.196415,
+        "lastTimestamp": "2026-07-23T19:45:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=6.75x; ICT=NEUTRAL/NONE/SELL_SIDE_SWEEP",
+        "ict": {
+          "bias": "NEUTRAL",
+          "structure": "RANGE",
+          "event": "NONE",
+          "liquidity": "SELL_SIDE_SWEEP",
+          "fvg": "BEARISH 135.9600~136.0500",
+          "score": 1
+        }
+      }
+    },
+    {
+      "ticker": "COGT",
+      "name": "Cogent Biosciences, Inc. - Common Stock",
+      "dailyScore": 78.25,
+      "relativeStrengthPercentile": 0.825,
+      "trigger": {
+        "ready": true,
+        "breakout": true,
+        "reclaim": false,
+        "volumeRatio": 3.879,
+        "ema20": 39.878739,
+        "ema50": 39.639749,
+        "lastTimestamp": "2026-07-23T19:45:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=3.88x; ICT=NEUTRAL/CHOCH_UP/NONE",
+        "ict": {
+          "bias": "NEUTRAL",
+          "structure": "BEARISH_LH_LL",
+          "event": "CHOCH_UP",
+          "liquidity": "NONE",
+          "fvg": "BULLISH 40.0000~40.0200",
+          "score": 1
+        }
+      }
+    },
+    {
       "ticker": "BTCZ",
       "name": "T-Rex 2X Inverse Bitcoin Daily Target ETF",
-      "dailyScore": 78.14,
-      "relativeStrengthPercentile": 0.8227848101265823,
+      "dailyScore": 78.03,
+      "relativeStrengthPercentile": 0.8205128205128205,
       "trigger": {
         "ready": false,
         "breakout": false,
@@ -212,7 +405,7 @@
       }
     }
   ],
-  "historyRecordCount": 1,
+  "historyRecordCount": 2,
   "researchBasis": [
     "time-series momentum",
     "cross-sectional momentum",
