@@ -1,0 +1,79 @@
+name: Global market signal monitor
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - 'tools/global_market_strategy.py'
+      - 'tools/global_market_universe.py'
+      - 'tools/global_market_monitor.py'
+      - '.github/workflows/global-market-monitor.yml'
+      - 'reports/global_market_shortlist.json'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: global-market-data-pipeline
+  cancel-in-progress: false
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - name: Install scanner dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install numpy pandas yfinance pykrx requests
+
+      - name: Compile scanner modules
+        run: |
+          python -m py_compile \
+            tools/global_market_strategy.py \
+            tools/global_market_universe.py \
+            tools/global_market_monitor.py
+
+      - name: Scan current shortlist
+        env:
+          PYTHONUNBUFFERED: '1'
+        run: python tools/global_market_monitor.py --mode fast
+
+      - name: Commit signals and recommendation history
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f \
+            reports/global_market_signals_latest.json \
+            reports/global_market_recommendation_history.json
+          if git diff --cached --quiet; then
+            echo "No global market report changes."
+            exit 0
+          fi
+          git commit -m "Update global market signals"
+          git pull --rebase origin main
+          git push origin HEAD:main
+
+      - name: Upload current monitor result
+        uses: actions/upload-artifact@v4
+        with:
+          name: global-market-signals-${{ github.run_number }}
+          path: |
+            reports/global_market_signals_latest.json
+            reports/global_market_recommendation_history.json
+          retention-days: 14
