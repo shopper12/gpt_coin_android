@@ -4,6 +4,13 @@ on:
   schedule:
     - cron: '20 22 * * 1-5'
   workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - 'tools/global_market_strategy.py'
+      - 'tools/global_market_universe.py'
+      - 'tools/global_market_monitor.py'
+      - '.github/workflows/global-market-discovery.yml'
 
 permissions:
   contents: write
