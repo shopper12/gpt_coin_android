@@ -1,18 +1,178 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "",
+  "generatedAtKst": "2026-07-23T23:10:37.444619+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
-    "shortlistCount": 0,
-    "dailyMetricsCount": 0,
-    "dailyCandidateCount": 0,
-    "intradayEvaluatedCount": 0,
-    "signalCount": 0
+    "shortlistCount": 89,
+    "dailyMetricsCount": 78,
+    "dailyCandidateCount": 2,
+    "intradayEvaluatedCount": 2,
+    "signalCount": 1
   },
-  "marketRegime": {},
-  "signals": [],
-  "topEvaluated": [],
-  "historyRecordCount": 0,
-  "guardrail": "첫 자동 스캔 결과를 기다리고 있습니다."
+  "marketRegime": {
+    "panic": false,
+    "riskOff": false,
+    "equityBelow200Count": 0,
+    "realizedVolatility20Annualized": 0.2273,
+    "reason": "광의 추세와 변동성 정상"
+  },
+  "signals": [
+    {
+      "id": "2026-07-23-XLE-LONG-EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
+      "date": "2026-07-23",
+      "generatedAtKst": "2026-07-23T23:10:37.444619+09:00",
+      "signalTimestamp": "2026-07-23T14:00:00+00:00",
+      "assetClass": "ETF",
+      "market": "US",
+      "ticker": "XLE",
+      "name": "Energy Select Sector ETF",
+      "direction": "LONG",
+      "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM: 절대추세+상대모멘텀+15분 트리거+변동성 목표",
+      "strategyType": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
+      "referencePrice": 60.27,
+      "currentPrice": 60.27,
+      "previousClose": 59.200001,
+      "todayChangePct": 1.807,
+      "recentCloses": [
+        57.832924,
+        56.711014,
+        57.137936,
+        55.152256,
+        54.963615,
+        54.278553,
+        53.385002,
+        54.060001,
+        54.459999,
+        53.57,
+        54.09,
+        53.84,
+        53.580002,
+        53.110001,
+        52.810001,
+        53.220001,
+        53.130001,
+        54.639999,
+        55.599998,
+        54.82,
+        55.080002,
+        56.740002,
+        56.950001,
+        56.5,
+        57.02,
+        57.68,
+        57.939999,
+        58.5,
+        59.200001,
+        60.27
+      ],
+      "currency": "USD",
+      "status": "ACTIVE_SIGNAL",
+      "score": 96.7,
+      "confidence": 9.4,
+      "relativeStrengthPercentile": 0.8333,
+      "entryLow": 59.777766,
+      "entryHigh": 60.488771,
+      "stopLoss": 57.863521,
+      "target1": 65.08296,
+      "target2": 67.970736,
+      "riskPct": 3.99,
+      "volatilityTargetExposurePct": 64.8,
+      "regime": {
+        "panic": false,
+        "riskOff": false,
+        "equityBelow200Count": 0,
+        "realizedVolatility20Annualized": 0.2273,
+        "reason": "광의 추세와 변동성 정상"
+      },
+      "ict": {
+        "bias": "BULLISH",
+        "structure": "BULLISH_HH_HL",
+        "event": "BOS_UP",
+        "liquidity": "NONE",
+        "fvg": "BULLISH 59.2800~59.8787",
+        "score": 5
+      },
+      "trigger": {
+        "ready": true,
+        "breakout": true,
+        "reclaim": false,
+        "volumeRatio": 1.389,
+        "ema20": 59.399247,
+        "ema50": 58.982813,
+        "lastTimestamp": "2026-07-23T14:00:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=1.39x; ICT=BULLISH/BOS_UP/NONE",
+        "ict": {
+          "bias": "BULLISH",
+          "structure": "BULLISH_HH_HL",
+          "event": "BOS_UP",
+          "liquidity": "NONE",
+          "fvg": "BULLISH 59.2800~59.8787",
+          "score": 5
+        }
+      },
+      "reason": "3/6/12개월 절대 모멘텀 양수, 200일선 상단, 자산군 상대강도 83백분위, breakout=True; reclaim=False; volume=1.39x; ICT=BULLISH/BOS_UP/NONE",
+      "guardrail": "자동 추천은 주문이 아니다. 실시간 호가·슬리피지·공시·거래 가능 여부를 확인한다."
+    }
+  ],
+  "topEvaluated": [
+    {
+      "ticker": "XLE",
+      "name": "Energy Select Sector ETF",
+      "dailyScore": 86.67,
+      "relativeStrengthPercentile": 0.8333333333333334,
+      "trigger": {
+        "ready": true,
+        "breakout": true,
+        "reclaim": false,
+        "volumeRatio": 1.389,
+        "ema20": 59.399247,
+        "ema50": 58.982813,
+        "lastTimestamp": "2026-07-23T14:00:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=1.39x; ICT=BULLISH/BOS_UP/NONE",
+        "ict": {
+          "bias": "BULLISH",
+          "structure": "BULLISH_HH_HL",
+          "event": "BOS_UP",
+          "liquidity": "NONE",
+          "fvg": "BULLISH 59.2800~59.8787",
+          "score": 5
+        }
+      }
+    },
+    {
+      "ticker": "XBI",
+      "name": "SPDR S&P Biotech ETF",
+      "dailyScore": 80.33,
+      "relativeStrengthPercentile": 0.8666666666666667,
+      "trigger": {
+        "ready": false,
+        "breakout": false,
+        "reclaim": false,
+        "volumeRatio": 0.949,
+        "ema20": 152.273362,
+        "ema50": 152.783867,
+        "lastTimestamp": "2026-07-23T14:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.95x; ICT=NEUTRAL/NONE/NONE",
+        "ict": {
+          "bias": "NEUTRAL",
+          "structure": "RANGE",
+          "event": "NONE",
+          "liquidity": "NONE",
+          "fvg": "BEARISH 151.1100~152.0500",
+          "score": -1
+        }
+      }
+    }
+  ],
+  "historyRecordCount": 1,
+  "researchBasis": [
+    "time-series momentum",
+    "cross-sectional momentum",
+    "volatility-managed exposure",
+    "momentum-crash panic filter",
+    "liquidity and exhaustion guards",
+    "15-minute breakout/reclaim with ICT-style confirmation"
+  ],
+  "guardrail": "자동 추천은 주문이 아니다. 실시간 호가, 거래정지, 공시, 슬리피지와 계좌 위험한도를 확인해야 한다."
 }
