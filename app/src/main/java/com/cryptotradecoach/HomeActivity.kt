@@ -1,9 +1,13 @@
 package com.cryptotradecoach
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,12 +28,22 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import com.cryptotradecoach.data.WorkflowDispatchRepository
+import com.cryptotradecoach.service.GlobalMarketSignalScheduler
+import com.cryptotradecoach.service.SignalNotificationHelper
 import kotlinx.coroutines.launch
 
 class HomeActivity : ComponentActivity() {
+    private val notificationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) { }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        SignalNotificationHelper(this).ensureChannels()
+        GlobalMarketSignalScheduler.schedule(this)
+        requestNotificationPermissionIfNeeded()
         val workflowRepository = WorkflowDispatchRepository(this)
         setContent {
             MaterialTheme {
@@ -41,6 +55,15 @@ class HomeActivity : ComponentActivity() {
                     onWorkflow = { workflowRepository.dispatchUnifiedStrategyMonitor() },
                 )
             }
+        }
+    }
+
+    private fun requestNotificationPermissionIfNeeded() {
+        if (
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+        ) {
+            notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
     }
 }
@@ -75,7 +98,7 @@ private fun UnifiedHomeScreen(
     ) {
         item {
             Text("Unified Trading Coach", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
-            Text("앱은 하나로 통합하고, 코인·주식 전략과 백테스트 모니터는 메뉴를 분리해서 운용합니다.", style = MaterialTheme.typography.bodyMedium)
+            Text("전세계 시장은 서버에서 15분마다 감시하고, 앱은 새 시그널을 백그라운드로 확인해 알림을 표시합니다.", style = MaterialTheme.typography.bodyMedium)
         }
         item {
             HomeCard(
@@ -95,9 +118,9 @@ private fun UnifiedHomeScreen(
         }
         item {
             HomeCard(
-                title = "과거 추천·현재 수익률",
-                description = "종목·현재가·추천가·추천가부터 수익률·간략차트를 한 줄 표로 확인합니다.",
-                button = "추천 이력 열기",
+                title = "통합 추천·자동 매매 시그널",
+                description = "기존 추천과 전세계 주식·ETF·채권·원자재·FX·코인 자동 시그널을 한 줄 표로 확인합니다. 새 시그널은 고우선순위 알림으로 표시됩니다.",
+                button = "추천 목록 열기",
                 onClick = onRecommendationHistory,
             )
         }
