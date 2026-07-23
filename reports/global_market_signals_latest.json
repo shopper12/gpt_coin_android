@@ -1,20 +1,20 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-07-23T23:41:05.642190+09:00",
+  "generatedAtKst": "2026-07-24T01:03:56.589778+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
-    "shortlistCount": 376,
-    "dailyMetricsCount": 365,
-    "dailyCandidateCount": 8,
-    "intradayEvaluatedCount": 8,
+    "shortlistCount": 377,
+    "dailyMetricsCount": 366,
+    "dailyCandidateCount": 9,
+    "intradayEvaluatedCount": 9,
     "signalCount": 0
   },
   "marketRegime": {
     "panic": false,
     "riskOff": false,
     "equityBelow200Count": 0,
-    "realizedVolatility20Annualized": 0.227,
+    "realizedVolatility20Annualized": 0.2303,
     "reason": "광의 추세와 변동성 정상"
   },
   "signals": [],
@@ -28,18 +28,18 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.637,
-        "ema20": 30.075854,
-        "ema50": 29.824794,
-        "lastTimestamp": "2026-07-23T14:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.64x; ICT=BULLISH/BOS_UP/NONE",
+        "volumeRatio": 0.318,
+        "ema20": 30.233694,
+        "ema50": 29.952786,
+        "lastTimestamp": "2026-07-23T16:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.32x; ICT=BULLISH/NONE/SELL_SIDE_SWEEP",
         "ict": {
           "bias": "BULLISH",
-          "structure": "RANGE",
-          "event": "BOS_UP",
-          "liquidity": "NONE",
+          "structure": "BULLISH_HH_HL",
+          "event": "NONE",
+          "liquidity": "SELL_SIDE_SWEEP",
           "fvg": "BULLISH 29.8900~30.3750",
-          "score": 3
+          "score": 5
         }
       }
     },
@@ -52,18 +52,18 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.996,
-        "ema20": 99.635399,
-        "ema50": 100.152599,
-        "lastTimestamp": "2026-07-23T14:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=1.00x; ICT=NEUTRAL/NONE/NONE",
+        "volumeRatio": 0.062,
+        "ema20": 99.514066,
+        "ema50": 99.987307,
+        "lastTimestamp": "2026-07-23T16:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.06x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BULLISH 98.6750~98.9200",
-          "score": 1
+          "fvg": "BEARISH 99.2000~99.7700",
+          "score": -1
         }
       }
     },
@@ -76,83 +76,59 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.402,
-        "ema20": 43.801962,
-        "ema50": 43.935629,
-        "lastTimestamp": "2026-07-23T14:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.40x; ICT=NEUTRAL/NONE/NONE",
+        "volumeRatio": 0.137,
+        "ema20": 43.648508,
+        "ema50": 43.835512,
+        "lastTimestamp": "2026-07-23T16:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.14x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
-          "structure": "RANGE",
+          "structure": "BULLISH_HH_HL",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BEARISH 43.5100~43.5300",
-          "score": -1
+          "fvg": "BEARISH 43.5900~43.9600",
+          "score": 1
         }
       }
     },
     {
       "ticker": "DNTH",
       "name": "Dianthus Therapeutics, Inc. - Common Stock",
-      "dailyScore": 84.48,
-      "relativeStrengthPercentile": 0.9495798319327731,
-      "trigger": {
-        "ready": false,
-        "breakout": true,
-        "reclaim": false,
-        "volumeRatio": 0.227,
-        "ema20": 104.525471,
-        "ema50": 104.23528,
-        "lastTimestamp": "2026-07-23T14:30:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=0.23x; ICT=BULLISH/BOS_UP/NONE",
-        "ict": {
-          "bias": "BULLISH",
-          "structure": "RANGE",
-          "event": "BOS_UP",
-          "liquidity": "NONE",
-          "fvg": "BULLISH 104.7150~104.8425",
-          "score": 3
-        }
-      }
-    },
-    {
-      "ticker": "BTSG",
-      "name": "BrightSpring Health Services, Inc. - Common Stock",
-      "dailyScore": 81.54,
-      "relativeStrengthPercentile": 0.8907563025210085,
+      "dailyScore": 84.69,
+      "relativeStrengthPercentile": 0.9537815126050421,
       "trigger": {
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.333,
-        "ema20": 70.361538,
-        "ema50": 70.993861,
-        "lastTimestamp": "2026-07-23T14:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.33x; ICT=BEARISH/NONE/NONE",
+        "volumeRatio": 0.062,
+        "ema20": 104.950385,
+        "ema50": 104.491116,
+        "lastTimestamp": "2026-07-23T16:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.06x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
-          "bias": "BEARISH",
-          "structure": "BEARISH_LH_LL",
+          "bias": "NEUTRAL",
+          "structure": "RANGE",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BEARISH 70.0388~70.6900",
-          "score": -3
+          "fvg": "BULLISH 105.3100~105.7500",
+          "score": 1
         }
       }
     },
     {
       "ticker": "VSXY",
       "name": "Victorias Secret & Co. Common Stock",
-      "dailyScore": 81.33,
-      "relativeStrengthPercentile": 0.8865546218487395,
+      "dailyScore": 81.54,
+      "relativeStrengthPercentile": 0.8907563025210085,
       "trigger": {
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 1.027,
-        "ema20": 86.959548,
-        "ema50": 87.159592,
-        "lastTimestamp": "2026-07-23T14:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=1.03x; ICT=NEUTRAL/NONE/NONE",
+        "volumeRatio": 0.107,
+        "ema20": 85.946828,
+        "ema50": 86.643877,
+        "lastTimestamp": "2026-07-23T16:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.11x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
@@ -164,50 +140,98 @@
       }
     },
     {
+      "ticker": "BTSG",
+      "name": "BrightSpring Health Services, Inc. - Common Stock",
+      "dailyScore": 81.33,
+      "relativeStrengthPercentile": 0.8865546218487395,
+      "trigger": {
+        "ready": false,
+        "breakout": false,
+        "reclaim": false,
+        "volumeRatio": 0.343,
+        "ema20": 69.623446,
+        "ema50": 70.513485,
+        "lastTimestamp": "2026-07-23T16:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.34x; ICT=BEARISH/BOS_DOWN/NONE",
+        "ict": {
+          "bias": "BEARISH",
+          "structure": "BEARISH_LH_LL",
+          "event": "BOS_DOWN",
+          "liquidity": "NONE",
+          "fvg": "BEARISH 68.6800~68.8100",
+          "score": -5
+        }
+      }
+    },
+    {
       "ticker": "ROIV",
       "name": "Roivant Sciences Ltd. - Common Shares",
       "dailyScore": 79.23,
       "relativeStrengthPercentile": 0.8445378151260504,
       "trigger": {
         "ready": false,
-        "breakout": true,
+        "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.419,
-        "ema20": 35.017094,
-        "ema50": 34.877512,
-        "lastTimestamp": "2026-07-23T14:30:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=0.42x; ICT=BULLISH/BOS_UP/NONE",
+        "volumeRatio": 0.128,
+        "ema20": 35.179403,
+        "ema50": 34.986812,
+        "lastTimestamp": "2026-07-23T16:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.13x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
-          "bias": "BULLISH",
+          "bias": "NEUTRAL",
           "structure": "RANGE",
-          "event": "BOS_UP",
+          "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BULLISH 35.0900~35.4000",
-          "score": 3
+          "fvg": "BEARISH 35.3400~35.4200",
+          "score": -1
         }
       }
     },
     {
-      "ticker": "TIGO",
-      "name": "Millicom International Cellular S.A. - Common Stock",
-      "dailyScore": 78.39,
-      "relativeStrengthPercentile": 0.8277310924369747,
+      "ticker": "DAVE",
+      "name": "Dave Inc.  - Class A Common Stock",
+      "dailyScore": 79.02,
+      "relativeStrengthPercentile": 0.8403361344537815,
       "trigger": {
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.187,
-        "ema20": 98.098074,
-        "ema50": 98.348888,
-        "lastTimestamp": "2026-07-23T14:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.19x; ICT=BEARISH/NONE/NONE",
+        "volumeRatio": 0.05,
+        "ema20": 406.689826,
+        "ema50": 419.741916,
+        "lastTimestamp": "2026-07-23T16:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.05x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
-          "bias": "BEARISH",
-          "structure": "BEARISH_LH_LL",
+          "bias": "NEUTRAL",
+          "structure": "RANGE",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BEARISH 97.8500~98.0200",
-          "score": -3
+          "fvg": "BULLISH 392.9900~393.0900",
+          "score": 1
+        }
+      }
+    },
+    {
+      "ticker": "BTCZ",
+      "name": "T-Rex 2X Inverse Bitcoin Daily Target ETF",
+      "dailyScore": 78.14,
+      "relativeStrengthPercentile": 0.8227848101265823,
+      "trigger": {
+        "ready": false,
+        "breakout": false,
+        "reclaim": false,
+        "volumeRatio": 0.031,
+        "ema20": 5.288186,
+        "ema50": 5.240311,
+        "lastTimestamp": "2026-07-23T16:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.03x; ICT=NEUTRAL/NONE/NONE",
+        "ict": {
+          "bias": "NEUTRAL",
+          "structure": "RANGE",
+          "event": "NONE",
+          "liquidity": "NONE",
+          "fvg": "BULLISH 5.3321~5.3450",
+          "score": 1
         }
       }
     }
