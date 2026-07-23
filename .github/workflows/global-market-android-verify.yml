@@ -1,0 +1,82 @@
+name: Verify global market Android integration
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - 'app/src/main/java/com/cryptotradecoach/HomeActivity.kt'
+      - 'app/src/main/java/com/cryptotradecoach/RecommendationHistoryActivity.kt'
+      - 'app/src/main/java/com/cryptotradecoach/service/GlobalMarketSignalWorker.kt'
+      - 'app/src/main/java/com/cryptotradecoach/service/GlobalMarketSignalScheduler.kt'
+      - 'app/src/main/java/com/cryptotradecoach/service/SignalNotificationHelper.kt'
+      - 'app/build.gradle.kts'
+      - '.github/workflows/global-market-android-verify.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: global-market-android-verify
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout latest main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Compile global market Android integration
+        id: compile
+        continue-on-error: true
+        run: bash ./gradlew :app:compileDebugKotlin --stacktrace
+
+      - name: Record verification result
+        if: always()
+        env:
+          COMPILE_OUTCOME: ${{ steps.compile.outcome }}
+        run: |
+          set -euo pipefail
+          mkdir -p reports
+          python - <<'PY'
+          import datetime as dt
+          import json
+          import os
+          from pathlib import Path
+
+          outcome = os.environ.get('COMPILE_OUTCOME', 'unknown')
+          payload = {
+              'ok': outcome == 'success',
+              'outcome': outcome,
+              'generated_at_utc': dt.datetime.now(dt.timezone.utc).isoformat(),
+              'compiled_commit': os.environ['GITHUB_SHA'],
+              'workflow_run_id': os.environ['GITHUB_RUN_ID'],
+              'workflow_run_number': int(os.environ['GITHUB_RUN_NUMBER']),
+              'task': ':app:compileDebugKotlin',
+              'scope': 'global market monitor, recommendation list and notification worker',
+          }
+          Path('reports/global_market_android_status.json').write_text(
+              json.dumps(payload, ensure_ascii=False, indent=2) + '\n',
+              encoding='utf-8',
+          )
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f reports/global_market_android_status.json
+          git commit -m "Record global market Android verification"
+          git pull --rebase origin main
+          git push origin HEAD:main
+
+      - name: Fail when Kotlin compilation failed
+        if: steps.compile.outcome != 'success'
+        run: exit 1
