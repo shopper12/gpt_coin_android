@@ -62,7 +62,7 @@ class GlobalMarketSignalWorker(
             seen += currentIds
             preferences.edit()
                 .putBoolean(KEY_INITIALIZED, true)
-                .putStringSet(KEY_SEEN_IDS, seen.takeLast(MAX_STORED_IDS).toSet())
+                .putStringSet(KEY_SEEN_IDS, seen.toList().takeLast(MAX_STORED_IDS).toSet())
                 .putString(KEY_LAST_REPORT_TIME, root.optString("generatedAtKst"))
                 .apply()
             Result.success()
@@ -127,8 +127,6 @@ class GlobalMarketSignalWorker(
     }
 
     private companion object {
-        const val UNIQUE_PERIODIC_WORK = "global-market-signal-periodic"
-        const val UNIQUE_IMMEDIATE_WORK = "global-market-signal-immediate"
         private const val PREFERENCES = "global_market_signal_alerts"
         private const val KEY_INITIALIZED = "initialized"
         private const val KEY_SEEN_IDS = "seen_ids"
