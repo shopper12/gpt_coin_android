@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-07-24T02:49:18.750460+09:00",
+  "generatedAtKst": "2026-07-24T04:38:10.955377+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
@@ -14,7 +14,7 @@
     "panic": false,
     "riskOff": false,
     "equityBelow200Count": 0,
-    "realizedVolatility20Annualized": 0.2303,
+    "realizedVolatility20Annualized": 0.2327,
     "reason": "광의 추세와 변동성 정상"
   },
   "signals": [],
@@ -22,24 +22,24 @@
     {
       "ticker": "DBC",
       "name": "Invesco DB Commodity Index",
-      "dailyScore": 87.0,
+      "dailyScore": 95.0,
       "relativeStrengthPercentile": 1.0,
       "trigger": {
         "ready": false,
-        "breakout": true,
+        "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.153,
-        "ema20": 30.346791,
-        "ema50": 30.074973,
-        "lastTimestamp": "2026-07-23T17:45:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=0.15x; ICT=BULLISH/BOS_UP/NONE",
+        "volumeRatio": 1.97,
+        "ema20": 30.364162,
+        "ema50": 30.15188,
+        "lastTimestamp": "2026-07-23T19:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=1.97x; ICT=BEARISH/BOS_DOWN/NONE",
         "ict": {
-          "bias": "BULLISH",
+          "bias": "BEARISH",
           "structure": "RANGE",
-          "event": "BOS_UP",
+          "event": "BOS_DOWN",
           "liquidity": "NONE",
-          "fvg": "BULLISH 30.5000~30.5100",
-          "score": 3
+          "fvg": "BEARISH 30.3650~30.3750",
+          "score": -3
         }
       }
     },
@@ -52,17 +52,17 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.12,
-        "ema20": 99.399676,
-        "ema50": 99.821968,
-        "lastTimestamp": "2026-07-23T17:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.12x; ICT=NEUTRAL/NONE/NONE",
+        "volumeRatio": 1.174,
+        "ema20": 99.322478,
+        "ema50": 99.675043,
+        "lastTimestamp": "2026-07-23T19:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=1.17x; ICT=NEUTRAL/NONE/BUY_SIDE_SWEEP",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
           "event": "NONE",
-          "liquidity": "NONE",
-          "fvg": "BEARISH 99.3400~99.4700",
+          "liquidity": "BUY_SIDE_SWEEP",
+          "fvg": "BULLISH 99.2750~99.3200",
           "score": -1
         }
       }
@@ -70,47 +70,47 @@
     {
       "ticker": "DFTX",
       "name": "Definium Therapeutics, Inc.  - Common Shares",
-      "dailyScore": 85.11,
-      "relativeStrengthPercentile": 0.9621848739495799,
+      "dailyScore": 84.9,
+      "relativeStrengthPercentile": 0.957983193277311,
       "trigger": {
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.034,
-        "ema20": 43.684842,
-        "ema50": 43.808042,
-        "lastTimestamp": "2026-07-23T17:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.03x; ICT=BULLISH/NONE/NONE",
+        "volumeRatio": 2.587,
+        "ema20": 43.421097,
+        "ema50": 43.652848,
+        "lastTimestamp": "2026-07-23T19:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=2.59x; ICT=NEUTRAL/CHOCH_DOWN/NONE",
         "ict": {
-          "bias": "BULLISH",
+          "bias": "NEUTRAL",
           "structure": "BULLISH_HH_HL",
-          "event": "NONE",
+          "event": "CHOCH_DOWN",
           "liquidity": "NONE",
-          "fvg": "BULLISH 43.4900~43.5600",
-          "score": 3
+          "fvg": "BEARISH 43.2000~43.2300",
+          "score": -1
         }
       }
     },
     {
       "ticker": "DNTH",
       "name": "Dianthus Therapeutics, Inc. - Common Stock",
-      "dailyScore": 84.69,
-      "relativeStrengthPercentile": 0.9537815126050421,
+      "dailyScore": 84.48,
+      "relativeStrengthPercentile": 0.9495798319327731,
       "trigger": {
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.053,
-        "ema20": 105.51128,
-        "ema50": 104.879274,
-        "lastTimestamp": "2026-07-23T17:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.05x; ICT=NEUTRAL/NONE/NONE",
+        "volumeRatio": 2.542,
+        "ema20": 105.295616,
+        "ema50": 104.925554,
+        "lastTimestamp": "2026-07-23T19:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=2.54x; ICT=NEUTRAL/NONE/SELL_SIDE_SWEEP",
         "ict": {
           "bias": "NEUTRAL",
-          "structure": "BULLISH_HH_HL",
+          "structure": "BEARISH_LH_LL",
           "event": "NONE",
-          "liquidity": "NONE",
-          "fvg": "BEARISH 105.9900~106.1300",
+          "liquidity": "SELL_SIDE_SWEEP",
+          "fvg": "BULLISH 105.1000~105.1400",
           "score": 1
         }
       }
@@ -122,19 +122,19 @@
       "relativeStrengthPercentile": 0.8907563025210085,
       "trigger": {
         "ready": false,
-        "breakout": false,
+        "breakout": true,
         "reclaim": false,
-        "volumeRatio": 0.091,
-        "ema20": 69.230673,
-        "ema50": 70.106114,
-        "lastTimestamp": "2026-07-23T17:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.09x; ICT=NEUTRAL/NONE/NONE",
+        "volumeRatio": 3.285,
+        "ema20": 69.239808,
+        "ema50": 69.891377,
+        "lastTimestamp": "2026-07-23T19:30:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=3.28x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BULLISH 68.6000~68.6400",
+          "fvg": "BULLISH 69.1600~69.2400",
           "score": 1
         }
       }
@@ -142,23 +142,23 @@
     {
       "ticker": "VSXY",
       "name": "Victorias Secret & Co. Common Stock",
-      "dailyScore": 81.12,
-      "relativeStrengthPercentile": 0.8823529411764706,
+      "dailyScore": 81.33,
+      "relativeStrengthPercentile": 0.8865546218487395,
       "trigger": {
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.095,
-        "ema20": 84.747681,
-        "ema50": 85.907631,
-        "lastTimestamp": "2026-07-23T17:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.09x; ICT=BEARISH/BOS_DOWN/NONE",
+        "volumeRatio": 0.59,
+        "ema20": 83.989263,
+        "ema50": 85.249763,
+        "lastTimestamp": "2026-07-23T19:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.59x; ICT=BEARISH/NONE/NONE",
         "ict": {
           "bias": "BEARISH",
-          "structure": "RANGE",
-          "event": "BOS_DOWN",
+          "structure": "BEARISH_LH_LL",
+          "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BEARISH 82.9400~83.3300",
+          "fvg": "BEARISH 83.1550~83.3300",
           "score": -3
         }
       }
@@ -172,41 +172,41 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.123,
-        "ema20": 35.311214,
-        "ema50": 35.098364,
-        "lastTimestamp": "2026-07-23T17:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.12x; ICT=NEUTRAL/NONE/NONE",
+        "volumeRatio": 1.032,
+        "ema20": 35.232901,
+        "ema50": 35.111713,
+        "lastTimestamp": "2026-07-23T19:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=1.03x; ICT=BEARISH/NONE/NONE",
         "ict": {
-          "bias": "NEUTRAL",
-          "structure": "RANGE",
+          "bias": "BEARISH",
+          "structure": "BEARISH_LH_LL",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BULLISH 35.3700~35.3800",
-          "score": 1
+          "fvg": "BEARISH 35.2450~35.2700",
+          "score": -3
         }
       }
     },
     {
-      "ticker": "DAVE",
-      "name": "Dave Inc.  - Class A Common Stock",
-      "dailyScore": 79.02,
-      "relativeStrengthPercentile": 0.8403361344537815,
+      "ticker": "TIGO",
+      "name": "Millicom International Cellular S.A. - Common Stock",
+      "dailyScore": 78.18,
+      "relativeStrengthPercentile": 0.8235294117647058,
       "trigger": {
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.044,
-        "ema20": 402.329581,
-        "ema50": 414.490845,
-        "lastTimestamp": "2026-07-23T17:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.04x; ICT=NEUTRAL/NONE/NONE",
+        "volumeRatio": 1.147,
+        "ema20": 96.598003,
+        "ema50": 97.239961,
+        "lastTimestamp": "2026-07-23T19:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=1.15x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BULLISH 395.1855~398.0000",
+          "fvg": "BULLISH 96.3150~96.4400",
           "score": 1
         }
       }
@@ -220,18 +220,18 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.147,
-        "ema20": 5.327484,
-        "ema50": 5.271256,
-        "lastTimestamp": "2026-07-23T17:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.15x; ICT=BULLISH/NONE/NONE",
+        "volumeRatio": 0.497,
+        "ema20": 5.34809,
+        "ema50": 5.295411,
+        "lastTimestamp": "2026-07-23T19:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.50x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
-          "bias": "BULLISH",
-          "structure": "BULLISH_HH_HL",
+          "bias": "NEUTRAL",
+          "structure": "RANGE",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BULLISH 5.3321~5.3450",
-          "score": 3
+          "fvg": "BULLISH 5.3700~5.3750",
+          "score": 1
         }
       }
     }
