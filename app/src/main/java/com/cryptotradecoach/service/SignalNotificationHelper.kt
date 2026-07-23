@@ -1,17 +1,22 @@
 package com.cryptotradecoach.service
 
+import android.Manifest
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import com.cryptotradecoach.MainActivity
+import com.cryptotradecoach.RecommendationHistoryActivity
 import com.cryptotradecoach.data.AppUpdateRepository
 import com.cryptotradecoach.data.local.StrategyEventType
 import com.cryptotradecoach.data.local.StrategyHistoryEntity
+import java.util.Locale
 
 class SignalNotificationHelper(private val context: Context) {
     private val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -31,6 +36,16 @@ class SignalNotificationHelper(private val context: Context) {
                     "Strategy Events",
                     NotificationManager.IMPORTANCE_HIGH,
                 ),
+            )
+            manager.createNotificationChannel(
+                NotificationChannel(
+                    CHANNEL_GLOBAL_MARKET,
+                    "Global Market Trade Signals",
+                    NotificationManager.IMPORTANCE_HIGH,
+                ).apply {
+                    description = "전세계 주식·ETF·원자재·채권·FX·코인 자동 매매 후보 알림"
+                    enableVibration(true)
+                },
             )
             manager.createNotificationChannel(
                 NotificationChannel(
@@ -77,7 +92,44 @@ class SignalNotificationHelper(private val context: Context) {
             .setContentIntent(openAppPendingIntent(id))
             .setAutoCancel(true)
             .build()
-        manager.notify(id, notification)
+        notifyIfAllowed(id, notification)
+    }
+
+    fun notifyGlobalMarketSignal(
+        notificationId: Int,
+        ticker: String,
+        name: String,
+        direction: String,
+        score: Double,
+        currentPrice: Double,
+        currency: String,
+        entryLow: Double,
+        entryHigh: Double,
+        stopLoss: Double,
+        target1: Double,
+        target2: Double,
+        reason: String,
+    ) {
+        val title = "$ticker $direction 시그널 · 점수 ${String.format(Locale.US, "%.1f", score)}"
+        val priceText = "현재 ${formatPrice(currentPrice, currency)} · 진입 ${formatPrice(entryLow, currency)}~${formatPrice(entryHigh, currency)}"
+        val detail = buildString {
+            append(name).append(" (").append(ticker).append(")\n")
+            append(priceText).append("\n")
+            append("손절 ").append(formatPrice(stopLoss, currency))
+            append(" · 목표 ").append(formatPrice(target1, currency)).append(" → ").append(formatPrice(target2, currency))
+            if (reason.isNotBlank()) append("\n").append(reason)
+        }
+        val notification = NotificationCompat.Builder(context, CHANNEL_GLOBAL_MARKET)
+            .setSmallIcon(android.R.drawable.stat_notify_more)
+            .setContentTitle(title)
+            .setContentText(priceText)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(detail))
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setCategory(NotificationCompat.CATEGORY_RECOMMENDATION)
+            .setContentIntent(openRecommendationHistoryPendingIntent(notificationId))
+            .setAutoCancel(true)
+            .build()
+        notifyIfAllowed(notificationId, notification)
     }
 
     fun notifyAppUpdateAvailable(info: AppUpdateRepository.ReleaseApkInfo) {
@@ -91,7 +143,17 @@ class SignalNotificationHelper(private val context: Context) {
             .setContentIntent(openAppPendingIntent(REQUEST_CODE_APP_UPDATE))
             .setAutoCancel(true)
             .build()
-        manager.notify(NOTIFICATION_ID_APP_UPDATE, notification)
+        notifyIfAllowed(NOTIFICATION_ID_APP_UPDATE, notification)
+    }
+
+    private fun notifyIfAllowed(id: Int, notification: Notification) {
+        if (
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
+        manager.notify(id, notification)
     }
 
     private fun openAppPendingIntent(requestCode: Int): PendingIntent {
@@ -100,10 +162,31 @@ class SignalNotificationHelper(private val context: Context) {
                 Intent.FLAG_ACTIVITY_CLEAR_TOP or
                 Intent.FLAG_ACTIVITY_SINGLE_TOP
         }
-        val flags = PendingIntent.FLAG_UPDATE_CURRENT or
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
+        return PendingIntent.getActivity(context, requestCode, intent, pendingIntentFlags())
+    }
 
-        return PendingIntent.getActivity(context, requestCode, intent, flags)
+    private fun openRecommendationHistoryPendingIntent(requestCode: Int): PendingIntent {
+        val intent = Intent(context, RecommendationHistoryActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+                Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                Intent.FLAG_ACTIVITY_SINGLE_TOP
+        }
+        return PendingIntent.getActivity(context, requestCode, intent, pendingIntentFlags())
+    }
+
+    private fun pendingIntentFlags(): Int {
+        return PendingIntent.FLAG_UPDATE_CURRENT or
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
+    }
+
+    private fun formatPrice(value: Double, currency: String): String {
+        if (value <= 0.0) return "-"
+        val decimals = when {
+            value >= 1_000 -> 0
+            value >= 10 -> 2
+            else -> 4
+        }
+        return String.format(Locale.US, "%,.${decimals}f %s", value, currency)
     }
 
     companion object {
@@ -112,6 +195,7 @@ class SignalNotificationHelper(private val context: Context) {
         private const val NOTIFICATION_ID_APP_UPDATE = 80
         const val CHANNEL_SERVICE = "scanner_service"
         const val CHANNEL_STRATEGY = "strategy_events"
+        const val CHANNEL_GLOBAL_MARKET = "global_market_signals"
         const val CHANNEL_APP_UPDATE = "app_updates"
     }
 }
