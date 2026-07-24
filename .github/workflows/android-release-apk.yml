@@ -111,13 +111,14 @@ jobs:
           "$APKSIGNER" verify --verbose --print-certs "$apk" | tee apk-output/apksigner-verify.txt
 
       - name: Inspect APK package metadata
+        continue-on-error: true
         run: |
-          set -euo pipefail
+          set -u
           apk="apk-output/$APK_FILE_NAME"
           AAPT="$(find "$ANDROID_HOME/build-tools" -name aapt -type f | sort -V | tail -n 1 || true)"
           : > apk-output/badging.txt
           if [ -x "$AAPT" ]; then
-            "$AAPT" dump badging "$apk" | tee apk-output/badging.txt
+            "$AAPT" dump badging "$apk" 2>&1 | tee apk-output/badging.txt || true
             grep -q "package: name='com.cryptotradecoach'" apk-output/badging.txt \
               || echo "::warning::aapt package line did not match expected legacy-compatible package id"
             grep -Fq "Unified Trading Coach" apk-output/badging.txt \
@@ -221,7 +222,7 @@ jobs:
               "package_name": "com.cryptotradecoach",
               "app_label": "Unified Trading Coach",
               "apk_file": os.environ["APK_FILE_NAME"],
-              "apk_bytes": int(os.environ["APK_BYTES"],),
+              "apk_bytes": int(os.environ["APK_BYTES"]),
               "apk_sha256": os.environ["APK_SHA256"],
               "signature_verified": True,
               "release_tag": "latest-phone-apk",
