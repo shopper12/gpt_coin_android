@@ -1,0 +1,110 @@
+name: Audit Android rolling release assets
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - '.github/workflows/android-release-assets-audit.yml'
+      - '.github/workflows/android-release-apk.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: android-release-assets-audit
+  cancel-in-progress: true
+
+jobs:
+  audit-release-assets:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Inspect and clean rolling release APK assets
+        id: audit
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p reports
+          before_file="$RUNNER_TEMP/android-release-assets-before.json"
+          after_file="$RUNNER_TEMP/android-release-assets-after.json"
+          deleted_file="$RUNNER_TEMP/android-release-assets-deleted.txt"
+          : > "$deleted_file"
+
+          gh api "repos/${GITHUB_REPOSITORY}/releases/tags/latest-phone-apk" > "$before_file"
+          canonical_count="$(jq '[.assets[] | select(.name == "unified-trading-coach-release.apk")] | length' "$before_file")"
+
+          if [ "$canonical_count" -gt 0 ]; then
+            while IFS=$'\t' read -r asset_id asset_name; do
+              [ -n "$asset_id" ] || continue
+              echo "Deleting legacy Crypto APK asset: $asset_name"
+              gh api --method DELETE "repos/${GITHUB_REPOSITORY}/releases/assets/$asset_id"
+              echo "$asset_name" >> "$deleted_file"
+            done < <(
+              jq -r '.assets[] | select(.name | startswith("crypto-trade-coach")) | [.id, .name] | @tsv' "$before_file"
+            )
+          else
+            echo "Canonical unified APK is missing; legacy APK assets were not deleted."
+          fi
+
+          gh api "repos/${GITHUB_REPOSITORY}/releases/tags/latest-phone-apk" > "$after_file"
+          BEFORE_FILE="$before_file" AFTER_FILE="$after_file" DELETED_FILE="$deleted_file" python - <<'PY'
+          import datetime as dt
+          import json
+          import os
+          from pathlib import Path
+
+          before = json.loads(Path(os.environ['BEFORE_FILE']).read_text(encoding='utf-8'))
+          after = json.loads(Path(os.environ['AFTER_FILE']).read_text(encoding='utf-8'))
+          deleted = [line for line in Path(os.environ['DELETED_FILE']).read_text(encoding='utf-8').splitlines() if line]
+          before_assets = [asset.get('name', '') for asset in before.get('assets', [])]
+          after_assets = [asset.get('name', '') for asset in after.get('assets', [])]
+          canonical = 'unified-trading-coach-release.apk'
+          payload = {
+              'ok': canonical in after_assets and not any(name.startswith('crypto-trade-coach') for name in after_assets),
+              'generated_at_utc': dt.datetime.now(dt.timezone.utc).isoformat(),
+              'release_tag': 'latest-phone-apk',
+              'canonical_asset': canonical,
+              'canonical_present_before': canonical in before_assets,
+              'canonical_present_after': canonical in after_assets,
+              'legacy_crypto_assets_before': [name for name in before_assets if name.startswith('crypto-trade-coach')],
+              'legacy_crypto_assets_deleted': deleted,
+              'legacy_crypto_assets_after': [name for name in after_assets if name.startswith('crypto-trade-coach')],
+              'assets_before': before_assets,
+              'assets_after': after_assets,
+              'release_url': after.get('html_url', ''),
+          }
+          Path('reports/android_release_assets_status.json').write_text(
+              json.dumps(payload, ensure_ascii=False, indent=2) + '\n',
+              encoding='utf-8',
+          )
+          if not payload['ok']:
+              raise SystemExit('Rolling release asset audit failed')
+          PY
+
+      - name: Commit release asset audit
+        if: always()
+        run: |
+          set -euo pipefail
+          test -f reports/android_release_assets_status.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f reports/android_release_assets_status.json
+          if git diff --cached --quiet; then
+            echo "No Android release asset audit changes."
+            exit 0
+          fi
+          git commit -m "Record Android rolling release asset audit"
+          git pull --rebase origin main
+          git push origin HEAD:main
+
+      - name: Fail when release assets are unsafe
+        if: steps.audit.outcome != 'success'
+        run: exit 1
