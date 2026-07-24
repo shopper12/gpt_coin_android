@@ -10,6 +10,7 @@ on:
 
 permissions:
   contents: write
+  actions: read
 
 concurrency:
   group: android-release-assets-audit
@@ -35,10 +36,12 @@ jobs:
           mkdir -p reports
           before_file="$RUNNER_TEMP/android-release-assets-before.json"
           after_file="$RUNNER_TEMP/android-release-assets-after.json"
+          runs_file="$RUNNER_TEMP/android-release-workflow-runs.json"
           deleted_file="$RUNNER_TEMP/android-release-assets-deleted.txt"
           : > "$deleted_file"
 
           gh api "repos/${GITHUB_REPOSITORY}/releases/tags/latest-phone-apk" > "$before_file"
+          gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/android-release-apk.yml/runs?per_page=5" > "$runs_file"
           canonical_count="$(jq '[.assets[] | select(.name == "unified-trading-coach-release.apk")] | length' "$before_file")"
 
           if [ "$canonical_count" -gt 0 ]; then
@@ -55,7 +58,7 @@ jobs:
           fi
 
           gh api "repos/${GITHUB_REPOSITORY}/releases/tags/latest-phone-apk" > "$after_file"
-          BEFORE_FILE="$before_file" AFTER_FILE="$after_file" DELETED_FILE="$deleted_file" python - <<'PY'
+          BEFORE_FILE="$before_file" AFTER_FILE="$after_file" RUNS_FILE="$runs_file" DELETED_FILE="$deleted_file" python - <<'PY'
           import datetime as dt
           import json
           import os
@@ -63,10 +66,12 @@ jobs:
 
           before = json.loads(Path(os.environ['BEFORE_FILE']).read_text(encoding='utf-8'))
           after = json.loads(Path(os.environ['AFTER_FILE']).read_text(encoding='utf-8'))
+          runs = json.loads(Path(os.environ['RUNS_FILE']).read_text(encoding='utf-8')).get('workflow_runs', [])
           deleted = [line for line in Path(os.environ['DELETED_FILE']).read_text(encoding='utf-8').splitlines() if line]
           before_assets = [asset.get('name', '') for asset in before.get('assets', [])]
           after_assets = [asset.get('name', '') for asset in after.get('assets', [])]
           canonical = 'unified-trading-coach-release.apk'
+          latest_run = runs[0] if runs else {}
           payload = {
               'ok': canonical in after_assets and not any(name.startswith('crypto-trade-coach') for name in after_assets),
               'generated_at_utc': dt.datetime.now(dt.timezone.utc).isoformat(),
@@ -80,6 +85,17 @@ jobs:
               'assets_before': before_assets,
               'assets_after': after_assets,
               'release_url': after.get('html_url', ''),
+              'latest_release_workflow_run': {
+                  'id': latest_run.get('id'),
+                  'run_number': latest_run.get('run_number'),
+                  'status': latest_run.get('status'),
+                  'conclusion': latest_run.get('conclusion'),
+                  'event': latest_run.get('event'),
+                  'head_sha': latest_run.get('head_sha'),
+                  'created_at': latest_run.get('created_at'),
+                  'updated_at': latest_run.get('updated_at'),
+                  'html_url': latest_run.get('html_url'),
+              },
           }
           Path('reports/android_release_assets_status.json').write_text(
               json.dumps(payload, ensure_ascii=False, indent=2) + '\n',
