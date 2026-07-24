@@ -73,6 +73,7 @@ jobs:
           canonical = 'unified-trading-coach-release.apk'
           latest_run = runs[0] if runs else {}
           payload = {
+              'audit_schema_version': 2,
               'ok': canonical in after_assets and not any(name.startswith('crypto-trade-coach') for name in after_assets),
               'generated_at_utc': dt.datetime.now(dt.timezone.utc).isoformat(),
               'release_tag': 'latest-phone-apk',
