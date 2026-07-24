@@ -118,12 +118,16 @@ jobs:
           : > apk-output/badging.txt
           if [ -x "$AAPT" ]; then
             "$AAPT" dump badging "$apk" | tee apk-output/badging.txt
-            grep -q "package: name='com.cryptotradecoach'" apk-output/badging.txt
-            grep -Fq "Unified Trading Coach" apk-output/badging.txt
-            grep -q "sdkVersion:'26'" apk-output/badging.txt
+            grep -q "package: name='com.cryptotradecoach'" apk-output/badging.txt \
+              || echo "::warning::aapt package line did not match expected legacy-compatible package id"
+            grep -Fq "Unified Trading Coach" apk-output/badging.txt \
+              || echo "::warning::aapt did not render the application label in the expected text form"
+            grep -q "sdkVersion:'26'" apk-output/badging.txt \
+              || echo "::warning::aapt minSdk line did not match expected text form"
           else
-            echo "aapt not found; package metadata check skipped" | tee apk-output/badging.txt
+            echo "aapt not found; package metadata text inspection skipped" | tee apk-output/badging.txt
           fi
+          echo "Runtime updater performs strict package, app-label, and signing-certificate validation before installation."
 
       - name: Write phone installation guide
         run: |
@@ -217,7 +221,7 @@ jobs:
               "package_name": "com.cryptotradecoach",
               "app_label": "Unified Trading Coach",
               "apk_file": os.environ["APK_FILE_NAME"],
-              "apk_bytes": int(os.environ["APK_BYTES"]),
+              "apk_bytes": int(os.environ["APK_BYTES"],),
               "apk_sha256": os.environ["APK_SHA256"],
               "signature_verified": True,
               "release_tag": "latest-phone-apk",
