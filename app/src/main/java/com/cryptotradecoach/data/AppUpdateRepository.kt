@@ -2,6 +2,8 @@ package com.cryptotradecoach.data
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageInfo
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
@@ -11,6 +13,7 @@ import java.io.File
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
+import java.security.MessageDigest
 
 class AppUpdateRepository(private val context: Context) {
     data class ReleaseApkInfo(
@@ -25,10 +28,9 @@ class AppUpdateRepository(private val context: Context) {
     }
 
     fun checkLatestRelease(settings: GitHubSyncSettings): ReleaseApkInfo? {
-        val normalized = settings.normalized()
-        if (!normalized.isConfigured) return null
-        val releaseJson = fetchLatestReleaseJson(normalized)
-        val asset = findApkAsset(releaseJson)
+        val token = settings.normalized().token
+        val releaseJson = fetchLatestReleaseJson(token)
+        val asset = findOfficialApkAsset(releaseJson)
         val body = releaseJson.optString("body")
         val assetName = asset.optString("name")
         return ReleaseApkInfo(
@@ -42,18 +44,21 @@ class AppUpdateRepository(private val context: Context) {
     }
 
     fun downloadLatestReleaseApk(settings: GitHubSyncSettings): File {
-        val normalized = settings.normalized()
-        if (!normalized.isConfigured) throw IOException("GitHub settings are incomplete: owner/repo/branch required")
-
-        val releaseJson = fetchLatestReleaseJson(normalized)
-        val asset = findApkAsset(releaseJson)
+        val token = settings.normalized().token
+        val releaseJson = fetchLatestReleaseJson(token)
+        val asset = findOfficialApkAsset(releaseJson)
         val apiUrl = asset.optString("url")
         val browserUrl = asset.optString("browser_download_url")
-        val downloadUrl = browserUrl.takeIf { it.isNotBlank() } ?: apiUrl.takeIf { it.isNotBlank() } ?: throw IOException("APK asset URL not found in $RELEASE_TAG")
-        val fileName = asset.optString("name").takeIf { it.isNotBlank() } ?: APK_ASSET_FALLBACK_NAME
+        val downloadUrl = browserUrl.takeIf { it.isNotBlank() }
+            ?: apiUrl.takeIf { it.isNotBlank() }
+            ?: throw IOException("Official unified APK asset URL not found in $RELEASE_TAG")
+        val fileName = asset.optString("name")
+        if (fileName != OFFICIAL_APK_ASSET_NAME) {
+            throw IOException("Refusing unexpected APK asset: $fileName")
+        }
         val outDir = File(context.cacheDir, "updates").also { it.mkdirs() }
-        val outFile = File(outDir, fileName)
-        downloadBinary(URL(downloadUrl), normalized.token, outFile, preferGitHubAssetApi = downloadUrl == apiUrl)
+        val outFile = File(outDir, OFFICIAL_APK_ASSET_NAME)
+        downloadBinary(URL(downloadUrl), token, outFile, preferGitHubAssetApi = downloadUrl == apiUrl)
         validateApk(outFile)
         return outFile
     }
@@ -84,39 +89,39 @@ class AppUpdateRepository(private val context: Context) {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
-        context.startActivity(Intent.createChooser(intent, "Install APK").apply { addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) })
+        context.startActivity(Intent.createChooser(intent, "Install Unified Trading Coach").apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        })
     }
 
-    private fun fetchLatestReleaseJson(settings: GitHubSyncSettings): JSONObject {
-        val releaseUrl = URL("https://api.github.com/repos/${settings.owner}/${settings.repo}/releases/tags/$RELEASE_TAG")
-        return fetchJson(releaseUrl, settings.token)
+    private fun fetchLatestReleaseJson(token: String): JSONObject {
+        val releaseUrl = URL("https://api.github.com/repos/$OFFICIAL_RELEASE_OWNER/$OFFICIAL_RELEASE_REPO/releases/tags/$RELEASE_TAG")
+        return fetchJson(releaseUrl, token)
     }
 
-    private fun findApkAsset(releaseJson: JSONObject): JSONObject {
+    private fun findOfficialApkAsset(releaseJson: JSONObject): JSONObject {
         val assets = releaseJson.optJSONArray("assets") ?: throw IOException("Release $RELEASE_TAG has no assets")
         val names = mutableListOf<String>()
         for (i in 0 until assets.length()) {
             val asset = assets.getJSONObject(i)
             val name = asset.optString("name")
             names += name
-            if (name.endsWith(".apk") && name.startsWith("crypto-trade-coach")) return asset
+            if (name == OFFICIAL_APK_ASSET_NAME) return asset
         }
-        for (i in 0 until assets.length()) {
-            val asset = assets.getJSONObject(i)
-            if (asset.optString("name").endsWith(".apk")) return asset
-        }
-        throw IOException("APK asset not found in $RELEASE_TAG. assets=${names.joinToString()}")
+        throw IOException(
+            "Official APK $OFFICIAL_APK_ASSET_NAME not found in $RELEASE_TAG. assets=${names.joinToString()}",
+        )
     }
 
     private fun parseVersionCode(body: String, assetName: String): Int {
         Regex("versionCode:\\s*(\\d+)").find(body)?.groupValues?.getOrNull(1)?.toIntOrNull()?.let { return it }
-        Regex("v(\\d+)\\.apk$").find(assetName)?.groupValues?.getOrNull(1)?.toIntOrNull()?.let { return it }
+        Regex("v(\\d+)(?:-[^.]+)?\\.apk$").find(assetName)?.groupValues?.getOrNull(1)?.toIntOrNull()?.let { return it }
         return 0
     }
 
     private fun parseVersionName(body: String, assetName: String): String {
         Regex("versionName:\\s*([^\\s]+)").find(body)?.groupValues?.getOrNull(1)?.let { return it }
-        Regex("v(\\d+)\\.apk$").find(assetName)?.groupValues?.getOrNull(1)?.let { return "1.0.$it" }
+        Regex("v(\\d+)(?:-[^.]+)?\\.apk$").find(assetName)?.groupValues?.getOrNull(1)?.let { return "1.0.$it" }
         return "unknown"
     }
 
@@ -143,14 +148,25 @@ class AppUpdateRepository(private val context: Context) {
         }
     }
 
-    private fun downloadBinary(url: URL, token: String, outFile: File, preferGitHubAssetApi: Boolean, redirectDepth: Int = 0) {
+    private fun downloadBinary(
+        url: URL,
+        token: String,
+        outFile: File,
+        preferGitHubAssetApi: Boolean,
+        redirectDepth: Int = 0,
+    ) {
         if (redirectDepth > MAX_REDIRECTS) throw IOException("APK download failed: too many redirects")
-        val accept = if (preferGitHubAssetApi) "application/octet-stream" else "application/vnd.android.package-archive,application/octet-stream,*/*"
+        val accept = if (preferGitHubAssetApi) {
+            "application/octet-stream"
+        } else {
+            "application/vnd.android.package-archive,application/octet-stream,*/*"
+        }
         val connection = openConnection(url, token, accept = accept, followRedirects = false)
         try {
             val status = connection.responseCode
             if (status in 300..399) {
-                val location = connection.getHeaderField("Location") ?: throw IOException("APK download redirect without Location")
+                val location = connection.getHeaderField("Location")
+                    ?: throw IOException("APK download redirect without Location")
                 connection.disconnect()
                 downloadBinary(URL(location), "", outFile, preferGitHubAssetApi = false, redirectDepth = redirectDepth + 1)
                 return
@@ -177,6 +193,70 @@ class AppUpdateRepository(private val context: Context) {
                 throw IOException("Downloaded file is not a valid APK/ZIP. size=${file.length()} bytes")
             }
         }
+        validateOfficialPackageMetadata(file)
+    }
+
+    private fun validateOfficialPackageMetadata(file: File) {
+        val packageManager = context.packageManager
+        val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            PackageManager.GET_SIGNING_CERTIFICATES
+        } else {
+            @Suppress("DEPRECATION")
+            PackageManager.GET_SIGNATURES
+        }
+        @Suppress("DEPRECATION")
+        val archiveInfo = packageManager.getPackageArchiveInfo(file.absolutePath, flags)
+            ?: throw IOException("Downloaded APK package metadata cannot be read")
+        if (archiveInfo.packageName != OFFICIAL_PACKAGE_NAME) {
+            throw IOException(
+                "Refusing APK package ${archiveInfo.packageName}; expected $OFFICIAL_PACKAGE_NAME",
+            )
+        }
+
+        val applicationInfo = archiveInfo.applicationInfo
+            ?: throw IOException("Downloaded APK application metadata is missing")
+        applicationInfo.sourceDir = file.absolutePath
+        applicationInfo.publicSourceDir = file.absolutePath
+        val appLabel = runCatching { packageManager.getApplicationLabel(applicationInfo).toString().trim() }
+            .getOrDefault("")
+        if (appLabel != OFFICIAL_APP_LABEL) {
+            throw IOException("Refusing APK app label '$appLabel'; expected '$OFFICIAL_APP_LABEL'")
+        }
+
+        if (context.packageName == OFFICIAL_PACKAGE_NAME) {
+            @Suppress("DEPRECATION")
+            val installedInfo = packageManager.getPackageInfo(context.packageName, flags)
+            val installedCertificates = signingCertificateDigests(installedInfo, includeHistory = true)
+            val archiveCertificates = signingCertificateDigests(archiveInfo, includeHistory = false)
+            if (
+                installedCertificates.isNotEmpty() &&
+                archiveCertificates.isNotEmpty() &&
+                installedCertificates.intersect(archiveCertificates).isEmpty()
+            ) {
+                throw IOException(
+                    "APK signing key does not match the installed app. Uninstall the old debug/Crypto build once, then install the official unified APK.",
+                )
+            }
+        }
+    }
+
+    @Suppress("DEPRECATION")
+    private fun signingCertificateDigests(packageInfo: PackageInfo, includeHistory: Boolean): Set<String> {
+        val signatures = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            val signingInfo = packageInfo.signingInfo ?: return emptySet()
+            if (includeHistory && !signingInfo.hasMultipleSigners()) {
+                signingInfo.signingCertificateHistory
+            } else {
+                signingInfo.apkContentsSigners
+            }
+        } else {
+            packageInfo.signatures
+        }
+        return signatures.orEmpty().map { signature ->
+            MessageDigest.getInstance("SHA-256")
+                .digest(signature.toByteArray())
+                .joinToString("") { byte -> "%02x".format(byte) }
+        }.toSet()
     }
 
     private fun readErrorBody(connection: HttpURLConnection): String {
@@ -198,14 +278,18 @@ class AppUpdateRepository(private val context: Context) {
             readTimeout = 60_000
             setRequestProperty("Accept", accept)
             setRequestProperty("X-GitHub-Api-Version", "2022-11-28")
-            setRequestProperty("User-Agent", "CryptoTradeCoach")
+            setRequestProperty("User-Agent", "UnifiedTradingCoach")
             if (token.isNotBlank()) setRequestProperty("Authorization", "Bearer $token")
         }
     }
 
     companion object {
+        private const val OFFICIAL_RELEASE_OWNER = "shopper12"
+        private const val OFFICIAL_RELEASE_REPO = "gpt_coin_android"
         private const val RELEASE_TAG = "latest-phone-apk"
-        private const val APK_ASSET_FALLBACK_NAME = "crypto-trade-coach-release.apk"
+        private const val OFFICIAL_APK_ASSET_NAME = "unified-trading-coach-release.apk"
+        private const val OFFICIAL_PACKAGE_NAME = "com.cryptotradecoach"
+        private const val OFFICIAL_APP_LABEL = "Unified Trading Coach"
         private const val APK_MIME_TYPE = "application/vnd.android.package-archive"
         private const val MIN_APK_BYTES = 1024L * 1024L
         private const val MAX_REDIRECTS = 5
