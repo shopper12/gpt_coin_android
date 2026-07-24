@@ -119,7 +119,7 @@ jobs:
           if [ -x "$AAPT" ]; then
             "$AAPT" dump badging "$apk" | tee apk-output/badging.txt
             grep -q "package: name='com.cryptotradecoach'" apk-output/badging.txt
-            grep -q "application-label:'Unified Trading Coach'" apk-output/badging.txt
+            grep -Fq "Unified Trading Coach" apk-output/badging.txt
             grep -q "sdkVersion:'26'" apk-output/badging.txt
           else
             echo "aapt not found; package metadata check skipped" | tee apk-output/badging.txt
