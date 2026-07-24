@@ -119,6 +119,7 @@ jobs:
           if [ -x "$AAPT" ]; then
             "$AAPT" dump badging "$apk" | tee apk-output/badging.txt
             grep -q "package: name='com.cryptotradecoach'" apk-output/badging.txt
+            grep -q "application-label:'Unified Trading Coach'" apk-output/badging.txt
             grep -q "sdkVersion:'26'" apk-output/badging.txt
           else
             echo "aapt not found; package metadata check skipped" | tee apk-output/badging.txt
@@ -129,8 +130,8 @@ jobs:
           cat > apk-output/INSTALL.txt <<'EOF'
           PHONE INSTALLATION
           1. Download unified-trading-coach-release.apk from GitHub Releases, not the Android Debug Verification artifact.
-          2. If an older debug build is already installed, uninstall that app once. Its temporary debug signature cannot be updated by this release signature.
-          3. Allow installation from the browser or file manager used to open the APK.
+          2. If an older debug or Crypto Trade Coach build is installed with a different signature, uninstall that app once.
+          3. Allow installation from the browser, file manager, or Unified Trading Coach used to open the APK.
           4. Android 8.0 or newer is required.
           5. Future release APKs from this workflow use the persistent release signing key and can update normally.
           EOF
@@ -153,16 +154,19 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: latest-phone-apk
-          name: Latest phone APK
+          name: Latest Unified Trading Coach APK
           body: |
-            Signed Android release APK for the unified coin/stock app.
+            Signed Android release APK for Unified Trading Coach.
 
             Download `unified-trading-coach-release.apk` from Assets and install it directly.
 
-            Important: if a previous debug APK is already installed, uninstall it once before installing this release. The old debug APK used a different temporary signing key. After this one-time cleanup, later release APKs can update normally.
+            The updater accepts only this exact unified APK name and verifies the package, app label, and signing certificate before opening Android's installer.
+
+            Important: if a previous debug or Crypto Trade Coach APK is already installed with a different signing key, uninstall it once before installing this release. After this one-time cleanup, later release APKs can update normally.
 
             Android 8.0 or newer is required.
             package: `com.cryptotradecoach`
+            appLabel: `Unified Trading Coach`
             commit: ${{ github.sha }}
             versionCode: ${{ env.CI_VERSION_CODE }}
             versionName: ${{ env.CI_VERSION_NAME }}
@@ -175,6 +179,20 @@ jobs:
           overwrite_files: true
         env:
           GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Remove stale APK assets from rolling release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh api "repos/${GITHUB_REPOSITORY}/releases/tags/latest-phone-apk" \
+            --jq '.assets[] | [.id, .name] | @tsv' |
+          while IFS=$'\t' read -r asset_id asset_name; do
+            if [[ "$asset_name" == *.apk && "$asset_name" != "$APK_FILE_NAME" && "$asset_name" != "$VERSIONED_APK" ]]; then
+              echo "Deleting stale APK asset: $asset_name"
+              gh api --method DELETE "repos/${GITHUB_REPOSITORY}/releases/assets/$asset_id"
+            fi
+          done
 
       - name: Record successful Android build
         run: |
@@ -197,6 +215,7 @@ jobs:
               "version_code": os.environ["CI_VERSION_CODE"],
               "version_name": os.environ["CI_VERSION_NAME"],
               "package_name": "com.cryptotradecoach",
+              "app_label": "Unified Trading Coach",
               "apk_file": os.environ["APK_FILE_NAME"],
               "apk_bytes": int(os.environ["APK_BYTES"]),
               "apk_sha256": os.environ["APK_SHA256"],
