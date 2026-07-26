@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-07-26T20:39:08.141957+09:00",
+  "generatedAtKst": "2026-07-26T21:46:14.832440+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
     "shortlistCount": 391,
-    "dailyMetricsCount": 374,
+    "dailyMetricsCount": 373,
     "dailyCandidateCount": 10,
     "intradayEvaluatedCount": 10,
     "signalCount": 0
@@ -164,6 +164,30 @@
       }
     },
     {
+      "ticker": "BTCZ",
+      "name": "T-Rex 2X Inverse Bitcoin Daily Target ETF",
+      "dailyScore": 78.77,
+      "relativeStrengthPercentile": 0.8354430379746836,
+      "trigger": {
+        "ready": false,
+        "breakout": false,
+        "reclaim": true,
+        "volumeRatio": 0.169,
+        "ema20": 5.46558,
+        "ema50": 5.415076,
+        "lastTimestamp": "2026-07-24T19:45:00+00:00",
+        "reason": "breakout=False; reclaim=True; volume=0.17x; ICT=NEUTRAL/NONE/NONE",
+        "ict": {
+          "bias": "NEUTRAL",
+          "structure": "RANGE",
+          "event": "NONE",
+          "liquidity": "NONE",
+          "fvg": "BEARISH 5.4801~5.4900",
+          "score": -1
+        }
+      }
+    },
+    {
       "ticker": "TIGO",
       "name": "Millicom International Cellular S.A. - Common Stock",
       "dailyScore": 78.6,
@@ -208,30 +232,6 @@
           "liquidity": "SELL_SIDE_SWEEP",
           "fvg": "BULLISH 235.7200~236.0000",
           "score": 1
-        }
-      }
-    },
-    {
-      "ticker": "BTCZ",
-      "name": "T-Rex 2X Inverse Bitcoin Daily Target ETF",
-      "dailyScore": 78.25,
-      "relativeStrengthPercentile": 0.825,
-      "trigger": {
-        "ready": false,
-        "breakout": false,
-        "reclaim": true,
-        "volumeRatio": 0.169,
-        "ema20": 5.46558,
-        "ema50": 5.415076,
-        "lastTimestamp": "2026-07-24T19:45:00+00:00",
-        "reason": "breakout=False; reclaim=True; volume=0.17x; ICT=NEUTRAL/NONE/NONE",
-        "ict": {
-          "bias": "NEUTRAL",
-          "structure": "RANGE",
-          "event": "NONE",
-          "liquidity": "NONE",
-          "fvg": "BEARISH 5.4801~5.4900",
-          "score": -1
         }
       }
     },
