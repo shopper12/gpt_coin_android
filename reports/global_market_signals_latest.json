@@ -1,20 +1,20 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-07-27T04:40:22.539783+09:00",
+  "generatedAtKst": "2026-07-27T05:39:51.607012+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
-    "shortlistCount": 392,
-    "dailyMetricsCount": 373,
-    "dailyCandidateCount": 10,
-    "intradayEvaluatedCount": 10,
+    "shortlistCount": 393,
+    "dailyMetricsCount": 374,
+    "dailyCandidateCount": 14,
+    "intradayEvaluatedCount": 14,
     "signalCount": 0
   },
   "marketRegime": {
     "panic": false,
     "riskOff": false,
     "equityBelow200Count": 0,
-    "realizedVolatility20Annualized": 0.2308,
+    "realizedVolatility20Annualized": 0.2306,
     "reason": "광의 추세와 변동성 정상"
   },
   "signals": [],
@@ -22,7 +22,7 @@
     {
       "ticker": "DBC",
       "name": "Invesco DB Commodity Index",
-      "dailyScore": 95.0,
+      "dailyScore": 87.0,
       "relativeStrengthPercentile": 1.0,
       "trigger": {
         "ready": false,
@@ -46,8 +46,8 @@
     {
       "ticker": "SYRE",
       "name": "Spyre Therapeutics, Inc. - Common Stock",
-      "dailyScore": 85.53,
-      "relativeStrengthPercentile": 0.9705882352941176,
+      "dailyScore": 85.95,
+      "relativeStrengthPercentile": 0.9789915966386554,
       "trigger": {
         "ready": false,
         "breakout": false,
@@ -68,10 +68,34 @@
       }
     },
     {
+      "ticker": "ORKA",
+      "name": "Oruka Therapeutics, Inc. - Common Stock",
+      "dailyScore": 85.74,
+      "relativeStrengthPercentile": 0.9747899159663865,
+      "trigger": {
+        "ready": false,
+        "breakout": false,
+        "reclaim": false,
+        "volumeRatio": 5.844,
+        "ema20": 92.3014,
+        "ema50": 92.565927,
+        "lastTimestamp": "2026-07-24T19:45:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=5.84x; ICT=BEARISH/NONE/NONE",
+        "ict": {
+          "bias": "BEARISH",
+          "structure": "BEARISH_LH_LL",
+          "event": "NONE",
+          "liquidity": "NONE",
+          "fvg": "BEARISH 91.4900~91.7600",
+          "score": -3
+        }
+      }
+    },
+    {
       "ticker": "DFTX",
       "name": "Definium Therapeutics, Inc.  - Common Shares",
-      "dailyScore": 84.9,
-      "relativeStrengthPercentile": 0.957983193277311,
+      "dailyScore": 85.32,
+      "relativeStrengthPercentile": 0.9663865546218487,
       "trigger": {
         "ready": false,
         "breakout": false,
@@ -94,8 +118,8 @@
     {
       "ticker": "DNTH",
       "name": "Dianthus Therapeutics, Inc. - Common Stock",
-      "dailyScore": 84.48,
-      "relativeStrengthPercentile": 0.9495798319327731,
+      "dailyScore": 85.11,
+      "relativeStrengthPercentile": 0.9621848739495799,
       "trigger": {
         "ready": false,
         "breakout": false,
@@ -118,8 +142,8 @@
     {
       "ticker": "VSXY",
       "name": "Victorias Secret & Co. Common Stock",
-      "dailyScore": 82.17,
-      "relativeStrengthPercentile": 0.9033613445378151,
+      "dailyScore": 82.8,
+      "relativeStrengthPercentile": 0.9159663865546218,
       "trigger": {
         "ready": false,
         "breakout": false,
@@ -140,10 +164,34 @@
       }
     },
     {
+      "ticker": "TWST",
+      "name": "Twist Bioscience Corporation - Common Stock",
+      "dailyScore": 81.75,
+      "relativeStrengthPercentile": 0.8949579831932774,
+      "trigger": {
+        "ready": false,
+        "breakout": false,
+        "reclaim": false,
+        "volumeRatio": 9.128,
+        "ema20": 91.58743,
+        "ema50": 92.593751,
+        "lastTimestamp": "2026-07-24T19:45:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=9.13x; ICT=NEUTRAL/CHOCH_DOWN/NONE",
+        "ict": {
+          "bias": "NEUTRAL",
+          "structure": "BULLISH_HH_HL",
+          "event": "CHOCH_DOWN",
+          "liquidity": "NONE",
+          "fvg": "BEARISH 91.8800~92.2000",
+          "score": -1
+        }
+      }
+    },
+    {
       "ticker": "ROIV",
       "name": "Roivant Sciences Ltd. - Common Shares",
-      "dailyScore": 80.07,
-      "relativeStrengthPercentile": 0.8613445378151261,
+      "dailyScore": 80.7,
+      "relativeStrengthPercentile": 0.8739495798319328,
       "trigger": {
         "ready": false,
         "breakout": false,
@@ -164,34 +212,58 @@
       }
     },
     {
-      "ticker": "TIGO",
-      "name": "Millicom International Cellular S.A. - Common Stock",
-      "dailyScore": 78.6,
-      "relativeStrengthPercentile": 0.8319327731092437,
+      "ticker": "DAVE",
+      "name": "Dave Inc.  - Class A Common Stock",
+      "dailyScore": 80.28,
+      "relativeStrengthPercentile": 0.865546218487395,
       "trigger": {
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 3.541,
-        "ema20": 95.470814,
-        "ema50": 96.186117,
+        "volumeRatio": 2.81,
+        "ema20": 409.990729,
+        "ema50": 410.650362,
         "lastTimestamp": "2026-07-24T19:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=3.54x; ICT=BEARISH/BOS_DOWN/NONE",
+        "reason": "breakout=False; reclaim=False; volume=2.81x; ICT=BEARISH/BOS_DOWN/NONE",
         "ict": {
           "bias": "BEARISH",
-          "structure": "BEARISH_LH_LL",
+          "structure": "RANGE",
           "event": "BOS_DOWN",
           "liquidity": "NONE",
-          "fvg": "BEARISH 95.2400~95.3200",
-          "score": -5
+          "fvg": "BEARISH 405.1300~407.6650",
+          "score": -3
+        }
+      }
+    },
+    {
+      "ticker": "PTGX",
+      "name": "Protagonist Therapeutics, Inc. - Common Stock",
+      "dailyScore": 80.07,
+      "relativeStrengthPercentile": 0.8613445378151261,
+      "trigger": {
+        "ready": false,
+        "breakout": false,
+        "reclaim": false,
+        "volumeRatio": 6.053,
+        "ema20": 136.069445,
+        "ema50": 136.101668,
+        "lastTimestamp": "2026-07-24T19:45:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=6.05x; ICT=NEUTRAL/NONE/NONE",
+        "ict": {
+          "bias": "NEUTRAL",
+          "structure": "RANGE",
+          "event": "NONE",
+          "liquidity": "NONE",
+          "fvg": "BULLISH 136.0550~136.2300",
+          "score": 1
         }
       }
     },
     {
       "ticker": "DVA",
       "name": "DaVita Inc. Common Stock",
-      "dailyScore": 78.39,
-      "relativeStrengthPercentile": 0.8277310924369747,
+      "dailyScore": 79.65,
+      "relativeStrengthPercentile": 0.8529411764705882,
       "trigger": {
         "ready": false,
         "breakout": false,
@@ -212,10 +284,34 @@
       }
     },
     {
+      "ticker": "TIGO",
+      "name": "Millicom International Cellular S.A. - Common Stock",
+      "dailyScore": 79.23,
+      "relativeStrengthPercentile": 0.8445378151260504,
+      "trigger": {
+        "ready": false,
+        "breakout": false,
+        "reclaim": false,
+        "volumeRatio": 3.541,
+        "ema20": 95.470814,
+        "ema50": 96.186117,
+        "lastTimestamp": "2026-07-24T19:45:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=3.54x; ICT=BEARISH/BOS_DOWN/NONE",
+        "ict": {
+          "bias": "BEARISH",
+          "structure": "BEARISH_LH_LL",
+          "event": "BOS_DOWN",
+          "liquidity": "NONE",
+          "fvg": "BEARISH 95.2400~95.3200",
+          "score": -5
+        }
+      }
+    },
+    {
       "ticker": "BTCZ",
       "name": "T-Rex 2X Inverse Bitcoin Daily Target ETF",
-      "dailyScore": 78.25,
-      "relativeStrengthPercentile": 0.825,
+      "dailyScore": 78.88,
+      "relativeStrengthPercentile": 0.8375,
       "trigger": {
         "ready": false,
         "breakout": false,
@@ -236,26 +332,26 @@
       }
     },
     {
-      "ticker": "OSCR",
-      "name": "Oscar Health, Inc. Class A Common Stock",
+      "ticker": "COGT",
+      "name": "Cogent Biosciences, Inc. - Common Stock",
       "dailyScore": 78.18,
       "relativeStrengthPercentile": 0.8235294117647058,
       "trigger": {
         "ready": false,
         "breakout": false,
-        "reclaim": false,
-        "volumeRatio": 7.976,
-        "ema20": 28.610014,
-        "ema50": 28.915274,
+        "reclaim": true,
+        "volumeRatio": 4.701,
+        "ema20": 39.690904,
+        "ema50": 39.670409,
         "lastTimestamp": "2026-07-24T19:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=7.98x; ICT=BEARISH/BOS_DOWN/NONE",
+        "reason": "breakout=False; reclaim=True; volume=4.70x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
-          "bias": "BEARISH",
+          "bias": "NEUTRAL",
           "structure": "RANGE",
-          "event": "BOS_DOWN",
+          "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BEARISH 28.2250~28.3000",
-          "score": -3
+          "fvg": "BULLISH 39.5400~39.5500",
+          "score": 1
         }
       }
     }
