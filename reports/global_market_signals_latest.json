@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-07-28T06:19:21.985710+09:00",
+  "generatedAtKst": "2026-07-28T07:35:34.025617+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
@@ -118,8 +118,8 @@
     {
       "ticker": "VSXY",
       "name": "Victorias Secret & Co. Common Stock",
-      "dailyScore": 82.8,
-      "relativeStrengthPercentile": 0.9159663865546218,
+      "dailyScore": 83.01,
+      "relativeStrengthPercentile": 0.9201680672268907,
       "trigger": {
         "ready": false,
         "breakout": false,
@@ -308,26 +308,26 @@
       }
     },
     {
-      "ticker": "ACHC",
-      "name": "Acadia Healthcare Company, Inc. - Common Stock",
-      "dailyScore": 78.39,
-      "relativeStrengthPercentile": 0.8277310924369747,
+      "ticker": "CNC",
+      "name": "Centene Corporation Common Stock",
+      "dailyScore": 78.18,
+      "relativeStrengthPercentile": 0.8235294117647058,
       "trigger": {
         "ready": false,
         "breakout": false,
-        "reclaim": false,
-        "volumeRatio": 7.977,
-        "ema20": 32.776966,
-        "ema50": 33.455531,
+        "reclaim": true,
+        "volumeRatio": 9.056,
+        "ema20": 64.002742,
+        "ema50": 63.943031,
         "lastTimestamp": "2026-07-27T19:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=7.98x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "breakout=False; reclaim=True; volume=9.06x; ICT=BEARISH/BOS_DOWN/NONE",
         "ict": {
-          "bias": "NEUTRAL",
-          "structure": "BEARISH_LH_LL",
-          "event": "NONE",
+          "bias": "BEARISH",
+          "structure": "RANGE",
+          "event": "BOS_DOWN",
           "liquidity": "NONE",
-          "fvg": "BULLISH 32.2600~32.3300",
-          "score": -1
+          "fvg": "BEARISH 63.9400~64.1500",
+          "score": -3
         }
       }
     }
