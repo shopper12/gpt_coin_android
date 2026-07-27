@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-07-28T04:47:36.391335+09:00",
+  "generatedAtKst": "2026-07-28T06:19:21.985710+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
@@ -14,7 +14,7 @@
     "panic": false,
     "riskOff": false,
     "equityBelow200Count": 0,
-    "realizedVolatility20Annualized": 0.2269,
+    "realizedVolatility20Annualized": 0.2268,
     "reason": "광의 추세와 변동성 정상"
   },
   "signals": [],
@@ -26,20 +26,20 @@
       "relativeStrengthPercentile": 0.9831932773109243,
       "trigger": {
         "ready": false,
-        "breakout": true,
+        "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.536,
-        "ema20": 100.469877,
-        "ema50": 100.566944,
+        "volumeRatio": 8.505,
+        "ema20": 100.366544,
+        "ema50": 100.524395,
         "lastTimestamp": "2026-07-27T19:45:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=0.54x; ICT=BULLISH/BOS_UP/NONE",
+        "reason": "breakout=False; reclaim=False; volume=8.51x; ICT=NEUTRAL/NONE/BUY_SIDE_SWEEP",
         "ict": {
-          "bias": "BULLISH",
+          "bias": "NEUTRAL",
           "structure": "RANGE",
-          "event": "BOS_UP",
-          "liquidity": "NONE",
+          "event": "NONE",
+          "liquidity": "BUY_SIDE_SWEEP",
           "fvg": "BULLISH 100.5000~100.8500",
-          "score": 3
+          "score": -1
         }
       }
     },
@@ -52,18 +52,18 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.562,
-        "ema20": 91.365227,
-        "ema50": 91.754015,
+        "volumeRatio": 8.679,
+        "ema20": 91.275703,
+        "ema50": 91.717152,
         "lastTimestamp": "2026-07-27T19:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.56x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "breakout=False; reclaim=False; volume=8.68x; ICT=NEUTRAL/CHOCH_DOWN/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "BULLISH_HH_HL",
-          "event": "NONE",
+          "event": "CHOCH_DOWN",
           "liquidity": "NONE",
           "fvg": "BEARISH 91.3700~91.4800",
-          "score": 1
+          "score": -1
         }
       }
     },
@@ -76,11 +76,11 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.561,
-        "ema20": 42.85033,
-        "ema50": 43.024668,
+        "volumeRatio": 5.976,
+        "ema20": 42.838901,
+        "ema50": 43.019962,
         "lastTimestamp": "2026-07-27T19:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.56x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "breakout=False; reclaim=False; volume=5.98x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
@@ -94,24 +94,24 @@
     {
       "ticker": "DNTH",
       "name": "Dianthus Therapeutics, Inc. - Common Stock",
-      "dailyScore": 84.9,
-      "relativeStrengthPercentile": 0.957983193277311,
+      "dailyScore": 84.69,
+      "relativeStrengthPercentile": 0.9537815126050421,
       "trigger": {
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.377,
-        "ema20": 105.493575,
-        "ema50": 105.048382,
+        "volumeRatio": 9.631,
+        "ema20": 105.284052,
+        "ema50": 104.962108,
         "lastTimestamp": "2026-07-27T19:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.38x; ICT=BULLISH/BOS_UP/NONE",
+        "reason": "breakout=False; reclaim=False; volume=9.63x; ICT=NEUTRAL/CHOCH_DOWN/BUY_SIDE_SWEEP",
         "ict": {
-          "bias": "BULLISH",
+          "bias": "NEUTRAL",
           "structure": "BULLISH_HH_HL",
-          "event": "BOS_UP",
-          "liquidity": "NONE",
+          "event": "CHOCH_DOWN",
+          "liquidity": "BUY_SIDE_SWEEP",
           "fvg": "BULLISH 105.7300~106.0600",
-          "score": 5
+          "score": -1
         }
       }
     },
@@ -124,11 +124,11 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.768,
-        "ema20": 84.462518,
-        "ema50": 84.116072,
+        "volumeRatio": 9.983,
+        "ema20": 84.434899,
+        "ema50": 84.1047,
         "lastTimestamp": "2026-07-27T19:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.77x; ICT=BULLISH/BOS_UP/NONE",
+        "reason": "breakout=False; reclaim=False; volume=9.98x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
           "bias": "BULLISH",
           "structure": "BULLISH_HH_HL",
@@ -142,17 +142,17 @@
     {
       "ticker": "TWST",
       "name": "Twist Bioscience Corporation - Common Stock",
-      "dailyScore": 81.75,
-      "relativeStrengthPercentile": 0.8949579831932774,
+      "dailyScore": 81.54,
+      "relativeStrengthPercentile": 0.8907563025210085,
       "trigger": {
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.306,
-        "ema20": 86.889012,
-        "ema50": 88.819479,
+        "volumeRatio": 5.004,
+        "ema20": 86.821869,
+        "ema50": 88.791832,
         "lastTimestamp": "2026-07-27T19:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.31x; ICT=NEUTRAL/CHOCH_UP/NONE",
+        "reason": "breakout=False; reclaim=False; volume=5.00x; ICT=NEUTRAL/CHOCH_UP/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "BEARISH_LH_LL",
@@ -166,17 +166,17 @@
     {
       "ticker": "ROIV",
       "name": "Roivant Sciences Ltd. - Common Shares",
-      "dailyScore": 81.12,
-      "relativeStrengthPercentile": 0.8823529411764706,
+      "dailyScore": 80.91,
+      "relativeStrengthPercentile": 0.8781512605042017,
       "trigger": {
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.604,
-        "ema20": 34.841539,
-        "ema50": 34.959619,
+        "volumeRatio": 10.245,
+        "ema20": 34.824396,
+        "ema50": 34.95256,
         "lastTimestamp": "2026-07-27T19:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.60x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "breakout=False; reclaim=False; volume=10.25x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "BEARISH_LH_LL",
@@ -190,24 +190,24 @@
     {
       "ticker": "PTGX",
       "name": "Protagonist Therapeutics, Inc. - Common Stock",
-      "dailyScore": 80.28,
-      "relativeStrengthPercentile": 0.865546218487395,
+      "dailyScore": 80.07,
+      "relativeStrengthPercentile": 0.8613445378151261,
       "trigger": {
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.222,
-        "ema20": 136.864019,
-        "ema50": 136.736224,
+        "volumeRatio": 8.959,
+        "ema20": 136.693543,
+        "ema50": 136.666029,
         "lastTimestamp": "2026-07-27T19:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.22x; ICT=BULLISH/BOS_UP/NONE",
+        "reason": "breakout=False; reclaim=False; volume=8.96x; ICT=BEARISH/BOS_DOWN/BUY_SIDE_SWEEP",
         "ict": {
-          "bias": "BULLISH",
+          "bias": "BEARISH",
           "structure": "RANGE",
-          "event": "BOS_UP",
-          "liquidity": "NONE",
-          "fvg": "BULLISH 137.2550~137.3300",
-          "score": 3
+          "event": "BOS_DOWN",
+          "liquidity": "BUY_SIDE_SWEEP",
+          "fvg": "BULLISH 136.5100~136.9000",
+          "score": -3
         }
       }
     },
@@ -220,42 +220,42 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 1.744,
-        "ema20": 236.391063,
-        "ema50": 236.148116,
+        "volumeRatio": 11.068,
+        "ema20": 236.416301,
+        "ema50": 236.158508,
         "lastTimestamp": "2026-07-27T19:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=1.74x; ICT=BEARISH/NONE/NONE",
+        "reason": "breakout=False; reclaim=False; volume=11.07x; ICT=NEUTRAL/NONE/SELL_SIDE_SWEEP",
         "ict": {
-          "bias": "BEARISH",
+          "bias": "NEUTRAL",
           "structure": "BEARISH_LH_LL",
           "event": "NONE",
-          "liquidity": "NONE",
+          "liquidity": "SELL_SIDE_SWEEP",
           "fvg": "BEARISH 235.9700~235.9900",
-          "score": -3
+          "score": -1
         }
       }
     },
     {
       "ticker": "COGT",
       "name": "Cogent Biosciences, Inc. - Common Stock",
-      "dailyScore": 79.44,
-      "relativeStrengthPercentile": 0.8487394957983193,
+      "dailyScore": 79.23,
+      "relativeStrengthPercentile": 0.8445378151260504,
       "trigger": {
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.626,
-        "ema20": 40.48535,
-        "ema50": 40.244597,
+        "volumeRatio": 7.238,
+        "ema20": 40.467255,
+        "ema50": 40.237146,
         "lastTimestamp": "2026-07-27T19:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.63x; ICT=NEUTRAL/CHOCH_UP/NONE",
+        "reason": "breakout=False; reclaim=False; volume=7.24x; ICT=BEARISH/NONE/BUY_SIDE_SWEEP",
         "ict": {
-          "bias": "NEUTRAL",
+          "bias": "BEARISH",
           "structure": "BEARISH_LH_LL",
-          "event": "CHOCH_UP",
-          "liquidity": "NONE",
+          "event": "NONE",
+          "liquidity": "BUY_SIDE_SWEEP",
           "fvg": "BULLISH 40.5700~40.5800",
-          "score": 1
+          "score": -3
         }
       }
     },
@@ -268,11 +268,11 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.261,
-        "ema20": 95.560427,
-        "ema50": 95.797092,
+        "volumeRatio": 4.062,
+        "ema20": 95.546618,
+        "ema50": 95.791406,
         "lastTimestamp": "2026-07-27T19:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.26x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "breakout=False; reclaim=False; volume=4.06x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
@@ -292,11 +292,11 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 1.231,
-        "ema20": 28.755192,
-        "ema50": 28.850825,
+        "volumeRatio": 9.709,
+        "ema20": 28.759002,
+        "ema50": 28.852393,
         "lastTimestamp": "2026-07-27T19:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=1.23x; ICT=BEARISH/BOS_DOWN/NONE",
+        "reason": "breakout=False; reclaim=False; volume=9.71x; ICT=BEARISH/BOS_DOWN/NONE",
         "ict": {
           "bias": "BEARISH",
           "structure": "RANGE",
@@ -310,24 +310,24 @@
     {
       "ticker": "ACHC",
       "name": "Acadia Healthcare Company, Inc. - Common Stock",
-      "dailyScore": 78.18,
-      "relativeStrengthPercentile": 0.8235294117647058,
+      "dailyScore": 78.39,
+      "relativeStrengthPercentile": 0.8277310924369747,
       "trigger": {
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.494,
-        "ema20": 32.757918,
-        "ema50": 33.447688,
+        "volumeRatio": 7.977,
+        "ema20": 32.776966,
+        "ema50": 33.455531,
         "lastTimestamp": "2026-07-27T19:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.49x; ICT=BEARISH/NONE/NONE",
+        "reason": "breakout=False; reclaim=False; volume=7.98x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
-          "bias": "BEARISH",
+          "bias": "NEUTRAL",
           "structure": "BEARISH_LH_LL",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BEARISH 32.3000~32.3300",
-          "score": -3
+          "fvg": "BULLISH 32.2600~32.3300",
+          "score": -1
         }
       }
     }
