@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-07-28T15:11:04.231367+09:00",
+  "generatedAtKst": "2026-07-28T18:08:42.177407+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
-    "shortlistCount": 382,
+    "shortlistCount": 383,
     "dailyMetricsCount": 363,
-    "dailyCandidateCount": 10,
-    "intradayEvaluatedCount": 10,
-    "signalCount": 0
+    "dailyCandidateCount": 13,
+    "intradayEvaluatedCount": 13,
+    "signalCount": 1
   },
   "marketRegime": {
     "panic": false,
@@ -17,8 +17,129 @@
     "realizedVolatility20Annualized": 0.2268,
     "reason": "광의 추세와 변동성 정상"
   },
-  "signals": [],
+  "signals": [
+    {
+      "id": "2026-07-28-ENVA-LONG-EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
+      "date": "2026-07-28",
+      "generatedAtKst": "2026-07-28T18:08:42.177407+09:00",
+      "signalTimestamp": "2026-07-27T19:45:00+00:00",
+      "assetClass": "US_STOCK",
+      "market": "US",
+      "ticker": "ENVA",
+      "name": "Enova International, Inc. Common Stock",
+      "direction": "LONG",
+      "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM: 절대추세+상대모멘텀+15분 트리거+변동성 목표",
+      "strategyType": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
+      "referencePrice": 251.960007,
+      "currentPrice": 251.960007,
+      "previousClose": 237.270004,
+      "todayChangePct": 6.191,
+      "recentCloses": [
+        189.330002,
+        189.160004,
+        193.800003,
+        197.300003,
+        202.550003,
+        204.740005,
+        210.990005,
+        216.580002,
+        221.380005,
+        231.039993,
+        235.669998,
+        240.729996,
+        242.179993,
+        235.190002,
+        234.779999,
+        237.0,
+        224.899994,
+        236.399994,
+        238.089996,
+        232.009995,
+        230.639999,
+        235.660004,
+        235.529999,
+        232.520004,
+        230.449997,
+        228.460007,
+        222.490005,
+        217.800003,
+        237.270004,
+        251.960007
+      ],
+      "currency": "USD",
+      "status": "ACTIVE_SIGNAL",
+      "score": 93.2,
+      "confidence": 9.3,
+      "relativeStrengthPercentile": 0.8432,
+      "entryLow": 249.440407,
+      "entryHigh": 253.888464,
+      "stopLoss": 230.746971,
+      "target1": 294.386077,
+      "target2": 319.84172,
+      "riskPct": 8.42,
+      "volatilityTargetExposurePct": 23.3,
+      "regime": {
+        "panic": false,
+        "riskOff": false,
+        "equityBelow200Count": 0,
+        "realizedVolatility20Annualized": 0.2268,
+        "reason": "광의 추세와 변동성 정상"
+      },
+      "ict": {
+        "bias": "BULLISH",
+        "structure": "RANGE",
+        "event": "BOS_UP",
+        "liquidity": "NONE",
+        "fvg": "BULLISH 248.2200~248.8500",
+        "score": 3
+      },
+      "trigger": {
+        "ready": true,
+        "breakout": true,
+        "reclaim": false,
+        "volumeRatio": 10.851,
+        "ema20": 246.538733,
+        "ema50": 240.911125,
+        "lastTimestamp": "2026-07-27T19:45:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=10.85x; ICT=BULLISH/BOS_UP/NONE",
+        "ict": {
+          "bias": "BULLISH",
+          "structure": "RANGE",
+          "event": "BOS_UP",
+          "liquidity": "NONE",
+          "fvg": "BULLISH 248.2200~248.8500",
+          "score": 3
+        }
+      },
+      "reason": "3/6/12개월 절대 모멘텀 양수, 200일선 상단, 자산군 상대강도 84백분위, breakout=True; reclaim=False; volume=10.85x; ICT=BULLISH/BOS_UP/NONE",
+      "guardrail": "자동 추천은 주문이 아니다. 실시간 호가·슬리피지·공시·거래 가능 여부를 확인한다."
+    }
+  ],
   "topEvaluated": [
+    {
+      "ticker": "ENVA",
+      "name": "Enova International, Inc. Common Stock",
+      "dailyScore": 87.16,
+      "relativeStrengthPercentile": 0.8432203389830508,
+      "trigger": {
+        "ready": true,
+        "breakout": true,
+        "reclaim": false,
+        "volumeRatio": 10.851,
+        "ema20": 246.538733,
+        "ema50": 240.911125,
+        "lastTimestamp": "2026-07-27T19:45:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=10.85x; ICT=BULLISH/BOS_UP/NONE",
+        "ict": {
+          "bias": "BULLISH",
+          "structure": "RANGE",
+          "event": "BOS_UP",
+          "liquidity": "NONE",
+          "fvg": "BULLISH 248.2200~248.8500",
+          "score": 3
+        }
+      }
+    },
     {
       "ticker": "SYRE",
       "name": "Spyre Therapeutics, Inc. - Common Stock",
@@ -46,8 +167,8 @@
     {
       "ticker": "ORKA",
       "name": "Oruka Therapeutics, Inc. - Common Stock",
-      "dailyScore": 85.31,
-      "relativeStrengthPercentile": 0.9661016949152542,
+      "dailyScore": 85.52,
+      "relativeStrengthPercentile": 0.9703389830508474,
       "trigger": {
         "ready": false,
         "breakout": false,
@@ -116,10 +237,34 @@
       }
     },
     {
+      "ticker": "TWST",
+      "name": "Twist Bioscience Corporation - Common Stock",
+      "dailyScore": 81.92,
+      "relativeStrengthPercentile": 0.8983050847457628,
+      "trigger": {
+        "ready": false,
+        "breakout": false,
+        "reclaim": false,
+        "volumeRatio": 5.004,
+        "ema20": 86.821869,
+        "ema50": 88.791832,
+        "lastTimestamp": "2026-07-27T19:45:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=5.00x; ICT=NEUTRAL/CHOCH_UP/NONE",
+        "ict": {
+          "bias": "NEUTRAL",
+          "structure": "BEARISH_LH_LL",
+          "event": "CHOCH_UP",
+          "liquidity": "NONE",
+          "fvg": "BULLISH 86.4900~87.0000",
+          "score": 1
+        }
+      }
+    },
+    {
       "ticker": "ROIV",
       "name": "Roivant Sciences Ltd. - Common Shares",
-      "dailyScore": 81.49,
-      "relativeStrengthPercentile": 0.8898305084745762,
+      "dailyScore": 81.28,
+      "relativeStrengthPercentile": 0.885593220338983,
       "trigger": {
         "ready": false,
         "breakout": false,
@@ -142,8 +287,8 @@
     {
       "ticker": "PTGX",
       "name": "Protagonist Therapeutics, Inc. - Common Stock",
-      "dailyScore": 80.43,
-      "relativeStrengthPercentile": 0.8686440677966102,
+      "dailyScore": 80.64,
+      "relativeStrengthPercentile": 0.8728813559322034,
       "trigger": {
         "ready": false,
         "breakout": false,
@@ -164,34 +309,10 @@
       }
     },
     {
-      "ticker": "CORT",
-      "name": "Corcept Therapeutics Incorporated - Common Stock",
-      "dailyScore": 80.22,
-      "relativeStrengthPercentile": 0.864406779661017,
-      "trigger": {
-        "ready": false,
-        "breakout": false,
-        "reclaim": false,
-        "volumeRatio": 7.7,
-        "ema20": 91.293726,
-        "ema50": 92.562012,
-        "lastTimestamp": "2026-07-27T19:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=7.70x; ICT=NEUTRAL/CHOCH_UP/NONE",
-        "ict": {
-          "bias": "NEUTRAL",
-          "structure": "BEARISH_LH_LL",
-          "event": "CHOCH_UP",
-          "liquidity": "NONE",
-          "fvg": "BULLISH 90.8900~91.1900",
-          "score": 1
-        }
-      }
-    },
-    {
       "ticker": "DVA",
       "name": "DaVita Inc. Common Stock",
-      "dailyScore": 80.01,
-      "relativeStrengthPercentile": 0.8601694915254238,
+      "dailyScore": 80.43,
+      "relativeStrengthPercentile": 0.8686440677966102,
       "trigger": {
         "ready": false,
         "breakout": false,
@@ -208,6 +329,30 @@
           "liquidity": "SELL_SIDE_SWEEP",
           "fvg": "BEARISH 235.9700~235.9900",
           "score": -1
+        }
+      }
+    },
+    {
+      "ticker": "COGT",
+      "name": "Cogent Biosciences, Inc. - Common Stock",
+      "dailyScore": 79.8,
+      "relativeStrengthPercentile": 0.8559322033898306,
+      "trigger": {
+        "ready": false,
+        "breakout": false,
+        "reclaim": false,
+        "volumeRatio": 7.238,
+        "ema20": 40.467255,
+        "ema50": 40.237146,
+        "lastTimestamp": "2026-07-27T19:45:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=7.24x; ICT=BEARISH/NONE/BUY_SIDE_SWEEP",
+        "ict": {
+          "bias": "BEARISH",
+          "structure": "BEARISH_LH_LL",
+          "event": "NONE",
+          "liquidity": "BUY_SIDE_SWEEP",
+          "fvg": "BULLISH 40.5700~40.5800",
+          "score": -3
         }
       }
     },
@@ -236,26 +381,50 @@
       }
     },
     {
-      "ticker": "COGT",
-      "name": "Cogent Biosciences, Inc. - Common Stock",
-      "dailyScore": 79.37,
-      "relativeStrengthPercentile": 0.847457627118644,
+      "ticker": "CORT",
+      "name": "Corcept Therapeutics Incorporated - Common Stock",
+      "dailyScore": 78.95,
+      "relativeStrengthPercentile": 0.8389830508474576,
       "trigger": {
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 7.238,
-        "ema20": 40.467255,
-        "ema50": 40.237146,
+        "volumeRatio": 7.7,
+        "ema20": 91.293726,
+        "ema50": 92.562012,
         "lastTimestamp": "2026-07-27T19:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=7.24x; ICT=BEARISH/NONE/BUY_SIDE_SWEEP",
+        "reason": "breakout=False; reclaim=False; volume=7.70x; ICT=NEUTRAL/CHOCH_UP/NONE",
         "ict": {
-          "bias": "BEARISH",
+          "bias": "NEUTRAL",
+          "structure": "BEARISH_LH_LL",
+          "event": "CHOCH_UP",
+          "liquidity": "NONE",
+          "fvg": "BULLISH 90.8900~91.1900",
+          "score": 1
+        }
+      }
+    },
+    {
+      "ticker": "ACHC",
+      "name": "Acadia Healthcare Company, Inc. - Common Stock",
+      "dailyScore": 78.53,
+      "relativeStrengthPercentile": 0.8305084745762712,
+      "trigger": {
+        "ready": false,
+        "breakout": false,
+        "reclaim": false,
+        "volumeRatio": 7.977,
+        "ema20": 32.776966,
+        "ema50": 33.455531,
+        "lastTimestamp": "2026-07-27T19:45:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=7.98x; ICT=NEUTRAL/NONE/NONE",
+        "ict": {
+          "bias": "NEUTRAL",
           "structure": "BEARISH_LH_LL",
           "event": "NONE",
-          "liquidity": "BUY_SIDE_SWEEP",
-          "fvg": "BULLISH 40.5700~40.5800",
-          "score": -3
+          "liquidity": "NONE",
+          "fvg": "BULLISH 32.2600~32.3300",
+          "score": -1
         }
       }
     }
