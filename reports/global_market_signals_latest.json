@@ -1,20 +1,20 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-07-29T00:52:29.962682+09:00",
+  "generatedAtKst": "2026-07-29T02:42:12.514572+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
     "shortlistCount": 386,
     "dailyMetricsCount": 365,
-    "dailyCandidateCount": 16,
-    "intradayEvaluatedCount": 16,
+    "dailyCandidateCount": 17,
+    "intradayEvaluatedCount": 17,
     "signalCount": 0
   },
   "marketRegime": {
     "panic": false,
     "riskOff": false,
     "equityBelow200Count": 0,
-    "realizedVolatility20Annualized": 0.2055,
+    "realizedVolatility20Annualized": 0.2059,
     "reason": "광의 추세와 변동성 정상"
   },
   "signals": [],
@@ -28,18 +28,18 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.178,
-        "ema20": 238.234951,
-        "ema50": 237.190921,
-        "lastTimestamp": "2026-07-28T15:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.18x; ICT=NEUTRAL/NONE/NONE",
+        "volumeRatio": 0.609,
+        "ema20": 238.960264,
+        "ema50": 237.795303,
+        "lastTimestamp": "2026-07-28T17:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.61x; ICT=BULLISH/NONE/NONE",
         "ict": {
-          "bias": "NEUTRAL",
-          "structure": "RANGE",
+          "bias": "BULLISH",
+          "structure": "BULLISH_HH_HL",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BULLISH 236.3700~238.8000",
-          "score": 1
+          "fvg": "BULLISH 239.6800~239.6950",
+          "score": 3
         }
       }
     },
@@ -50,20 +50,20 @@
       "relativeStrengthPercentile": 0.8305084745762712,
       "trigger": {
         "ready": false,
-        "breakout": true,
+        "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.463,
-        "ema20": 257.8137,
-        "ema50": 255.98614,
-        "lastTimestamp": "2026-07-28T15:45:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=0.46x; ICT=BULLISH/BOS_UP/NONE",
+        "volumeRatio": 0.327,
+        "ema20": 258.561175,
+        "ema50": 256.811141,
+        "lastTimestamp": "2026-07-28T17:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.33x; ICT=NEUTRAL/CHOCH_DOWN/NONE",
         "ict": {
-          "bias": "BULLISH",
+          "bias": "NEUTRAL",
           "structure": "BULLISH_HH_HL",
-          "event": "BOS_UP",
+          "event": "CHOCH_DOWN",
           "liquidity": "NONE",
-          "fvg": "BULLISH 259.3800~260.6800",
-          "score": 5
+          "fvg": "BEARISH 259.5700~260.1200",
+          "score": -1
         }
       }
     },
@@ -76,18 +76,18 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.217,
-        "ema20": 89.869018,
-        "ema50": 90.827315,
-        "lastTimestamp": "2026-07-28T15:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.22x; ICT=NEUTRAL/NONE/NONE",
+        "volumeRatio": 0.359,
+        "ema20": 89.674472,
+        "ema50": 90.478582,
+        "lastTimestamp": "2026-07-28T17:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.36x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
-          "bias": "NEUTRAL",
-          "structure": "BEARISH_LH_LL",
-          "event": "NONE",
+          "bias": "BULLISH",
+          "structure": "RANGE",
+          "event": "BOS_UP",
           "liquidity": "NONE",
-          "fvg": "BULLISH 89.2450~89.3750",
-          "score": -1
+          "fvg": "BULLISH 88.9750~89.7925",
+          "score": 3
         }
       }
     },
@@ -100,18 +100,18 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.9,
-        "ema20": 96.957246,
-        "ema50": 98.679226,
-        "lastTimestamp": "2026-07-28T15:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.90x; ICT=NEUTRAL/NONE/NONE",
+        "volumeRatio": 0.101,
+        "ema20": 97.284948,
+        "ema50": 98.393927,
+        "lastTimestamp": "2026-07-28T17:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.10x; ICT=NEUTRAL/CHOCH_UP/NONE",
         "ict": {
           "bias": "NEUTRAL",
-          "structure": "RANGE",
-          "event": "NONE",
+          "structure": "BEARISH_LH_LL",
+          "event": "CHOCH_UP",
           "liquidity": "NONE",
-          "fvg": "BEARISH 94.1750~94.6000",
-          "score": -1
+          "fvg": "BULLISH 96.6600~97.8550",
+          "score": 1
         }
       }
     },
@@ -124,41 +124,89 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.144,
-        "ema20": 41.829981,
-        "ema50": 42.439428,
-        "lastTimestamp": "2026-07-28T15:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.14x; ICT=BEARISH/NONE/NONE",
+        "volumeRatio": 0.427,
+        "ema20": 41.587639,
+        "ema50": 42.174596,
+        "lastTimestamp": "2026-07-28T17:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.43x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
-          "bias": "BEARISH",
-          "structure": "BEARISH_LH_LL",
+          "bias": "NEUTRAL",
+          "structure": "BULLISH_HH_HL",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BEARISH 42.2000~42.5500",
-          "score": -3
+          "fvg": "BEARISH 41.4250~41.4700",
+          "score": 1
         }
       }
     },
     {
       "ticker": "DNTH",
       "name": "Dianthus Therapeutics, Inc. - Common Stock",
-      "dailyScore": 84.46,
-      "relativeStrengthPercentile": 0.9491525423728814,
+      "dailyScore": 84.67,
+      "relativeStrengthPercentile": 0.9533898305084746,
       "trigger": {
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.156,
-        "ema20": 103.94122,
-        "ema50": 104.372942,
-        "lastTimestamp": "2026-07-28T15:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.16x; ICT=NEUTRAL/NONE/NONE",
+        "volumeRatio": 0.336,
+        "ema20": 103.329768,
+        "ema50": 103.966586,
+        "lastTimestamp": "2026-07-28T17:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.34x; ICT=NEUTRAL/NONE/SELL_SIDE_SWEEP",
         "ict": {
           "bias": "NEUTRAL",
+          "structure": "BEARISH_LH_LL",
+          "event": "NONE",
+          "liquidity": "SELL_SIDE_SWEEP",
+          "fvg": "BEARISH 103.0000~103.1075",
+          "score": -1
+        }
+      }
+    },
+    {
+      "ticker": "TWST",
+      "name": "Twist Bioscience Corporation - Common Stock",
+      "dailyScore": 82.13,
+      "relativeStrengthPercentile": 0.902542372881356,
+      "trigger": {
+        "ready": false,
+        "breakout": false,
+        "reclaim": false,
+        "volumeRatio": 0.218,
+        "ema20": 86.498335,
+        "ema50": 87.495443,
+        "lastTimestamp": "2026-07-28T17:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.22x; ICT=BEARISH/BOS_DOWN/NONE",
+        "ict": {
+          "bias": "BEARISH",
           "structure": "RANGE",
+          "event": "BOS_DOWN",
+          "liquidity": "NONE",
+          "fvg": "BEARISH 87.0350~87.2200",
+          "score": -3
+        }
+      }
+    },
+    {
+      "ticker": "DAVE",
+      "name": "Dave Inc.  - Class A Common Stock",
+      "dailyScore": 81.7,
+      "relativeStrengthPercentile": 0.8940677966101694,
+      "trigger": {
+        "ready": false,
+        "breakout": false,
+        "reclaim": false,
+        "volumeRatio": 0.426,
+        "ema20": 396.959005,
+        "ema50": 400.317448,
+        "lastTimestamp": "2026-07-28T17:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.43x; ICT=NEUTRAL/NONE/NONE",
+        "ict": {
+          "bias": "NEUTRAL",
+          "structure": "BEARISH_LH_LL",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BEARISH 104.1600~104.2800",
+          "fvg": "BULLISH 394.8000~395.8700",
           "score": -1
         }
       }
@@ -172,89 +220,17 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.5,
-        "ema20": 34.256326,
-        "ema50": 34.615867,
-        "lastTimestamp": "2026-07-28T15:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.50x; ICT=NEUTRAL/NONE/NONE",
-        "ict": {
-          "bias": "NEUTRAL",
-          "structure": "BEARISH_LH_LL",
-          "event": "NONE",
-          "liquidity": "NONE",
-          "fvg": "BULLISH 33.8400~33.9100",
-          "score": -1
-        }
-      }
-    },
-    {
-      "ticker": "DAVE",
-      "name": "Dave Inc.  - Class A Common Stock",
-      "dailyScore": 81.28,
-      "relativeStrengthPercentile": 0.885593220338983,
-      "trigger": {
-        "ready": false,
-        "breakout": false,
-        "reclaim": false,
-        "volumeRatio": 0.142,
-        "ema20": 394.064464,
-        "ema50": 400.508618,
-        "lastTimestamp": "2026-07-28T15:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.14x; ICT=NEUTRAL/NONE/NONE",
-        "ict": {
-          "bias": "NEUTRAL",
-          "structure": "BEARISH_LH_LL",
-          "event": "NONE",
-          "liquidity": "NONE",
-          "fvg": "BULLISH 393.5600~393.5801",
-          "score": -1
-        }
-      }
-    },
-    {
-      "ticker": "PTGX",
-      "name": "Protagonist Therapeutics, Inc. - Common Stock",
-      "dailyScore": 80.86,
-      "relativeStrengthPercentile": 0.8771186440677966,
-      "trigger": {
-        "ready": false,
-        "breakout": false,
-        "reclaim": false,
-        "volumeRatio": 0.328,
-        "ema20": 135.8209,
-        "ema50": 136.201888,
-        "lastTimestamp": "2026-07-28T15:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.33x; ICT=NEUTRAL/NONE/NONE",
+        "volumeRatio": 0.305,
+        "ema20": 34.082945,
+        "ema50": 34.444273,
+        "lastTimestamp": "2026-07-28T17:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.31x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BULLISH 135.3900~135.7000",
-          "score": 1
-        }
-      }
-    },
-    {
-      "ticker": "TIGO",
-      "name": "Millicom International Cellular S.A. - Common Stock",
-      "dailyScore": 80.64,
-      "relativeStrengthPercentile": 0.8728813559322034,
-      "trigger": {
-        "ready": false,
-        "breakout": false,
-        "reclaim": false,
-        "volumeRatio": 0.852,
-        "ema20": 95.622502,
-        "ema50": 95.741721,
-        "lastTimestamp": "2026-07-28T15:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.85x; ICT=NEUTRAL/NONE/NONE",
-        "ict": {
-          "bias": "NEUTRAL",
-          "structure": "RANGE",
-          "event": "NONE",
-          "liquidity": "NONE",
-          "fvg": "BEARISH 95.6500~95.8700",
+          "fvg": "BEARISH 33.9400~33.9900",
           "score": -1
         }
       }
@@ -262,96 +238,168 @@
     {
       "ticker": "BTCZ",
       "name": "T-Rex 2X Inverse Bitcoin Daily Target ETF",
-      "dailyScore": 80.21,
-      "relativeStrengthPercentile": 0.8641975308641975,
+      "dailyScore": 81.44,
+      "relativeStrengthPercentile": 0.8888888888888888,
       "trigger": {
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.373,
-        "ema20": 5.496505,
-        "ema50": 5.443534,
-        "lastTimestamp": "2026-07-28T15:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.37x; ICT=NEUTRAL/NONE/NONE",
+        "volumeRatio": 0.617,
+        "ema20": 5.512424,
+        "ema50": 5.463608,
+        "lastTimestamp": "2026-07-28T17:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.62x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
-          "bias": "NEUTRAL",
-          "structure": "BULLISH_HH_HL",
-          "event": "NONE",
+          "bias": "BULLISH",
+          "structure": "RANGE",
+          "event": "BOS_UP",
           "liquidity": "NONE",
-          "fvg": "BEARISH 5.5498~5.5850",
-          "score": 1
+          "fvg": "BULLISH 5.5350~5.5399",
+          "score": 3
         }
       }
     },
     {
-      "ticker": "CORT",
-      "name": "Corcept Therapeutics Incorporated - Common Stock",
-      "dailyScore": 79.8,
-      "relativeStrengthPercentile": 0.8559322033898306,
+      "ticker": "PTGX",
+      "name": "Protagonist Therapeutics, Inc. - Common Stock",
+      "dailyScore": 80.64,
+      "relativeStrengthPercentile": 0.8728813559322034,
       "trigger": {
         "ready": false,
-        "breakout": true,
+        "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.134,
-        "ema20": 91.807283,
-        "ema50": 92.38409,
-        "lastTimestamp": "2026-07-28T15:45:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=0.13x; ICT=BULLISH/BOS_UP/NONE",
+        "volumeRatio": 0.287,
+        "ema20": 135.757806,
+        "ema50": 136.076084,
+        "lastTimestamp": "2026-07-28T17:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.29x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
-          "bias": "BULLISH",
-          "structure": "BULLISH_HH_HL",
-          "event": "BOS_UP",
+          "bias": "NEUTRAL",
+          "structure": "RANGE",
+          "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BULLISH 92.6200~92.8700",
-          "score": 5
+          "fvg": "BEARISH 135.7100~135.9100",
+          "score": -1
+        }
+      }
+    },
+    {
+      "ticker": "TIGO",
+      "name": "Millicom International Cellular S.A. - Common Stock",
+      "dailyScore": 80.22,
+      "relativeStrengthPercentile": 0.864406779661017,
+      "trigger": {
+        "ready": false,
+        "breakout": false,
+        "reclaim": false,
+        "volumeRatio": 0.33,
+        "ema20": 95.552785,
+        "ema50": 95.683251,
+        "lastTimestamp": "2026-07-28T17:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.33x; ICT=BEARISH/BOS_DOWN/NONE",
+        "ict": {
+          "bias": "BEARISH",
+          "structure": "RANGE",
+          "event": "BOS_DOWN",
+          "liquidity": "NONE",
+          "fvg": "BEARISH 95.3400~95.4400",
+          "score": -3
         }
       }
     },
     {
       "ticker": "COGT",
       "name": "Cogent Biosciences, Inc. - Common Stock",
+      "dailyScore": 79.8,
+      "relativeStrengthPercentile": 0.8559322033898306,
+      "trigger": {
+        "ready": false,
+        "breakout": false,
+        "reclaim": false,
+        "volumeRatio": 0.299,
+        "ema20": 39.742824,
+        "ema50": 39.892526,
+        "lastTimestamp": "2026-07-28T17:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.30x; ICT=BULLISH/BOS_UP/NONE",
+        "ict": {
+          "bias": "BULLISH",
+          "structure": "RANGE",
+          "event": "BOS_UP",
+          "liquidity": "NONE",
+          "fvg": "BULLISH 39.4000~39.7950",
+          "score": 3
+        }
+      }
+    },
+    {
+      "ticker": "ENVA",
+      "name": "Enova International, Inc. Common Stock",
       "dailyScore": 79.58,
       "relativeStrengthPercentile": 0.8516949152542372,
       "trigger": {
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.418,
-        "ema20": 39.779142,
-        "ema50": 39.962412,
-        "lastTimestamp": "2026-07-28T15:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.42x; ICT=BEARISH/NONE/NONE",
+        "volumeRatio": 0.084,
+        "ema20": 247.58999,
+        "ema50": 244.172457,
+        "lastTimestamp": "2026-07-28T17:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.08x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
-          "bias": "BEARISH",
-          "structure": "BEARISH_LH_LL",
+          "bias": "NEUTRAL",
+          "structure": "RANGE",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BEARISH 39.7100~39.7700",
-          "score": -3
+          "fvg": "BEARISH 247.9101~248.7800",
+          "score": -1
+        }
+      }
+    },
+    {
+      "ticker": "CORT",
+      "name": "Corcept Therapeutics Incorporated - Common Stock",
+      "dailyScore": 79.16,
+      "relativeStrengthPercentile": 0.8432203389830508,
+      "trigger": {
+        "ready": false,
+        "breakout": false,
+        "reclaim": false,
+        "volumeRatio": 0.169,
+        "ema20": 92.156841,
+        "ema50": 92.416892,
+        "lastTimestamp": "2026-07-28T17:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.17x; ICT=NEUTRAL/NONE/NONE",
+        "ict": {
+          "bias": "NEUTRAL",
+          "structure": "RANGE",
+          "event": "NONE",
+          "liquidity": "NONE",
+          "fvg": "BEARISH 92.4400~92.5300",
+          "score": -1
         }
       }
     },
     {
       "ticker": "ACHC",
       "name": "Acadia Healthcare Company, Inc. - Common Stock",
-      "dailyScore": 78.95,
-      "relativeStrengthPercentile": 0.8389830508474576,
+      "dailyScore": 78.74,
+      "relativeStrengthPercentile": 0.8347457627118644,
       "trigger": {
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.207,
-        "ema20": 32.634191,
-        "ema50": 33.170378,
-        "lastTimestamp": "2026-07-28T15:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.21x; ICT=NEUTRAL/NONE/NONE",
+        "volumeRatio": 0.376,
+        "ema20": 32.3877,
+        "ema50": 32.918743,
+        "lastTimestamp": "2026-07-28T17:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.38x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
-          "structure": "BULLISH_HH_HL",
+          "structure": "BEARISH_LH_LL",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BEARISH 32.4200~32.6250",
-          "score": 1
+          "fvg": "BULLISH 32.0380~32.1350",
+          "score": -1
         }
       }
     },
@@ -362,44 +410,20 @@
       "relativeStrengthPercentile": 0.826271186440678,
       "trigger": {
         "ready": false,
-        "breakout": true,
-        "reclaim": false,
-        "volumeRatio": 0.352,
-        "ema20": 416.769037,
-        "ema50": 413.921459,
-        "lastTimestamp": "2026-07-28T15:45:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=0.35x; ICT=BULLISH/BOS_UP/NONE",
-        "ict": {
-          "bias": "BULLISH",
-          "structure": "RANGE",
-          "event": "BOS_UP",
-          "liquidity": "NONE",
-          "fvg": "BULLISH 420.7450~424.4350",
-          "score": 3
-        }
-      }
-    },
-    {
-      "ticker": "LGND",
-      "name": "Ligand Pharmaceuticals Incorporated - Common Stock",
-      "dailyScore": 78.1,
-      "relativeStrengthPercentile": 0.8220338983050848,
-      "trigger": {
-        "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.215,
-        "ema20": 296.924562,
-        "ema50": 298.060859,
-        "lastTimestamp": "2026-07-28T15:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.22x; ICT=BULLISH/NONE/NONE",
+        "volumeRatio": 0.597,
+        "ema20": 419.180068,
+        "ema50": 415.863259,
+        "lastTimestamp": "2026-07-28T17:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.60x; ICT=BEARISH/NONE/NONE",
         "ict": {
-          "bias": "BULLISH",
-          "structure": "BULLISH_HH_HL",
+          "bias": "BEARISH",
+          "structure": "BEARISH_LH_LL",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BULLISH 297.0150~297.1700",
-          "score": 3
+          "fvg": "BEARISH 420.0300~423.5900",
+          "score": -3
         }
       }
     }
