@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-07-29T12:25:38.100831+09:00",
+  "generatedAtKst": "2026-07-29T15:15:43.206928+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
-    "shortlistCount": 381,
-    "dailyMetricsCount": 361,
-    "dailyCandidateCount": 12,
-    "intradayEvaluatedCount": 12,
-    "signalCount": 1
+    "shortlistCount": 383,
+    "dailyMetricsCount": 363,
+    "dailyCandidateCount": 15,
+    "intradayEvaluatedCount": 15,
+    "signalCount": 3
   },
   "marketRegime": {
     "panic": false,
@@ -19,9 +19,201 @@
   },
   "signals": [
     {
+      "id": "2026-07-29-TWST-LONG-EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
+      "date": "2026-07-29",
+      "generatedAtKst": "2026-07-29T15:15:43.206928+09:00",
+      "signalTimestamp": "2026-07-28T19:45:00+00:00",
+      "assetClass": "US_STOCK",
+      "market": "US",
+      "ticker": "TWST",
+      "name": "Twist Bioscience Corporation - Common Stock",
+      "direction": "LONG",
+      "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM: 절대추세+상대모멘텀+15분 트리거+변동성 목표",
+      "strategyType": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
+      "referencePrice": 88.550003,
+      "currentPrice": 88.550003,
+      "previousClose": 86.540001,
+      "todayChangePct": 2.323,
+      "recentCloses": [
+        80.790001,
+        84.949997,
+        82.870003,
+        87.559998,
+        85.169998,
+        85.0,
+        91.349998,
+        96.650002,
+        99.839996,
+        98.360001,
+        102.879997,
+        102.25,
+        99.239998,
+        99.93,
+        91.029999,
+        89.379997,
+        93.669998,
+        90.639999,
+        90.349998,
+        92.529999,
+        92.610001,
+        91.230003,
+        93.849998,
+        87.449997,
+        95.860001,
+        94.209999,
+        92.440002,
+        90.269997,
+        86.540001,
+        88.550003
+      ],
+      "currency": "USD",
+      "status": "ACTIVE_SIGNAL",
+      "score": 92.2,
+      "confidence": 9.2,
+      "relativeStrengthPercentile": 0.9034,
+      "entryLow": 87.664503,
+      "entryHigh": 89.856175,
+      "stopLoss": 74.18211,
+      "target1": 117.285789,
+      "target2": 134.527261,
+      "riskPct": 16.23,
+      "volatilityTargetExposurePct": 18.5,
+      "regime": {
+        "panic": false,
+        "riskOff": false,
+        "equityBelow200Count": 0,
+        "realizedVolatility20Annualized": 0.2065,
+        "reason": "광의 추세와 변동성 정상"
+      },
+      "ict": {
+        "bias": "BULLISH",
+        "structure": "BULLISH_HH_HL",
+        "event": "BOS_UP",
+        "liquidity": "NONE",
+        "fvg": "BULLISH 86.6400~87.1700",
+        "score": 5
+      },
+      "trigger": {
+        "ready": true,
+        "breakout": true,
+        "reclaim": false,
+        "volumeRatio": 5.432,
+        "ema20": 86.824003,
+        "ema50": 87.330623,
+        "lastTimestamp": "2026-07-28T19:45:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=5.43x; ICT=BULLISH/BOS_UP/NONE",
+        "ict": {
+          "bias": "BULLISH",
+          "structure": "BULLISH_HH_HL",
+          "event": "BOS_UP",
+          "liquidity": "NONE",
+          "fvg": "BULLISH 86.6400~87.1700",
+          "score": 5
+        }
+      },
+      "reason": "3/6/12개월 절대 모멘텀 양수, 200일선 상단, 자산군 상대강도 90백분위, breakout=True; reclaim=False; volume=5.43x; ICT=BULLISH/BOS_UP/NONE",
+      "guardrail": "자동 추천은 주문이 아니다. 실시간 호가·슬리피지·공시·거래 가능 여부를 확인한다."
+    },
+    {
+      "id": "2026-07-29-DAVE-LONG-EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
+      "date": "2026-07-29",
+      "generatedAtKst": "2026-07-29T15:15:43.206928+09:00",
+      "signalTimestamp": "2026-07-28T19:45:00+00:00",
+      "assetClass": "US_STOCK",
+      "market": "US",
+      "ticker": "DAVE",
+      "name": "Dave Inc.  - Class A Common Stock",
+      "direction": "LONG",
+      "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM: 절대추세+상대모멘텀+15분 트리거+변동성 목표",
+      "strategyType": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
+      "referencePrice": 406.450012,
+      "currentPrice": 406.450012,
+      "previousClose": 405.649994,
+      "todayChangePct": 0.197,
+      "recentCloses": [
+        308.75,
+        298.519989,
+        285.839996,
+        314.440002,
+        309.720001,
+        317.970001,
+        323.220001,
+        322.75,
+        348.709991,
+        371.619995,
+        372.589996,
+        383.130005,
+        387.359985,
+        396.0,
+        383.959991,
+        375.51001,
+        390.140015,
+        400.75,
+        389.559998,
+        417.0,
+        438.190002,
+        442.529999,
+        440.420013,
+        438.279999,
+        438.899994,
+        423.660004,
+        408.589996,
+        402.809998,
+        405.649994,
+        406.450012
+      ],
+      "currency": "USD",
+      "status": "ACTIVE_SIGNAL",
+      "score": 87.1,
+      "confidence": 8.7,
+      "relativeStrengthPercentile": 0.8824,
+      "entryLow": 402.385512,
+      "entryHigh": 411.542007,
+      "stopLoss": 350.438073,
+      "target1": 518.473891,
+      "target2": 585.688219,
+      "riskPct": 13.78,
+      "volatilityTargetExposurePct": 26.9,
+      "regime": {
+        "panic": false,
+        "riskOff": false,
+        "equityBelow200Count": 0,
+        "realizedVolatility20Annualized": 0.2065,
+        "reason": "광의 추세와 변동성 정상"
+      },
+      "ict": {
+        "bias": "BULLISH",
+        "structure": "RANGE",
+        "event": "BOS_UP",
+        "liquidity": "NONE",
+        "fvg": "BULLISH 397.3950~397.4200",
+        "score": 3
+      },
+      "trigger": {
+        "ready": true,
+        "breakout": true,
+        "reclaim": false,
+        "volumeRatio": 5.557,
+        "ema20": 397.643481,
+        "ema50": 399.55034,
+        "lastTimestamp": "2026-07-28T19:45:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=5.56x; ICT=BULLISH/BOS_UP/NONE",
+        "ict": {
+          "bias": "BULLISH",
+          "structure": "RANGE",
+          "event": "BOS_UP",
+          "liquidity": "NONE",
+          "fvg": "BULLISH 397.3950~397.4200",
+          "score": 3
+        }
+      },
+      "reason": "3/6/12개월 절대 모멘텀 양수, 200일선 상단, 자산군 상대강도 88백분위, breakout=True; reclaim=False; volume=5.56x; ICT=BULLISH/BOS_UP/NONE",
+      "guardrail": "자동 추천은 주문이 아니다. 실시간 호가·슬리피지·공시·거래 가능 여부를 확인한다."
+    },
+    {
       "id": "2026-07-29-KRYS-LONG-EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
       "date": "2026-07-29",
-      "generatedAtKst": "2026-07-29T12:25:38.100831+09:00",
+      "generatedAtKst": "2026-07-29T15:15:43.206928+09:00",
       "signalTimestamp": "2026-07-28T19:45:00+00:00",
       "assetClass": "US_STOCK",
       "market": "US",
@@ -35,7 +227,6 @@
       "previousClose": 351.820007,
       "todayChangePct": 3.527,
       "recentCloses": [
-        317.970001,
         324.75,
         323.369995,
         341.660004,
@@ -63,6 +254,7 @@
         339.059998,
         336.799988,
         327.5,
+        335.190002,
         351.820007,
         364.230011
       ],
@@ -72,12 +264,12 @@
       "confidence": 8.0,
       "relativeStrengthPercentile": 0.8235,
       "entryLow": 360.587711,
-      "entryHigh": 367.51332,
-      "stopLoss": 328.113608,
-      "target1": 436.462817,
-      "target2": 479.8025,
-      "riskPct": 9.92,
-      "volatilityTargetExposurePct": 24.8,
+      "entryHigh": 367.387017,
+      "stopLoss": 329.502948,
+      "target1": 433.684137,
+      "target2": 475.356613,
+      "riskPct": 9.53,
+      "volatilityTargetExposurePct": 26.9,
       "regime": {
         "panic": false,
         "riskOff": false,
@@ -143,8 +335,8 @@
     {
       "ticker": "JAZZ",
       "name": "Jazz Pharmaceuticals plc - Ordinary Shares",
-      "dailyScore": 86.81,
-      "relativeStrengthPercentile": 0.8361344537815126,
+      "dailyScore": 86.6,
+      "relativeStrengthPercentile": 0.8319327731092437,
       "trigger": {
         "ready": false,
         "breakout": false,
@@ -237,6 +429,30 @@
       }
     },
     {
+      "ticker": "TWST",
+      "name": "Twist Bioscience Corporation - Common Stock",
+      "dailyScore": 82.17,
+      "relativeStrengthPercentile": 0.9033613445378151,
+      "trigger": {
+        "ready": true,
+        "breakout": true,
+        "reclaim": false,
+        "volumeRatio": 5.432,
+        "ema20": 86.824003,
+        "ema50": 87.330623,
+        "lastTimestamp": "2026-07-28T19:45:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=5.43x; ICT=BULLISH/BOS_UP/NONE",
+        "ict": {
+          "bias": "BULLISH",
+          "structure": "BULLISH_HH_HL",
+          "event": "BOS_UP",
+          "liquidity": "NONE",
+          "fvg": "BULLISH 86.6400~87.1700",
+          "score": 5
+        }
+      }
+    },
+    {
       "ticker": "BTCZ",
       "name": "T-Rex 2X Inverse Bitcoin Daily Target ETF",
       "dailyScore": 81.44,
@@ -261,10 +477,34 @@
       }
     },
     {
+      "ticker": "DAVE",
+      "name": "Dave Inc.  - Class A Common Stock",
+      "dailyScore": 81.12,
+      "relativeStrengthPercentile": 0.8823529411764706,
+      "trigger": {
+        "ready": true,
+        "breakout": true,
+        "reclaim": false,
+        "volumeRatio": 5.557,
+        "ema20": 397.643481,
+        "ema50": 399.55034,
+        "lastTimestamp": "2026-07-28T19:45:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=5.56x; ICT=BULLISH/BOS_UP/NONE",
+        "ict": {
+          "bias": "BULLISH",
+          "structure": "RANGE",
+          "event": "BOS_UP",
+          "liquidity": "NONE",
+          "fvg": "BULLISH 397.3950~397.4200",
+          "score": 3
+        }
+      }
+    },
+    {
       "ticker": "ROIV",
       "name": "Roivant Sciences Ltd. - Common Shares",
-      "dailyScore": 80.91,
-      "relativeStrengthPercentile": 0.8781512605042017,
+      "dailyScore": 80.7,
+      "relativeStrengthPercentile": 0.8739495798319328,
       "trigger": {
         "ready": false,
         "breakout": false,
@@ -287,8 +527,8 @@
     {
       "ticker": "TIGO",
       "name": "Millicom International Cellular S.A. - Common Stock",
-      "dailyScore": 79.86,
-      "relativeStrengthPercentile": 0.8571428571428571,
+      "dailyScore": 79.65,
+      "relativeStrengthPercentile": 0.8529411764705882,
       "trigger": {
         "ready": false,
         "breakout": false,
@@ -305,6 +545,30 @@
           "liquidity": "BUY_SIDE_SWEEP",
           "fvg": "BULLISH 95.3400~95.5700",
           "score": -1
+        }
+      }
+    },
+    {
+      "ticker": "HNGE",
+      "name": "Hinge Health, Inc. Class A Common Stock",
+      "dailyScore": 78.81,
+      "relativeStrengthPercentile": 0.8361344537815126,
+      "trigger": {
+        "ready": false,
+        "breakout": false,
+        "reclaim": false,
+        "volumeRatio": 2.47,
+        "ema20": 74.918625,
+        "ema50": 75.067222,
+        "lastTimestamp": "2026-07-28T19:45:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=2.47x; ICT=NEUTRAL/NONE/NONE",
+        "ict": {
+          "bias": "NEUTRAL",
+          "structure": "BULLISH_HH_HL",
+          "event": "NONE",
+          "liquidity": "NONE",
+          "fvg": "BEARISH 75.2100~75.3100",
+          "score": 1
         }
       }
     },
@@ -333,26 +597,26 @@
       }
     },
     {
-      "ticker": "LGND",
-      "name": "Ligand Pharmaceuticals Incorporated - Common Stock",
+      "ticker": "MOG-A",
+      "name": "Moog Inc. Class A Common Stock",
       "dailyScore": 78.39,
       "relativeStrengthPercentile": 0.8277310924369747,
       "trigger": {
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 4.707,
-        "ema20": 296.553018,
-        "ema50": 297.349325,
+        "volumeRatio": 2.289,
+        "ema20": 417.5803,
+        "ema50": 416.061071,
         "lastTimestamp": "2026-07-28T19:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=4.71x; ICT=NEUTRAL/NONE/SELL_SIDE_SWEEP",
+        "reason": "breakout=False; reclaim=False; volume=2.29x; ICT=BEARISH/BOS_DOWN/NONE",
         "ict": {
-          "bias": "NEUTRAL",
-          "structure": "BEARISH_LH_LL",
-          "event": "NONE",
-          "liquidity": "SELL_SIDE_SWEEP",
-          "fvg": "BULLISH 296.0500~296.6600",
-          "score": 1
+          "bias": "BEARISH",
+          "structure": "RANGE",
+          "event": "BOS_DOWN",
+          "liquidity": "NONE",
+          "fvg": "BEARISH 416.0675~417.3100",
+          "score": -3
         }
       }
     },
