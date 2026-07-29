@@ -45,10 +45,13 @@ REPORTS = ROOT / "reports"
 SHORTLIST_PATH = REPORTS / "global_market_shortlist.json"
 LATEST_PATH = REPORTS / "global_market_signals_latest.json"
 HISTORY_PATH = REPORTS / "global_market_recommendation_history.json"
+DAILY_STATE_PATH = REPORTS / "global_market_daily_state.json"
 SCHEMA_VERSION = 1
 FAST_INTRADAY_LIMIT = 90
 MAX_SIGNALS = 12
 HISTORY_LIMIT = 600
+DAILY_CACHE_MINUTES = 55
+MAX_SIGNAL_AGE_MINUTES = 45
 
 
 def now_kst() -> dt.datetime:
@@ -182,6 +185,54 @@ def fetch_daily(instruments: list[Instrument]) -> list[dict[str, Any]]:
     return metrics
 
 
+def load_or_refresh_daily_state(instruments: list[Instrument]) -> tuple[list[dict[str, Any]], dict[str, Any], bool]:
+    cached = read_json(DAILY_STATE_PATH, {})
+    cached_metrics = cached.get("metrics") or []
+    cached_regime = cached.get("marketRegime") or {}
+    generated_text = str(cached.get("generatedAtKst") or "")
+    cache_fresh = False
+    if cached_metrics and cached_regime and generated_text:
+        try:
+            generated_at = dt.datetime.fromisoformat(generated_text)
+            age = now_kst() - generated_at.astimezone(KST)
+            cache_fresh = dt.timedelta(0) <= age <= dt.timedelta(minutes=DAILY_CACHE_MINUTES)
+        except (TypeError, ValueError):
+            cache_fresh = False
+    if cache_fresh:
+        return list(cached_metrics), dict(cached_regime), True
+
+    metrics = fetch_daily(instruments)
+    regime = market_regime({row["ticker"]: row for row in metrics})
+    write_json(
+        DAILY_STATE_PATH,
+        {
+            "schemaVersion": SCHEMA_VERSION,
+            "generatedAtKst": now_kst().isoformat(),
+            "instrumentCount": len(instruments),
+            "metricCount": len(metrics),
+            "marketRegime": regime,
+            "metrics": metrics,
+        },
+    )
+    return metrics, regime, False
+
+
+def trigger_freshness(trigger: dict[str, Any]) -> tuple[bool, float | None]:
+    timestamp = trigger.get("lastTimestamp")
+    if not timestamp:
+        return False, None
+    try:
+        candle_time = pd.Timestamp(timestamp)
+        if candle_time.tzinfo is None:
+            candle_time = candle_time.tz_localize("UTC")
+        else:
+            candle_time = candle_time.tz_convert("UTC")
+        age_minutes = max(0.0, (pd.Timestamp.now(tz="UTC") - candle_time).total_seconds() / 60.0)
+        return age_minutes <= MAX_SIGNAL_AGE_MINUTES, round(age_minutes, 1)
+    except (TypeError, ValueError):
+        return False, None
+
+
 def fetch_intraday(candidates: list[dict[str, Any]], instruments: list[Instrument]) -> dict[str, pd.DataFrame]:
     lookup = {item.ticker: item for item in instruments}
     selected = candidates[:FAST_INTRADAY_LIMIT]
@@ -235,9 +286,7 @@ def update_history(signals: list[dict[str, Any]], metrics: list[dict[str, Any]])
 
 def run_scan(instruments: list[Instrument]) -> dict[str, Any]:
     generated = now_kst().isoformat()
-    metrics = fetch_daily(instruments)
-    by_ticker = {row["ticker"]: row for row in metrics}
-    regime = market_regime(by_ticker)
+    metrics, regime, daily_cache_hit = load_or_refresh_daily_state(instruments)
     candidates = sorted(
         [
             row
@@ -266,7 +315,10 @@ def run_scan(instruments: list[Instrument]) -> dict[str, Any]:
                 "trigger": trigger,
             }
         )
-        if trigger.get("ready"):
+        fresh, age_minutes = trigger_freshness(trigger)
+        trigger["fresh"] = fresh
+        trigger["ageMinutes"] = age_minutes
+        if trigger.get("ready") and fresh:
             signals.append(build_signal(item, trigger, regime, generated))
     signals = sorted(signals, key=lambda row: (float(row.get("score") or 0), float(row.get("confidence") or 0)), reverse=True)[:MAX_SIGNALS]
     history = update_history(signals, metrics)
@@ -281,6 +333,8 @@ def run_scan(instruments: list[Instrument]) -> dict[str, Any]:
             "dailyCandidateCount": len(candidates),
             "intradayEvaluatedCount": min(len(candidates), FAST_INTRADAY_LIMIT),
             "signalCount": len(signals),
+            "dailyCacheHit": daily_cache_hit,
+            "maxSignalAgeMinutes": MAX_SIGNAL_AGE_MINUTES,
         },
         "marketRegime": regime,
         "signals": signals,
