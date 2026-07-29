@@ -256,8 +256,18 @@ def update_history(signals: list[dict[str, Any]], metrics: list[dict[str, Any]])
         {"schemaVersion": SCHEMA_VERSION, "coverageStart": "", "coverageEnd": "", "recordCount": 0, "recommendations": []},
     )
     by_id = {str(row.get("id")): dict(row) for row in current.get("recommendations") or [] if row.get("id")}
+    active_ids = {str(signal["id"]) for signal in signals}
     for signal in signals:
         by_id[str(signal["id"])] = dict(signal)
+    for key, row in list(by_id.items()):
+        if (
+            row.get("strategyType") == STRATEGY_NAME
+            and row.get("status") == "ACTIVE_SIGNAL"
+            and key not in active_ids
+        ):
+            row["status"] = "EXPIRED_SIGNAL"
+            row["expiredAtKst"] = now_kst().isoformat()
+            by_id[key] = row
     price_by_ticker = {row["ticker"]: row for row in metrics}
     for key, row in list(by_id.items()):
         metric = price_by_ticker.get(row.get("ticker"))
