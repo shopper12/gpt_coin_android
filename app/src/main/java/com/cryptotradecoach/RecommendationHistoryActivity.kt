@@ -1,5 +1,6 @@
 package com.cryptotradecoach
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -35,6 +36,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.cryptotradecoach.data.MyStocksRepository
+import com.cryptotradecoach.data.WatchlistItem
 import com.cryptotradecoach.data.WorkflowDispatchRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -48,11 +51,29 @@ class RecommendationHistoryActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val workflowRepository = WorkflowDispatchRepository(this)
+        val myStocksRepository = MyStocksRepository(this)
         setContent {
             MaterialTheme {
                 RecommendationHistoryScreen(
                     onBack = { finish() },
                     onPriceRefresh = { workflowRepository.dispatchRecommendationPriceRefresh() },
+                    onOpenMyStocks = { startActivity(Intent(this, MyStocksActivity::class.java)) },
+                    initialWatchlistTickers = myStocksRepository.loadWatchlist().map { it.key }.toSet(),
+                    onAddToMyStocks = { record ->
+                        myStocksRepository.addWatchlist(
+                            WatchlistItem(
+                                ticker = record.ticker,
+                                name = record.name,
+                                market = record.market,
+                                assetClass = record.assetClass,
+                                currency = record.currency,
+                                direction = record.direction,
+                                referencePrice = record.referencePrice,
+                                currentPrice = record.currentPrice,
+                                sourceRecommendationId = record.id,
+                            )
+                        )
+                    },
                 )
             }
         }
@@ -72,6 +93,7 @@ private data class RecommendationRecord(
     val date: String,
     val generatedAtKst: String,
     val assetClass: String,
+    val market: String,
     val ticker: String,
     val name: String,
     val direction: String,
@@ -121,6 +143,9 @@ private data class HistoryUiState(
 private fun RecommendationHistoryScreen(
     onBack: () -> Unit,
     onPriceRefresh: suspend () -> String,
+    onOpenMyStocks: () -> Unit,
+    initialWatchlistTickers: Set<String>,
+    onAddToMyStocks: (RecommendationRecord) -> Boolean,
 ) {
     val scope = rememberCoroutineScope()
     val tableScrollState = rememberScrollState()
@@ -130,6 +155,7 @@ private fun RecommendationHistoryScreen(
     var sortKey by remember { mutableStateOf(HistorySortKey.DATE) }
     var sortDescending by remember { mutableStateOf(true) }
     var priceRefreshRunning by remember { mutableStateOf(false) }
+    var watchlistTickers by remember { mutableStateOf(initialWatchlistTickers) }
 
     fun refresh() {
         scope.launch {
@@ -164,6 +190,21 @@ private fun RecommendationHistoryScreen(
         }
     }
 
+    fun addToMyStocks(record: RecommendationRecord) {
+        runCatching { onAddToMyStocks(record) }
+            .onSuccess { saved ->
+                if (saved) {
+                    watchlistTickers = watchlistTickers + record.ticker.uppercase()
+                    state = state.copy(message = "${record.name}(${record.ticker})을 내 종목의 관심종목에 담았습니다.", error = null)
+                } else {
+                    state = state.copy(error = "관심종목을 저장하지 못했습니다.", message = null)
+                }
+            }
+            .onFailure {
+                state = state.copy(error = it.message ?: it.javaClass.simpleName, message = null)
+            }
+    }
+
     LaunchedEffect(Unit) { refresh() }
 
     val filtered = state.records.filter { record ->
@@ -186,8 +227,12 @@ private fun RecommendationHistoryScreen(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         item {
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
                 OutlinedButton(onClick = onBack) { Text("← 홈") }
+                OutlinedButton(onClick = onOpenMyStocks) { Text("내 종목 열기") }
                 Button(onClick = { refresh() }, enabled = !state.loading) {
                     Text(if (state.loading) "불러오는 중" else "추천 목록 새로고침")
                 }
@@ -216,7 +261,7 @@ private fun RecommendationHistoryScreen(
                 modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
             ) {
-                listOf("ALL", "KR_STOCK", "US_STOCK", "ETF", "BOND", "COMMODITY", "FX", "CRYPTO").forEach { key ->
+                listOf("ALL", "KR_ETF", "KR_STOCK", "US_STOCK", "ETF", "BOND", "COMMODITY", "FX", "CRYPTO").forEach { key ->
                     FilterChip(selected = assetFilter == key, onClick = { assetFilter = key }, label = { Text(key) })
                 }
             }
@@ -265,7 +310,13 @@ private fun RecommendationHistoryScreen(
                     modifier = Modifier.fillMaxWidth().horizontalScroll(tableScrollState),
                 ) {
                     RecommendationTableHeader()
-                    sorted.forEach { record -> RecommendationTableRow(record) }
+                    sorted.forEach { record ->
+                        RecommendationTableRow(
+                            record = record,
+                            saved = record.ticker.uppercase() in watchlistTickers,
+                            onAddToMyStocks = { addToMyStocks(record) },
+                        )
+                    }
                 }
             }
         }
@@ -276,6 +327,7 @@ private fun RecommendationHistoryScreen(
 private fun RecommendationTableHeader() {
     Row(modifier = Modifier.padding(vertical = 8.dp)) {
         TableCell("종목", 190.dp, true)
+        TableCell("내 종목", 120.dp, true)
         TableCell("현재가", 130.dp, true)
         TableCell("추천가", 130.dp, true)
         TableCell("추천가부터 수익률", 150.dp, true)
@@ -292,9 +344,20 @@ private fun RecommendationTableHeader() {
 }
 
 @Composable
-private fun RecommendationTableRow(record: RecommendationRecord) {
+private fun RecommendationTableRow(
+    record: RecommendationRecord,
+    saved: Boolean,
+    onAddToMyStocks: () -> Unit,
+) {
     Row(modifier = Modifier.padding(vertical = 6.dp)) {
         TableCell("${record.name} (${record.ticker})", 190.dp, true)
+        OutlinedButton(
+            onClick = onAddToMyStocks,
+            enabled = !saved,
+            modifier = Modifier.width(120.dp).padding(horizontal = 4.dp),
+        ) {
+            Text(if (saved) "담김" else "내 종목 담기", maxLines = 1)
+        }
         TableCell(price(record.currentPrice, record.currency), 130.dp)
         TableCell(price(record.referencePrice, record.currency), 130.dp)
         TableCell(record.returnPct?.let { signed(it) } ?: if (record.isExecuted) "계산 불가" else "미체결", 150.dp, true)
@@ -427,6 +490,7 @@ private fun parseHistory(text: String, sourceLabel: String): HistoryPayload {
                     date = item.optString("date"),
                     generatedAtKst = item.optString("generatedAtKst"),
                     assetClass = normalizeAssetClass(item.optString("assetClass", "UNKNOWN")),
+                    market = item.optString("market"),
                     ticker = item.optString("ticker"),
                     name = item.optString("name", item.optString("ticker")),
                     direction = item.optString("direction", "LONG"),
@@ -455,6 +519,7 @@ private fun normalizeAssetClass(value: String): String {
     return when (value.uppercase()) {
         "US STOCK" -> "US_STOCK"
         "KR STOCK" -> "KR_STOCK"
+        "KR ETF" -> "KR_ETF"
         "EQUITY ETF" -> "ETF"
         "PRECIOUS METAL", "ENERGY COMMODITY", "COMMODITY BASKET", "AGRICULTURE" -> "COMMODITY"
         else -> value.uppercase().ifBlank { "UNKNOWN" }

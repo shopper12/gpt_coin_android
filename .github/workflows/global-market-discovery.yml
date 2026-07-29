@@ -10,6 +10,7 @@ on:
       - 'tools/global_market_strategy.py'
       - 'tools/global_market_universe.py'
       - 'tools/global_market_monitor.py'
+      - 'tools/test_global_market_monitor.py'
       - '.github/workflows/global-market-discovery.yml'
 
 permissions:
@@ -45,7 +46,11 @@ jobs:
           python -m py_compile \
             tools/global_market_strategy.py \
             tools/global_market_universe.py \
-            tools/global_market_monitor.py
+            tools/global_market_monitor.py \
+            tools/test_global_market_monitor.py
+
+      - name: Test Korean ETF monitoring guarantees
+        run: python -m unittest tools/test_global_market_monitor.py
 
       - name: Discover all listed symbols and rebuild liquid shortlist
         env:
@@ -55,6 +60,7 @@ jobs:
             --mode full \
             --us-limit 1200 \
             --kr-limit 800 \
+            --kr-etf-limit 180 \
             --shortlist-size 300
 
       - name: Commit shortlist, signals and history

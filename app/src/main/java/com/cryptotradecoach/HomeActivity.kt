@@ -51,6 +51,7 @@ class HomeActivity : ComponentActivity() {
                     onCoin = { startActivity(Intent(this, MainActivity::class.java)) },
                     onStock = { startActivity(Intent(this, StockActivity::class.java)) },
                     onRecommendationHistory = { startActivity(Intent(this, RecommendationHistoryActivity::class.java)) },
+                    onMyStocks = { startActivity(Intent(this, MyStocksActivity::class.java)) },
                     onBtcMonitor = { startActivity(Intent(this, BacktestMonitorActivity::class.java)) },
                     onWorkflow = { workflowRepository.dispatchUnifiedStrategyMonitor() },
                 )
@@ -73,6 +74,7 @@ private fun UnifiedHomeScreen(
     onCoin: () -> Unit,
     onStock: () -> Unit,
     onRecommendationHistory: () -> Unit,
+    onMyStocks: () -> Unit,
     onBtcMonitor: () -> Unit,
     onWorkflow: suspend () -> String,
 ) {
@@ -119,9 +121,17 @@ private fun UnifiedHomeScreen(
         item {
             HomeCard(
                 title = "통합 추천·자동 매매 시그널",
-                description = "기존 추천과 전세계 주식·ETF·채권·원자재·FX·코인 자동 시그널을 한 줄 표로 확인합니다. 새 시그널은 고우선순위 알림으로 표시됩니다.",
+                description = "한국 ETF 전용 슬롯을 포함한 주식·ETF·채권·원자재·FX·코인 자동 시그널을 한 줄 표로 확인합니다. 새 시그널은 고우선순위 알림으로 표시됩니다.",
                 button = "추천 목록 열기",
                 onClick = onRecommendationHistory,
+            )
+        }
+        item {
+            HomeCard(
+                title = "내 종목",
+                description = "추천 목록에서 담은 종목과 직접 추가한 관심종목을 관리하고, 한국투자증권 Open API에서 실제 보유종목을 읽기 전용으로 동기화합니다.",
+                button = "내 종목 열기",
+                onClick = onMyStocks,
             )
         }
         item {

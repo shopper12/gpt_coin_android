@@ -6,10 +6,13 @@ on:
     branches: [ main ]
     paths:
       - 'app/src/main/java/com/cryptotradecoach/HomeActivity.kt'
+      - 'app/src/main/java/com/cryptotradecoach/MyStocksActivity.kt'
       - 'app/src/main/java/com/cryptotradecoach/RecommendationHistoryActivity.kt'
+      - 'app/src/main/java/com/cryptotradecoach/data/MyStocksRepository.kt'
       - 'app/src/main/java/com/cryptotradecoach/service/GlobalMarketSignalWorker.kt'
       - 'app/src/main/java/com/cryptotradecoach/service/GlobalMarketSignalScheduler.kt'
       - 'app/src/main/java/com/cryptotradecoach/service/SignalNotificationHelper.kt'
+      - 'app/src/main/AndroidManifest.xml'
       - 'app/build.gradle.kts'
       - '.github/workflows/global-market-android-verify.yml'
 
@@ -63,7 +66,7 @@ jobs:
               'workflow_run_id': os.environ['GITHUB_RUN_ID'],
               'workflow_run_number': int(os.environ['GITHUB_RUN_NUMBER']),
               'task': ':app:compileDebugKotlin',
-              'scope': 'global market monitor, recommendation list and notification worker',
+              'scope': 'Korean ETF monitor, recommendation list, my stocks and KIS holdings',
           }
           Path('reports/global_market_android_status.json').write_text(
               json.dumps(payload, ensure_ascii=False, indent=2) + '\n',

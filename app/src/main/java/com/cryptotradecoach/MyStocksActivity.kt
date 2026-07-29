@@ -1,0 +1,429 @@
+package com.cryptotradecoach
+
+import android.content.Intent
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.unit.dp
+import com.cryptotradecoach.data.KisCredentials
+import com.cryptotradecoach.data.KisHolding
+import com.cryptotradecoach.data.KisHoldingsSnapshot
+import com.cryptotradecoach.data.MyStocksRepository
+import com.cryptotradecoach.data.WatchlistItem
+import kotlinx.coroutines.launch
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.Locale
+
+class MyStocksActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val repository = MyStocksRepository(this)
+        setContent {
+            MaterialTheme {
+                MyStocksScreen(
+                    repository = repository,
+                    onBack = { finish() },
+                    onRecommendations = {
+                        startActivity(Intent(this, RecommendationHistoryActivity::class.java))
+                    },
+                )
+            }
+        }
+    }
+}
+
+private enum class MyStocksTab(val label: String) {
+    WATCHLIST("관심종목"),
+    HOLDINGS("보유종목"),
+    KIS_SETTINGS("한투 설정"),
+}
+
+@Composable
+private fun MyStocksScreen(
+    repository: MyStocksRepository,
+    onBack: () -> Unit,
+    onRecommendations: () -> Unit,
+) {
+    val scope = rememberCoroutineScope()
+    var tab by remember { mutableStateOf(MyStocksTab.WATCHLIST) }
+    var watchlist by remember { mutableStateOf(repository.loadWatchlist()) }
+    var holdings by remember { mutableStateOf(repository.loadCachedHoldings()) }
+    var credentials by remember { mutableStateOf(repository.loadCredentials()) }
+    var loadingHoldings by remember { mutableStateOf(false) }
+    var message by remember { mutableStateOf<String?>(null) }
+    var error by remember { mutableStateOf<String?>(null) }
+
+    fun refreshHoldings() {
+        if (loadingHoldings) return
+        scope.launch {
+            loadingHoldings = true
+            message = "한국투자증권 보유종목을 조회하는 중입니다."
+            error = null
+            runCatching { repository.refreshKisHoldings() }
+                .onSuccess {
+                    holdings = it
+                    message = "보유종목 ${it.holdings.size}개를 동기화했습니다."
+                }
+                .onFailure {
+                    error = it.message ?: it.javaClass.simpleName
+                    message = null
+                }
+            loadingHoldings = false
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        if (credentials.isConfigured) refreshHoldings()
+    }
+
+    LazyColumn(
+        modifier = Modifier.fillMaxSize().padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
+        item {
+            Row(
+                modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                OutlinedButton(onClick = onBack) { Text("← 홈") }
+                OutlinedButton(onClick = onRecommendations) { Text("추천 목록") }
+            }
+        }
+        item {
+            Text("내 종목", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+            Text("관심종목은 직접 관리하고, 실제 보유종목은 한국투자증권 Open API에서 읽기 전용으로 동기화합니다.")
+        }
+        item {
+            Row(
+                modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                MyStocksTab.entries.forEach { item ->
+                    FilterChip(
+                        selected = tab == item,
+                        onClick = { tab = item },
+                        label = { Text(item.label) },
+                    )
+                }
+            }
+        }
+        error?.let { item { MyStocksInfoCard("오류: $it") } }
+        message?.let { item { MyStocksInfoCard(it) } }
+        when (tab) {
+            MyStocksTab.WATCHLIST -> {
+                item {
+                    AddWatchlistCard(
+                        onAdd = { ticker, name ->
+                            runCatching {
+                                check(
+                                    repository.addWatchlist(
+                                        WatchlistItem(
+                                            ticker = ticker,
+                                            name = name,
+                                            market = if (ticker.filter(Char::isDigit).length == 6) "KR" else "",
+                                            assetClass = "MANUAL",
+                                            currency = if (ticker.filter(Char::isDigit).length == 6) "KRW" else "",
+                                        )
+                                    )
+                                ) { "관심종목을 저장하지 못했습니다." }
+                            }.onSuccess {
+                                watchlist = repository.loadWatchlist()
+                                message = "${ticker.trim().uppercase(Locale.US)}을 관심종목에 추가했습니다."
+                                error = null
+                            }.onFailure {
+                                error = it.message ?: it.javaClass.simpleName
+                                message = null
+                            }
+                        },
+                    )
+                }
+                if (watchlist.isEmpty()) {
+                    item { MyStocksInfoCard("관심종목이 없습니다. 추천 목록에서 담거나 직접 종목코드를 입력하세요.") }
+                } else {
+                    items(watchlist, key = { it.key }) { item ->
+                        WatchlistCard(
+                            item = item,
+                            onRemove = {
+                                repository.removeWatchlist(item.ticker)
+                                watchlist = repository.loadWatchlist()
+                                message = "${item.ticker}을 관심종목에서 삭제했습니다."
+                            },
+                        )
+                    }
+                }
+            }
+
+            MyStocksTab.HOLDINGS -> {
+                item {
+                    HoldingsSummaryCard(
+                        snapshot = holdings,
+                        configured = credentials.isConfigured,
+                        loading = loadingHoldings,
+                        onRefresh = { refreshHoldings() },
+                        onOpenSettings = { tab = MyStocksTab.KIS_SETTINGS },
+                    )
+                }
+                if (holdings.holdings.isEmpty()) {
+                    item {
+                        MyStocksInfoCard(
+                            if (credentials.isConfigured) {
+                                "동기화된 보유종목이 없습니다. 조회 오류가 있으면 위 메시지와 한투 설정을 확인하세요."
+                            } else {
+                                "한투 설정을 저장하면 실제 보유종목을 자동으로 불러옵니다."
+                            }
+                        )
+                    }
+                } else {
+                    items(holdings.holdings, key = { it.ticker }) { holding ->
+                        HoldingCard(holding)
+                    }
+                }
+            }
+
+            MyStocksTab.KIS_SETTINGS -> {
+                item {
+                    KisSettingsCard(
+                        initial = credentials,
+                        onSave = { updated ->
+                            runCatching {
+                                check(repository.saveCredentials(updated)) {
+                                    "한국투자증권 설정을 저장하지 못했습니다."
+                                }
+                            }
+                                .onSuccess {
+                                    credentials = repository.loadCredentials()
+                                    message = "한국투자증권 설정을 암호화 저장했습니다."
+                                    error = null
+                                    tab = MyStocksTab.HOLDINGS
+                                    refreshHoldings()
+                                }
+                                .onFailure {
+                                    error = it.message ?: it.javaClass.simpleName
+                                    message = null
+                                }
+                        },
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun AddWatchlistCard(onAdd: (String, String) -> Unit) {
+    var ticker by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf("") }
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text("관심종목 직접 추가", fontWeight = FontWeight.Bold)
+            OutlinedTextField(
+                value = ticker,
+                onValueChange = { ticker = it },
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text("종목코드 · 예: 069500, AAPL") },
+                singleLine = true,
+            )
+            OutlinedTextField(
+                value = name,
+                onValueChange = { name = it },
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text("종목명(선택)") },
+                singleLine = true,
+            )
+            Button(
+                onClick = {
+                    onAdd(ticker, name)
+                    if (ticker.isNotBlank()) {
+                        ticker = ""
+                        name = ""
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text("관심종목 추가")
+            }
+        }
+    }
+}
+
+@Composable
+private fun WatchlistCard(item: WatchlistItem, onRemove: () -> Unit) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text("${item.name} (${item.ticker})", fontWeight = FontWeight.Bold)
+            Text(
+                listOf(item.market, item.assetClass, item.direction)
+                    .filter(String::isNotBlank)
+                    .joinToString(" · ")
+                    .ifBlank { "직접 추가" }
+            )
+            if (item.referencePrice != null || item.currentPrice != null) {
+                Text(
+                    "추천가 ${formatMoney(item.referencePrice, item.currency)} / 현재가 ${
+                        formatMoney(item.currentPrice, item.currency)
+                    }"
+                )
+            }
+            if (item.sourceRecommendationId.isNotBlank()) {
+                Text("추천 목록에서 담은 종목", style = MaterialTheme.typography.bodySmall)
+            }
+            OutlinedButton(onClick = onRemove) { Text("관심종목 삭제") }
+        }
+    }
+}
+
+@Composable
+private fun HoldingsSummaryCard(
+    snapshot: KisHoldingsSnapshot,
+    configured: Boolean,
+    loading: Boolean,
+    onRefresh: () -> Unit,
+    onOpenSettings: () -> Unit,
+) {
+    val totalEvaluation = snapshot.holdings.sumOf { it.evaluationAmount }
+    val totalProfitLoss = snapshot.holdings.sumOf { it.profitLossAmount }
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            Text("한국투자증권 보유종목", fontWeight = FontWeight.Bold)
+            Text("종목 ${snapshot.holdings.size}개 / 평가금액 ${formatWon(totalEvaluation)} / 평가손익 ${formatSignedWon(totalProfitLoss)}")
+            Text("마지막 동기화: ${formatTimestamp(snapshot.fetchedAt)}", style = MaterialTheme.typography.bodySmall)
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Button(onClick = onRefresh, enabled = configured && !loading) {
+                    Text(if (loading) "동기화 중" else "보유종목 새로고침")
+                }
+                OutlinedButton(onClick = onOpenSettings) { Text("한투 설정") }
+            }
+        }
+    }
+}
+
+@Composable
+private fun HoldingCard(item: KisHolding) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text("${item.name} (${item.ticker})", fontWeight = FontWeight.Bold)
+            Text("보유 ${formatQuantity(item.quantity)}주 / 주문가능 ${formatQuantity(item.orderableQuantity)}주")
+            Text("평균단가 ${formatWon(item.averagePrice)} / 현재가 ${formatWon(item.currentPrice)}")
+            Text("평가금액 ${formatWon(item.evaluationAmount)} / 매입금액 ${formatWon(item.purchaseAmount)}")
+            Text(
+                "평가손익 ${formatSignedWon(item.profitLossAmount)} (${formatSignedPercent(item.profitLossRate)})",
+                fontWeight = FontWeight.Bold,
+            )
+        }
+    }
+}
+
+@Composable
+private fun KisSettingsCard(initial: KisCredentials, onSave: (KisCredentials) -> Unit) {
+    var appKey by remember(initial.appKey) { mutableStateOf(initial.appKey) }
+    var appSecret by remember(initial.appSecret) { mutableStateOf(initial.appSecret) }
+    var accountNumber by remember(initial.accountNumber) { mutableStateOf(initial.accountNumber) }
+    var mockTrading by remember(initial.mockTrading) { mutableStateOf(initial.mockTrading) }
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text("한국투자증권 Open API 설정", fontWeight = FontWeight.Bold)
+            Text("앱키·시크릿·계좌번호와 토큰은 이 기기의 Android Keystore 암호화 저장소에만 보관됩니다.")
+            Text("잔고조회만 사용하며 주문 API는 호출하지 않습니다.", fontWeight = FontWeight.Bold)
+            OutlinedTextField(
+                value = appKey,
+                onValueChange = { appKey = it },
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text("App Key") },
+                visualTransformation = PasswordVisualTransformation(),
+                singleLine = true,
+            )
+            OutlinedTextField(
+                value = appSecret,
+                onValueChange = { appSecret = it },
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text("App Secret") },
+                visualTransformation = PasswordVisualTransformation(),
+                singleLine = true,
+            )
+            OutlinedTextField(
+                value = accountNumber,
+                onValueChange = { accountNumber = it },
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text("계좌번호 10자리(앞 8자리 + 상품코드 2자리)") },
+                visualTransformation = PasswordVisualTransformation(),
+                singleLine = true,
+            )
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Switch(checked = mockTrading, onCheckedChange = { mockTrading = it })
+                Text(if (mockTrading) "모의투자 계좌" else "실전투자 계좌", modifier = Modifier.padding(top = 12.dp))
+            }
+            Button(
+                onClick = {
+                    onSave(
+                        KisCredentials(
+                            appKey = appKey,
+                            appSecret = appSecret,
+                            accountNumber = accountNumber,
+                            mockTrading = mockTrading,
+                        )
+                    )
+                },
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text("암호화 저장 후 잔고 동기화")
+            }
+        }
+    }
+}
+
+@Composable
+private fun MyStocksInfoCard(text: String) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Text(text, modifier = Modifier.padding(12.dp))
+    }
+}
+
+private fun formatMoney(value: Double?, currency: String): String {
+    if (value == null) return "미확인"
+    return if (currency == "KRW") formatWon(value) else "%,.2f %s".format(Locale.US, value, currency)
+}
+
+private fun formatWon(value: Double): String = "%,.0f원".format(Locale.US, value)
+private fun formatSignedWon(value: Double): String = "%+,.0f원".format(Locale.US, value)
+private fun formatSignedPercent(value: Double): String = "%+.2f%%".format(Locale.US, value)
+
+private fun formatQuantity(value: Double): String {
+    return if (value % 1.0 == 0.0) "%,.0f".format(Locale.US, value) else "%,.4f".format(Locale.US, value)
+}
+
+private fun formatTimestamp(value: Long): String {
+    if (value <= 0L) return "아직 없음"
+    return DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm", Locale.KOREA)
+        .withZone(ZoneId.systemDefault())
+        .format(Instant.ofEpochMilli(value))
+}

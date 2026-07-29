@@ -31,8 +31,10 @@ from global_market_strategy import (  # noqa: E402
     score_daily,
 )
 from global_market_universe import (  # noqa: E402
+    KR_ETF_FALLBACK,
     STATIC_MULTI_ASSET,
     download_yahoo,
+    load_kr_etfs,
     load_kr_listed,
     load_upbit_top,
     load_us_listed,
@@ -48,6 +50,9 @@ HISTORY_PATH = REPORTS / "global_market_recommendation_history.json"
 DAILY_STATE_PATH = REPORTS / "global_market_daily_state.json"
 SCHEMA_VERSION = 1
 FAST_INTRADAY_LIMIT = 90
+KR_ETF_SHORTLIST_MIN = 80
+KR_ETF_INTRADAY_SLOTS = 30
+KR_ETF_SIGNAL_SLOTS = 4
 MAX_SIGNALS = 12
 HISTORY_LIMIT = 600
 DAILY_CACHE_MINUTES = 55
@@ -105,10 +110,16 @@ def save_shortlist(instruments: list[Instrument], discovery: dict[str, Any]) -> 
     )
 
 
-def discover_liquid_universe(us_limit: int, kr_limit: int, shortlist_size: int) -> list[Instrument]:
+def discover_liquid_universe(
+    us_limit: int,
+    kr_limit: int,
+    kr_etf_limit: int,
+    shortlist_size: int,
+) -> list[Instrument]:
     us = load_us_listed()
-    kr = load_kr_listed()
-    listed = unique([*us, *kr, *STATIC_MULTI_ASSET])
+    kr_stocks = load_kr_listed()
+    kr_etfs = load_kr_etfs()
+    listed = unique([*us, *kr_stocks, *kr_etfs, *STATIC_MULTI_ASSET])
     frames = download_yahoo(listed, period="3mo", interval="1d", batch_size=180)
     lookup = {item.ticker: item for item in listed}
     liquidity: list[tuple[Instrument, float]] = []
@@ -120,9 +131,27 @@ def discover_liquid_universe(us_limit: int, kr_limit: int, shortlist_size: int) 
         if price > 0 and value > 0:
             liquidity.append((lookup[ticker], value))
     us_rows = sorted([row for row in liquidity if row[0].market == "US"], key=lambda row: row[1], reverse=True)[:us_limit]
-    kr_rows = sorted([row for row in liquidity if row[0].market == "KR"], key=lambda row: row[1], reverse=True)[:kr_limit]
+    kr_stock_rows = sorted(
+        [row for row in liquidity if row[0].asset_class == "KR_STOCK"],
+        key=lambda row: row[1],
+        reverse=True,
+    )[:kr_limit]
+    kr_etf_rows = sorted(
+        [row for row in liquidity if row[0].asset_class == "KR_ETF"],
+        key=lambda row: row[1],
+        reverse=True,
+    )[:kr_etf_limit]
     other_rows = sorted([row for row in liquidity if row[0].market not in {"US", "KR"}], key=lambda row: row[1], reverse=True)
-    liquid = unique([*[item for item, _ in us_rows], *[item for item, _ in kr_rows], *[item for item, _ in other_rows], *STATIC_MULTI_ASSET])
+    liquid = unique(
+        [
+            *[item for item, _ in us_rows],
+            *[item for item, _ in kr_stock_rows],
+            *[item for item, _ in kr_etf_rows],
+            *[item for item, _ in other_rows],
+            *STATIC_MULTI_ASSET,
+            *KR_ETF_FALLBACK,
+        ]
+    )
     history = download_yahoo(liquid, period="18mo", interval="1d", batch_size=100)
     metrics: list[dict[str, Any]] = []
     liquid_lookup = {item.ticker: item for item in liquid}
@@ -141,18 +170,25 @@ def discover_liquid_universe(us_limit: int, kr_limit: int, shortlist_size: int) 
         ),
         reverse=True,
     )
-    selected_tickers = {row["ticker"] for row in ranked[:shortlist_size]}
+    kr_etf_ranked = [row for row in ranked if row.get("assetClass") == "KR_ETF"]
+    selected_tickers = {
+        *[row["ticker"] for row in ranked[:shortlist_size]],
+        *[row["ticker"] for row in kr_etf_ranked[:KR_ETF_SHORTLIST_MIN]],
+    }
     selected = [liquid_lookup[ticker] for ticker in selected_tickers if ticker in liquid_lookup]
-    selected = unique([*selected, *STATIC_MULTI_ASSET, *load_upbit_top(40)])
+    selected = unique([*selected, *KR_ETF_FALLBACK, *STATIC_MULTI_ASSET, *load_upbit_top(40)])
     save_shortlist(
         selected,
         {
             "usListedDiscovered": len(us),
-            "krListedDiscovered": len(kr),
+            "krStockListedDiscovered": len(kr_stocks),
+            "krEtfListedDiscovered": len(kr_etfs),
             "liquidityRowsEvaluated": len(liquidity),
             "liquidHistoryEvaluated": len(metrics),
             "usLiquidLimit": us_limit,
             "krLiquidLimit": kr_limit,
+            "krEtfLiquidLimit": kr_etf_limit,
+            "krEtfShortlistCount": sum(1 for item in selected if item.asset_class == "KR_ETF"),
             "shortlistSizeRequested": shortlist_size,
         },
     )
@@ -196,6 +232,14 @@ def load_or_refresh_daily_state(instruments: list[Instrument]) -> tuple[list[dic
             generated_at = dt.datetime.fromisoformat(generated_text)
             age = now_kst() - generated_at.astimezone(KST)
             cache_fresh = dt.timedelta(0) <= age <= dt.timedelta(minutes=DAILY_CACHE_MINUTES)
+            requested_kr_etfs = {item.ticker for item in instruments if item.asset_class == "KR_ETF"}
+            cached_kr_etfs = {
+                str(item.get("ticker") or "")
+                for item in cached_metrics
+                if item.get("assetClass") == "KR_ETF"
+            }
+            minimum_kr_etf_coverage = min(10, len(requested_kr_etfs))
+            cache_fresh = cache_fresh and len(cached_kr_etfs) >= minimum_kr_etf_coverage
         except (TypeError, ValueError):
             cache_fresh = False
     if cache_fresh:
@@ -231,6 +275,38 @@ def trigger_freshness(trigger: dict[str, Any]) -> tuple[bool, float | None]:
         return age_minutes <= MAX_SIGNAL_AGE_MINUTES, round(age_minutes, 1)
     except (TypeError, ValueError):
         return False, None
+
+
+def select_intraday_candidates(candidates: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    kr_etfs = [row for row in candidates if row.get("assetClass") == "KR_ETF"][:KR_ETF_INTRADAY_SLOTS]
+    selected: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for row in [*kr_etfs, *candidates]:
+        ticker = str(row.get("ticker") or "")
+        if not ticker or ticker in seen:
+            continue
+        selected.append(row)
+        seen.add(ticker)
+        if len(selected) >= FAST_INTRADAY_LIMIT:
+            break
+    return selected
+
+
+def select_final_signals(signals: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    ranked = sorted(
+        signals,
+        key=lambda row: (float(row.get("score") or 0), float(row.get("confidence") or 0)),
+        reverse=True,
+    )
+    kr_etfs = [row for row in ranked if row.get("assetClass") == "KR_ETF"][:KR_ETF_SIGNAL_SLOTS]
+    reserved_ids = {str(row.get("id") or "") for row in kr_etfs}
+    remainder = [row for row in ranked if str(row.get("id") or "") not in reserved_ids]
+    selected = [*kr_etfs, *remainder[: max(0, MAX_SIGNALS - len(kr_etfs))]]
+    return sorted(
+        selected,
+        key=lambda row: (float(row.get("score") or 0), float(row.get("confidence") or 0)),
+        reverse=True,
+    )
 
 
 def fetch_intraday(candidates: list[dict[str, Any]], instruments: list[Instrument]) -> dict[str, pd.DataFrame]:
@@ -311,11 +387,15 @@ def run_scan(instruments: list[Instrument]) -> dict[str, Any]:
         key=lambda row: (float(row.get("dailyScore") or 0), float(row.get("relativeStrengthPercentile") or 0)),
         reverse=True,
     )
-    intraday = fetch_intraday(candidates, instruments)
+    intraday_candidates = select_intraday_candidates(candidates)
+    intraday = fetch_intraday(intraday_candidates, instruments)
     signals: list[dict[str, Any]] = []
     evaluated: list[dict[str, Any]] = []
-    for item in candidates[:FAST_INTRADAY_LIMIT]:
-        trigger = intraday_trigger(intraday.get(item["ticker"], pd.DataFrame()))
+    for item in intraday_candidates:
+        trigger = intraday_trigger(
+            intraday.get(item["ticker"], pd.DataFrame()),
+            asset_class=str(item.get("assetClass") or ""),
+        )
         evaluated.append(
             {
                 "ticker": item["ticker"],
@@ -330,7 +410,7 @@ def run_scan(instruments: list[Instrument]) -> dict[str, Any]:
         trigger["ageMinutes"] = age_minutes
         if trigger.get("ready") and fresh:
             signals.append(build_signal(item, trigger, regime, generated))
-    signals = sorted(signals, key=lambda row: (float(row.get("score") or 0), float(row.get("confidence") or 0)), reverse=True)[:MAX_SIGNALS]
+    signals = select_final_signals(signals)
     history = update_history(signals, metrics)
     latest = {
         "schemaVersion": SCHEMA_VERSION,
@@ -339,10 +419,14 @@ def run_scan(instruments: list[Instrument]) -> dict[str, Any]:
         "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
         "universe": {
             "shortlistCount": len(instruments),
+            "krEtfShortlistCount": sum(1 for item in instruments if item.asset_class == "KR_ETF"),
             "dailyMetricsCount": len(metrics),
             "dailyCandidateCount": len(candidates),
-            "intradayEvaluatedCount": min(len(candidates), FAST_INTRADAY_LIMIT),
+            "krEtfDailyCandidateCount": sum(1 for item in candidates if item.get("assetClass") == "KR_ETF"),
+            "intradayEvaluatedCount": len(intraday_candidates),
+            "krEtfIntradayEvaluatedCount": sum(1 for item in intraday_candidates if item.get("assetClass") == "KR_ETF"),
             "signalCount": len(signals),
+            "krEtfSignalCount": sum(1 for item in signals if item.get("assetClass") == "KR_ETF"),
             "dailyCacheHit": daily_cache_hit,
             "maxSignalAgeMinutes": MAX_SIGNAL_AGE_MINUTES,
         },
@@ -369,13 +453,19 @@ def main() -> int:
     parser.add_argument("--mode", choices=["fast", "full"], default="fast")
     parser.add_argument("--us-limit", type=int, default=1200)
     parser.add_argument("--kr-limit", type=int, default=800)
+    parser.add_argument("--kr-etf-limit", type=int, default=180)
     parser.add_argument("--shortlist-size", type=int, default=300)
     args = parser.parse_args()
     REPORTS.mkdir(parents=True, exist_ok=True)
     instruments = (
-        discover_liquid_universe(max(200, args.us_limit), max(200, args.kr_limit), max(100, args.shortlist_size))
+        discover_liquid_universe(
+            max(200, args.us_limit),
+            max(200, args.kr_limit),
+            max(80, args.kr_etf_limit),
+            max(100, args.shortlist_size),
+        )
         if args.mode == "full"
-        else unique([*load_shortlist(), *STATIC_MULTI_ASSET, *load_upbit_top(40)])
+        else unique([*load_shortlist(), *KR_ETF_FALLBACK, *STATIC_MULTI_ASSET, *load_upbit_top(40)])
     )
     print(json.dumps(run_scan(instruments), ensure_ascii=False, indent=2, default=str))
     return 0

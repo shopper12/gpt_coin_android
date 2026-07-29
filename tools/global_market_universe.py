@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+import datetime as dt
 import io
 import json
 import re
@@ -8,6 +9,7 @@ import time
 import urllib.parse
 import urllib.request
 from typing import Any, Iterable
+from zoneinfo import ZoneInfo
 
 import pandas as pd
 
@@ -78,6 +80,43 @@ STATIC_MULTI_ASSET: tuple[Instrument, ...] = (
     Instrument("XRP-USD", "XRP", "CRYPTO", "CRYPTO", "USD", "static"),
 )
 
+KR_ETF_FALLBACK: tuple[Instrument, ...] = (
+    Instrument("069500.KS", "KODEX 200", "KR", "KR_ETF", "KRW", "static:kr_etf"),
+    Instrument("102110.KS", "TIGER 200", "KR", "KR_ETF", "KRW", "static:kr_etf"),
+    Instrument("278530.KS", "KODEX 200TR", "KR", "KR_ETF", "KRW", "static:kr_etf"),
+    Instrument("229200.KS", "KODEX 코스닥150", "KR", "KR_ETF", "KRW", "static:kr_etf"),
+    Instrument("232080.KS", "TIGER 코스닥150", "KR", "KR_ETF", "KRW", "static:kr_etf"),
+    Instrument("122630.KS", "KODEX 레버리지", "KR", "KR_ETF", "KRW", "static:kr_etf"),
+    Instrument("114800.KS", "KODEX 인버스", "KR", "KR_ETF", "KRW", "static:kr_etf"),
+    Instrument("252670.KS", "KODEX 200선물인버스2X", "KR", "KR_ETF", "KRW", "static:kr_etf"),
+    Instrument("233740.KS", "KODEX 코스닥150레버리지", "KR", "KR_ETF", "KRW", "static:kr_etf"),
+    Instrument("251340.KS", "KODEX 코스닥150선물인버스", "KR", "KR_ETF", "KRW", "static:kr_etf"),
+    Instrument("091160.KS", "KODEX 반도체", "KR", "KR_ETF", "KRW", "static:kr_etf"),
+    Instrument("091230.KS", "TIGER 반도체", "KR", "KR_ETF", "KRW", "static:kr_etf"),
+    Instrument("305720.KS", "KODEX 2차전지산업", "KR", "KR_ETF", "KRW", "static:kr_etf"),
+    Instrument("364980.KS", "TIGER 2차전지TOP10", "KR", "KR_ETF", "KRW", "static:kr_etf"),
+    Instrument("466920.KS", "SOL 조선TOP3플러스", "KR", "KR_ETF", "KRW", "static:kr_etf"),
+    Instrument("449450.KS", "PLUS K방산", "KR", "KR_ETF", "KRW", "static:kr_etf"),
+    Instrument("139260.KS", "TIGER 200 IT", "KR", "KR_ETF", "KRW", "static:kr_etf"),
+    Instrument("117700.KS", "KODEX 건설", "KR", "KR_ETF", "KRW", "static:kr_etf"),
+    Instrument("117680.KS", "KODEX 철강", "KR", "KR_ETF", "KRW", "static:kr_etf"),
+    Instrument("117460.KS", "KODEX 에너지화학", "KR", "KR_ETF", "KRW", "static:kr_etf"),
+    Instrument("102970.KS", "KODEX 증권", "KR", "KR_ETF", "KRW", "static:kr_etf"),
+    Instrument("091170.KS", "KODEX 은행", "KR", "KR_ETF", "KRW", "static:kr_etf"),
+    Instrument("102780.KS", "KODEX 삼성그룹", "KR", "KR_ETF", "KRW", "static:kr_etf"),
+    Instrument("381180.KS", "TIGER 미국필라델피아반도체나스닥", "KR", "KR_ETF", "KRW", "static:kr_etf"),
+    Instrument("390390.KS", "KODEX 미국반도체MV", "KR", "KR_ETF", "KRW", "static:kr_etf"),
+    Instrument("360750.KS", "TIGER 미국S&P500", "KR", "KR_ETF", "KRW", "static:kr_etf"),
+    Instrument("133690.KS", "TIGER 미국나스닥100", "KR", "KR_ETF", "KRW", "static:kr_etf"),
+    Instrument("379800.KS", "KODEX 미국S&P500", "KR", "KR_ETF", "KRW", "static:kr_etf"),
+    Instrument("379810.KS", "KODEX 미국나스닥100", "KR", "KR_ETF", "KRW", "static:kr_etf"),
+    Instrument("458730.KS", "TIGER 미국배당다우존스", "KR", "KR_ETF", "KRW", "static:kr_etf"),
+    Instrument("261220.KS", "KODEX WTI원유선물(H)", "KR", "KR_ETF", "KRW", "static:kr_etf"),
+    Instrument("132030.KS", "KODEX 골드선물(H)", "KR", "KR_ETF", "KRW", "static:kr_etf"),
+    Instrument("273130.KS", "KODEX 종합채권(AA-이상)액티브", "KR", "KR_ETF", "KRW", "static:kr_etf"),
+    Instrument("439870.KS", "KODEX 국고채30년액티브", "KR", "KR_ETF", "KRW", "static:kr_etf"),
+)
+
 
 def _http_text(url: str, timeout: int = 30) -> str:
     request = urllib.request.Request(
@@ -124,6 +163,18 @@ def load_us_listed() -> list[Instrument]:
     return unique(output)
 
 
+def _recent_krx_dates(limit: int = 8) -> list[str]:
+    today = dt.datetime.now(ZoneInfo("Asia/Seoul")).date()
+    output: list[str] = []
+    offset = 1
+    while len(output) < limit:
+        candidate = today - dt.timedelta(days=offset)
+        offset += 1
+        if candidate.weekday() < 5:
+            output.append(candidate.strftime("%Y%m%d"))
+    return output
+
+
 def load_kr_listed() -> list[Instrument]:
     try:
         from pykrx import stock
@@ -132,13 +183,59 @@ def load_kr_listed() -> list[Instrument]:
         return []
     output: list[Instrument] = []
     for market, suffix in (("KOSPI", ".KS"), ("KOSDAQ", ".KQ")):
-        try:
-            for code in stock.get_market_ticker_list(market=market):
-                code = str(code).zfill(6)
-                output.append(Instrument(f"{code}{suffix}", stock.get_market_ticker_name(code) or code, "KR", "KR_STOCK", "KRW", f"pykrx:{market}"))
-        except Exception as exc:
-            print(f"KR listing warning {market}: {exc}")
+        for business_date in _recent_krx_dates():
+            try:
+                codes = list(stock.get_market_ticker_list(business_date, market=market))
+                if not codes:
+                    continue
+                for code in codes:
+                    code = str(code).zfill(6)
+                    output.append(
+                        Instrument(
+                            f"{code}{suffix}",
+                            stock.get_market_ticker_name(code) or code,
+                            "KR",
+                            "KR_STOCK",
+                            "KRW",
+                            f"pykrx:{market}:{business_date}",
+                        )
+                    )
+                break
+            except Exception as exc:
+                print(f"KR listing warning {market} {business_date}: {exc}")
     return unique(output)
+
+
+def load_kr_etfs() -> list[Instrument]:
+    output: list[Instrument] = []
+    try:
+        from pykrx import stock
+    except Exception as exc:
+        print(f"pykrx ETF unavailable; using core fallback: {exc}")
+        return list(KR_ETF_FALLBACK)
+    for business_date in _recent_krx_dates():
+        try:
+            codes = list(stock.get_etf_ticker_list(business_date))
+            if not codes:
+                continue
+            for code in codes:
+                code = str(code).zfill(6)
+                output.append(
+                    Instrument(
+                        f"{code}.KS",
+                        stock.get_etf_ticker_name(code) or code,
+                        "KR",
+                        "KR_ETF",
+                        "KRW",
+                        f"pykrx:ETF:{business_date}",
+                    )
+                )
+            break
+        except Exception as exc:
+            print(f"KR ETF listing warning {business_date}: {exc}")
+    if not output:
+        print("KR ETF listing returned no rows; using core fallback.")
+    return unique([*output, *KR_ETF_FALLBACK])
 
 
 def load_upbit_top(limit: int = 40) -> list[Instrument]:

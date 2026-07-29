@@ -167,9 +167,9 @@ def score_daily(item: dict[str, Any], regime: dict[str, Any]) -> float:
     score += 8 if 0.10 <= vol <= 0.65 else 3 if vol < 0.10 else -10
     score += 8 if 42 <= rsi14 <= 72 else -10 if rsi14 > 80 else 0
     score += 7 if gap20 <= 0.12 and float(item["ret1m"]) <= 0.25 else -15
-    if regime.get("panic") and item.get("assetClass") in {"US_STOCK", "KR_STOCK", "CRYPTO"}:
+    if regime.get("panic") and item.get("assetClass") in {"US_STOCK", "KR_STOCK", "KR_ETF", "CRYPTO"}:
         score -= 35
-    elif regime.get("riskOff") and item.get("assetClass") in {"US_STOCK", "KR_STOCK", "CRYPTO"}:
+    elif regime.get("riskOff") and item.get("assetClass") in {"US_STOCK", "KR_STOCK", "KR_ETF", "CRYPTO"}:
         score -= 12
     return max(0.0, min(100.0, score))
 
@@ -224,7 +224,7 @@ def ict_intraday(frame: pd.DataFrame) -> dict[str, Any]:
     return {"bias": bias, "structure": structure, "event": event, "liquidity": liquidity, "fvg": fvg, "score": score}
 
 
-def intraday_trigger(frame: pd.DataFrame) -> dict[str, Any]:
+def intraday_trigger(frame: pd.DataFrame, asset_class: str = "") -> dict[str, Any]:
     if frame is None or frame.empty or len(frame) < 60:
         return {"ready": False, "reason": "15분봉 부족", "ict": ict_intraday(frame)}
     x = frame.tail(160).copy()
@@ -240,16 +240,18 @@ def intraday_trigger(frame: pd.DataFrame) -> dict[str, Any]:
     reclaim = float(x["close"].iloc[-2]) <= ema20 and close > ema20 and ema20 > ema50
     ict = ict_intraday(x)
     ict_ok = ict["bias"] == "BULLISH" or ict["event"] in {"BOS_UP", "CHOCH_UP"} or ict["liquidity"] == "SELL_SIDE_SWEEP"
-    ready = bool((breakout or reclaim) and volume_ratio >= 1.35 and ict_ok)
+    volume_threshold = 1.20 if asset_class == "KR_ETF" else 1.35
+    ready = bool((breakout or reclaim) and volume_ratio >= volume_threshold and ict_ok)
     return {
         "ready": ready,
         "breakout": breakout,
         "reclaim": reclaim,
         "volumeRatio": round(volume_ratio, 3),
+        "volumeThreshold": volume_threshold,
         "ema20": round(ema20, 6),
         "ema50": round(ema50, 6),
         "lastTimestamp": pd.Timestamp(x.index[-1]).isoformat(),
-        "reason": f"breakout={breakout}; reclaim={reclaim}; volume={volume_ratio:.2f}x; ICT={ict['bias']}/{ict['event']}/{ict['liquidity']}",
+        "reason": f"breakout={breakout}; reclaim={reclaim}; volume={volume_ratio:.2f}x/{volume_threshold:.2f}x; ICT={ict['bias']}/{ict['event']}/{ict['liquidity']}",
         "ict": ict,
     }
 
@@ -262,7 +264,7 @@ def build_signal(item: dict[str, Any], trigger: dict[str, Any], regime: dict[str
     risk = max(price - stop, price * 0.01)
     annual_vol = max(float(item.get("volatility20") or 0), 0.08)
     exposure = min(0.12 / annual_vol, 1.0)
-    if regime.get("riskOff") and item.get("assetClass") in {"US_STOCK", "KR_STOCK", "CRYPTO"}:
+    if regime.get("riskOff") and item.get("assetClass") in {"US_STOCK", "KR_STOCK", "KR_ETF", "CRYPTO"}:
         exposure *= 0.5
     score = min(100.0, float(item.get("dailyScore") or 0) + min(max(float(trigger["ict"]["score"]) * 2, -12), 12))
     date = generated_at_kst[:10]
