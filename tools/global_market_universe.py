@@ -193,7 +193,17 @@ def download_yahoo(instruments: list[Instrument], *, period: str, interval: str,
         if not tickers:
             continue
         try:
-            data = yf.download(\n                tickers=tickers,\n                period=period,\n                interval=interval,\n                auto_adjust=True,\n                prepost=interval.endswith(("m", "h")),\n                group_by="ticker",\n                threads=True,\n                progress=False,\n                timeout=30,\n            )
+            data = yf.download(
+                tickers=tickers,
+                period=period,
+                interval=interval,
+                auto_adjust=True,
+                prepost=interval.endswith(("m", "h")),
+                group_by="ticker",
+                threads=True,
+                progress=False,
+                timeout=30,
+            )
             for ticker in tickers:
                 frame = _extract_frame(data, ticker, single=len(tickers) == 1)
                 if not frame.empty:
