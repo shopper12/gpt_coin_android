@@ -23,7 +23,7 @@ concurrency:
 jobs:
   monitor:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 20
     steps:
       - name: Checkout main
         uses: actions/checkout@v4
@@ -60,7 +60,8 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -f \
             reports/global_market_signals_latest.json \
-            reports/global_market_recommendation_history.json
+            reports/global_market_recommendation_history.json \
+            reports/global_market_daily_state.json
           if git diff --cached --quiet; then
             echo "No global market report changes."
             exit 0
@@ -76,4 +77,5 @@ jobs:
           path: |
             reports/global_market_signals_latest.json
             reports/global_market_recommendation_history.json
+            reports/global_market_daily_state.json
           retention-days: 14
