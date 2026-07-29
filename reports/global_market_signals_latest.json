@@ -1,107 +1,55 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-07-29T19:10:06.527531+09:00",
+  "generatedAtKst": "2026-07-29T20:41:46.192089+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
     "shortlistCount": 384,
     "dailyMetricsCount": 362,
-    "dailyCandidateCount": 15,
-    "intradayEvaluatedCount": 15,
+    "dailyCandidateCount": 7,
+    "intradayEvaluatedCount": 7,
     "signalCount": 0,
-    "dailyCacheHit": true,
+    "dailyCacheHit": false,
     "maxSignalAgeMinutes": 45
   },
   "marketRegime": {
     "panic": false,
     "riskOff": false,
     "equityBelow200Count": 0,
-    "realizedVolatility20Annualized": 0.2065,
+    "realizedVolatility20Annualized": 0.2268,
     "reason": "광의 추세와 변동성 정상"
   },
   "signals": [],
   "topEvaluated": [
     {
-      "ticker": "DVA",
-      "name": "DaVita Inc. Common Stock",
-      "dailyScore": 88.49,
-      "relativeStrengthPercentile": 0.8697478991596639,
-      "trigger": {
-        "ready": false,
-        "breakout": false,
-        "reclaim": false,
-        "volumeRatio": 0.0,
-        "ema20": 239.575832,
-        "ema50": 239.068925,
-        "lastTimestamp": "2026-07-29T09:15:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x; ICT=NEUTRAL/NONE/NONE",
-        "ict": {
-          "bias": "NEUTRAL",
-          "structure": "RANGE",
-          "event": "NONE",
-          "liquidity": "NONE",
-          "fvg": "BULLISH 239.4700~240.1400",
-          "score": 1
-        },
-        "fresh": false,
-        "ageMinutes": 55.1
-      }
-    },
-    {
-      "ticker": "JAZZ",
-      "name": "Jazz Pharmaceuticals plc - Ordinary Shares",
-      "dailyScore": 86.6,
-      "relativeStrengthPercentile": 0.8319327731092437,
-      "trigger": {
-        "ready": false,
-        "breakout": true,
-        "reclaim": false,
-        "volumeRatio": 0.0,
-        "ema20": 257.715418,
-        "ema50": 257.392637,
-        "lastTimestamp": "2026-07-29T08:00:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=0.00x; ICT=NEUTRAL/CHOCH_UP/NONE",
-        "ict": {
-          "bias": "NEUTRAL",
-          "structure": "BEARISH_LH_LL",
-          "event": "CHOCH_UP",
-          "liquidity": "NONE",
-          "fvg": "BULLISH 258.1700~260.2200",
-          "score": 1
-        },
-        "fresh": false,
-        "ageMinutes": 130.1
-      }
-    },
-    {
-      "ticker": "ORKA",
-      "name": "Oruka Therapeutics, Inc. - Common Stock",
+      "ticker": "SYRE",
+      "name": "Spyre Therapeutics, Inc. - Common Stock",
       "dailyScore": 85.95,
       "relativeStrengthPercentile": 0.9789915966386554,
       "trigger": {
         "ready": false,
         "breakout": false,
-        "reclaim": false,
+        "reclaim": true,
         "volumeRatio": 0.0,
-        "ema20": 89.852688,
-        "ema50": 90.11345,
-        "lastTimestamp": "2026-07-28T23:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x; ICT=BULLISH/NONE/NONE",
+        "ema20": 98.869552,
+        "ema50": 98.694163,
+        "lastTimestamp": "2026-07-29T11:15:00+00:00",
+        "reason": "breakout=False; reclaim=True; volume=0.00x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
-          "bias": "BULLISH",
-          "structure": "BULLISH_HH_HL",
+          "bias": "NEUTRAL",
+          "structure": "RANGE",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BULLISH 90.1200~90.4500",
-          "score": 3
+          "fvg": "BULLISH 99.9600~100.0000",
+          "score": 1
         },
-        "fresh": false,
-        "ageMinutes": 640.1
+        "fresh": true,
+        "ageMinutes": 28.1
       }
     },
     {
-      "ticker": "SYRE",
-      "name": "Spyre Therapeutics, Inc. - Common Stock",
+      "ticker": "ORKA",
+      "name": "Oruka Therapeutics, Inc. - Common Stock",
       "dailyScore": 85.74,
       "relativeStrengthPercentile": 0.9747899159663865,
       "trigger": {
@@ -109,157 +57,131 @@
         "breakout": false,
         "reclaim": false,
         "volumeRatio": 0.0,
-        "ema20": 98.750558,
-        "ema50": 98.640863,
-        "lastTimestamp": "2026-07-29T08:00:00+00:00",
+        "ema20": 89.885765,
+        "ema50": 90.116894,
+        "lastTimestamp": "2026-07-29T11:00:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
-          "structure": "RANGE",
+          "structure": "BULLISH_HH_HL",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BULLISH 94.9600~99.9600",
+          "fvg": "BEARISH 90.2000~90.4500",
           "score": 1
         },
-        "fresh": false,
-        "ageMinutes": 130.1
+        "fresh": true,
+        "ageMinutes": 43.1
       }
     },
     {
       "ticker": "VSXY",
       "name": "Victorias Secret & Co. Common Stock",
-      "dailyScore": 83.85,
-      "relativeStrengthPercentile": 0.9369747899159664,
-      "trigger": {
-        "ready": false,
-        "breakout": false,
-        "reclaim": true,
-        "volumeRatio": 0.0,
-        "ema20": 89.172617,
-        "ema50": 88.502786,
-        "lastTimestamp": "2026-07-29T08:15:00+00:00",
-        "reason": "breakout=False; reclaim=True; volume=0.00x; ICT=NEUTRAL/NONE/NONE",
-        "ict": {
-          "bias": "NEUTRAL",
-          "structure": "BULLISH_HH_HL",
-          "event": "NONE",
-          "liquidity": "NONE",
-          "fvg": "BEARISH 88.9297~90.0450",
-          "score": 1
-        },
-        "fresh": false,
-        "ageMinutes": 115.1
-      }
-    },
-    {
-      "ticker": "TWST",
-      "name": "Twist Bioscience Corporation - Common Stock",
-      "dailyScore": 82.17,
-      "relativeStrengthPercentile": 0.9033613445378151,
+      "dailyScore": 83.01,
+      "relativeStrengthPercentile": 0.9201680672268907,
       "trigger": {
         "ready": false,
         "breakout": false,
         "reclaim": false,
         "volumeRatio": 0.0,
-        "ema20": 87.578496,
-        "ema50": 87.275776,
-        "lastTimestamp": "2026-07-28T23:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x; ICT=NEUTRAL/NONE/NONE",
-        "ict": {
-          "bias": "NEUTRAL",
-          "structure": "BULLISH_HH_HL",
-          "event": "NONE",
-          "liquidity": "NONE",
-          "fvg": "BEARISH 88.0000~88.5000",
-          "score": 1
-        },
-        "fresh": false,
-        "ageMinutes": 640.1
-      }
-    },
-    {
-      "ticker": "BTCZ",
-      "name": "T-Rex 2X Inverse Bitcoin Daily Target ETF",
-      "dailyScore": 81.44,
-      "relativeStrengthPercentile": 0.8888888888888888,
-      "trigger": {
-        "ready": false,
-        "breakout": false,
-        "reclaim": false,
-        "volumeRatio": 0.0,
-        "ema20": 5.457667,
-        "ema50": 5.491883,
-        "lastTimestamp": "2026-07-29T10:07:17+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x; ICT=BEARISH/NONE/NONE",
-        "ict": {
-          "bias": "BEARISH",
-          "structure": "BEARISH_LH_LL",
-          "event": "NONE",
-          "liquidity": "NONE",
-          "fvg": "BEARISH 5.4029~5.4122",
-          "score": -3
-        },
-        "fresh": true,
-        "ageMinutes": 2.9
-      }
-    },
-    {
-      "ticker": "DAVE",
-      "name": "Dave Inc.  - Class A Common Stock",
-      "dailyScore": 81.12,
-      "relativeStrengthPercentile": 0.8823529411764706,
-      "trigger": {
-        "ready": false,
-        "breakout": false,
-        "reclaim": false,
-        "volumeRatio": 0.0,
-        "ema20": 402.360792,
-        "ema50": 400.900127,
-        "lastTimestamp": "2026-07-29T10:00:00+00:00",
+        "ema20": 89.273964,
+        "ema50": 88.619718,
+        "lastTimestamp": "2026-07-29T11:15:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BULLISH 404.7900~405.0000",
+          "fvg": "BULLISH 89.3100~90.0000",
           "score": 1
         },
         "fresh": true,
-        "ageMinutes": 10.1
+        "ageMinutes": 28.1
       }
     },
     {
       "ticker": "ROIV",
       "name": "Roivant Sciences Ltd. - Common Shares",
-      "dailyScore": 80.7,
-      "relativeStrengthPercentile": 0.8739495798319328,
+      "dailyScore": 81.33,
+      "relativeStrengthPercentile": 0.8865546218487395,
+      "trigger": {
+        "ready": false,
+        "breakout": true,
+        "reclaim": false,
+        "volumeRatio": 0.0,
+        "ema20": 33.873059,
+        "ema50": 34.121315,
+        "lastTimestamp": "2026-07-29T10:15:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=0.00x; ICT=NEUTRAL/CHOCH_UP/NONE",
+        "ict": {
+          "bias": "NEUTRAL",
+          "structure": "BEARISH_LH_LL",
+          "event": "CHOCH_UP",
+          "liquidity": "NONE",
+          "fvg": "BULLISH 33.8000~34.7700",
+          "score": 1
+        },
+        "fresh": false,
+        "ageMinutes": 88.1
+      }
+    },
+    {
+      "ticker": "DVA",
+      "name": "DaVita Inc. Common Stock",
+      "dailyScore": 79.86,
+      "relativeStrengthPercentile": 0.8571428571428571,
       "trigger": {
         "ready": false,
         "breakout": false,
         "reclaim": false,
         "volumeRatio": 0.0,
-        "ema20": 33.778644,
-        "ema50": 34.094717,
-        "lastTimestamp": "2026-07-29T08:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x; ICT=BEARISH/NONE/NONE",
+        "ema20": 239.703224,
+        "ema50": 239.211141,
+        "lastTimestamp": "2026-07-29T11:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.00x; ICT=BEARISH/BOS_DOWN/BUY_SIDE_SWEEP",
         "ict": {
           "bias": "BEARISH",
-          "structure": "BEARISH_LH_LL",
-          "event": "NONE",
-          "liquidity": "NONE",
-          "fvg": "BEARISH 33.3600~33.8000",
+          "structure": "RANGE",
+          "event": "BOS_DOWN",
+          "liquidity": "BUY_SIDE_SWEEP",
+          "fvg": "BULLISH 240.1400~240.2100",
           "score": -3
         },
-        "fresh": false,
-        "ageMinutes": 85.1
+        "fresh": true,
+        "ageMinutes": 43.1
+      }
+    },
+    {
+      "ticker": "OSCR",
+      "name": "Oscar Health, Inc. Class A Common Stock",
+      "dailyScore": 79.65,
+      "relativeStrengthPercentile": 0.8529411764705882,
+      "trigger": {
+        "ready": false,
+        "breakout": false,
+        "reclaim": false,
+        "volumeRatio": 0.0,
+        "ema20": 31.270143,
+        "ema50": 30.867618,
+        "lastTimestamp": "2026-07-29T11:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.00x; ICT=NEUTRAL/NONE/NONE",
+        "ict": {
+          "bias": "NEUTRAL",
+          "structure": "RANGE",
+          "event": "NONE",
+          "liquidity": "NONE",
+          "fvg": "BULLISH 31.2200~31.2500",
+          "score": 1
+        },
+        "fresh": true,
+        "ageMinutes": 13.1
       }
     },
     {
       "ticker": "TIGO",
       "name": "Millicom International Cellular S.A. - Common Stock",
-      "dailyScore": 79.65,
-      "relativeStrengthPercentile": 0.8529411764705882,
+      "dailyScore": 79.44,
+      "relativeStrengthPercentile": 0.8487394957983193,
       "trigger": {
         "ready": false,
         "breakout": false,
@@ -278,137 +200,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 130.1
-      }
-    },
-    {
-      "ticker": "HNGE",
-      "name": "Hinge Health, Inc. Class A Common Stock",
-      "dailyScore": 78.81,
-      "relativeStrengthPercentile": 0.8361344537815126,
-      "trigger": {
-        "ready": false,
-        "breakout": false,
-        "reclaim": false,
-        "volumeRatio": 0.0,
-        "ema20": 75.588946,
-        "ema50": 75.230701,
-        "lastTimestamp": "2026-07-29T09:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x; ICT=NEUTRAL/BOS_UP/NONE",
-        "ict": {
-          "bias": "NEUTRAL",
-          "structure": "RANGE",
-          "event": "BOS_UP",
-          "liquidity": "NONE",
-          "fvg": "BEARISH 75.9800~76.0000",
-          "score": 1
-        },
-        "fresh": true,
-        "ageMinutes": 40.1
-      }
-    },
-    {
-      "ticker": "APGE",
-      "name": "Apogee Therapeutics, Inc. - Common Stock",
-      "dailyScore": 78.43,
-      "relativeStrengthPercentile": 0.9285714285714286,
-      "trigger": {
-        "ready": false,
-        "breakout": true,
-        "reclaim": false,
-        "volumeRatio": 0.0,
-        "ema20": 134.143924,
-        "ema50": 134.168462,
-        "lastTimestamp": "2026-07-28T23:30:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=0.00x; ICT=NEUTRAL/NONE/NONE",
-        "ict": {
-          "bias": "NEUTRAL",
-          "structure": "RANGE",
-          "event": "NONE",
-          "liquidity": "NONE",
-          "fvg": "BULLISH 134.1500~134.1550",
-          "score": 1
-        },
-        "fresh": false,
-        "ageMinutes": 640.1
-      }
-    },
-    {
-      "ticker": "MOG-A",
-      "name": "Moog Inc. Class A Common Stock",
-      "dailyScore": 78.39,
-      "relativeStrengthPercentile": 0.8277310924369747,
-      "trigger": {
-        "ready": false,
-        "breakout": false,
-        "reclaim": false,
-        "volumeRatio": 0.0,
-        "ema20": 415.316906,
-        "ema50": 416.139756,
-        "lastTimestamp": "2026-07-29T09:33:10+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x; ICT=NEUTRAL/NONE/NONE",
-        "ict": {
-          "bias": "NEUTRAL",
-          "structure": "RANGE",
-          "event": "NONE",
-          "liquidity": "NONE",
-          "fvg": "BULLISH 412.1000~414.5600",
-          "score": 1
-        },
-        "fresh": true,
-        "ageMinutes": 37.0
-      }
-    },
-    {
-      "ticker": "TNA",
-      "name": "Direxion Small Cap Bull 3X ETF",
-      "dailyScore": 78.36,
-      "relativeStrengthPercentile": 0.8271604938271605,
-      "trigger": {
-        "ready": false,
-        "breakout": false,
-        "reclaim": false,
-        "volumeRatio": 0.0,
-        "ema20": 69.540069,
-        "ema50": 69.274857,
-        "lastTimestamp": "2026-07-29T10:00:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x; ICT=NEUTRAL/NONE/BUY_SIDE_SWEEP",
-        "ict": {
-          "bias": "NEUTRAL",
-          "structure": "RANGE",
-          "event": "NONE",
-          "liquidity": "BUY_SIDE_SWEEP",
-          "fvg": "BULLISH 69.7700~69.8800",
-          "score": -1
-        },
-        "fresh": true,
-        "ageMinutes": 10.1
-      }
-    },
-    {
-      "ticker": "KRYS",
-      "name": "Krystal Biotech, Inc. - Common Stock",
-      "dailyScore": 78.18,
-      "relativeStrengthPercentile": 0.8235294117647058,
-      "trigger": {
-        "ready": false,
-        "breakout": true,
-        "reclaim": true,
-        "volumeRatio": 0.0,
-        "ema20": 364.746179,
-        "ema50": 358.121804,
-        "lastTimestamp": "2026-07-29T08:45:00+00:00",
-        "reason": "breakout=True; reclaim=True; volume=0.00x; ICT=BULLISH/BOS_UP/NONE",
-        "ict": {
-          "bias": "BULLISH",
-          "structure": "RANGE",
-          "event": "BOS_UP",
-          "liquidity": "NONE",
-          "fvg": "BULLISH 362.8830~387.3800",
-          "score": 3
-        },
-        "fresh": false,
-        "ageMinutes": 85.1
+        "ageMinutes": 223.1
       }
     }
   ],
