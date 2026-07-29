@@ -266,11 +266,13 @@ def build_signal(item: dict[str, Any], trigger: dict[str, Any], regime: dict[str
         exposure *= 0.5
     score = min(100.0, float(item.get("dailyScore") or 0) + min(max(float(trigger["ict"]["score"]) * 2, -12), 12))
     date = generated_at_kst[:10]
+    signal_timestamp = str(trigger.get("lastTimestamp") or item.get("lastDailyTimestamp") or generated_at_kst)
+    signal_key = "".join(character for character in signal_timestamp if character.isalnum())
     return {
-        "id": f"{date}-{item['ticker']}-LONG-{STRATEGY_NAME}",
+        "id": f"{item['ticker']}-LONG-{signal_key}-{STRATEGY_NAME}",
         "date": date,
         "generatedAtKst": generated_at_kst,
-        "signalTimestamp": str(trigger.get("lastTimestamp") or item.get("lastDailyTimestamp")),
+        "signalTimestamp": signal_timestamp,
         "assetClass": item["assetClass"],
         "market": item["market"],
         "ticker": item["ticker"],
