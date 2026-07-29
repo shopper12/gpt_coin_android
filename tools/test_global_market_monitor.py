@@ -14,6 +14,8 @@ if str(TOOLS) not in sys.path:
 from global_market_monitor import (  # noqa: E402
     FAST_INTRADAY_LIMIT,
     MAX_SIGNALS,
+    can_emit_signal,
+    select_daily_candidates,
     select_final_signals,
     select_intraday_candidates,
 )
@@ -71,6 +73,27 @@ class KoreanEtfMonitoringTest(unittest.TestCase):
             {row["id"] for row in kr_signals},
             {row["id"] for row in selected if row["assetClass"] == "KR_ETF"},
         )
+
+    def test_korean_etf_is_observed_without_bypassing_daily_signal_guard(self) -> None:
+        metrics = [
+            {
+                "ticker": "069500.KS",
+                "assetClass": "KR_ETF",
+                "currentPrice": 10_000,
+                "ma200": 12_000,
+                "ret1m": -0.05,
+                "ret3m": -0.10,
+                "ret6m": -0.20,
+                "ret12m": 0.10,
+                "dailyScore": 10,
+                "relativeStrengthPercentile": 0.70,
+                "avgDollarValue": 1_000_000_000,
+            }
+        ]
+        selected = select_daily_candidates(metrics)
+        self.assertEqual([row["ticker"] for row in selected], ["069500.KS"])
+        self.assertFalse(selected[0]["dailySignalEligible"])
+        self.assertFalse(can_emit_signal(selected[0], {"ready": True}, fresh=True))
 
     def test_korean_etf_uses_its_documented_volume_threshold(self) -> None:
         index = pd.date_range("2026-07-28 00:00:00+00:00", periods=80, freq="15min")

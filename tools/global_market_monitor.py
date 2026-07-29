@@ -277,6 +277,54 @@ def trigger_freshness(trigger: dict[str, Any]) -> tuple[bool, float | None]:
         return False, None
 
 
+def is_strict_daily_candidate(row: dict[str, Any]) -> bool:
+    return (
+        float(row.get("dailyScore") or 0) >= 74
+        and float(row.get("relativeStrengthPercentile") or 0) >= 0.82
+        and float(row.get("currentPrice") or 0) > float(row.get("ma200") or 0)
+        and float(row.get("ret3m") or -9) > 0
+        and float(row.get("ret6m") or -9) > 0
+        and float(row.get("ret12m") or -9) > 0
+    )
+
+
+def select_daily_candidates(metrics: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    strict = [
+        {**row, "dailySignalEligible": True}
+        for row in metrics
+        if is_strict_daily_candidate(row)
+    ]
+    strict.sort(
+        key=lambda row: (
+            float(row.get("dailyScore") or 0),
+            float(row.get("relativeStrengthPercentile") or 0),
+        ),
+        reverse=True,
+    )
+    strict_tickers = {str(row.get("ticker") or "") for row in strict}
+    kr_etf_watch = [
+        {**row, "dailySignalEligible": False}
+        for row in metrics
+        if row.get("assetClass") == "KR_ETF"
+        and str(row.get("ticker") or "") not in strict_tickers
+        and float(row.get("currentPrice") or 0) > 0
+        and float(row.get("avgDollarValue") or 0) > 0
+    ]
+    kr_etf_watch.sort(
+        key=lambda row: (
+            float(row.get("dailyScore") or 0),
+            float(row.get("ret1m") or -9),
+            float(row.get("relativeStrengthPercentile") or 0),
+        ),
+        reverse=True,
+    )
+    return [*strict, *kr_etf_watch[:KR_ETF_INTRADAY_SLOTS]]
+
+
+def can_emit_signal(item: dict[str, Any], trigger: dict[str, Any], fresh: bool) -> bool:
+    return bool(item.get("dailySignalEligible", True) and trigger.get("ready") and fresh)
+
+
 def select_intraday_candidates(candidates: list[dict[str, Any]]) -> list[dict[str, Any]]:
     kr_etfs = [row for row in candidates if row.get("assetClass") == "KR_ETF"][:KR_ETF_INTRADAY_SLOTS]
     selected: list[dict[str, Any]] = []
@@ -373,20 +421,7 @@ def update_history(signals: list[dict[str, Any]], metrics: list[dict[str, Any]])
 def run_scan(instruments: list[Instrument]) -> dict[str, Any]:
     generated = now_kst().isoformat()
     metrics, regime, daily_cache_hit = load_or_refresh_daily_state(instruments)
-    candidates = sorted(
-        [
-            row
-            for row in metrics
-            if float(row.get("dailyScore") or 0) >= 74
-            and float(row.get("relativeStrengthPercentile") or 0) >= 0.82
-            and float(row.get("currentPrice") or 0) > float(row.get("ma200") or 0)
-            and float(row.get("ret3m") or -9) > 0
-            and float(row.get("ret6m") or -9) > 0
-            and float(row.get("ret12m") or -9) > 0
-        ],
-        key=lambda row: (float(row.get("dailyScore") or 0), float(row.get("relativeStrengthPercentile") or 0)),
-        reverse=True,
-    )
+    candidates = select_daily_candidates(metrics)
     intraday_candidates = select_intraday_candidates(candidates)
     intraday = fetch_intraday(intraday_candidates, instruments)
     signals: list[dict[str, Any]] = []
@@ -402,13 +437,14 @@ def run_scan(instruments: list[Instrument]) -> dict[str, Any]:
                 "name": item["name"],
                 "dailyScore": item["dailyScore"],
                 "relativeStrengthPercentile": item["relativeStrengthPercentile"],
+                "dailySignalEligible": bool(item.get("dailySignalEligible", True)),
                 "trigger": trigger,
             }
         )
         fresh, age_minutes = trigger_freshness(trigger)
         trigger["fresh"] = fresh
         trigger["ageMinutes"] = age_minutes
-        if trigger.get("ready") and fresh:
+        if can_emit_signal(item, trigger, fresh):
             signals.append(build_signal(item, trigger, regime, generated))
     signals = select_final_signals(signals)
     history = update_history(signals, metrics)
@@ -423,6 +459,12 @@ def run_scan(instruments: list[Instrument]) -> dict[str, Any]:
             "dailyMetricsCount": len(metrics),
             "dailyCandidateCount": len(candidates),
             "krEtfDailyCandidateCount": sum(1 for item in candidates if item.get("assetClass") == "KR_ETF"),
+            "strictDailyCandidateCount": sum(1 for item in candidates if item.get("dailySignalEligible")),
+            "krEtfSignalEligibleCount": sum(
+                1
+                for item in candidates
+                if item.get("assetClass") == "KR_ETF" and item.get("dailySignalEligible")
+            ),
             "intradayEvaluatedCount": len(intraday_candidates),
             "krEtfIntradayEvaluatedCount": sum(1 for item in intraday_candidates if item.get("assetClass") == "KR_ETF"),
             "signalCount": len(signals),
