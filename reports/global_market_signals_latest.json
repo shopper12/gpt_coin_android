@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-07-29T15:15:43.206928+09:00",
+  "generatedAtKst": "2026-07-29T18:24:00.525969+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
-    "shortlistCount": 383,
+    "shortlistCount": 384,
     "dailyMetricsCount": 363,
-    "dailyCandidateCount": 15,
-    "intradayEvaluatedCount": 15,
-    "signalCount": 3
+    "dailyCandidateCount": 12,
+    "intradayEvaluatedCount": 12,
+    "signalCount": 2
   },
   "marketRegime": {
     "panic": false,
@@ -21,7 +21,7 @@
     {
       "id": "2026-07-29-TWST-LONG-EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
       "date": "2026-07-29",
-      "generatedAtKst": "2026-07-29T15:15:43.206928+09:00",
+      "generatedAtKst": "2026-07-29T18:24:00.525969+09:00",
       "signalTimestamp": "2026-07-28T19:45:00+00:00",
       "assetClass": "US_STOCK",
       "market": "US",
@@ -117,7 +117,7 @@
     {
       "id": "2026-07-29-DAVE-LONG-EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
       "date": "2026-07-29",
-      "generatedAtKst": "2026-07-29T15:15:43.206928+09:00",
+      "generatedAtKst": "2026-07-29T18:24:00.525969+09:00",
       "signalTimestamp": "2026-07-28T19:45:00+00:00",
       "assetClass": "US_STOCK",
       "market": "US",
@@ -209,102 +209,6 @@
       },
       "reason": "3/6/12개월 절대 모멘텀 양수, 200일선 상단, 자산군 상대강도 88백분위, breakout=True; reclaim=False; volume=5.56x; ICT=BULLISH/BOS_UP/NONE",
       "guardrail": "자동 추천은 주문이 아니다. 실시간 호가·슬리피지·공시·거래 가능 여부를 확인한다."
-    },
-    {
-      "id": "2026-07-29-KRYS-LONG-EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
-      "date": "2026-07-29",
-      "generatedAtKst": "2026-07-29T15:15:43.206928+09:00",
-      "signalTimestamp": "2026-07-28T19:45:00+00:00",
-      "assetClass": "US_STOCK",
-      "market": "US",
-      "ticker": "KRYS",
-      "name": "Krystal Biotech, Inc. - Common Stock",
-      "direction": "LONG",
-      "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM: 절대추세+상대모멘텀+15분 트리거+변동성 목표",
-      "strategyType": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
-      "referencePrice": 364.230011,
-      "currentPrice": 364.230011,
-      "previousClose": 351.820007,
-      "todayChangePct": 3.527,
-      "recentCloses": [
-        324.75,
-        323.369995,
-        341.660004,
-        348.059998,
-        343.429993,
-        340.209991,
-        347.630005,
-        359.929993,
-        372.25,
-        378.149994,
-        371.670013,
-        371.579987,
-        375.070007,
-        374.679993,
-        368.600006,
-        375.399994,
-        371.23999,
-        365.809998,
-        363.440002,
-        339.429993,
-        350.23999,
-        341.790009,
-        354.859985,
-        339.220001,
-        339.059998,
-        336.799988,
-        327.5,
-        335.190002,
-        351.820007,
-        364.230011
-      ],
-      "currency": "USD",
-      "status": "ACTIVE_SIGNAL",
-      "score": 80.2,
-      "confidence": 8.0,
-      "relativeStrengthPercentile": 0.8235,
-      "entryLow": 360.587711,
-      "entryHigh": 367.387017,
-      "stopLoss": 329.502948,
-      "target1": 433.684137,
-      "target2": 475.356613,
-      "riskPct": 9.53,
-      "volatilityTargetExposurePct": 26.9,
-      "regime": {
-        "panic": false,
-        "riskOff": false,
-        "equityBelow200Count": 0,
-        "realizedVolatility20Annualized": 0.2065,
-        "reason": "광의 추세와 변동성 정상"
-      },
-      "ict": {
-        "bias": "NEUTRAL",
-        "structure": "BEARISH_LH_LL",
-        "event": "CHOCH_UP",
-        "liquidity": "NONE",
-        "fvg": "BULLISH 358.8150~360.6400",
-        "score": 1
-      },
-      "trigger": {
-        "ready": true,
-        "breakout": true,
-        "reclaim": false,
-        "volumeRatio": 7.64,
-        "ema20": 357.253534,
-        "ema50": 351.625364,
-        "lastTimestamp": "2026-07-28T19:45:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=7.64x; ICT=NEUTRAL/CHOCH_UP/NONE",
-        "ict": {
-          "bias": "NEUTRAL",
-          "structure": "BEARISH_LH_LL",
-          "event": "CHOCH_UP",
-          "liquidity": "NONE",
-          "fvg": "BULLISH 358.8150~360.6400",
-          "score": 1
-        }
-      },
-      "reason": "3/6/12개월 절대 모멘텀 양수, 200일선 상단, 자산군 상대강도 82백분위, breakout=True; reclaim=False; volume=7.64x; ICT=NEUTRAL/CHOCH_UP/NONE",
-      "guardrail": "자동 추천은 주문이 아니다. 실시간 호가·슬리피지·공시·거래 가능 여부를 확인한다."
     }
   ],
   "topEvaluated": [
@@ -335,8 +239,8 @@
     {
       "ticker": "JAZZ",
       "name": "Jazz Pharmaceuticals plc - Ordinary Shares",
-      "dailyScore": 86.6,
-      "relativeStrengthPercentile": 0.8319327731092437,
+      "dailyScore": 86.39,
+      "relativeStrengthPercentile": 0.8277310924369747,
       "trigger": {
         "ready": false,
         "breakout": false,
@@ -551,8 +455,8 @@
     {
       "ticker": "HNGE",
       "name": "Hinge Health, Inc. Class A Common Stock",
-      "dailyScore": 78.81,
-      "relativeStrengthPercentile": 0.8361344537815126,
+      "dailyScore": 78.6,
+      "relativeStrengthPercentile": 0.8319327731092437,
       "trigger": {
         "ready": false,
         "breakout": false,
@@ -569,54 +473,6 @@
           "liquidity": "NONE",
           "fvg": "BEARISH 75.2100~75.3100",
           "score": 1
-        }
-      }
-    },
-    {
-      "ticker": "APGE",
-      "name": "Apogee Therapeutics, Inc. - Common Stock",
-      "dailyScore": 78.43,
-      "relativeStrengthPercentile": 0.9285714285714286,
-      "trigger": {
-        "ready": false,
-        "breakout": true,
-        "reclaim": false,
-        "volumeRatio": 4.354,
-        "ema20": 134.140487,
-        "ema50": 134.183634,
-        "lastTimestamp": "2026-07-28T19:45:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=4.35x; ICT=NEUTRAL/NONE/BUY_SIDE_SWEEP",
-        "ict": {
-          "bias": "NEUTRAL",
-          "structure": "RANGE",
-          "event": "NONE",
-          "liquidity": "BUY_SIDE_SWEEP",
-          "fvg": "BULLISH 134.1500~134.1550",
-          "score": -1
-        }
-      }
-    },
-    {
-      "ticker": "MOG-A",
-      "name": "Moog Inc. Class A Common Stock",
-      "dailyScore": 78.39,
-      "relativeStrengthPercentile": 0.8277310924369747,
-      "trigger": {
-        "ready": false,
-        "breakout": false,
-        "reclaim": false,
-        "volumeRatio": 2.289,
-        "ema20": 417.5803,
-        "ema50": 416.061071,
-        "lastTimestamp": "2026-07-28T19:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=2.29x; ICT=BEARISH/BOS_DOWN/NONE",
-        "ict": {
-          "bias": "BEARISH",
-          "structure": "RANGE",
-          "event": "BOS_DOWN",
-          "liquidity": "NONE",
-          "fvg": "BEARISH 416.0675~417.3100",
-          "score": -3
         }
       }
     },
@@ -641,30 +497,6 @@
           "liquidity": "BUY_SIDE_SWEEP",
           "fvg": "BULLISH 68.8600~68.9000",
           "score": -3
-        }
-      }
-    },
-    {
-      "ticker": "KRYS",
-      "name": "Krystal Biotech, Inc. - Common Stock",
-      "dailyScore": 78.18,
-      "relativeStrengthPercentile": 0.8235294117647058,
-      "trigger": {
-        "ready": true,
-        "breakout": true,
-        "reclaim": false,
-        "volumeRatio": 7.64,
-        "ema20": 357.253534,
-        "ema50": 351.625364,
-        "lastTimestamp": "2026-07-28T19:45:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=7.64x; ICT=NEUTRAL/CHOCH_UP/NONE",
-        "ict": {
-          "bias": "NEUTRAL",
-          "structure": "BEARISH_LH_LL",
-          "event": "CHOCH_UP",
-          "liquidity": "NONE",
-          "fvg": "BULLISH 358.8150~360.6400",
-          "score": 1
         }
       }
     }
