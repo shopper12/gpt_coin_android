@@ -72,11 +72,15 @@ class GlobalMarketSignalWorker(
     }
 
     private fun fetchLatestSignals(): JSONObject {
-        val connection = URL(LATEST_SIGNALS_URL).openConnection() as HttpURLConnection
+        val url = "$LATEST_SIGNALS_URL?ts=${System.currentTimeMillis()}"
+        val connection = URL(url).openConnection() as HttpURLConnection
+        connection.useCaches = false
         connection.requestMethod = "GET"
         connection.connectTimeout = 12_000
         connection.readTimeout = 20_000
         connection.setRequestProperty("Accept", "application/json")
+        connection.setRequestProperty("Cache-Control", "no-cache, no-store, max-age=0")
+        connection.setRequestProperty("Pragma", "no-cache")
         connection.setRequestProperty("User-Agent", "UnifiedTradingCoach-Android")
         return try {
             val code = connection.responseCode
