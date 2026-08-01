@@ -46,6 +46,7 @@ KST = ZoneInfo("Asia/Seoul")
 REPORTS = ROOT / "reports"
 SHORTLIST_PATH = REPORTS / "global_market_shortlist.json"
 LATEST_PATH = REPORTS / "global_market_signals_latest.json"
+CHATGPT_LATEST_PATH = REPORTS / "chatgpt_recommendations_latest.json"
 HISTORY_PATH = REPORTS / "global_market_recommendation_history.json"
 DAILY_STATE_PATH = REPORTS / "global_market_daily_state.json"
 SCHEMA_VERSION = 1
@@ -74,6 +75,38 @@ def read_json(path: Path, default: dict[str, Any]) -> dict[str, Any]:
 def write_json(path: Path, payload: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2, default=str) + "\n", encoding="utf-8")
+
+
+def load_chatgpt_signals() -> list[dict[str, Any]]:
+    payload = read_json(CHATGPT_LATEST_PATH, {})
+    rows = payload.get("signals") or payload.get("recommendations") or []
+    if not isinstance(rows, list):
+        return []
+    generated = str(payload.get("generatedAtKst") or payload.get("updatedAtKst") or "")
+    output: list[dict[str, Any]] = []
+    for raw in rows:
+        if not isinstance(raw, dict):
+            continue
+        item = dict(raw)
+        signal_id = str(item.get("id") or "").strip()
+        ticker = str(item.get("ticker") or item.get("code") or "").strip()
+        if not signal_id or not ticker:
+            continue
+        item["id"] = signal_id
+        item["ticker"] = ticker
+        item.setdefault("name", ticker)
+        item.setdefault("date", (generated[:10] if generated else now_kst().date().isoformat()))
+        item.setdefault("generatedAtKst", generated or now_kst().isoformat())
+        item.setdefault("strategyType", "CHATGPT_SCHEDULED_BRIEFING")
+        item.setdefault("status", "CONDITIONAL")
+        item.setdefault("assetClass", str(item.get("asset_class") or "UNKNOWN").upper())
+        item.setdefault("market", "GLOBAL")
+        item.setdefault("currency", "USD")
+        item.setdefault("direction", "LONG")
+        item.setdefault("score", 0.0)
+        item.setdefault("confidence", 0.0)
+        output.append(item)
+    return output[:10]
 
 
 def load_shortlist() -> list[Instrument]:
@@ -446,7 +479,17 @@ def run_scan(instruments: list[Instrument]) -> dict[str, Any]:
         trigger["ageMinutes"] = age_minutes
         if can_emit_signal(item, trigger, fresh):
             signals.append(build_signal(item, trigger, regime, generated))
-    signals = select_final_signals(signals)
+    scanner_signals = select_final_signals(signals)
+    chatgpt_signals = load_chatgpt_signals()
+    chatgpt_ids = {str(item.get("id") or "") for item in chatgpt_signals}
+    signals = [
+        *chatgpt_signals,
+        *[
+            item
+            for item in scanner_signals
+            if str(item.get("id") or "") not in chatgpt_ids
+        ],
+    ]
     history = update_history(signals, metrics)
     latest = {
         "schemaVersion": SCHEMA_VERSION,
@@ -468,6 +511,8 @@ def run_scan(instruments: list[Instrument]) -> dict[str, Any]:
             "intradayEvaluatedCount": len(intraday_candidates),
             "krEtfIntradayEvaluatedCount": sum(1 for item in intraday_candidates if item.get("assetClass") == "KR_ETF"),
             "signalCount": len(signals),
+            "scannerSignalCount": len(scanner_signals),
+            "chatgptSignalCount": len(chatgpt_signals),
             "krEtfSignalCount": sum(1 for item in signals if item.get("assetClass") == "KR_ETF"),
             "dailyCacheHit": daily_cache_hit,
             "maxSignalAgeMinutes": MAX_SIGNAL_AGE_MINUTES,
