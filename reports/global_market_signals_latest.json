@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-08-01T13:10:25.217516+09:00",
+  "generatedAtKst": "2026-08-01T15:04:43.277607+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
@@ -13,11 +13,11 @@
     "krEtfSignalEligibleCount": 0,
     "intradayEvaluatedCount": 40,
     "krEtfIntradayEvaluatedCount": 28,
-    "signalCount": 0,
+    "signalCount": 4,
     "scannerSignalCount": 0,
-    "chatgptSignalCount": 0,
+    "chatgptSignalCount": 4,
     "krEtfSignalCount": 0,
-    "dailyCacheHit": true,
+    "dailyCacheHit": false,
     "maxSignalAgeMinutes": 45
   },
   "marketRegime": {
@@ -27,7 +27,136 @@
     "realizedVolatility20Annualized": 0.2323,
     "reason": "광의 추세와 변동성 정상"
   },
-  "signals": [],
+  "signals": [
+    {
+      "id": "20260801-1500KST-XLE-LONG",
+      "date": "2026-08-01",
+      "generatedAtKst": "2026-08-01T15:00:00+09:00",
+      "briefingSlot": "1500",
+      "assetClass": "US_ETF",
+      "market": "NYSEARCA",
+      "ticker": "XLE",
+      "name": "Energy Select Sector SPDR Fund",
+      "direction": "LONG",
+      "strategy": "유가 강세와 에너지 상대강도 지속 시 눌림 분할매수",
+      "strategyType": "CHATGPT_SCHEDULED_BRIEFING",
+      "status": "CONDITIONAL",
+      "score": 82,
+      "confidence": 78,
+      "currentPrice": 59.55,
+      "referencePrice": 59.55,
+      "currency": "USD",
+      "entryLow": 58.8,
+      "entryHigh": 59.4,
+      "stopLoss": 57.4,
+      "target1": 61.8,
+      "target2": 64,
+      "holdingPeriod": "3-15 trading days",
+      "committeeVote": "6/7",
+      "catalyst": "7월 WTI·Brent 급등과 에너지 섹터 월간 상대강도",
+      "reason": "XLE는 7월 미국 섹터 중 선두권이고 유가 공급위험의 직접 수혜지만 금요일 종가 추격은 피한다.",
+      "risk": "지정학 완화, 원유 공급 회복, 수요파괴 및 광범위 위험회피",
+      "invalidation": "WTI 82달러 이탈과 XLE 57.40달러 종가 이탈이 함께 발생",
+      "quoteStatus": "MARKET_CLOSED_VERIFIED_CLOSE",
+      "priceTimestampKst": "2026-08-01T05:00:00+09:00"
+    },
+    {
+      "id": "20260801-1500KST-SOXS-INVERSE",
+      "date": "2026-08-01",
+      "generatedAtKst": "2026-08-01T15:00:00+09:00",
+      "briefingSlot": "1500",
+      "assetClass": "LEVERAGED_INVERSE_ETF",
+      "market": "NYSEARCA",
+      "ticker": "SOXS",
+      "name": "Direxion Daily Semiconductor Bear 3X Shares",
+      "direction": "INVERSE",
+      "strategy": "반도체 반등 실패 확인 후 단기 헤지",
+      "strategyType": "CHATGPT_SCHEDULED_BRIEFING",
+      "status": "CONDITIONAL",
+      "score": 76,
+      "confidence": 68,
+      "currentPrice": 54.27,
+      "referencePrice": 54.27,
+      "currency": "USD",
+      "entryLow": 51.5,
+      "entryHigh": 53,
+      "stopLoss": 48.7,
+      "target1": 58.5,
+      "target2": 63,
+      "holdingPeriod": "1-5 trading days",
+      "committeeVote": "5/7",
+      "catalyst": "SOXX 7월 -22.1%, 금요일 나스닥 상승에도 SOX +0.07%로 상대약세",
+      "reason": "한국 반도체 숏커버 급등과 달리 미국 반도체 폭·상대강도는 취약하다. SOXS 자체 급등 추격은 금지한다.",
+      "risk": "AI주 추가 숏커버, 3배 레버리지 일일 재조정·변동성 감가",
+      "invalidation": "SOXS 48.70달러 이탈 또는 SOX가 2거래일 연속 시장 대비 초과상승",
+      "quoteStatus": "MARKET_CLOSED_VERIFIED_CLOSE",
+      "priceTimestampKst": "2026-08-01T05:00:00+09:00"
+    },
+    {
+      "id": "20260801-1500KST-BTC-USD-SHORT",
+      "date": "2026-08-01",
+      "generatedAtKst": "2026-08-01T15:00:00+09:00",
+      "briefingSlot": "1500",
+      "assetClass": "CRYPTO",
+      "market": "GLOBAL_24X7",
+      "ticker": "BTC-USD",
+      "name": "Bitcoin",
+      "direction": "SHORT",
+      "strategy": "63.25K-63.65K 되돌림 저항 확인 시 단기 숏",
+      "strategyType": "CHATGPT_SCHEDULED_BRIEFING",
+      "status": "CONDITIONAL",
+      "score": 72,
+      "confidence": 66,
+      "currentPrice": 63030,
+      "referencePrice": 63030,
+      "currency": "USD",
+      "entryLow": 63250,
+      "entryHigh": 63650,
+      "stopLoss": 64500,
+      "target1": 61500,
+      "target2": 59800,
+      "holdingPeriod": "6-72 hours",
+      "committeeVote": "5/7",
+      "catalyst": "주말 유동성 속 64.4K 실패와 위험자산 내부 시장폭 약화",
+      "reason": "실시간 복수 거래소 가격이 63.0K 부근으로 수렴하나 이미 하락한 자리라 반등 실패에서만 진입한다.",
+      "risk": "주말 숏스퀴즈, 거래소별 가격괴리, 24시간 급격한 변동",
+      "invalidation": "64,500달러 상향 돌파 후 1시간 유지",
+      "quoteStatus": "LIVE_CROSS_VERIFIED",
+      "priceTimestampKst": "2026-08-01T14:59:00+09:00"
+    },
+    {
+      "id": "20260801-1500KST-GLD-DEFENSIVE",
+      "date": "2026-08-01",
+      "generatedAtKst": "2026-08-01T15:00:00+09:00",
+      "briefingSlot": "1500",
+      "assetClass": "COMMODITY_ETF",
+      "market": "NYSEARCA",
+      "ticker": "GLD",
+      "name": "SPDR Gold Shares",
+      "direction": "DEFENSIVE",
+      "strategy": "지정학·인플레이션 꼬리위험 방어용 금 눌림매수",
+      "strategyType": "CHATGPT_SCHEDULED_BRIEFING",
+      "status": "CONDITIONAL",
+      "score": 67,
+      "confidence": 60,
+      "currentPrice": 371.54,
+      "referencePrice": 371.54,
+      "currency": "USD",
+      "entryLow": 369,
+      "entryHigh": 372,
+      "stopLoss": 364.8,
+      "target1": 380,
+      "target2": 389,
+      "holdingPeriod": "5-20 trading days",
+      "committeeVote": "4/7",
+      "catalyst": "지정학·원유발 인플레이션 꼬리위험",
+      "reason": "포트폴리오 분산에는 유리하지만 미 10년물 4.74%와 달러 99.8이 역풍이므로 즉시진입 요건 미달이다.",
+      "risk": "실질금리 상승, 달러 강세, 지정학 프리미엄 축소",
+      "invalidation": "GLD 364.80달러 종가 이탈 또는 미 10년물 4.90% 상향 돌파",
+      "quoteStatus": "MARKET_CLOSED_VERIFIED_CLOSE",
+      "priceTimestampKst": "2026-08-01T05:00:00+09:00"
+    }
+  ],
   "topEvaluated": [
     {
       "ticker": "091170.KS",
@@ -54,7 +183,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 1300.5
+        "ageMinutes": 1416.5
       }
     },
     {
@@ -82,7 +211,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 1300.5
+        "ageMinutes": 1416.5
       }
     },
     {
@@ -110,7 +239,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 1300.5
+        "ageMinutes": 1416.5
       }
     },
     {
@@ -138,7 +267,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 1300.5
+        "ageMinutes": 1416.5
       }
     },
     {
@@ -166,7 +295,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 1300.5
+        "ageMinutes": 1416.5
       }
     },
     {
@@ -194,7 +323,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 1300.5
+        "ageMinutes": 1416.5
       }
     },
     {
@@ -207,12 +336,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 1.489,
+        "volumeRatio": 2.895,
         "volumeThreshold": 1.2,
         "ema20": 15252.77146,
         "ema50": 15322.644164,
         "lastTimestamp": "2026-07-31T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=1.49x/1.20x; ICT=BEARISH/BOS_DOWN/NONE",
+        "reason": "breakout=False; reclaim=False; volume=2.89x/1.20x; ICT=BEARISH/BOS_DOWN/NONE",
         "ict": {
           "bias": "BEARISH",
           "structure": "RANGE",
@@ -222,7 +351,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 1300.5
+        "ageMinutes": 1416.5
       }
     },
     {
@@ -250,7 +379,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 1300.5
+        "ageMinutes": 1416.5
       }
     },
     {
@@ -278,7 +407,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 1300.5
+        "ageMinutes": 1416.5
       }
     },
     {
@@ -306,7 +435,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 1300.5
+        "ageMinutes": 1416.5
       }
     },
     {
@@ -334,7 +463,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 1300.5
+        "ageMinutes": 1416.5
       }
     },
     {
@@ -362,7 +491,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 1300.5
+        "ageMinutes": 1416.5
       }
     },
     {
@@ -390,7 +519,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 1300.5
+        "ageMinutes": 1416.5
       }
     },
     {
@@ -418,7 +547,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 1300.5
+        "ageMinutes": 1416.5
       }
     },
     {
@@ -446,7 +575,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 1300.5
+        "ageMinutes": 1416.5
       }
     },
     {
@@ -474,7 +603,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 1300.5
+        "ageMinutes": 1416.5
       }
     },
     {
@@ -502,7 +631,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 1300.5
+        "ageMinutes": 1416.6
       }
     },
     {
@@ -530,7 +659,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 1300.5
+        "ageMinutes": 1416.6
       }
     },
     {
@@ -558,7 +687,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 1300.5
+        "ageMinutes": 1416.6
       }
     },
     {
@@ -586,7 +715,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 1300.5
+        "ageMinutes": 1416.6
       }
     },
     {
@@ -614,7 +743,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 1300.5
+        "ageMinutes": 1416.6
       }
     },
     {
@@ -642,7 +771,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 1300.5
+        "ageMinutes": 1416.6
       }
     },
     {
@@ -655,12 +784,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 11.372,
+        "volumeRatio": 11.6,
         "volumeThreshold": 1.2,
         "ema20": 27788.667257,
         "ema50": 27396.390066,
         "lastTimestamp": "2026-07-31T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=11.37x/1.20x; ICT=BULLISH/NONE/NONE",
+        "reason": "breakout=False; reclaim=False; volume=11.60x/1.20x; ICT=BULLISH/NONE/NONE",
         "ict": {
           "bias": "BULLISH",
           "structure": "BULLISH_HH_HL",
@@ -670,7 +799,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 1300.5
+        "ageMinutes": 1416.6
       }
     },
     {
@@ -698,7 +827,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 1300.5
+        "ageMinutes": 1416.6
       }
     },
     {
@@ -726,7 +855,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 1300.5
+        "ageMinutes": 1416.6
       }
     },
     {
@@ -754,7 +883,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 1300.5
+        "ageMinutes": 1416.6
       }
     },
     {
@@ -782,7 +911,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 1300.5
+        "ageMinutes": 1416.6
       }
     },
     {
@@ -810,7 +939,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 1300.5
+        "ageMinutes": 1416.6
       }
     },
     {
@@ -838,7 +967,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 280.5
+        "ageMinutes": 396.6
       }
     },
     {
@@ -866,11 +995,11 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 265.5
+        "ageMinutes": 381.6
       }
     }
   ],
-  "historyRecordCount": 19,
+  "historyRecordCount": 23,
   "researchBasis": [
     "time-series momentum",
     "cross-sectional momentum",
