@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-08-02T08:16:53.350873+09:00",
+  "generatedAtKst": "2026-08-02T09:32:22.601953+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
-    "shortlistCount": 413,
+    "shortlistCount": 415,
     "krEtfShortlistCount": 34,
-    "dailyMetricsCount": 386,
+    "dailyMetricsCount": 387,
     "dailyCandidateCount": 40,
     "krEtfDailyCandidateCount": 28,
     "strictDailyCandidateCount": 12,
@@ -29,22 +29,22 @@
   },
   "signals": [
     {
-      "id": "20260802-0730KST-BTC-USD-SHORT",
+      "id": "20260802-0930KST-BTC-USD-SHORT",
       "date": "2026-08-02",
-      "generatedAtKst": "2026-08-02T07:30:23+09:00",
-      "briefingSlot": "0730",
+      "generatedAtKst": "2026-08-02T09:30:20+09:00",
+      "briefingSlot": "0930",
       "assetClass": "CRYPTO",
       "market": "GLOBAL_24X7",
       "ticker": "BTC-USD",
       "name": "Bitcoin",
       "direction": "SHORT",
-      "strategy": "62.90K-63.10K 반등 저항 확인 시 단기 숏",
+      "strategy": "62.90K-63.10K 진입구간에서 15분봉 62.88K 재이탈 확인 시 숏",
       "strategyType": "CHATGPT_SCHEDULED_BRIEFING",
       "status": "CONDITIONAL",
-      "score": 76,
-      "confidence": 69,
-      "currentPrice": 62790,
-      "referencePrice": 62790,
+      "score": 75,
+      "confidence": 67,
+      "currentPrice": 62902,
+      "referencePrice": 62902,
       "currency": "USD",
       "entryLow": 62900,
       "entryHigh": 63100,
@@ -53,18 +53,18 @@
       "target2": 61000,
       "holdingPeriod": "6-72 hours",
       "committeeVote": "5/7",
-      "catalyst": "63K 지지 약화, 24시간 거래량 감소와 대규모 콜드월렛 공격 보도",
-      "reason": "00시 전략의 63.25K 진입선에는 닿지 않은 채 가격이 62.79K로 하락했다. 현재가 추격 대신 62.90K 이상 되돌림 실패에서만 진입한다.",
+      "catalyst": "63K 저항, 24시간 거래량 감소와 지갑 보안사건",
+      "reason": "07:30 이후 가격이 62.90K 진입 하단에 도달했지만 저항 확인용 15분봉 재이탈은 아직 검증되지 않았다. 접촉만으로 소급 체결하지 않는다.",
       "risk": "주말 저유동성 숏스퀴즈, 거래소별 가격괴리, 보안사건 피해 규모 수정",
       "invalidation": "63,600달러 상향 돌파 후 1시간 유지",
       "quoteStatus": "LIVE_CROSS_VERIFIED",
-      "priceTimestampKst": "2026-08-02T07:30:00+09:00"
+      "priceTimestampKst": "2026-08-02T09:12:00+09:00"
     },
     {
-      "id": "20260802-0730KST-XLE-LONG",
+      "id": "20260802-0930KST-XLE-LONG",
       "date": "2026-08-02",
-      "generatedAtKst": "2026-08-02T07:30:23+09:00",
-      "briefingSlot": "0730",
+      "generatedAtKst": "2026-08-02T09:30:20+09:00",
+      "briefingSlot": "0930",
       "assetClass": "US_ETF",
       "market": "NYSEARCA",
       "ticker": "XLE",
@@ -86,17 +86,17 @@
       "holdingPeriod": "3-15 trading days",
       "committeeVote": "6/7",
       "catalyst": "7월 원유 급등과 미국 에너지 섹터 상대강도",
-      "reason": "유가 상승의 현금흐름 수혜가 장기금리 상승에 취약한 성장주보다 직접적이다. 주말 폐장이므로 월요일 눌림 확인이 필수다.",
+      "reason": "유가 상승의 현금흐름 수혜가 직접적이지만 주말 폐장으로 월요일 가격과 유가를 다시 확인해야 한다.",
       "risk": "미국-이란 긴장 완화, 원유 공급 회복, 수요파괴와 시장 전반 급락",
       "invalidation": "WTI 82달러 이탈과 XLE 57.40달러 종가 이탈이 함께 발생",
       "quoteStatus": "MARKET_CLOSED_VERIFIED_CLOSE",
       "priceTimestampKst": "2026-08-01T05:00:00+09:00"
     },
     {
-      "id": "20260802-0730KST-SOXS-INVERSE",
+      "id": "20260802-0930KST-SOXS-INVERSE",
       "date": "2026-08-02",
-      "generatedAtKst": "2026-08-02T07:30:23+09:00",
-      "briefingSlot": "0730",
+      "generatedAtKst": "2026-08-02T09:30:20+09:00",
+      "briefingSlot": "0930",
       "assetClass": "LEVERAGED_INVERSE_ETF",
       "market": "NYSEARCA",
       "ticker": "SOXS",
@@ -125,10 +125,10 @@
       "priceTimestampKst": "2026-08-01T05:00:00+09:00"
     },
     {
-      "id": "20260802-0730KST-GLD-DEFENSIVE",
+      "id": "20260802-0930KST-GLD-DEFENSIVE",
       "date": "2026-08-02",
-      "generatedAtKst": "2026-08-02T07:30:23+09:00",
-      "briefingSlot": "0730",
+      "generatedAtKst": "2026-08-02T09:30:20+09:00",
+      "briefingSlot": "0930",
       "assetClass": "COMMODITY_ETF",
       "market": "NYSEARCA",
       "ticker": "GLD",
@@ -183,7 +183,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2448.8
+        "ageMinutes": 2523.9
       }
     },
     {
@@ -211,7 +211,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2448.8
+        "ageMinutes": 2523.9
       }
     },
     {
@@ -239,7 +239,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2448.8
+        "ageMinutes": 2523.9
       }
     },
     {
@@ -267,7 +267,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2448.8
+        "ageMinutes": 2523.9
       }
     },
     {
@@ -295,7 +295,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2448.8
+        "ageMinutes": 2523.9
       }
     },
     {
@@ -323,7 +323,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2448.8
+        "ageMinutes": 2523.9
       }
     },
     {
@@ -351,7 +351,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 2448.8
+        "ageMinutes": 2523.9
       }
     },
     {
@@ -379,7 +379,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2448.8
+        "ageMinutes": 2523.9
       }
     },
     {
@@ -407,7 +407,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 2448.8
+        "ageMinutes": 2523.9
       }
     },
     {
@@ -435,7 +435,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 2448.8
+        "ageMinutes": 2523.9
       }
     },
     {
@@ -463,7 +463,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 2448.8
+        "ageMinutes": 2523.9
       }
     },
     {
@@ -491,7 +491,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 2448.8
+        "ageMinutes": 2523.9
       }
     },
     {
@@ -519,7 +519,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2448.8
+        "ageMinutes": 2523.9
       }
     },
     {
@@ -547,7 +547,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2448.8
+        "ageMinutes": 2523.9
       }
     },
     {
@@ -575,7 +575,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2448.8
+        "ageMinutes": 2523.9
       }
     },
     {
@@ -603,7 +603,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2448.8
+        "ageMinutes": 2523.9
       }
     },
     {
@@ -631,7 +631,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2448.8
+        "ageMinutes": 2523.9
       }
     },
     {
@@ -659,7 +659,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 2448.8
+        "ageMinutes": 2523.9
       }
     },
     {
@@ -687,7 +687,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 2448.8
+        "ageMinutes": 2523.9
       }
     },
     {
@@ -715,7 +715,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2448.8
+        "ageMinutes": 2523.9
       }
     },
     {
@@ -743,7 +743,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2448.8
+        "ageMinutes": 2523.9
       }
     },
     {
@@ -771,7 +771,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2448.8
+        "ageMinutes": 2523.9
       }
     },
     {
@@ -799,7 +799,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2448.8
+        "ageMinutes": 2523.9
       }
     },
     {
@@ -827,7 +827,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2448.8
+        "ageMinutes": 2523.9
       }
     },
     {
@@ -855,7 +855,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2448.8
+        "ageMinutes": 2523.9
       }
     },
     {
@@ -883,7 +883,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2448.8
+        "ageMinutes": 2523.9
       }
     },
     {
@@ -911,7 +911,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2448.8
+        "ageMinutes": 2523.9
       }
     },
     {
@@ -939,7 +939,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2448.8
+        "ageMinutes": 2523.9
       }
     },
     {
@@ -967,7 +967,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 1428.8
+        "ageMinutes": 1503.9
       }
     },
     {
@@ -995,11 +995,11 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 1413.8
+        "ageMinutes": 1488.9
       }
     }
   ],
-  "historyRecordCount": 35,
+  "historyRecordCount": 39,
   "researchBasis": [
     "time-series momentum",
     "cross-sectional momentum",
