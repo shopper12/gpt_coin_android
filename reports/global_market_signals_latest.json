@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-08-03T21:03:04.570421+09:00",
+  "generatedAtKst": "2026-08-04T00:19:35.157063+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
     "shortlistCount": 418,
     "krEtfShortlistCount": 34,
     "dailyMetricsCount": 393,
-    "dailyCandidateCount": 40,
+    "dailyCandidateCount": 39,
     "krEtfDailyCandidateCount": 28,
-    "strictDailyCandidateCount": 12,
+    "strictDailyCandidateCount": 11,
     "krEtfSignalEligibleCount": 0,
-    "intradayEvaluatedCount": 40,
+    "intradayEvaluatedCount": 39,
     "krEtfIntradayEvaluatedCount": 28,
     "signalCount": 4,
     "scannerSignalCount": 0,
@@ -24,7 +24,7 @@
     "panic": false,
     "riskOff": false,
     "equityBelow200Count": 0,
-    "realizedVolatility20Annualized": 0.2323,
+    "realizedVolatility20Annualized": 0.2312,
     "reason": "광의 추세와 변동성 정상"
   },
   "signals": [
@@ -168,22 +168,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.056,
+        "volumeRatio": 0.012,
         "volumeThreshold": 1.2,
-        "ema20": 15603.770775,
-        "ema50": 15574.215248,
-        "lastTimestamp": "2026-08-03T06:15:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.06x/1.20x; ICT=BULLISH/BOS_UP/NONE",
+        "ema20": 15617.697401,
+        "ema50": 15581.598509,
+        "lastTimestamp": "2026-08-03T06:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.01x/1.20x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
           "bias": "BULLISH",
-          "structure": "BULLISH_HH_HL",
+          "structure": "RANGE",
           "event": "BOS_UP",
           "liquidity": "NONE",
-          "fvg": "BULLISH 15620.0000~15640.0000",
-          "score": 5
+          "fvg": "BULLISH 15630.0000~15750.0000",
+          "score": 3
         },
         "fresh": false,
-        "ageMinutes": 349.8
+        "ageMinutes": 531.8
       }
     },
     {
@@ -196,12 +196,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.54,
+        "volumeRatio": 0.159,
         "volumeThreshold": 1.2,
-        "ema20": 121783.168843,
-        "ema50": 120714.186065,
-        "lastTimestamp": "2026-08-03T06:15:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.54x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 121725.724297,
+        "ema50": 120734.030411,
+        "lastTimestamp": "2026-08-03T06:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.16x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
@@ -211,7 +211,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 349.8
+        "ageMinutes": 531.8
       }
     },
     {
@@ -239,14 +239,126 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 349.8
+        "ageMinutes": 546.8
+      }
+    },
+    {
+      "ticker": "102110.KS",
+      "name": "TIGER 200",
+      "dailyScore": 49.59,
+      "relativeStrengthPercentile": 0.8518518518518519,
+      "dailySignalEligible": false,
+      "trigger": {
+        "ready": false,
+        "breakout": false,
+        "reclaim": false,
+        "volumeRatio": 0.517,
+        "volumeThreshold": 1.2,
+        "ema20": 99751.510022,
+        "ema50": 99523.188935,
+        "lastTimestamp": "2026-08-03T06:15:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.52x/1.20x; ICT=BEARISH/NONE/NONE",
+        "ict": {
+          "bias": "BEARISH",
+          "structure": "BEARISH_LH_LL",
+          "event": "NONE",
+          "liquidity": "NONE",
+          "fvg": "BEARISH 99545.0000~99575.0000",
+          "score": -3
+        },
+        "fresh": false,
+        "ageMinutes": 546.8
+      }
+    },
+    {
+      "ticker": "069500.KS",
+      "name": "KODEX 200",
+      "dailyScore": 47.74,
+      "relativeStrengthPercentile": 0.8148148148148148,
+      "dailySignalEligible": false,
+      "trigger": {
+        "ready": false,
+        "breakout": false,
+        "reclaim": false,
+        "volumeRatio": 1.078,
+        "volumeThreshold": 1.2,
+        "ema20": 99527.171413,
+        "ema50": 99325.014455,
+        "lastTimestamp": "2026-08-03T06:15:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=1.08x/1.20x; ICT=BEARISH/NONE/NONE",
+        "ict": {
+          "bias": "BEARISH",
+          "structure": "BEARISH_LH_LL",
+          "event": "NONE",
+          "liquidity": "NONE",
+          "fvg": "BEARISH 99340.0000~99345.0000",
+          "score": -3
+        },
+        "fresh": false,
+        "ageMinutes": 546.8
+      }
+    },
+    {
+      "ticker": "278530.KS",
+      "name": "KODEX 200TR",
+      "dailyScore": 45.89,
+      "relativeStrengthPercentile": 0.7777777777777778,
+      "dailySignalEligible": false,
+      "trigger": {
+        "ready": false,
+        "breakout": false,
+        "reclaim": false,
+        "volumeRatio": 0.085,
+        "volumeThreshold": 1.2,
+        "ema20": 36041.070033,
+        "ema50": 35953.906374,
+        "lastTimestamp": "2026-08-03T06:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.09x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "ict": {
+          "bias": "NEUTRAL",
+          "structure": "BEARISH_LH_LL",
+          "event": "NONE",
+          "liquidity": "NONE",
+          "fvg": "BULLISH 35850.0000~35930.0000",
+          "score": -1
+        },
+        "fresh": false,
+        "ageMinutes": 531.8
+      }
+    },
+    {
+      "ticker": "458730.KS",
+      "name": "TIGER 미국배당다우존스",
+      "dailyScore": 44.78,
+      "relativeStrengthPercentile": 0.5555555555555556,
+      "dailySignalEligible": false,
+      "trigger": {
+        "ready": false,
+        "breakout": false,
+        "reclaim": false,
+        "volumeRatio": 0.187,
+        "volumeThreshold": 1.2,
+        "ema20": 15181.19462,
+        "ema50": 15230.523007,
+        "lastTimestamp": "2026-08-03T06:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.19x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "ict": {
+          "bias": "NEUTRAL",
+          "structure": "BEARISH_LH_LL",
+          "event": "NONE",
+          "liquidity": "NONE",
+          "fvg": "BULLISH 15165.0000~15170.0000",
+          "score": -1
+        },
+        "fresh": false,
+        "ageMinutes": 531.8
       }
     },
     {
       "ticker": "102780.KS",
       "name": "KODEX 삼성그룹",
-      "dailyScore": 49.59,
-      "relativeStrengthPercentile": 0.8518518518518519,
+      "dailyScore": 44.04,
+      "relativeStrengthPercentile": 0.7407407407407407,
       "dailySignalEligible": false,
       "trigger": {
         "ready": false,
@@ -267,35 +379,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 349.8
-      }
-    },
-    {
-      "ticker": "458730.KS",
-      "name": "TIGER 미국배당다우존스",
-      "dailyScore": 44.78,
-      "relativeStrengthPercentile": 0.5555555555555556,
-      "dailySignalEligible": false,
-      "trigger": {
-        "ready": false,
-        "breakout": false,
-        "reclaim": false,
-        "volumeRatio": 0.186,
-        "volumeThreshold": 1.2,
-        "ema20": 15181.19462,
-        "ema50": 15230.523007,
-        "lastTimestamp": "2026-08-03T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.19x/1.20x; ICT=NEUTRAL/NONE/NONE",
-        "ict": {
-          "bias": "NEUTRAL",
-          "structure": "BEARISH_LH_LL",
-          "event": "NONE",
-          "liquidity": "NONE",
-          "fvg": "BULLISH 15165.0000~15170.0000",
-          "score": -1
-        },
-        "fresh": false,
-        "ageMinutes": 334.8
+        "ageMinutes": 546.8
       }
     },
     {
@@ -323,25 +407,25 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 349.8
+        "ageMinutes": 546.8
       }
     },
     {
       "ticker": "360750.KS",
       "name": "TIGER 미국S&P500",
       "dailyScore": 42.0,
-      "relativeStrengthPercentile": 0.4074074074074074,
+      "relativeStrengthPercentile": 0.4444444444444444,
       "dailySignalEligible": false,
       "trigger": {
         "ready": false,
         "breakout": false,
         "reclaim": true,
-        "volumeRatio": 0.032,
+        "volumeRatio": 0.017,
         "volumeThreshold": 1.2,
         "ema20": 26679.588281,
         "ema50": 26631.886986,
         "lastTimestamp": "2026-08-03T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=True; volume=0.03x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "breakout=False; reclaim=True; volume=0.02x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "BEARISH_LH_LL",
@@ -351,35 +435,35 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 334.8
+        "ageMinutes": 531.8
       }
     },
     {
       "ticker": "379800.KS",
       "name": "KODEX 미국S&P500",
       "dailyScore": 42.0,
-      "relativeStrengthPercentile": 0.4444444444444444,
+      "relativeStrengthPercentile": 0.4074074074074074,
       "dailySignalEligible": false,
       "trigger": {
         "ready": false,
         "breakout": false,
-        "reclaim": true,
-        "volumeRatio": 0.024,
+        "reclaim": false,
+        "volumeRatio": 0.018,
         "volumeThreshold": 1.2,
-        "ema20": 24249.388395,
-        "ema50": 24208.12755,
-        "lastTimestamp": "2026-08-03T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=True; volume=0.02x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 24247.745053,
+        "ema50": 24205.598877,
+        "lastTimestamp": "2026-08-03T06:15:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.02x/1.20x; ICT=BEARISH/BOS_DOWN/NONE",
         "ict": {
-          "bias": "NEUTRAL",
-          "structure": "BEARISH_LH_LL",
-          "event": "NONE",
+          "bias": "BEARISH",
+          "structure": "RANGE",
+          "event": "BOS_DOWN",
           "liquidity": "NONE",
-          "fvg": "BULLISH 24242.0000~24265.0000",
-          "score": -1
+          "fvg": "BEARISH 24242.0000~24245.0000",
+          "score": -3
         },
         "fresh": false,
-        "ageMinutes": 334.8
+        "ageMinutes": 546.8
       }
     },
     {
@@ -407,7 +491,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 349.8
+        "ageMinutes": 546.8
       }
     },
     {
@@ -420,40 +504,40 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.197,
+        "volumeRatio": 0.234,
         "volumeThreshold": 1.2,
-        "ema20": 42815.523755,
-        "ema50": 42664.155483,
-        "lastTimestamp": "2026-08-03T06:15:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.20x/1.20x; ICT=NEUTRAL/CHOCH_DOWN/NONE",
+        "ema20": 42803.092831,
+        "ema50": 42663.628202,
+        "lastTimestamp": "2026-08-03T06:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.23x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
-          "structure": "BULLISH_HH_HL",
-          "event": "CHOCH_DOWN",
+          "structure": "RANGE",
+          "event": "NONE",
           "liquidity": "NONE",
           "fvg": "BEARISH 42690.0000~42725.0000",
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 349.8
+        "ageMinutes": 531.8
       }
     },
     {
       "ticker": "261220.KS",
       "name": "KODEX WTI원유선물(H)",
-      "dailyScore": 11.48,
+      "dailyScore": 23.48,
       "relativeStrengthPercentile": 0.6296296296296297,
       "dailySignalEligible": false,
       "trigger": {
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.768,
+        "volumeRatio": 0.761,
         "volumeThreshold": 1.2,
         "ema20": 22193.762943,
         "ema50": 22466.367776,
         "lastTimestamp": "2026-08-03T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.77x/1.20x; ICT=BEARISH/BOS_DOWN/NONE",
+        "reason": "breakout=False; reclaim=False; volume=0.76x/1.20x; ICT=BEARISH/BOS_DOWN/NONE",
         "ict": {
           "bias": "BEARISH",
           "structure": "BEARISH_LH_LL",
@@ -463,7 +547,35 @@
           "score": -5
         },
         "fresh": false,
-        "ageMinutes": 334.8
+        "ageMinutes": 531.9
+      }
+    },
+    {
+      "ticker": "122630.KS",
+      "name": "KODEX 레버리지",
+      "dailyScore": 10.15,
+      "relativeStrengthPercentile": 0.9629629629629629,
+      "dailySignalEligible": false,
+      "trigger": {
+        "ready": false,
+        "breakout": false,
+        "reclaim": false,
+        "volumeRatio": 0.555,
+        "volumeThreshold": 1.2,
+        "ema20": 94518.604422,
+        "ema50": 94597.917649,
+        "lastTimestamp": "2026-08-03T06:15:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.55x/1.20x; ICT=BEARISH/NONE/NONE",
+        "ict": {
+          "bias": "BEARISH",
+          "structure": "BEARISH_LH_LL",
+          "event": "NONE",
+          "liquidity": "NONE",
+          "fvg": "BEARISH 94150.0000~94230.0000",
+          "score": -3
+        },
+        "fresh": false,
+        "ageMinutes": 546.9
       }
     },
     {
@@ -491,109 +603,53 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 349.8
+        "ageMinutes": 546.9
       }
     },
     {
-      "ticker": "102110.KS",
-      "name": "TIGER 200",
-      "dailyScore": 2.74,
-      "relativeStrengthPercentile": 0.8148148148148148,
+      "ticker": "091160.KS",
+      "name": "KODEX 반도체",
+      "dailyScore": 6.44,
+      "relativeStrengthPercentile": 0.8888888888888888,
       "dailySignalEligible": false,
       "trigger": {
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.144,
+        "volumeRatio": 0.358,
         "volumeThreshold": 1.2,
-        "ema20": 99714.223417,
-        "ema50": 99517.743949,
-        "lastTimestamp": "2026-08-03T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.14x/1.20x; ICT=NEUTRAL/NONE/NONE",
-        "ict": {
-          "bias": "NEUTRAL",
-          "structure": "BEARISH_LH_LL",
-          "event": "NONE",
-          "liquidity": "NONE",
-          "fvg": "BULLISH 99150.0000~99360.0000",
-          "score": -1
-        },
-        "fresh": false,
-        "ageMinutes": 334.8
-      }
-    },
-    {
-      "ticker": "122630.KS",
-      "name": "KODEX 레버리지",
-      "dailyScore": 2.15,
-      "relativeStrengthPercentile": 0.9629629629629629,
-      "dailySignalEligible": false,
-      "trigger": {
-        "ready": false,
-        "breakout": false,
-        "reclaim": false,
-        "volumeRatio": 0.648,
-        "volumeThreshold": 1.2,
-        "ema20": 94437.785088,
-        "ema50": 94563.554092,
-        "lastTimestamp": "2026-08-03T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.65x/1.20x; ICT=NEUTRAL/NONE/NONE",
-        "ict": {
-          "bias": "NEUTRAL",
-          "structure": "BEARISH_LH_LL",
-          "event": "NONE",
-          "liquidity": "NONE",
-          "fvg": "BULLISH 93335.0000~93670.0000",
-          "score": -1
-        },
-        "fresh": false,
-        "ageMinutes": 334.8
-      }
-    },
-    {
-      "ticker": "278530.KS",
-      "name": "KODEX 200TR",
-      "dailyScore": 0.89,
-      "relativeStrengthPercentile": 0.7777777777777778,
-      "dailySignalEligible": false,
-      "trigger": {
-        "ready": false,
-        "breakout": false,
-        "reclaim": false,
-        "volumeRatio": 0.605,
-        "volumeThreshold": 1.2,
-        "ema20": 36052.761595,
-        "ema50": 35954.588401,
+        "ema20": 112868.402729,
+        "ema50": 111897.638838,
         "lastTimestamp": "2026-08-03T06:15:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.60x/1.20x; ICT=BEARISH/NONE/NONE",
+        "reason": "breakout=False; reclaim=False; volume=0.36x/1.20x; ICT=BEARISH/NONE/NONE",
         "ict": {
           "bias": "BEARISH",
           "structure": "BEARISH_LH_LL",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BEARISH 36000.0000~36010.0000",
+          "fvg": "BEARISH 112075.0000~112125.0000",
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 349.8
+        "ageMinutes": 546.9
       }
     },
     {
       "ticker": "251340.KS",
       "name": "KODEX 코스닥150선물인버스",
       "dailyScore": 0.0,
-      "relativeStrengthPercentile": 0.3333333333333333,
+      "relativeStrengthPercentile": 0.2962962962962963,
       "dailySignalEligible": false,
       "trigger": {
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.388,
+        "volumeRatio": 0.435,
         "volumeThreshold": 1.2,
         "ema20": 2775.123618,
         "ema50": 2849.648143,
         "lastTimestamp": "2026-08-03T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.39x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "breakout=False; reclaim=False; volume=0.43x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "BULLISH_HH_HL",
@@ -603,7 +659,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 334.8
+        "ageMinutes": 531.9
       }
     },
     {
@@ -631,7 +687,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 349.8
+        "ageMinutes": 546.9
       }
     },
     {
@@ -644,68 +700,40 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.04,
+        "volumeRatio": 1.891,
         "volumeThreshold": 1.2,
-        "ema20": 8524.967817,
-        "ema50": 8527.051085,
-        "lastTimestamp": "2026-08-03T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.04x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 8526.543366,
+        "ema50": 8527.600177,
+        "lastTimestamp": "2026-08-03T06:15:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=1.89x/1.20x; ICT=BEARISH/NONE/NONE",
         "ict": {
-          "bias": "NEUTRAL",
-          "structure": "RANGE",
+          "bias": "BEARISH",
+          "structure": "BEARISH_LH_LL",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BULLISH 8475.0000~8510.0000",
-          "score": 1
+          "fvg": "BEARISH 8475.0000~8490.0000",
+          "score": -3
         },
         "fresh": false,
-        "ageMinutes": 334.8
-      }
-    },
-    {
-      "ticker": "102970.KS",
-      "name": "KODEX 증권",
-      "dailyScore": 0.0,
-      "relativeStrengthPercentile": 0.2962962962962963,
-      "dailySignalEligible": false,
-      "trigger": {
-        "ready": false,
-        "breakout": false,
-        "reclaim": true,
-        "volumeRatio": 0.759,
-        "volumeThreshold": 1.2,
-        "ema20": 18363.366747,
-        "ema50": 18355.846811,
-        "lastTimestamp": "2026-08-03T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=True; volume=0.76x/1.20x; ICT=NEUTRAL/NONE/NONE",
-        "ict": {
-          "bias": "NEUTRAL",
-          "structure": "RANGE",
-          "event": "NONE",
-          "liquidity": "NONE",
-          "fvg": "BULLISH 18300.0000~18385.0000",
-          "score": 1
-        },
-        "fresh": false,
-        "ageMinutes": 334.8
+        "ageMinutes": 546.9
       }
     },
     {
       "ticker": "305720.KS",
       "name": "KODEX 2차전지산업",
       "dailyScore": 0.0,
-      "relativeStrengthPercentile": 0.18518518518518517,
+      "relativeStrengthPercentile": 0.2222222222222222,
       "dailySignalEligible": false,
       "trigger": {
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.286,
+        "volumeRatio": 0.431,
         "volumeThreshold": 1.2,
         "ema20": 12356.654881,
         "ema50": 12347.591525,
         "lastTimestamp": "2026-08-03T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.29x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "breakout=False; reclaim=False; volume=0.43x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
@@ -715,12 +743,12 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 334.8
+        "ageMinutes": 531.9
       }
     },
     {
-      "ticker": "117700.KS",
-      "name": "KODEX 건설",
+      "ticker": "102970.KS",
+      "name": "KODEX 증권",
       "dailyScore": 0.0,
       "relativeStrengthPercentile": 0.37037037037037035,
       "dailySignalEligible": false,
@@ -728,29 +756,29 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.316,
+        "volumeRatio": 0.963,
         "volumeThreshold": 1.2,
-        "ema20": 5699.395832,
-        "ema50": 5615.345498,
+        "ema20": 18361.089527,
+        "ema50": 18354.155793,
         "lastTimestamp": "2026-08-03T06:15:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.32x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "breakout=False; reclaim=False; volume=0.96x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
-          "structure": "BEARISH_LH_LL",
+          "structure": "RANGE",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BULLISH 5645.0000~5695.0000",
+          "fvg": "BEARISH 18450.0000~18490.0000",
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 349.8
+        "ageMinutes": 546.9
       }
     },
     {
       "ticker": "466920.KS",
       "name": "SOL 조선TOP3플러스",
       "dailyScore": 0.0,
-      "relativeStrengthPercentile": 0.2222222222222222,
+      "relativeStrengthPercentile": 0.18518518518518517,
       "dailySignalEligible": false,
       "trigger": {
         "ready": false,
@@ -771,7 +799,91 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 334.8
+        "ageMinutes": 531.9
+      }
+    },
+    {
+      "ticker": "449450.KS",
+      "name": "PLUS K방산",
+      "dailyScore": 0.0,
+      "relativeStrengthPercentile": 0.14814814814814814,
+      "dailySignalEligible": false,
+      "trigger": {
+        "ready": false,
+        "breakout": false,
+        "reclaim": true,
+        "volumeRatio": 0.097,
+        "volumeThreshold": 1.2,
+        "ema20": 48883.552693,
+        "ema50": 48626.686182,
+        "lastTimestamp": "2026-08-03T06:15:00+00:00",
+        "reason": "breakout=False; reclaim=True; volume=0.10x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "ict": {
+          "bias": "NEUTRAL",
+          "structure": "BEARISH_LH_LL",
+          "event": "NONE",
+          "liquidity": "NONE",
+          "fvg": "BULLISH 48650.0000~48745.0000",
+          "score": -1
+        },
+        "fresh": false,
+        "ageMinutes": 546.9
+      }
+    },
+    {
+      "ticker": "117700.KS",
+      "name": "KODEX 건설",
+      "dailyScore": 0.0,
+      "relativeStrengthPercentile": 0.3333333333333333,
+      "dailySignalEligible": false,
+      "trigger": {
+        "ready": false,
+        "breakout": false,
+        "reclaim": false,
+        "volumeRatio": 0.037,
+        "volumeThreshold": 1.2,
+        "ema20": 5702.786714,
+        "ema50": 5620.162342,
+        "lastTimestamp": "2026-08-03T06:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.04x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "ict": {
+          "bias": "NEUTRAL",
+          "structure": "RANGE",
+          "event": "NONE",
+          "liquidity": "NONE",
+          "fvg": "BULLISH 5710.0000~5735.0000",
+          "score": 1
+        },
+        "fresh": false,
+        "ageMinutes": 531.9
+      }
+    },
+    {
+      "ticker": "229200.KS",
+      "name": "KODEX 코스닥150",
+      "dailyScore": 0.0,
+      "relativeStrengthPercentile": 0.1111111111111111,
+      "dailySignalEligible": false,
+      "trigger": {
+        "ready": false,
+        "breakout": false,
+        "reclaim": true,
+        "volumeRatio": 2.97,
+        "volumeThreshold": 1.2,
+        "ema20": 12457.733776,
+        "ema50": 12206.448137,
+        "lastTimestamp": "2026-08-03T06:30:00+00:00",
+        "reason": "breakout=False; reclaim=True; volume=2.97x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "ict": {
+          "bias": "NEUTRAL",
+          "structure": "BEARISH_LH_LL",
+          "event": "NONE",
+          "liquidity": "NONE",
+          "fvg": "BULLISH 12445.0000~12470.0000",
+          "score": -1
+        },
+        "fresh": false,
+        "ageMinutes": 531.9
       }
     },
     {
@@ -799,119 +911,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 349.8
-      }
-    },
-    {
-      "ticker": "229200.KS",
-      "name": "KODEX 코스닥150",
-      "dailyScore": 0.0,
-      "relativeStrengthPercentile": 0.1111111111111111,
-      "dailySignalEligible": false,
-      "trigger": {
-        "ready": false,
-        "breakout": false,
-        "reclaim": true,
-        "volumeRatio": 0.116,
-        "volumeThreshold": 1.2,
-        "ema20": 12457.733776,
-        "ema50": 12206.448137,
-        "lastTimestamp": "2026-08-03T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=True; volume=0.12x/1.20x; ICT=NEUTRAL/NONE/NONE",
-        "ict": {
-          "bias": "NEUTRAL",
-          "structure": "BEARISH_LH_LL",
-          "event": "NONE",
-          "liquidity": "NONE",
-          "fvg": "BULLISH 12445.0000~12470.0000",
-          "score": -1
-        },
-        "fresh": false,
-        "ageMinutes": 334.8
-      }
-    },
-    {
-      "ticker": "069500.KS",
-      "name": "KODEX 200",
-      "dailyScore": 0.0,
-      "relativeStrengthPercentile": 0.7407407407407407,
-      "dailySignalEligible": false,
-      "trigger": {
-        "ready": false,
-        "breakout": false,
-        "reclaim": false,
-        "volumeRatio": 0.291,
-        "volumeThreshold": 1.2,
-        "ema20": 99486.964674,
-        "ema50": 99317.324416,
-        "lastTimestamp": "2026-08-03T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.29x/1.20x; ICT=NEUTRAL/NONE/NONE",
-        "ict": {
-          "bias": "NEUTRAL",
-          "structure": "BEARISH_LH_LL",
-          "event": "NONE",
-          "liquidity": "NONE",
-          "fvg": "BULLISH 98900.0000~99105.0000",
-          "score": -1
-        },
-        "fresh": false,
-        "ageMinutes": 334.8
-      }
-    },
-    {
-      "ticker": "449450.KS",
-      "name": "PLUS K방산",
-      "dailyScore": 0.0,
-      "relativeStrengthPercentile": 0.14814814814814814,
-      "dailySignalEligible": false,
-      "trigger": {
-        "ready": false,
-        "breakout": false,
-        "reclaim": true,
-        "volumeRatio": 0.842,
-        "volumeThreshold": 1.2,
-        "ema20": 48929.404529,
-        "ema50": 48651.323302,
-        "lastTimestamp": "2026-08-03T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=True; volume=0.84x/1.20x; ICT=NEUTRAL/CHOCH_UP/NONE",
-        "ict": {
-          "bias": "NEUTRAL",
-          "structure": "BEARISH_LH_LL",
-          "event": "CHOCH_UP",
-          "liquidity": "NONE",
-          "fvg": "BULLISH 48860.0000~49365.0000",
-          "score": 1
-        },
-        "fresh": false,
-        "ageMinutes": 334.8
-      }
-    },
-    {
-      "ticker": "091160.KS",
-      "name": "KODEX 반도체",
-      "dailyScore": 0.0,
-      "relativeStrengthPercentile": 0.8888888888888888,
-      "dailySignalEligible": false,
-      "trigger": {
-        "ready": false,
-        "breakout": false,
-        "reclaim": false,
-        "volumeRatio": 0.152,
-        "volumeThreshold": 1.2,
-        "ema20": 112776.650231,
-        "ema50": 111900.069091,
-        "lastTimestamp": "2026-08-03T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.15x/1.20x; ICT=BEARISH/NONE/NONE",
-        "ict": {
-          "bias": "BEARISH",
-          "structure": "BEARISH_LH_LL",
-          "event": "NONE",
-          "liquidity": "NONE",
-          "fvg": "BEARISH 112075.0000~112125.0000",
-          "score": -3
-        },
-        "fresh": false,
-        "ageMinutes": 334.8
+        "ageMinutes": 546.9
       }
     },
     {
@@ -924,12 +924,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": true,
-        "volumeRatio": 0.271,
+        "volumeRatio": 0.355,
         "volumeThreshold": 1.2,
         "ema20": 5577.607232,
         "ema50": 5382.822683,
         "lastTimestamp": "2026-08-03T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=True; volume=0.27x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "breakout=False; reclaim=True; volume=0.35x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "BEARISH_LH_LL",
@@ -939,63 +939,63 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 334.8
+        "ageMinutes": 531.9
       }
     },
     {
       "ticker": "SYRE",
       "name": "Spyre Therapeutics, Inc. - Common Stock",
-      "dailyScore": 86.57,
-      "relativeStrengthPercentile": 0.9913419913419913,
+      "dailyScore": 86.35,
+      "relativeStrengthPercentile": 0.987012987012987,
       "dailySignalEligible": true,
       "trigger": {
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.0,
+        "volumeRatio": 0.296,
         "volumeThreshold": 1.35,
-        "ema20": 98.201664,
-        "ema50": 98.550391,
-        "lastTimestamp": "2026-08-03T11:00:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/SELL_SIDE_SWEEP",
+        "ema20": 97.10303,
+        "ema50": 97.865301,
+        "lastTimestamp": "2026-08-03T15:15:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.30x/1.35x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
-          "structure": "BEARISH_LH_LL",
+          "structure": "RANGE",
           "event": "NONE",
-          "liquidity": "SELL_SIDE_SWEEP",
-          "fvg": "BEARISH 97.6100~98.3300",
-          "score": -1
+          "liquidity": "NONE",
+          "fvg": "BULLISH 96.4200~96.5200",
+          "score": 1
         },
-        "fresh": false,
-        "ageMinutes": 64.8
+        "fresh": true,
+        "ageMinutes": 6.9
       }
     },
     {
       "ticker": "RVMD",
       "name": "Revolution Medicines, Inc. - Common Stock",
-      "dailyScore": 85.48,
-      "relativeStrengthPercentile": 0.9696969696969697,
+      "dailyScore": 85.05,
+      "relativeStrengthPercentile": 0.961038961038961,
       "dailySignalEligible": true,
       "trigger": {
         "ready": false,
-        "breakout": true,
+        "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.0,
+        "volumeRatio": 0.782,
         "volumeThreshold": 1.35,
-        "ema20": 188.126529,
-        "ema50": 188.371605,
-        "lastTimestamp": "2026-08-03T11:45:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=0.00x/1.35x; ICT=BULLISH/BOS_UP/NONE",
+        "ema20": 185.820342,
+        "ema50": 187.074874,
+        "lastTimestamp": "2026-08-03T15:15:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.78x/1.35x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
-          "bias": "BULLISH",
+          "bias": "NEUTRAL",
           "structure": "RANGE",
-          "event": "BOS_UP",
+          "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BULLISH 187.5300~187.7999",
-          "score": 3
+          "fvg": "BEARISH 186.2500~187.0000",
+          "score": -1
         },
         "fresh": true,
-        "ageMinutes": 19.8
+        "ageMinutes": 6.9
       }
     }
   ],
