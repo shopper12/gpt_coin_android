@@ -1,11 +1,111 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-08-06T20:54:07.897222+09:00",
+  "generatedAtKst": "2026-08-06T23:32:11.326938+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "coverageStart": "2026-07-23",
   "coverageEnd": "2026-08-06",
-  "recordCount": 64,
+  "recordCount": 65,
   "recommendations": [
+    {
+      "id": "VSXY-LONG-20260806T1430000000-EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
+      "date": "2026-08-06",
+      "generatedAtKst": "2026-08-06T23:30:05.808645+09:00",
+      "signalTimestamp": "2026-08-06T14:30:00+00:00",
+      "assetClass": "US_STOCK",
+      "market": "US",
+      "ticker": "VSXY",
+      "name": "Victorias Secret & Co. Common Stock",
+      "direction": "LONG",
+      "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM: 절대추세+상대모멘텀+15분 트리거+변동성 목표",
+      "strategyType": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
+      "referencePrice": 93.599998,
+      "currentPrice": 93.599998,
+      "previousClose": 89.860001,
+      "todayChangePct": 4.162,
+      "recentCloses": [
+        83.0,
+        88.5,
+        86.449997,
+        83.480003,
+        77.709999,
+        76.709999,
+        77.870003,
+        78.25,
+        76.580002,
+        76.190002,
+        78.360001,
+        78.980003,
+        81.919998,
+        84.379997,
+        82.379997,
+        81.449997,
+        87.410004,
+        87.089996,
+        87.339996,
+        82.790001,
+        83.550003,
+        85.32,
+        89.309998,
+        89.129997,
+        88.239998,
+        88.68,
+        89.110001,
+        89.209999,
+        89.860001,
+        93.599998
+      ],
+      "currency": "USD",
+      "status": "ACTIVE_SIGNAL",
+      "score": 91.8,
+      "confidence": 9.2,
+      "relativeStrengthPercentile": 0.8966,
+      "entryLow": 92.663998,
+      "entryHigh": 94.4093,
+      "stopLoss": 84.697686,
+      "target1": 111.404623,
+      "target2": 122.087398,
+      "riskPct": 9.51,
+      "volatilityTargetExposurePct": 28.3,
+      "regime": {
+        "panic": false,
+        "riskOff": false,
+        "equityBelow200Count": 0,
+        "realizedVolatility20Annualized": 0.2521,
+        "reason": "광의 추세와 변동성 정상"
+      },
+      "ict": {
+        "bias": "NEUTRAL",
+        "structure": "BEARISH_LH_LL",
+        "event": "CHOCH_UP",
+        "liquidity": "NONE",
+        "fvg": "BULLISH 92.3400~93.5650",
+        "score": 1
+      },
+      "trigger": {
+        "ready": true,
+        "breakout": true,
+        "reclaim": false,
+        "volumeRatio": 3.983,
+        "volumeThreshold": 1.35,
+        "ema20": 90.973879,
+        "ema50": 90.597241,
+        "lastTimestamp": "2026-08-06T14:30:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=3.98x/1.35x; ICT=NEUTRAL/CHOCH_UP/NONE",
+        "ict": {
+          "bias": "NEUTRAL",
+          "structure": "BEARISH_LH_LL",
+          "event": "CHOCH_UP",
+          "liquidity": "NONE",
+          "fvg": "BULLISH 92.3400~93.5650",
+          "score": 1
+        },
+        "fresh": true,
+        "ageMinutes": 2.2
+      },
+      "reason": "3/6/12개월 절대 모멘텀 양수, 200일선 상단, 자산군 상대강도 90백분위, breakout=True; reclaim=False; volume=3.98x/1.35x; ICT=NEUTRAL/CHOCH_UP/NONE",
+      "guardrail": "자동 추천은 주문이 아니다. 실시간 호가·슬리피지·공시·거래 가능 여부를 확인한다.",
+      "currentPriceDate": "2026-08-06"
+    },
     {
       "id": "20260806-0000KST-NVDA-LONG",
       "date": "2026-08-06",
@@ -85,7 +185,7 @@
       "status": "CONDITIONAL",
       "score": 84,
       "confidence": 74,
-      "currentPrice": 482.049988,
+      "currentPrice": 488.149994,
       "referencePrice": 482,
       "currency": "USD",
       "entryLow": 486,
@@ -101,10 +201,9 @@
       "invalidation": "503달러 돌파 또는 493달러 회복 후 30분 VWAP 지지",
       "quoteStatus": "US_INTRADAY_LIVE",
       "priceTimestampKst": "2026-08-05T23:48:30+09:00",
-      "previousClose": 518.580017,
-      "todayChangePct": -7.044,
+      "previousClose": 482.049988,
+      "todayChangePct": 1.265,
       "recentCloses": [
-        519.73999,
         532.570007,
         521.580017,
         539.48999,
@@ -133,7 +232,8 @@
         476.149994,
         484.640015,
         518.580017,
-        482.049988
+        482.049988,
+        488.149994
       ],
       "currentPriceDate": "2026-08-06"
     },
@@ -152,7 +252,7 @@
       "status": "IMMEDIATE",
       "score": 81,
       "confidence": 74,
-      "currentPrice": 83.0,
+      "currentPrice": 82.834999,
       "referencePrice": 83.005,
       "currency": "USD",
       "entryLow": 82.9,
@@ -168,13 +268,12 @@
       "invalidation": "82.55달러 이탈 또는 미국 10년물 4.72% 돌파",
       "quoteStatus": "US_INTRADAY_LIVE",
       "priceTimestampKst": "2026-08-05T23:48:30+09:00",
-      "previousClose": 82.82,
-      "todayChangePct": 0.217,
+      "previousClose": 83.0,
+      "todayChangePct": -0.199,
       "recentCloses": [
-        86.709167,
         86.679405,
         86.689331,
-        86.778641,
+        86.778633,
         85.756538,
         85.17688,
         85.166924,
@@ -200,7 +299,8 @@
         81.919998,
         82.190002,
         82.82,
-        83.0
+        83.0,
+        82.834999
       ],
       "currentPriceDate": "2026-08-06"
     },
@@ -217,11 +317,10 @@
       "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM: 절대추세+상대모멘텀+15분 트리거+변동성 목표",
       "strategyType": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
       "referencePrice": 134.160004,
-      "currentPrice": 134.229996,
-      "previousClose": 134.190002,
-      "todayChangePct": 0.03,
+      "currentPrice": 134.434998,
+      "previousClose": 134.229996,
+      "todayChangePct": 0.153,
       "recentCloses": [
-        132.690002,
         132.679993,
         132.550003,
         132.610001,
@@ -250,7 +349,8 @@
         134.089996,
         134.110001,
         134.190002,
-        134.229996
+        134.229996,
+        134.434998
       ],
       "currency": "USD",
       "status": "EXPIRED_SIGNAL",
@@ -416,7 +516,7 @@
       "status": "CONDITIONAL",
       "score": 87,
       "confidence": 78,
-      "currentPrice": 769.789978,
+      "currentPrice": 770.599976,
       "referencePrice": 774.46,
       "currency": "USD",
       "entryLow": 772,
@@ -432,10 +532,9 @@
       "invalidation": "768.50달러 이탈 또는 개장 후 RSP와 IWM 동반 음전 및 미국 10년물 4.70% 돌파",
       "quoteStatus": "US_PREMARKET_LIVE",
       "priceTimestampKst": "2026-08-05T21:05:00+09:00",
-      "previousClose": 771.330017,
-      "todayChangePct": -0.2,
+      "previousClose": 769.789978,
+      "todayChangePct": 0.105,
       "recentCloses": [
-        733.23999,
         734.299988,
         728.98999,
         741.0,
@@ -464,7 +563,8 @@
         747.030029,
         757.669983,
         771.330017,
-        769.789978
+        769.789978,
+        770.599976
       ],
       "currentPriceDate": "2026-08-06"
     },
@@ -675,7 +775,7 @@
       "status": "CONDITIONAL",
       "score": 81,
       "confidence": 70,
-      "currentPrice": 482.049988,
+      "currentPrice": 488.149994,
       "referencePrice": 478,
       "currency": "USD",
       "entryLow": 484,
@@ -691,10 +791,9 @@
       "invalidation": "503달러 돌파 또는 492달러 회복 후 30분 VWAP 지지",
       "quoteStatus": "US_PREMARKET_LIVE",
       "priceTimestampKst": "2026-08-05T21:05:00+09:00",
-      "previousClose": 518.580017,
-      "todayChangePct": -7.044,
+      "previousClose": 482.049988,
+      "todayChangePct": 1.265,
       "recentCloses": [
-        519.73999,
         532.570007,
         521.580017,
         539.48999,
@@ -723,7 +822,8 @@
         476.149994,
         484.640015,
         518.580017,
-        482.049988
+        482.049988,
+        488.149994
       ],
       "currentPriceDate": "2026-08-06"
     },
@@ -774,7 +874,7 @@
       "status": "IMMEDIATE",
       "score": 80,
       "confidence": 72,
-      "currentPrice": 83.0,
+      "currentPrice": 82.834999,
       "referencePrice": 83.13,
       "currency": "USD",
       "entryLow": 83.05,
@@ -790,13 +890,12 @@
       "invalidation": "82.55달러 이탈 또는 미국 10년물 4.72% 돌파",
       "quoteStatus": "US_PREMARKET_DELAYED",
       "priceTimestampKst": "2026-08-05T20:52:00+09:00",
-      "previousClose": 82.82,
-      "todayChangePct": 0.217,
+      "previousClose": 83.0,
+      "todayChangePct": -0.199,
       "recentCloses": [
-        86.709167,
         86.679405,
         86.689331,
-        86.778641,
+        86.778633,
         85.756538,
         85.17688,
         85.166924,
@@ -822,7 +921,8 @@
         81.919998,
         82.190002,
         82.82,
-        83.0
+        83.0,
+        82.834999
       ],
       "currentPriceDate": "2026-08-06"
     },
@@ -937,7 +1037,7 @@
       "status": "CONDITIONAL",
       "score": 82,
       "confidence": 77,
-      "currentPrice": 57.310001,
+      "currentPrice": 57.709999,
       "referencePrice": 59.55,
       "currency": "USD",
       "entryLow": 58.8,
@@ -953,10 +1053,9 @@
       "invalidation": "WTI 82달러 이탈과 XLE 57.40달러 종가 이탈이 함께 발생",
       "quoteStatus": "MARKET_CLOSED_VERIFIED_CLOSE",
       "priceTimestampKst": "2026-08-01T05:00:00+09:00",
-      "previousClose": 58.52,
-      "todayChangePct": -2.068,
+      "previousClose": 57.310001,
+      "todayChangePct": 0.698,
       "recentCloses": [
-        53.57,
         54.09,
         53.84,
         53.580002,
@@ -985,7 +1084,8 @@
         59.549999,
         58.790001,
         58.52,
-        57.310001
+        57.310001,
+        57.709999
       ],
       "currentPriceDate": "2026-08-06"
     },
@@ -1004,7 +1104,7 @@
       "status": "CONDITIONAL",
       "score": 82,
       "confidence": 77,
-      "currentPrice": 57.310001,
+      "currentPrice": 57.709999,
       "referencePrice": 59.55,
       "currency": "USD",
       "entryLow": 58.8,
@@ -1020,10 +1120,9 @@
       "invalidation": "WTI 82달러 이탈과 XLE 57.40달러 종가 이탈이 함께 발생",
       "quoteStatus": "MARKET_CLOSED_VERIFIED_CLOSE",
       "priceTimestampKst": "2026-08-01T05:00:00+09:00",
-      "previousClose": 58.52,
-      "todayChangePct": -2.068,
+      "previousClose": 57.310001,
+      "todayChangePct": 0.698,
       "recentCloses": [
-        53.57,
         54.09,
         53.84,
         53.580002,
@@ -1052,7 +1151,8 @@
         59.549999,
         58.790001,
         58.52,
-        57.310001
+        57.310001,
+        57.709999
       ],
       "currentPriceDate": "2026-08-06"
     },
@@ -1071,7 +1171,7 @@
       "status": "CONDITIONAL",
       "score": 82,
       "confidence": 77,
-      "currentPrice": 57.310001,
+      "currentPrice": 57.709999,
       "referencePrice": 59.55,
       "currency": "USD",
       "entryLow": 58.8,
@@ -1087,10 +1187,9 @@
       "invalidation": "WTI 82달러 이탈과 XLE 57.40달러 종가 이탈이 함께 발생",
       "quoteStatus": "MARKET_CLOSED_VERIFIED_CLOSE",
       "priceTimestampKst": "2026-08-01T05:00:00+09:00",
-      "previousClose": 58.52,
-      "todayChangePct": -2.068,
+      "previousClose": 57.310001,
+      "todayChangePct": 0.698,
       "recentCloses": [
-        53.57,
         54.09,
         53.84,
         53.580002,
@@ -1119,7 +1218,8 @@
         59.549999,
         58.790001,
         58.52,
-        57.310001
+        57.310001,
+        57.709999
       ],
       "currentPriceDate": "2026-08-06"
     },
@@ -1138,7 +1238,7 @@
       "status": "CONDITIONAL",
       "score": 82,
       "confidence": 77,
-      "currentPrice": 57.310001,
+      "currentPrice": 57.709999,
       "referencePrice": 59.55,
       "currency": "USD",
       "entryLow": 58.8,
@@ -1154,10 +1254,9 @@
       "invalidation": "WTI 82달러 이탈과 XLE 57.40달러 종가 이탈이 함께 발생",
       "quoteStatus": "MARKET_CLOSED_VERIFIED_CLOSE",
       "priceTimestampKst": "2026-08-01T05:00:00+09:00",
-      "previousClose": 58.52,
-      "todayChangePct": -2.068,
+      "previousClose": 57.310001,
+      "todayChangePct": 0.698,
       "recentCloses": [
-        53.57,
         54.09,
         53.84,
         53.580002,
@@ -1186,7 +1285,8 @@
         59.549999,
         58.790001,
         58.52,
-        57.310001
+        57.310001,
+        57.709999
       ],
       "currentPriceDate": "2026-08-06"
     },
@@ -1205,7 +1305,7 @@
       "status": "CONDITIONAL",
       "score": 76,
       "confidence": 69,
-      "currentPrice": 64543.871094,
+      "currentPrice": 64331.601562,
       "referencePrice": 62790,
       "currency": "USD",
       "entryLow": 62900,
@@ -1222,7 +1322,7 @@
       "quoteStatus": "LIVE_CROSS_VERIFIED",
       "priceTimestampKst": "2026-08-02T07:30:00+09:00",
       "previousClose": 64597.5,
-      "todayChangePct": -0.083,
+      "todayChangePct": -0.412,
       "recentCloses": [
         62257.574219,
         63193.148438,
@@ -1253,7 +1353,7 @@
         63460.898438,
         64055.953125,
         64597.5,
-        64543.871094
+        64331.601562
       ],
       "currentPriceDate": "2026-08-06"
     },
@@ -1272,7 +1372,7 @@
       "status": "CONDITIONAL",
       "score": 75,
       "confidence": 67,
-      "currentPrice": 45.080002,
+      "currentPrice": 43.02,
       "referencePrice": 54.27,
       "currency": "USD",
       "entryLow": 51.5,
@@ -1288,10 +1388,9 @@
       "invalidation": "SOXS 48.70달러 이탈 또는 SOX가 2거래일 연속 S&P500 대비 초과상승",
       "quoteStatus": "MARKET_CLOSED_VERIFIED_CLOSE",
       "priceTimestampKst": "2026-08-01T05:00:00+09:00",
-      "previousClose": 42.330002,
-      "todayChangePct": 6.497,
+      "previousClose": 45.080002,
+      "todayChangePct": -4.57,
       "recentCloses": [
-        40.799999,
         36.299999,
         42.400002,
         37.200001,
@@ -1320,7 +1419,8 @@
         54.27,
         53.080002,
         42.330002,
-        45.080002
+        45.080002,
+        43.02
       ],
       "currentPriceDate": "2026-08-06"
     },
@@ -1339,7 +1439,7 @@
       "status": "CONDITIONAL",
       "score": 75,
       "confidence": 67,
-      "currentPrice": 45.080002,
+      "currentPrice": 43.02,
       "referencePrice": 54.27,
       "currency": "USD",
       "entryLow": 51.5,
@@ -1355,10 +1455,9 @@
       "invalidation": "SOXS 48.70달러 이탈 또는 SOX가 2거래일 연속 S&P500 대비 초과상승",
       "quoteStatus": "MARKET_CLOSED_VERIFIED_CLOSE",
       "priceTimestampKst": "2026-08-01T05:00:00+09:00",
-      "previousClose": 42.330002,
-      "todayChangePct": 6.497,
+      "previousClose": 45.080002,
+      "todayChangePct": -4.57,
       "recentCloses": [
-        40.799999,
         36.299999,
         42.400002,
         37.200001,
@@ -1387,7 +1486,8 @@
         54.27,
         53.080002,
         42.330002,
-        45.080002
+        45.080002,
+        43.02
       ],
       "currentPriceDate": "2026-08-06"
     },
@@ -1406,7 +1506,7 @@
       "status": "CONDITIONAL",
       "score": 75,
       "confidence": 67,
-      "currentPrice": 64543.871094,
+      "currentPrice": 64331.601562,
       "referencePrice": 62902,
       "currency": "USD",
       "entryLow": 62900,
@@ -1423,7 +1523,7 @@
       "quoteStatus": "LIVE_CROSS_VERIFIED",
       "priceTimestampKst": "2026-08-02T09:12:00+09:00",
       "previousClose": 64597.5,
-      "todayChangePct": -0.083,
+      "todayChangePct": -0.412,
       "recentCloses": [
         62257.574219,
         63193.148438,
@@ -1454,7 +1554,7 @@
         63460.898438,
         64055.953125,
         64597.5,
-        64543.871094
+        64331.601562
       ],
       "currentPriceDate": "2026-08-06"
     },
@@ -1473,7 +1573,7 @@
       "status": "CONDITIONAL",
       "score": 75,
       "confidence": 67,
-      "currentPrice": 45.080002,
+      "currentPrice": 43.02,
       "referencePrice": 54.27,
       "currency": "USD",
       "entryLow": 51.5,
@@ -1489,10 +1589,9 @@
       "invalidation": "SOXS 48.70달러 이탈 또는 SOX가 2거래일 연속 S&P500 대비 초과상승",
       "quoteStatus": "MARKET_CLOSED_VERIFIED_CLOSE",
       "priceTimestampKst": "2026-08-01T05:00:00+09:00",
-      "previousClose": 42.330002,
-      "todayChangePct": 6.497,
+      "previousClose": 45.080002,
+      "todayChangePct": -4.57,
       "recentCloses": [
-        40.799999,
         36.299999,
         42.400002,
         37.200001,
@@ -1521,7 +1620,8 @@
         54.27,
         53.080002,
         42.330002,
-        45.080002
+        45.080002,
+        43.02
       ],
       "currentPriceDate": "2026-08-06"
     },
@@ -1540,7 +1640,7 @@
       "status": "CONDITIONAL",
       "score": 75,
       "confidence": 67,
-      "currentPrice": 45.080002,
+      "currentPrice": 43.02,
       "referencePrice": 54.27,
       "currency": "USD",
       "entryLow": 51.5,
@@ -1556,10 +1656,9 @@
       "invalidation": "SOXS 48.70달러 이탈 또는 SOX가 2거래일 연속 S&P500 대비 초과상승",
       "quoteStatus": "MARKET_CLOSED_VERIFIED_CLOSE",
       "priceTimestampKst": "2026-08-01T05:00:00+09:00",
-      "previousClose": 42.330002,
-      "todayChangePct": 6.497,
+      "previousClose": 45.080002,
+      "todayChangePct": -4.57,
       "recentCloses": [
-        40.799999,
         36.299999,
         42.400002,
         37.200001,
@@ -1588,7 +1687,8 @@
         54.27,
         53.080002,
         42.330002,
-        45.080002
+        45.080002,
+        43.02
       ],
       "currentPriceDate": "2026-08-06"
     },
@@ -1607,7 +1707,7 @@
       "status": "CONDITIONAL",
       "score": 73,
       "confidence": 64,
-      "currentPrice": 64543.871094,
+      "currentPrice": 64331.601562,
       "referencePrice": 62840,
       "currency": "USD",
       "entryLow": 62900,
@@ -1624,7 +1724,7 @@
       "quoteStatus": "LIVE_3SOURCE_MEDIAN_CONFLICT_EXCLUDED",
       "priceTimestampKst": "2026-08-02T12:00:00+09:00",
       "previousClose": 64597.5,
-      "todayChangePct": -0.083,
+      "todayChangePct": -0.412,
       "recentCloses": [
         62257.574219,
         63193.148438,
@@ -1655,7 +1755,7 @@
         63460.898438,
         64055.953125,
         64597.5,
-        64543.871094
+        64331.601562
       ],
       "currentPriceDate": "2026-08-06"
     },
@@ -1674,7 +1774,7 @@
       "status": "CONDITIONAL",
       "score": 70,
       "confidence": 63,
-      "currentPrice": 64543.871094,
+      "currentPrice": 64331.601562,
       "referencePrice": 63044,
       "currency": "USD",
       "entryLow": 63250,
@@ -1691,7 +1791,7 @@
       "quoteStatus": "LIVE_CROSS_VERIFIED",
       "priceTimestampKst": "2026-08-01T23:40:00+09:00",
       "previousClose": 64597.5,
-      "todayChangePct": -0.083,
+      "todayChangePct": -0.412,
       "recentCloses": [
         62257.574219,
         63193.148438,
@@ -1722,7 +1822,7 @@
         63460.898438,
         64055.953125,
         64597.5,
-        64543.871094
+        64331.601562
       ],
       "currentPriceDate": "2026-08-06"
     },
@@ -1741,7 +1841,7 @@
       "status": "CONDITIONAL",
       "score": 67,
       "confidence": 59,
-      "currentPrice": 389.640015,
+      "currentPrice": 391.380005,
       "referencePrice": 371.54,
       "currency": "USD",
       "entryLow": 369,
@@ -1757,10 +1857,9 @@
       "invalidation": "GLD 364.80달러 종가 이탈 또는 미국 10년물 4.90% 돌파",
       "quoteStatus": "MARKET_CLOSED_VERIFIED_CLOSE",
       "priceTimestampKst": "2026-08-01T05:00:00+09:00",
-      "previousClose": 374.160004,
-      "todayChangePct": 4.137,
+      "previousClose": 389.640015,
+      "todayChangePct": 0.447,
       "recentCloses": [
-        365.920013,
         369.459991,
         373.630005,
         368.579987,
@@ -1789,7 +1888,8 @@
         371.540009,
         371.709991,
         374.160004,
-        389.640015
+        389.640015,
+        391.380005
       ],
       "currentPriceDate": "2026-08-06"
     },
@@ -1808,7 +1908,7 @@
       "status": "CONDITIONAL",
       "score": 67,
       "confidence": 59,
-      "currentPrice": 389.640015,
+      "currentPrice": 391.380005,
       "referencePrice": 371.54,
       "currency": "USD",
       "entryLow": 369,
@@ -1824,10 +1924,9 @@
       "invalidation": "GLD 364.80달러 종가 이탈 또는 미국 10년물 4.90% 돌파",
       "quoteStatus": "MARKET_CLOSED_VERIFIED_CLOSE",
       "priceTimestampKst": "2026-08-01T05:00:00+09:00",
-      "previousClose": 374.160004,
-      "todayChangePct": 4.137,
+      "previousClose": 389.640015,
+      "todayChangePct": 0.447,
       "recentCloses": [
-        365.920013,
         369.459991,
         373.630005,
         368.579987,
@@ -1856,7 +1955,8 @@
         371.540009,
         371.709991,
         374.160004,
-        389.640015
+        389.640015,
+        391.380005
       ],
       "currentPriceDate": "2026-08-06"
     },
@@ -1875,7 +1975,7 @@
       "status": "CONDITIONAL",
       "score": 67,
       "confidence": 59,
-      "currentPrice": 389.640015,
+      "currentPrice": 391.380005,
       "referencePrice": 371.54,
       "currency": "USD",
       "entryLow": 369,
@@ -1891,10 +1991,9 @@
       "invalidation": "GLD 364.80달러 종가 이탈 또는 미국 10년물 4.90% 돌파",
       "quoteStatus": "MARKET_CLOSED_VERIFIED_CLOSE",
       "priceTimestampKst": "2026-08-01T05:00:00+09:00",
-      "previousClose": 374.160004,
-      "todayChangePct": 4.137,
+      "previousClose": 389.640015,
+      "todayChangePct": 0.447,
       "recentCloses": [
-        365.920013,
         369.459991,
         373.630005,
         368.579987,
@@ -1923,7 +2022,8 @@
         371.540009,
         371.709991,
         374.160004,
-        389.640015
+        389.640015,
+        391.380005
       ],
       "currentPriceDate": "2026-08-06"
     },
@@ -1942,7 +2042,7 @@
       "status": "CONDITIONAL",
       "score": 67,
       "confidence": 59,
-      "currentPrice": 389.640015,
+      "currentPrice": 391.380005,
       "referencePrice": 371.54,
       "currency": "USD",
       "entryLow": 369,
@@ -1958,10 +2058,9 @@
       "invalidation": "GLD 364.80달러 종가 이탈 또는 미국 10년물 4.90% 돌파",
       "quoteStatus": "MARKET_CLOSED_VERIFIED_CLOSE",
       "priceTimestampKst": "2026-08-01T05:00:00+09:00",
-      "previousClose": 374.160004,
-      "todayChangePct": 4.137,
+      "previousClose": 389.640015,
+      "todayChangePct": 0.447,
       "recentCloses": [
-        365.920013,
         369.459991,
         373.630005,
         368.579987,
@@ -1990,7 +2089,8 @@
         371.540009,
         371.709991,
         374.160004,
-        389.640015
+        389.640015,
+        391.380005
       ],
       "currentPriceDate": "2026-08-06"
     },
@@ -2009,7 +2109,7 @@
       "status": "CONDITIONAL",
       "score": 82,
       "confidence": 78,
-      "currentPrice": 57.310001,
+      "currentPrice": 57.709999,
       "referencePrice": 59.55,
       "currency": "USD",
       "entryLow": 58.8,
@@ -2025,10 +2125,9 @@
       "invalidation": "WTI 82달러 이탈과 XLE 57.40달러 종가 이탈이 함께 발생",
       "quoteStatus": "MARKET_CLOSED_VERIFIED_CLOSE",
       "priceTimestampKst": "2026-08-01T05:00:00+09:00",
-      "previousClose": 58.52,
-      "todayChangePct": -2.068,
+      "previousClose": 57.310001,
+      "todayChangePct": 0.698,
       "recentCloses": [
-        53.57,
         54.09,
         53.84,
         53.580002,
@@ -2057,7 +2156,8 @@
         59.549999,
         58.790001,
         58.52,
-        57.310001
+        57.310001,
+        57.709999
       ],
       "currentPriceDate": "2026-08-06"
     },
@@ -2076,7 +2176,7 @@
       "status": "CONDITIONAL",
       "score": 82,
       "confidence": 77,
-      "currentPrice": 57.310001,
+      "currentPrice": 57.709999,
       "referencePrice": 59.55,
       "currency": "USD",
       "entryLow": 58.8,
@@ -2092,10 +2192,9 @@
       "invalidation": "WTI 82달러 이탈과 XLE 57.40달러 종가 이탈이 함께 발생",
       "quoteStatus": "MARKET_CLOSED_VERIFIED_CLOSE",
       "priceTimestampKst": "2026-08-01T05:00:00+09:00",
-      "previousClose": 58.52,
-      "todayChangePct": -2.068,
+      "previousClose": 57.310001,
+      "todayChangePct": 0.698,
       "recentCloses": [
-        53.57,
         54.09,
         53.84,
         53.580002,
@@ -2124,7 +2223,8 @@
         59.549999,
         58.790001,
         58.52,
-        57.310001
+        57.310001,
+        57.709999
       ],
       "currentPriceDate": "2026-08-06"
     },
@@ -2141,11 +2241,10 @@
       "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM: 절대추세+상대모멘텀+15분 트리거+변동성 목표",
       "strategyType": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
       "referencePrice": 238.990005,
-      "currentPrice": 188.690002,
-      "previousClose": 227.990005,
-      "todayChangePct": -17.238,
+      "currentPrice": 185.5,
+      "previousClose": 188.690002,
+      "todayChangePct": -1.691,
       "recentCloses": [
-        213.039993,
         213.360001,
         217.039993,
         219.699997,
@@ -2174,7 +2273,8 @@
         240.089996,
         233.679993,
         227.990005,
-        188.690002
+        188.690002,
+        185.5
       ],
       "currency": "USD",
       "status": "EXPIRED_SIGNAL",
@@ -2244,7 +2344,7 @@
       "status": "CONDITIONAL",
       "score": 76,
       "confidence": 68,
-      "currentPrice": 45.080002,
+      "currentPrice": 43.02,
       "referencePrice": 54.27,
       "currency": "USD",
       "entryLow": 51.5,
@@ -2260,10 +2360,9 @@
       "invalidation": "SOXS 48.70달러 이탈 또는 SOX가 2거래일 연속 시장 대비 초과상승",
       "quoteStatus": "MARKET_CLOSED_VERIFIED_CLOSE",
       "priceTimestampKst": "2026-08-01T05:00:00+09:00",
-      "previousClose": 42.330002,
-      "todayChangePct": 6.497,
+      "previousClose": 45.080002,
+      "todayChangePct": -4.57,
       "recentCloses": [
-        40.799999,
         36.299999,
         42.400002,
         37.200001,
@@ -2292,7 +2391,8 @@
         54.27,
         53.080002,
         42.330002,
-        45.080002
+        45.080002,
+        43.02
       ],
       "currentPriceDate": "2026-08-06"
     },
@@ -2311,7 +2411,7 @@
       "status": "CONDITIONAL",
       "score": 75,
       "confidence": 67,
-      "currentPrice": 45.080002,
+      "currentPrice": 43.02,
       "referencePrice": 54.27,
       "currency": "USD",
       "entryLow": 51.5,
@@ -2327,10 +2427,9 @@
       "invalidation": "SOXS 48.70달러 이탈 또는 SOX가 2거래일 연속 S&P500 대비 초과상승",
       "quoteStatus": "MARKET_CLOSED_VERIFIED_CLOSE",
       "priceTimestampKst": "2026-08-01T05:00:00+09:00",
-      "previousClose": 42.330002,
-      "todayChangePct": 6.497,
+      "previousClose": 45.080002,
+      "todayChangePct": -4.57,
       "recentCloses": [
-        40.799999,
         36.299999,
         42.400002,
         37.200001,
@@ -2359,7 +2458,8 @@
         54.27,
         53.080002,
         42.330002,
-        45.080002
+        45.080002,
+        43.02
       ],
       "currentPriceDate": "2026-08-06"
     },
@@ -2378,7 +2478,7 @@
       "status": "CONDITIONAL",
       "score": 73,
       "confidence": 68,
-      "currentPrice": 64543.871094,
+      "currentPrice": 64331.601562,
       "referencePrice": 63024,
       "currency": "USD",
       "entryLow": 63250,
@@ -2395,7 +2495,7 @@
       "quoteStatus": "LIVE_CROSS_VERIFIED",
       "priceTimestampKst": "2026-08-01T21:03:00+09:00",
       "previousClose": 64597.5,
-      "todayChangePct": -0.083,
+      "todayChangePct": -0.412,
       "recentCloses": [
         62257.574219,
         63193.148438,
@@ -2426,7 +2526,7 @@
         63460.898438,
         64055.953125,
         64597.5,
-        64543.871094
+        64331.601562
       ],
       "currentPriceDate": "2026-08-06"
     },
@@ -2445,7 +2545,7 @@
       "status": "CONDITIONAL",
       "score": 72,
       "confidence": 66,
-      "currentPrice": 64543.871094,
+      "currentPrice": 64331.601562,
       "referencePrice": 63030,
       "currency": "USD",
       "entryLow": 63250,
@@ -2462,7 +2562,7 @@
       "quoteStatus": "LIVE_CROSS_VERIFIED",
       "priceTimestampKst": "2026-08-01T14:59:00+09:00",
       "previousClose": 64597.5,
-      "todayChangePct": -0.083,
+      "todayChangePct": -0.412,
       "recentCloses": [
         62257.574219,
         63193.148438,
@@ -2493,7 +2593,7 @@
         63460.898438,
         64055.953125,
         64597.5,
-        64543.871094
+        64331.601562
       ],
       "currentPriceDate": "2026-08-06"
     },
@@ -2512,7 +2612,7 @@
       "status": "CONDITIONAL",
       "score": 67,
       "confidence": 60,
-      "currentPrice": 389.640015,
+      "currentPrice": 391.380005,
       "referencePrice": 371.54,
       "currency": "USD",
       "entryLow": 369,
@@ -2528,10 +2628,9 @@
       "invalidation": "GLD 364.80달러 종가 이탈 또는 미 10년물 4.90% 상향 돌파",
       "quoteStatus": "MARKET_CLOSED_VERIFIED_CLOSE",
       "priceTimestampKst": "2026-08-01T05:00:00+09:00",
-      "previousClose": 374.160004,
-      "todayChangePct": 4.137,
+      "previousClose": 389.640015,
+      "todayChangePct": 0.447,
       "recentCloses": [
-        365.920013,
         369.459991,
         373.630005,
         368.579987,
@@ -2560,7 +2659,8 @@
         371.540009,
         371.709991,
         374.160004,
-        389.640015
+        389.640015,
+        391.380005
       ],
       "currentPriceDate": "2026-08-06"
     },
@@ -2579,7 +2679,7 @@
       "status": "CONDITIONAL",
       "score": 67,
       "confidence": 59,
-      "currentPrice": 389.640015,
+      "currentPrice": 391.380005,
       "referencePrice": 371.54,
       "currency": "USD",
       "entryLow": 369,
@@ -2595,10 +2695,9 @@
       "invalidation": "GLD 364.80달러 종가 이탈 또는 미국 10년물 4.90% 돌파",
       "quoteStatus": "MARKET_CLOSED_VERIFIED_CLOSE",
       "priceTimestampKst": "2026-08-01T05:00:00+09:00",
-      "previousClose": 374.160004,
-      "todayChangePct": 4.137,
+      "previousClose": 389.640015,
+      "todayChangePct": 0.447,
       "recentCloses": [
-        365.920013,
         369.459991,
         373.630005,
         368.579987,
@@ -2627,7 +2726,8 @@
         371.540009,
         371.709991,
         374.160004,
-        389.640015
+        389.640015,
+        391.380005
       ],
       "currentPriceDate": "2026-08-06"
     },
@@ -2745,11 +2845,10 @@
       "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM: 절대추세+상대모멘텀+15분 트리거+변동성 목표",
       "strategyType": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
       "referencePrice": 91.150002,
-      "currentPrice": 89.860001,
-      "previousClose": 89.209999,
-      "todayChangePct": 0.729,
+      "currentPrice": 93.599998,
+      "previousClose": 89.860001,
+      "todayChangePct": 4.162,
       "recentCloses": [
-        80.639999,
         83.0,
         88.5,
         86.449997,
@@ -2778,7 +2877,8 @@
         88.68,
         89.110001,
         89.209999,
-        89.860001
+        89.860001,
+        93.599998
       ],
       "currency": "USD",
       "status": "EXPIRED_SIGNAL",
@@ -2846,11 +2946,10 @@
       "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM: 절대추세+상대모멘텀+15분 트리거+변동성 목표",
       "strategyType": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
       "referencePrice": 134.169998,
-      "currentPrice": 134.229996,
-      "previousClose": 134.190002,
-      "todayChangePct": 0.03,
+      "currentPrice": 134.434998,
+      "previousClose": 134.229996,
+      "todayChangePct": 0.153,
       "recentCloses": [
-        132.690002,
         132.679993,
         132.550003,
         132.610001,
@@ -2879,7 +2978,8 @@
         134.089996,
         134.110001,
         134.190002,
-        134.229996
+        134.229996,
+        134.434998
       ],
       "currency": "USD",
       "status": "EXPIRED_SIGNAL",
@@ -2946,11 +3046,10 @@
       "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM: 절대추세+상대모멘텀+15분 트리거+변동성 목표",
       "strategyType": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
       "referencePrice": 88.550003,
-      "currentPrice": 115.010002,
-      "previousClose": 99.449997,
-      "todayChangePct": 15.646,
+      "currentPrice": 112.370003,
+      "previousClose": 115.010002,
+      "todayChangePct": -2.295,
       "recentCloses": [
-        91.349998,
         96.650002,
         99.839996,
         98.360001,
@@ -2979,7 +3078,8 @@
         91.550003,
         101.059998,
         99.449997,
-        115.010002
+        115.010002,
+        112.370003
       ],
       "currency": "USD",
       "status": "EXPIRED_SIGNAL",
@@ -3338,11 +3438,10 @@
       "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM: 절대추세+상대모멘텀+15분 트리거+변동성 목표",
       "strategyType": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
       "referencePrice": 406.450012,
-      "currentPrice": 430.160004,
-      "previousClose": 429.26001,
-      "todayChangePct": 0.21,
+      "currentPrice": 374.420013,
+      "previousClose": 430.160004,
+      "todayChangePct": -12.958,
       "recentCloses": [
-        323.220001,
         322.75,
         348.709991,
         371.619995,
@@ -3371,7 +3470,8 @@
         372.690002,
         399.149994,
         429.26001,
-        430.160004
+        430.160004,
+        374.420013
       ],
       "currency": "USD",
       "status": "EXPIRED_SIGNAL",
@@ -3534,11 +3634,10 @@
       "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM: 절대추세+상대모멘텀+15분 트리거+변동성 목표",
       "strategyType": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
       "referencePrice": 94.190002,
-      "currentPrice": 110.690002,
-      "previousClose": 109.800003,
-      "todayChangePct": 0.811,
+      "currentPrice": 108.330002,
+      "previousClose": 110.690002,
+      "todayChangePct": -2.132,
       "recentCloses": [
-        81.559998,
         84.75,
         87.32,
         87.889999,
@@ -3567,7 +3666,8 @@
         114.489998,
         112.800003,
         109.800003,
-        110.690002
+        110.690002,
+        108.330002
       ],
       "currency": "USD",
       "status": "EXPIRED_SIGNAL",
@@ -3632,11 +3732,10 @@
       "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM: 절대추세+상대모멘텀+15분 트리거+변동성 목표",
       "strategyType": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
       "referencePrice": 364.230011,
-      "currentPrice": 325.779999,
-      "previousClose": 324.769989,
-      "todayChangePct": 0.311,
+      "currentPrice": 322.204987,
+      "previousClose": 325.779999,
+      "todayChangePct": -1.097,
       "recentCloses": [
-        347.630005,
         359.929993,
         372.25,
         378.149994,
@@ -3665,7 +3764,8 @@
         341.119995,
         312.570007,
         324.769989,
-        325.779999
+        325.779999,
+        322.204987
       ],
       "currency": "USD",
       "status": "EXPIRED_SIGNAL",
@@ -3926,11 +4026,10 @@
       "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM: 절대추세+상대모멘텀+15분 트리거+변동성 목표",
       "strategyType": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
       "referencePrice": 238.559998,
-      "currentPrice": 188.690002,
-      "previousClose": 227.990005,
-      "todayChangePct": -17.238,
+      "currentPrice": 185.5,
+      "previousClose": 188.690002,
+      "todayChangePct": -1.691,
       "recentCloses": [
-        213.039993,
         213.360001,
         217.039993,
         219.699997,
@@ -3959,7 +4058,8 @@
         240.089996,
         233.679993,
         227.990005,
-        188.690002
+        188.690002,
+        185.5
       ],
       "currency": "USD",
       "status": "EXPIRED_SIGNAL",
@@ -4024,11 +4124,10 @@
       "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM: 절대추세+상대모멘텀+15분 트리거+변동성 목표",
       "strategyType": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
       "referencePrice": 94.099998,
-      "currentPrice": 115.010002,
-      "previousClose": 99.449997,
-      "todayChangePct": 15.646,
+      "currentPrice": 112.370003,
+      "previousClose": 115.010002,
+      "todayChangePct": -2.295,
       "recentCloses": [
-        91.349998,
         96.650002,
         99.839996,
         98.360001,
@@ -4057,7 +4156,8 @@
         91.550003,
         101.059998,
         99.449997,
-        115.010002
+        115.010002,
+        112.370003
       ],
       "currency": "USD",
       "status": "EXPIRED_SIGNAL",
@@ -4318,11 +4418,10 @@
       "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM: 절대추세+상대모멘텀+15분 트리거+변동성 목표",
       "strategyType": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
       "referencePrice": 60.27,
-      "currentPrice": 57.310001,
-      "previousClose": 58.52,
-      "todayChangePct": -2.068,
+      "currentPrice": 57.709999,
+      "previousClose": 57.310001,
+      "todayChangePct": 0.698,
       "recentCloses": [
-        53.57,
         54.09,
         53.84,
         53.580002,
@@ -4351,7 +4450,8 @@
         59.549999,
         58.790001,
         58.52,
-        57.310001
+        57.310001,
+        57.709999
       ],
       "currency": "USD",
       "status": "EXPIRED_SIGNAL",
