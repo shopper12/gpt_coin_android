@@ -7,6 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
+import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
@@ -40,24 +41,6 @@ data class WatchlistItem(
         )
     }
 }
-
-data class KisHolding(
-    val ticker: String,
-    val name: String,
-    val quantity: Double,
-    val orderableQuantity: Double,
-    val averagePrice: Double,
-    val currentPrice: Double,
-    val purchaseAmount: Double,
-    val evaluationAmount: Double,
-    val profitLossAmount: Double,
-    val profitLossRate: Double,
-)
-
-data class KisHoldingsSnapshot(
-    val holdings: List<KisHolding> = emptyList(),
-    val fetchedAt: Long = 0L,
-)
 
 data class KisCredentials(
     val appKey: String = "",
@@ -159,6 +142,7 @@ class MyStocksRepository(context: Context) {
             if (changed) {
                 remove(KEY_KIS_ACCESS_TOKEN)
                 remove(KEY_KIS_TOKEN_EXPIRES_AT)
+                remove(KEY_KIS_HOLDINGS)
             }
         }.commit()
     }
@@ -178,70 +162,102 @@ class MyStocksRepository(context: Context) {
                         KisHolding(
                             ticker = ticker,
                             name = item.optString("name", ticker),
-                            quantity = item.optDouble("quantity", 0.0),
-                            orderableQuantity = item.optDouble("orderableQuantity", 0.0),
-                            averagePrice = item.optDouble("averagePrice", 0.0),
-                            currentPrice = item.optDouble("currentPrice", 0.0),
-                            purchaseAmount = item.optDouble("purchaseAmount", 0.0),
-                            evaluationAmount = item.optDouble("evaluationAmount", 0.0),
-                            profitLossAmount = item.optDouble("profitLossAmount", 0.0),
-                            profitLossRate = item.optDouble("profitLossRate", 0.0),
+                            quantity = item.optApiDecimal("quantity"),
+                            orderableQuantity = item.optApiDecimal("orderableQuantity"),
+                            averagePrice = item.optApiDecimal("averagePrice"),
+                            currentPrice = item.optApiDecimal("currentPrice"),
+                            purchaseAmount = item.optApiDecimal("purchaseAmount"),
+                            evaluationAmount = item.optApiDecimal("evaluationAmount"),
+                            profitLossAmount = item.optApiDecimal("profitLossAmount"),
+                            profitLossRate = item.optApiDecimal("profitLossRate"),
                         )
                     )
                 }
             }
-            KisHoldingsSnapshot(holdings = holdings, fetchedAt = root.optLong("fetchedAt", 0L))
+            val accountSummary = root.optJSONObject("accountSummary")?.let { summary ->
+                KisAccountSummary(
+                    cashBalance = summary.optApiDecimal("cashBalance"),
+                    purchaseAmount = summary.optApiDecimal("purchaseAmount"),
+                    evaluationAmount = summary.optApiDecimal("evaluationAmount"),
+                    profitLossAmount = summary.optApiDecimal("profitLossAmount"),
+                    netAssetAmount = summary.optApiDecimal("netAssetAmount"),
+                )
+            }
+            KisHoldingsSnapshot(
+                holdings = holdings,
+                accountSummary = accountSummary,
+                fetchedAt = root.optLong("fetchedAt", 0L),
+            )
         }.getOrDefault(KisHoldingsSnapshot())
     }
 
     suspend fun refreshKisHoldings(): KisHoldingsSnapshot = withContext(Dispatchers.IO) {
         val credentials = loadCredentials()
         require(credentials.isConfigured) { "한투 설정에서 App Key, App Secret, 10자리 계좌번호를 먼저 저장하세요." }
-        val token = accessToken(credentials)
+        var authenticationRetried = false
+        var result: KisHoldingsSnapshot? = null
+        while (result == null) {
+            try {
+                val token = accessToken(credentials, forceRefresh = authenticationRetried)
+                val snapshot = fetchAllHoldings(credentials, token)
+                saveHoldings(snapshot)
+                result = snapshot
+            } catch (error: KisApiException) {
+                if (!authenticationRetried && error.authenticationFailure) {
+                    clearAccessToken()
+                    authenticationRetried = true
+                    continue
+                }
+                throw error
+            }
+        }
+        checkNotNull(result)
+    }
+
+    private fun fetchAllHoldings(
+        credentials: KisCredentials,
+        token: String,
+    ): KisHoldingsSnapshot {
         val holdings = mutableListOf<KisHolding>()
+        var accountSummary: KisAccountSummary? = null
         var fk100 = ""
         var nk100 = ""
         var trCont = ""
         var page = 0
         while (page < MAX_BALANCE_PAGES) {
             page += 1
-            val response = fetchBalancePage(credentials, token, fk100, nk100, trCont)
-            val root = response.body
-            if (root.optString("rt_cd") != "0") {
-                error(root.optString("msg1", "한국투자증권 잔고조회가 실패했습니다."))
-            }
-            val rows = root.optJSONArray("output1") ?: JSONArray()
-            for (index in 0 until rows.length()) {
-                val item = rows.optJSONObject(index) ?: continue
-                val quantity = item.optApiDouble("hldg_qty")
-                if (quantity <= 0.0) continue
-                holdings += KisHolding(
-                    ticker = item.optString("pdno").trim(),
-                    name = item.optString("prdt_name", item.optString("pdno")).trim(),
-                    quantity = quantity,
-                    orderableQuantity = item.optApiDouble("ord_psbl_qty"),
-                    averagePrice = item.optApiDouble("pchs_avg_pric"),
-                    currentPrice = item.optApiDouble("prpr"),
-                    purchaseAmount = item.optApiDouble("pchs_amt"),
-                    evaluationAmount = item.optApiDouble("evlu_amt"),
-                    profitLossAmount = item.optApiDouble("evlu_pfls_amt"),
-                    profitLossRate = item.optApiDouble("evlu_pfls_rt"),
+            val (response, parsed) = fetchParsedBalancePageWithRetry(
+                credentials = credentials,
+                accessToken = token,
+                fk100 = fk100,
+                nk100 = nk100,
+                trCont = trCont,
+            )
+            holdings += parsed.holdings
+            accountSummary = parsed.accountSummary ?: accountSummary
+            val hasNextPage = response.trCont in setOf("M", "F") &&
+                parsed.nextFk100.isNotBlank() &&
+                parsed.nextNk100.isNotBlank()
+            if (!hasNextPage) break
+            if (page >= MAX_BALANCE_PAGES) {
+                throw KisApiException(
+                    messageCode = "CLIENT_PAGE_LIMIT",
+                    httpStatus = null,
+                    authenticationFailure = false,
+                    retryable = false,
+                    detail = "잔고 연속조회가 ${MAX_BALANCE_PAGES}페이지를 초과해 중단됐습니다.",
                 )
             }
-            val nextFk = root.optString("ctx_area_fk100")
-            val nextNk = root.optString("ctx_area_nk100")
-            if (response.trCont !in setOf("M", "F") || nextFk.isBlank() || nextNk.isBlank()) break
-            fk100 = nextFk
-            nk100 = nextNk
+            fk100 = parsed.nextFk100
+            nk100 = parsed.nextNk100
             trCont = "N"
-            Thread.sleep(120)
+            Thread.sleep(if (credentials.mockTrading) MOCK_REQUEST_INTERVAL_MS else REAL_REQUEST_INTERVAL_MS)
         }
-        val snapshot = KisHoldingsSnapshot(
+        return KisHoldingsSnapshot(
             holdings = holdings.distinctBy { it.ticker }.sortedByDescending { it.evaluationAmount },
+            accountSummary = accountSummary,
             fetchedAt = System.currentTimeMillis(),
         )
-        saveHoldings(snapshot)
-        snapshot
     }
 
     private fun saveWatchlist(items: List<WatchlistItem>): Boolean {
@@ -271,24 +287,37 @@ class MyStocksRepository(context: Context) {
                 JSONObject()
                     .put("ticker", item.ticker)
                     .put("name", item.name)
-                    .put("quantity", item.quantity)
-                    .put("orderableQuantity", item.orderableQuantity)
-                    .put("averagePrice", item.averagePrice)
-                    .put("currentPrice", item.currentPrice)
-                    .put("purchaseAmount", item.purchaseAmount)
-                    .put("evaluationAmount", item.evaluationAmount)
-                    .put("profitLossAmount", item.profitLossAmount)
-                    .put("profitLossRate", item.profitLossRate)
+                    .put("quantity", item.quantity.toPlainString())
+                    .put("orderableQuantity", item.orderableQuantity.toPlainString())
+                    .put("averagePrice", item.averagePrice.toPlainString())
+                    .put("currentPrice", item.currentPrice.toPlainString())
+                    .put("purchaseAmount", item.purchaseAmount.toPlainString())
+                    .put("evaluationAmount", item.evaluationAmount.toPlainString())
+                    .put("profitLossAmount", item.profitLossAmount.toPlainString())
+                    .put("profitLossRate", item.profitLossRate.toPlainString())
             )
         }
-        val payload = JSONObject().put("fetchedAt", snapshot.fetchedAt).put("holdings", rows)
+        val payload = JSONObject()
+            .put("fetchedAt", snapshot.fetchedAt)
+            .put("holdings", rows)
+        snapshot.accountSummary?.let { summary ->
+            payload.put(
+                "accountSummary",
+                JSONObject()
+                    .put("cashBalance", summary.cashBalance.toPlainString())
+                    .put("purchaseAmount", summary.purchaseAmount.toPlainString())
+                    .put("evaluationAmount", summary.evaluationAmount.toPlainString())
+                    .put("profitLossAmount", summary.profitLossAmount.toPlainString())
+                    .put("netAssetAmount", summary.netAssetAmount.toPlainString())
+            )
+        }
         return securePrefs.edit().putString(KEY_KIS_HOLDINGS, payload.toString()).commit()
     }
 
-    private fun accessToken(credentials: KisCredentials): String {
+    private fun accessToken(credentials: KisCredentials, forceRefresh: Boolean = false): String {
         val cached = securePrefs.getString(KEY_KIS_ACCESS_TOKEN, "").orEmpty()
         val expiresAt = securePrefs.getLong(KEY_KIS_TOKEN_EXPIRES_AT, 0L)
-        if (cached.isNotBlank() && expiresAt > System.currentTimeMillis() + TOKEN_EXPIRY_MARGIN_MS) {
+        if (!forceRefresh && cached.isNotBlank() && expiresAt > System.currentTimeMillis() + TOKEN_EXPIRY_MARGIN_MS) {
             return cached
         }
         val baseUrl = if (credentials.mockTrading) MOCK_BASE_URL else REAL_BASE_URL
@@ -296,17 +325,80 @@ class MyStocksRepository(context: Context) {
             .put("grant_type", "client_credentials")
             .put("appkey", credentials.appKey)
             .put("appsecret", credentials.appSecret)
-        val response = postJson("$baseUrl/oauth2/tokenP", payload)
+        val response = postJsonWithRetry("$baseUrl/oauth2/tokenP", payload, credentials.mockTrading)
         val token = response.optString("access_token").trim()
         if (token.isBlank()) {
-            error(response.optString("error_description", response.optString("msg1", "한국투자증권 접근토큰 발급에 실패했습니다.")))
+            throw KisApiException.fromResponse(
+                body = response,
+                fallback = "한국투자증권 접근토큰 발급에 실패했습니다.",
+            )
         }
-        val expiresInSeconds = response.optLong("expires_in", DEFAULT_TOKEN_LIFETIME_SECONDS)
+        val expiresAtMillis = KisTokenExpiryParser.parseExpiryMillis(
+            response = response,
+            defaultLifetimeSeconds = DEFAULT_TOKEN_LIFETIME_SECONDS,
+        )
         securePrefs.edit()
             .putString(KEY_KIS_ACCESS_TOKEN, token)
-            .putLong(KEY_KIS_TOKEN_EXPIRES_AT, System.currentTimeMillis() + expiresInSeconds * 1_000L)
+            .putLong(KEY_KIS_TOKEN_EXPIRES_AT, expiresAtMillis)
             .commit()
         return token
+    }
+
+    private fun clearAccessToken() {
+        securePrefs.edit()
+            .remove(KEY_KIS_ACCESS_TOKEN)
+            .remove(KEY_KIS_TOKEN_EXPIRES_AT)
+            .commit()
+    }
+
+    private fun fetchParsedBalancePageWithRetry(
+        credentials: KisCredentials,
+        accessToken: String,
+        fk100: String,
+        nk100: String,
+        trCont: String,
+    ): Pair<KisHttpResponse, KisBalancePage> {
+        var retryCount = 0
+        while (true) {
+            try {
+                val response = fetchBalancePage(credentials, accessToken, fk100, nk100, trCont)
+                return response to KisBalanceParser.parsePage(response.body)
+            } catch (error: IOException) {
+                val retryable = when (error) {
+                    is KisApiException -> error.retryable
+                    else -> true
+                }
+                if (!retryable || retryCount >= MAX_API_RETRIES) throw error
+                Thread.sleep(retryDelayMillis(credentials.mockTrading, retryCount))
+                retryCount += 1
+            }
+        }
+    }
+
+    private fun retryDelayMillis(mockTrading: Boolean, retryCount: Int): Long {
+        val base = if (mockTrading) 750L else 250L
+        return (base * (1L shl retryCount)).coerceAtMost(MAX_RETRY_DELAY_MS)
+    }
+
+    private fun postJsonWithRetry(
+        url: String,
+        payload: JSONObject,
+        mockTrading: Boolean,
+    ): JSONObject {
+        var retryCount = 0
+        while (true) {
+            try {
+                return postJson(url, payload)
+            } catch (error: IOException) {
+                val retryable = when (error) {
+                    is KisApiException -> error.retryable
+                    else -> true
+                }
+                if (!retryable || retryCount >= MAX_API_RETRIES) throw error
+                Thread.sleep(retryDelayMillis(mockTrading, retryCount))
+                retryCount += 1
+            }
+        }
     }
 
     private fun fetchBalancePage(
@@ -350,7 +442,13 @@ class MyStocksRepository(context: Context) {
             val stream = if (code in 200..299) connection.inputStream else connection.errorStream
             val text = stream?.bufferedReader(StandardCharsets.UTF_8)?.use { it.readText() }.orEmpty()
             val body = runCatching { JSONObject(text) }.getOrElse { JSONObject().put("msg1", "잔고조회 HTTP $code") }
-            if (code !in 200..299) error(body.optString("msg1", "잔고조회 HTTP $code"))
+            if (code !in 200..299) {
+                throw KisApiException.fromResponse(
+                    body = body,
+                    httpStatus = code,
+                    fallback = "잔고조회 HTTP $code",
+                )
+            }
             KisHttpResponse(body = body, trCont = connection.getHeaderField("tr_cont").orEmpty())
         } finally {
             connection.disconnect()
@@ -373,7 +471,11 @@ class MyStocksRepository(context: Context) {
             val text = stream?.bufferedReader(StandardCharsets.UTF_8)?.use { it.readText() }.orEmpty()
             val body = runCatching { JSONObject(text) }.getOrElse { JSONObject() }
             if (code !in 200..299) {
-                error(body.optString("error_description", body.optString("msg1", "접근토큰 HTTP $code")))
+                throw KisApiException.fromResponse(
+                    body = body,
+                    httpStatus = code,
+                    fallback = "접근토큰 HTTP $code",
+                )
             }
             body
         } finally {
@@ -401,7 +503,10 @@ class MyStocksRepository(context: Context) {
         private const val DEFAULT_TOKEN_LIFETIME_SECONDS = 86_400L
         private const val TOKEN_EXPIRY_MARGIN_MS = 120_000L
         private const val MAX_BALANCE_PAGES = 10
-
+        private const val MAX_API_RETRIES = 2
+        private const val REAL_REQUEST_INTERVAL_MS = 100L
+        private const val MOCK_REQUEST_INTERVAL_MS = 500L
+        private const val MAX_RETRY_DELAY_MS = 2_000L
         private fun encode(value: String): String {
             return URLEncoder.encode(value, StandardCharsets.UTF_8.name())
         }
@@ -412,8 +517,4 @@ private fun JSONObject.optNullableDouble(key: String): Double? {
     if (!has(key) || isNull(key)) return null
     val value = optDouble(key, Double.NaN)
     return if (value.isFinite()) value else null
-}
-
-private fun JSONObject.optApiDouble(key: String): Double {
-    return optString(key).replace(",", "").trim().toDoubleOrNull() ?: optDouble(key, 0.0)
 }

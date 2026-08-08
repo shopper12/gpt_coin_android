@@ -8,7 +8,8 @@ on:
       - 'app/src/main/java/com/cryptotradecoach/HomeActivity.kt'
       - 'app/src/main/java/com/cryptotradecoach/MyStocksActivity.kt'
       - 'app/src/main/java/com/cryptotradecoach/RecommendationHistoryActivity.kt'
-      - 'app/src/main/java/com/cryptotradecoach/data/MyStocksRepository.kt'
+      - 'app/src/main/java/com/cryptotradecoach/data/**'
+      - 'app/src/test/**'
       - 'app/src/main/java/com/cryptotradecoach/service/GlobalMarketSignalWorker.kt'
       - 'app/src/main/java/com/cryptotradecoach/service/GlobalMarketSignalScheduler.kt'
       - 'app/src/main/java/com/cryptotradecoach/service/SignalNotificationHelper.kt'
@@ -39,10 +40,10 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Compile global market Android integration
+      - name: Test and compile global market Android integration
         id: compile
         continue-on-error: true
-        run: bash ./gradlew :app:compileDebugKotlin --stacktrace
+        run: bash ./gradlew :app:testDebugUnitTest :app:compileDebugKotlin --stacktrace
 
       - name: Record verification result
         if: always()
@@ -65,7 +66,7 @@ jobs:
               'compiled_commit': os.environ['GITHUB_SHA'],
               'workflow_run_id': os.environ['GITHUB_RUN_ID'],
               'workflow_run_number': int(os.environ['GITHUB_RUN_NUMBER']),
-              'task': ':app:compileDebugKotlin',
+              'task': ':app:testDebugUnitTest :app:compileDebugKotlin',
               'scope': 'Korean ETF monitor, recommendation list, my stocks and KIS holdings',
           }
           Path('reports/global_market_android_status.json').write_text(

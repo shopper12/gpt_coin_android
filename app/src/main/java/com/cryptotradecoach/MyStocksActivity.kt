@@ -39,6 +39,9 @@ import com.cryptotradecoach.data.KisHoldingsSnapshot
 import com.cryptotradecoach.data.MyStocksRepository
 import com.cryptotradecoach.data.WatchlistItem
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
+import java.math.RoundingMode
+import java.text.NumberFormat
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -222,6 +225,7 @@ private fun MyStocksScreen(
                             }
                                 .onSuccess {
                                     credentials = repository.loadCredentials()
+                                    holdings = repository.loadCachedHoldings()
                                     message = "한국투자증권 설정을 암호화 저장했습니다."
                                     error = null
                                     tab = MyStocksTab.HOLDINGS
@@ -310,12 +314,32 @@ private fun HoldingsSummaryCard(
     onRefresh: () -> Unit,
     onOpenSettings: () -> Unit,
 ) {
-    val totalEvaluation = snapshot.holdings.sumOf { it.evaluationAmount }
-    val totalProfitLoss = snapshot.holdings.sumOf { it.profitLossAmount }
+    val fallbackEvaluation = snapshot.holdings.fold(BigDecimal.ZERO) { total, item ->
+        total + item.evaluationAmount
+    }
+    val fallbackProfitLoss = snapshot.holdings.fold(BigDecimal.ZERO) { total, item ->
+        total + item.profitLossAmount
+    }
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Text("한국투자증권 보유종목", fontWeight = FontWeight.Bold)
-            Text("종목 ${snapshot.holdings.size}개 / 평가금액 ${formatWon(totalEvaluation)} / 평가손익 ${formatSignedWon(totalProfitLoss)}")
+            snapshot.accountSummary?.let { summary ->
+                Text(
+                    "종목 ${snapshot.holdings.size}개 / 순자산 ${formatWon(summary.netAssetAmount)} / " +
+                        "예수금 ${formatWon(summary.cashBalance)}"
+                )
+                Text(
+                    "평가금액 ${formatWon(summary.evaluationAmount)} / " +
+                        "매입금액 ${formatWon(summary.purchaseAmount)}"
+                )
+                Text(
+                    "평가손익 ${formatSignedWon(summary.profitLossAmount)}",
+                    fontWeight = FontWeight.Bold,
+                )
+            } ?: Text(
+                "종목 ${snapshot.holdings.size}개 / 평가금액 ${formatWon(fallbackEvaluation)} / " +
+                    "평가손익 ${formatSignedWon(fallbackProfitLoss)}"
+            )
             Text("마지막 동기화: ${formatTimestamp(snapshot.fetchedAt)}", style = MaterialTheme.typography.bodySmall)
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Button(onClick = onRefresh, enabled = configured && !loading) {
@@ -414,11 +438,26 @@ private fun formatMoney(value: Double?, currency: String): String {
 }
 
 private fun formatWon(value: Double): String = "%,.0f원".format(Locale.US, value)
-private fun formatSignedWon(value: Double): String = "%+,.0f원".format(Locale.US, value)
-private fun formatSignedPercent(value: Double): String = "%+.2f%%".format(Locale.US, value)
+private fun formatWon(value: BigDecimal): String {
+    val rounded = value.setScale(0, RoundingMode.HALF_UP)
+    return "${NumberFormat.getIntegerInstance(Locale.KOREA).format(rounded)}원"
+}
 
-private fun formatQuantity(value: Double): String {
-    return if (value % 1.0 == 0.0) "%,.0f".format(Locale.US, value) else "%,.4f".format(Locale.US, value)
+private fun formatSignedWon(value: BigDecimal): String {
+    val prefix = if (value.signum() > 0) "+" else ""
+    return "$prefix${formatWon(value)}"
+}
+
+private fun formatSignedPercent(value: BigDecimal): String {
+    val prefix = if (value.signum() > 0) "+" else ""
+    return "$prefix${value.setScale(2, RoundingMode.HALF_UP).toPlainString()}%"
+}
+
+private fun formatQuantity(value: BigDecimal): String {
+    return NumberFormat.getNumberInstance(Locale.KOREA).apply {
+        maximumFractionDigits = 8
+        isGroupingUsed = true
+    }.format(value.stripTrailingZeros())
 }
 
 private fun formatTimestamp(value: Long): String {
