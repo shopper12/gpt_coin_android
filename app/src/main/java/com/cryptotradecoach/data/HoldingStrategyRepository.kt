@@ -91,7 +91,9 @@ class HoldingStrategyRepository {
         val threshold = base.optDouble("threshold", 0.0)
         val adjustedScore = (baseScore + ict.scoreAdjustment).coerceIn(0.0, 100.0)
         val baseAction = base.optString("action", "관망")
-        val currentPrice = base.optDouble("current_price", holding.currentPrice.toDouble())
+        val strategyCurrentPrice = base.optDouble("current_price", holding.currentPrice.toDouble())
+        val kisCurrentPrice = holding.currentPrice.toDouble()
+        val decisionPrice = kisCurrentPrice.takeIf { it > 0.0 } ?: strategyCurrentPrice
         val stopLoss = base.optDouble("stop_loss", 0.0)
         val target1 = base.optDouble("target1", 0.0)
         val target2 = base.optDouble("target2", 0.0)
@@ -100,7 +102,7 @@ class HoldingStrategyRepository {
             action = adjustedAction,
             score = adjustedScore,
             threshold = threshold,
-            currentPrice = currentPrice,
+            currentPrice = decisionPrice,
             stopLoss = stopLoss,
             target1 = target1,
             target2 = target2,
@@ -122,7 +124,7 @@ class HoldingStrategyRepository {
             score = adjustedScore,
             threshold = threshold,
             setup = base.optString("setup", ""),
-            currentPrice = currentPrice,
+            currentPrice = strategyCurrentPrice,
             entry = base.optDouble("entry", 0.0),
             stopLoss = stopLoss,
             target1 = target1,
@@ -191,11 +193,11 @@ class HoldingStrategyRepository {
     ): Pair<String, String> {
         return when {
             currentPrice > 0.0 && stopLoss > 0.0 && currentPrice <= stopLoss ->
-                "손절·축소 검토" to "현재가가 전략 무효화/손절 기준 이하입니다."
+                "손절·축소 검토" to "한투 현재가가 전략 무효화/손절 기준 이하입니다."
             currentPrice > 0.0 && target2 > 0.0 && currentPrice >= target2 ->
-                "2차 목표 도달·익절관리" to "현재가가 2차 목표 이상이므로 수익 보호가 우선입니다."
+                "2차 목표 도달·익절관리" to "한투 현재가가 2차 목표 이상이므로 수익 보호가 우선입니다."
             currentPrice > 0.0 && target1 > 0.0 && currentPrice >= target1 ->
-                "1차 목표 도달·트레일링" to "1차 목표를 통과했으므로 일부 이익실현과 추적손절 구간입니다."
+                "1차 목표 도달·트레일링" to "한투 현재가가 1차 목표를 통과해 일부 이익실현과 추적손절 구간입니다."
             ict.bias == "BEARISH" && score < threshold ->
                 "비중축소·방어" to "ICT 약세 구조이고 종합점수가 기준 미만입니다."
             action.contains("매수") && ict.bias != "BEARISH" ->
