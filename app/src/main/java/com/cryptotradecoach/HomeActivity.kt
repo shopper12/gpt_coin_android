@@ -128,9 +128,9 @@ private fun UnifiedHomeScreen(
         }
         item {
             HomeCard(
-                title = "내 종목",
-                description = "추천 목록에서 담은 종목과 직접 추가한 관심종목을 관리하고, 한국투자증권 Open API에서 실제 보유종목을 읽기 전용으로 동기화합니다.",
-                button = "내 종목 열기",
+                title = "내 종목 · 한투 보유전략",
+                description = "추천·관심종목을 관리하고 한국투자증권 Open API에서 실제 보유종목을 동기화한 뒤, 보유종목별 추가매수·보유·방어·손절 관리 신호와 ICT 근거를 확인합니다.",
+                button = "내 종목·보유전략 열기",
                 onClick = onMyStocks,
             )
         }
