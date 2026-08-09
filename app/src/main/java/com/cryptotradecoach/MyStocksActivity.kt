@@ -33,6 +33,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import com.cryptotradecoach.data.HoldingStrategyRepository
+import com.cryptotradecoach.data.HoldingStrategySignal
 import com.cryptotradecoach.data.KisCredentials
 import com.cryptotradecoach.data.KisHolding
 import com.cryptotradecoach.data.KisHoldingsSnapshot
@@ -51,10 +53,12 @@ class MyStocksActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val repository = MyStocksRepository(this)
+        val strategyRepository = HoldingStrategyRepository()
         setContent {
             MaterialTheme {
                 MyStocksScreen(
                     repository = repository,
+                    strategyRepository = strategyRepository,
                     onBack = { finish() },
                     onRecommendations = {
                         startActivity(Intent(this, RecommendationHistoryActivity::class.java))
@@ -68,12 +72,14 @@ class MyStocksActivity : ComponentActivity() {
 private enum class MyStocksTab(val label: String) {
     WATCHLIST("관심종목"),
     HOLDINGS("보유종목"),
+    HOLDING_SIGNALS("보유전략"),
     KIS_SETTINGS("한투 설정"),
 }
 
 @Composable
 private fun MyStocksScreen(
     repository: MyStocksRepository,
+    strategyRepository: HoldingStrategyRepository,
     onBack: () -> Unit,
     onRecommendations: () -> Unit,
 ) {
@@ -82,9 +88,35 @@ private fun MyStocksScreen(
     var watchlist by remember { mutableStateOf(repository.loadWatchlist()) }
     var holdings by remember { mutableStateOf(repository.loadCachedHoldings()) }
     var credentials by remember { mutableStateOf(repository.loadCredentials()) }
+    var strategySignals by remember { mutableStateOf<List<HoldingStrategySignal>>(emptyList()) }
+    var strategyErrors by remember { mutableStateOf<List<String>>(emptyList()) }
     var loadingHoldings by remember { mutableStateOf(false) }
+    var analyzingStrategies by remember { mutableStateOf(false) }
     var message by remember { mutableStateOf<String?>(null) }
     var error by remember { mutableStateOf<String?>(null) }
+
+    fun analyzeHoldings(targets: List<KisHolding> = holdings.holdings) {
+        if (analyzingStrategies || targets.isEmpty()) return
+        scope.launch {
+            analyzingStrategies = true
+            message = "보유종목 ${targets.size}개의 추세·모멘텀·ICT 전략 신호를 분석하는 중입니다."
+            error = null
+            runCatching { strategyRepository.analyzeHoldings(targets) }
+                .onSuccess { result ->
+                    strategySignals = result.signals
+                    strategyErrors = result.errors
+                    message = buildString {
+                        append("보유전략 ${result.signals.size}개 분석 완료")
+                        if (result.errors.isNotEmpty()) append(" / 실패 ${result.errors.size}개")
+                    }
+                }
+                .onFailure {
+                    error = it.message ?: it.javaClass.simpleName
+                    message = null
+                }
+            analyzingStrategies = false
+        }
+    }
 
     fun refreshHoldings() {
         if (loadingHoldings) return
@@ -95,7 +127,12 @@ private fun MyStocksScreen(
             runCatching { repository.refreshKisHoldings() }
                 .onSuccess {
                     holdings = it
+                    strategySignals = emptyList()
+                    strategyErrors = emptyList()
                     message = "보유종목 ${it.holdings.size}개를 동기화했습니다."
+                    if (tab == MyStocksTab.HOLDING_SIGNALS && it.holdings.isNotEmpty()) {
+                        analyzeHoldings(it.holdings)
+                    }
                 }
                 .onFailure {
                     error = it.message ?: it.javaClass.simpleName
@@ -107,6 +144,18 @@ private fun MyStocksScreen(
 
     LaunchedEffect(Unit) {
         if (credentials.isConfigured) refreshHoldings()
+    }
+
+    LaunchedEffect(tab, holdings.fetchedAt) {
+        if (
+            tab == MyStocksTab.HOLDING_SIGNALS &&
+            holdings.holdings.isNotEmpty() &&
+            strategySignals.isEmpty() &&
+            !loadingHoldings &&
+            !analyzingStrategies
+        ) {
+            analyzeHoldings()
+        }
     }
 
     LazyColumn(
@@ -124,7 +173,7 @@ private fun MyStocksScreen(
         }
         item {
             Text("내 종목", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
-            Text("관심종목은 직접 관리하고, 실제 보유종목은 한국투자증권 Open API에서 읽기 전용으로 동기화합니다.")
+            Text("한국투자증권 실보유 종목을 읽기 전용으로 동기화하고, 각 보유종목의 추세·모멘텀·ICT 전략 신호를 별도로 계산합니다.")
         }
         item {
             Row(
@@ -213,6 +262,47 @@ private fun MyStocksScreen(
                 }
             }
 
+            MyStocksTab.HOLDING_SIGNALS -> {
+                item {
+                    HoldingStrategySummaryCard(
+                        snapshot = holdings,
+                        signalCount = strategySignals.size,
+                        errorCount = strategyErrors.size,
+                        configured = credentials.isConfigured,
+                        loadingHoldings = loadingHoldings,
+                        analyzing = analyzingStrategies,
+                        onRefreshHoldings = { refreshHoldings() },
+                        onAnalyze = { analyzeHoldings() },
+                        onOpenSettings = { tab = MyStocksTab.KIS_SETTINGS },
+                    )
+                }
+                if (strategyErrors.isNotEmpty()) {
+                    item {
+                        MyStocksInfoCard(
+                            "분석 실패 ${strategyErrors.size}개: ${strategyErrors.take(3).joinToString(" / ")}"
+                        )
+                    }
+                }
+                if (holdings.holdings.isEmpty()) {
+                    item {
+                        MyStocksInfoCard(
+                            if (credentials.isConfigured) "보유종목을 먼저 동기화하세요." else "한투 설정을 먼저 저장하세요."
+                        )
+                    }
+                } else if (strategySignals.isEmpty()) {
+                    item {
+                        MyStocksInfoCard(
+                            if (analyzingStrategies) "보유전략을 계산하고 있습니다." else "전략 결과가 없습니다. '전략 재분석'을 누르세요."
+                        )
+                    }
+                } else {
+                    val holdingMap = holdings.holdings.associateBy { it.ticker }
+                    items(strategySignals, key = { it.ticker }) { signal ->
+                        HoldingStrategyCard(signal = signal, holding = holdingMap[signal.ticker])
+                    }
+                }
+            }
+
             MyStocksTab.KIS_SETTINGS -> {
                 item {
                     KisSettingsCard(
@@ -226,6 +316,8 @@ private fun MyStocksScreen(
                                 .onSuccess {
                                     credentials = repository.loadCredentials()
                                     holdings = repository.loadCachedHoldings()
+                                    strategySignals = emptyList()
+                                    strategyErrors = emptyList()
                                     message = "한국투자증권 설정을 암호화 저장했습니다."
                                     error = null
                                     tab = MyStocksTab.HOLDINGS
@@ -368,6 +460,76 @@ private fun HoldingCard(item: KisHolding) {
 }
 
 @Composable
+private fun HoldingStrategySummaryCard(
+    snapshot: KisHoldingsSnapshot,
+    signalCount: Int,
+    errorCount: Int,
+    configured: Boolean,
+    loadingHoldings: Boolean,
+    analyzing: Boolean,
+    onRefreshHoldings: () -> Unit,
+    onAnalyze: () -> Unit,
+    onOpenSettings: () -> Unit,
+) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(7.dp)) {
+            Text("한국투자증권 보유전략", fontWeight = FontWeight.Bold)
+            Text("한투에서 읽은 보유 ${snapshot.holdings.size}개 중 전략 ${signalCount}개 분석 / 실패 ${errorCount}개")
+            Text("App Key·App Secret·계좌번호·보유수량·평균단가는 전략 서버로 보내지 않습니다. 전략 분석에는 6자리 종목코드만 사용합니다.", style = MaterialTheme.typography.bodySmall)
+            Row(
+                modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Button(
+                    onClick = onRefreshHoldings,
+                    enabled = configured && !loadingHoldings && !analyzing,
+                ) {
+                    Text(if (loadingHoldings) "잔고 동기화 중" else "잔고+전략 새로고침")
+                }
+                OutlinedButton(
+                    onClick = onAnalyze,
+                    enabled = snapshot.holdings.isNotEmpty() && !loadingHoldings && !analyzing,
+                ) {
+                    Text(if (analyzing) "전략 분석 중" else "전략 재분석")
+                }
+                OutlinedButton(onClick = onOpenSettings) { Text("한투 설정") }
+            }
+        }
+    }
+}
+
+@Composable
+private fun HoldingStrategyCard(signal: HoldingStrategySignal, holding: KisHolding?) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
+            Text("${signal.name} (${signal.ticker})", fontWeight = FontWeight.Bold)
+            Text("보유전략: ${signal.holdingSignal}", fontWeight = FontWeight.Bold)
+            Text(signal.holdingSignalReason)
+            if (holding != null) {
+                Text(
+                    "한투 현재가 ${formatWon(holding.currentPrice)} / 평균단가 ${formatWon(holding.averagePrice)} / " +
+                        "보유수익률 ${formatSignedPercent(holding.profitLossRate)}"
+                )
+            }
+            Text("전략 현재가 ${formatWon(signal.currentPrice)} / 기본판단 ${signal.baseAction}")
+            Text("점수 ${formatScore(signal.score)} / 기준 ${formatScore(signal.threshold)} / ${signal.setup}")
+            Text(
+                "진입 ${formatWon(signal.entry)} / 손절 ${formatWon(signal.stopLoss)} / " +
+                    "목표 ${formatWon(signal.target1)} → ${formatWon(signal.target2)}"
+            )
+            Text(
+                "RSI ${formatScore(signal.rsi14)} / MA20 괴리 ${formatSignedPercent(signal.gapMa20Pct)} / " +
+                    "20일 모멘텀 ${formatSignedPercent(signal.momentum20dPct)}"
+            )
+            Text("ICT: ${signal.ict.summary}", fontWeight = FontWeight.Bold)
+            if (signal.actionReason.isNotBlank()) Text("판단근거: ${signal.actionReason}")
+            if (signal.reason.isNotBlank()) Text("기본근거: ${signal.reason}")
+            if (signal.failureCondition.isNotBlank()) Text("무효화: ${signal.failureCondition}")
+        }
+    }
+}
+
+@Composable
 private fun KisSettingsCard(initial: KisCredentials, onSave: (KisCredentials) -> Unit) {
     var appKey by remember(initial.appKey) { mutableStateOf(initial.appKey) }
     var appSecret by remember(initial.appSecret) { mutableStateOf(initial.appSecret) }
@@ -452,6 +614,9 @@ private fun formatSignedPercent(value: BigDecimal): String {
     val prefix = if (value.signum() > 0) "+" else ""
     return "$prefix${value.setScale(2, RoundingMode.HALF_UP).toPlainString()}%"
 }
+
+private fun formatSignedPercent(value: Double): String = String.format(Locale.US, "%+.2f%%", value)
+private fun formatScore(value: Double): String = String.format(Locale.US, "%.1f", value)
 
 private fun formatQuantity(value: BigDecimal): String {
     return NumberFormat.getNumberInstance(Locale.KOREA).apply {
