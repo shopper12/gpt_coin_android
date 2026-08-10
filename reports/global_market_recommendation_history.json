@@ -1,11 +1,344 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-08-10T23:41:27.174258+09:00",
+  "generatedAtKst": "2026-08-11T00:06:09.758825+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "coverageStart": "2026-07-23",
-  "coverageEnd": "2026-08-10",
-  "recordCount": 126,
+  "coverageEnd": "2026-08-11",
+  "recordCount": 131,
   "recommendations": [
+    {
+      "id": "ARKG-LONG-20260810T1500000000-EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
+      "date": "2026-08-11",
+      "generatedAtKst": "2026-08-11T00:06:04.643305+09:00",
+      "signalTimestamp": "2026-08-10T15:00:00+00:00",
+      "assetClass": "ETF",
+      "market": "US",
+      "ticker": "ARKG",
+      "name": "ARK Genomic Revolution ETF",
+      "direction": "LONG",
+      "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM: 절대추세+상대모멘텀+15분 트리거+변동성 목표",
+      "strategyType": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
+      "referencePrice": 44.099998,
+      "currentPrice": 44.099998,
+      "previousClose": 43.040001,
+      "todayChangePct": 2.463,
+      "recentCloses": [
+        42.360001,
+        42.060001,
+        42.619999,
+        42.91,
+        43.57,
+        42.599998,
+        41.869999,
+        43.0,
+        41.32,
+        40.59,
+        41.049999,
+        41.220001,
+        40.09,
+        39.869999,
+        38.279999,
+        39.560001,
+        38.849998,
+        38.82,
+        37.810001,
+        37.790001,
+        37.82,
+        37.5,
+        39.259998,
+        38.560001,
+        39.619999,
+        40.700001,
+        41.240002,
+        40.549999,
+        43.040001,
+        44.099998
+      ],
+      "currency": "USD",
+      "status": "ACTIVE_SIGNAL",
+      "score": 94.1,
+      "confidence": 9.4,
+      "relativeStrengthPercentile": 0.8625,
+      "entryLow": 43.658998,
+      "entryHigh": 44.4161,
+      "stopLoss": 40.622878,
+      "target1": 51.054239,
+      "target2": 55.226784,
+      "riskPct": 7.88,
+      "volatilityTargetExposurePct": 29.5,
+      "regime": {
+        "panic": false,
+        "riskOff": false,
+        "equityBelow200Count": 0,
+        "realizedVolatility20Annualized": 0.2462,
+        "reason": "광의 추세와 변동성 정상"
+      },
+      "ict": {
+        "bias": "BULLISH",
+        "structure": "RANGE",
+        "event": "BOS_UP",
+        "liquidity": "NONE",
+        "fvg": "BULLISH 44.0200~44.0300",
+        "score": 3
+      },
+      "trigger": {
+        "ready": true,
+        "breakout": true,
+        "reclaim": false,
+        "volumeRatio": 1.794,
+        "volumeThreshold": 1.35,
+        "ema20": 43.625301,
+        "ema50": 43.103012,
+        "lastTimestamp": "2026-08-10T15:00:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=1.79x/1.35x; ICT=BULLISH/BOS_UP/NONE",
+        "ict": {
+          "bias": "BULLISH",
+          "structure": "RANGE",
+          "event": "BOS_UP",
+          "liquidity": "NONE",
+          "fvg": "BULLISH 44.0200~44.0300",
+          "score": 3
+        },
+        "fresh": true,
+        "ageMinutes": 6.2
+      },
+      "reason": "3/6/12개월 절대 모멘텀 양수, 200일선 상단, 자산군 상대강도 86백분위, breakout=True; reclaim=False; volume=1.79x/1.35x; ICT=BULLISH/BOS_UP/NONE",
+      "guardrail": "자동 추천은 주문이 아니다. 실시간 호가·슬리피지·공시·거래 가능 여부를 확인한다.",
+      "currentPriceDate": "2026-08-11"
+    },
+    {
+      "id": "20260811-0000KST-XLE-LONG",
+      "date": "2026-08-11",
+      "generatedAtKst": "2026-08-11T00:04:12+09:00",
+      "briefingSlot": "0000",
+      "assetClass": "US_SECTOR_ETF",
+      "market": "NYSE_ARCA",
+      "ticker": "XLE",
+      "name": "Energy Select Sector SPDR Fund",
+      "direction": "LONG",
+      "strategy": "$58.85~59.10 눌림에서 Brent $85 이상과 XLE 개장 VWAP 지지를 확인해 분할매수",
+      "strategyType": "CHATGPT_SCHEDULED_BRIEFING",
+      "status": "CONDITIONAL",
+      "score": 89,
+      "confidence": 81,
+      "currentPrice": 59.18,
+      "referencePrice": 59.265,
+      "currency": "USD",
+      "entryLow": 58.85,
+      "entryHigh": 59.1,
+      "stopLoss": 58.25,
+      "target1": 60.15,
+      "target2": 61.4,
+      "holdingPeriod": "1-5 trading days",
+      "committeeVote": "6/7",
+      "catalyst": "Brent $86.11·에너지 섹터 +2.6%와 호르무즈 재개 불확실성",
+      "reason": "11개 섹터 중 에너지가 확실한 선두이고 지수·기술주 약세와 분리됐다. 다만 XLE가 장중 +3%라 현재 고가 추격 대신 첫 VWAP 눌림만 허용한다.",
+      "risk": "미국-이란 합의, 호르무즈 재개, 유가 급락과 장중 갭 메우기",
+      "invalidation": "Brent $84.50 이탈 또는 XLE $58.25 이탈, 에너지 섹터 상대강도 상실",
+      "quoteStatus": "US_INTRADAY_LIVE",
+      "priceTimestampKst": "2026-08-10T23:47:23+09:00",
+      "previousClose": 57.5,
+      "todayChangePct": 2.922,
+      "recentCloses": [
+        53.580002,
+        53.110001,
+        52.810001,
+        53.220001,
+        53.130001,
+        54.639999,
+        55.599998,
+        54.82,
+        55.080002,
+        56.740002,
+        56.950001,
+        56.5,
+        57.02,
+        57.68,
+        57.939999,
+        58.5,
+        59.200001,
+        59.380001,
+        59.619999,
+        58.360001,
+        57.57,
+        58.650002,
+        58.959999,
+        59.549999,
+        58.790001,
+        58.52,
+        57.310001,
+        58.16,
+        57.5,
+        59.18
+      ],
+      "currentPriceDate": "2026-08-11"
+    },
+    {
+      "id": "20260811-0000KST-GLD-DEFENSIVE",
+      "date": "2026-08-11",
+      "generatedAtKst": "2026-08-11T00:04:12+09:00",
+      "briefingSlot": "0000",
+      "assetClass": "GOLD_ETF",
+      "market": "NYSE_ARCA",
+      "ticker": "GLD",
+      "name": "SPDR Gold Shares",
+      "direction": "DEFENSIVE",
+      "strategy": "$398.20~398.80에서 지지하고 DXY 100 미만·미국 10년물 4.70% 이하일 때 분할매수",
+      "strategyType": "CHATGPT_SCHEDULED_BRIEFING",
+      "status": "CONDITIONAL",
+      "score": 84,
+      "confidence": 75,
+      "currentPrice": 398.592194,
+      "referencePrice": 398.8,
+      "currency": "USD",
+      "entryLow": 398.2,
+      "entryHigh": 398.8,
+      "stopLoss": 395.7,
+      "target1": 402.5,
+      "target2": 408,
+      "holdingPeriod": "3-15 trading days",
+      "committeeVote": "5/7",
+      "catalyst": "중동 위험과 CPI 이벤트 헤지, 금의 주식·채권 대비 상대강도",
+      "reason": "금리·달러 상승에도 GLD가 양수여서 방어 상대강도가 확인됐다. 다만 10년물 4.67%대 상승 때문에 지지 확인 없이 즉시 추격하지 않는다.",
+      "risk": "달러 100 돌파, 실질금리 상승, 호르무즈 합의와 금 차익실현",
+      "invalidation": "GLD $395.70 이탈 또는 DXY 100 돌파와 미국 10년물 4.72% 돌파가 동시 발생",
+      "quoteStatus": "US_INTRADAY_LIVE",
+      "priceTimestampKst": "2026-08-10T23:48:03+09:00",
+      "previousClose": 398.470001,
+      "todayChangePct": 0.031,
+      "recentCloses": [
+        368.579987,
+        368.380005,
+        370.600006,
+        378.130005,
+        382.130005,
+        377.48999,
+        374.450012,
+        378.179993,
+        377.01001,
+        367.130005,
+        372.149994,
+        372.350006,
+        364.959991,
+        368.410004,
+        367.600006,
+        374.809998,
+        379.119995,
+        371.519989,
+        371.899994,
+        374.630005,
+        369.369995,
+        371.079987,
+        377.160004,
+        371.540009,
+        371.709991,
+        374.160004,
+        389.640015,
+        389.670013,
+        398.470001,
+        398.592194
+      ],
+      "currentPriceDate": "2026-08-11"
+    },
+    {
+      "id": "20260811-0000KST-BTC-SHORT",
+      "date": "2026-08-11",
+      "generatedAtKst": "2026-08-11T00:04:12+09:00",
+      "briefingSlot": "0000",
+      "assetClass": "CRYPTO",
+      "market": "CRYPTO_GLOBAL",
+      "ticker": "BTC",
+      "name": "Bitcoin",
+      "direction": "SHORT",
+      "strategy": "$64,480 하향 돌파 후 15분봉이 되돌림에 실패할 때 $64,380~64,480에서 숏 진입",
+      "strategyType": "CHATGPT_SCHEDULED_BRIEFING",
+      "status": "CONDITIONAL",
+      "score": 83,
+      "confidence": 72,
+      "currentPrice": 64568,
+      "referencePrice": 64568,
+      "currency": "USD",
+      "entryLow": 64380,
+      "entryHigh": 64480,
+      "stopLoss": 65080,
+      "target1": 63600,
+      "target2": 62000,
+      "holdingPeriod": "6 hours-3 days",
+      "committeeVote": "5/7",
+      "catalyst": "DXY 99.78·미국 금리 상승과 BTC 일중 저점 재시험",
+      "reason": "주식지수는 보합이지만 BTC는 -0.94%로 위험자산 중 상대약세다. $64,480 지지가 아직 남아 있어 현재가 숏이 아니라 확인형 이탈 매도만 허용한다.",
+      "risk": "미국장 후반 위험선호 회복, 숏스퀴즈, 현물 ETF 유입과 24시간 변동성",
+      "invalidation": "BTC $65,080 회복 또는 DXY 99.50 하회와 Nasdaq·HYG 동반 양전",
+      "quoteStatus": "CRYPTO_INTRADAY_LIVE",
+      "priceTimestampKst": "2026-08-11T00:02:47+09:00"
+    },
+    {
+      "id": "20260811-0000KST-SPY-LONG",
+      "date": "2026-08-11",
+      "generatedAtKst": "2026-08-11T00:04:12+09:00",
+      "briefingSlot": "0000",
+      "assetClass": "US_EQUITY_ETF",
+      "market": "NYSE_ARCA",
+      "ticker": "SPY",
+      "name": "SPDR S&P 500 ETF Trust",
+      "direction": "LONG",
+      "strategy": "$773.20~774.30 눌림에서 NYSE 상승종목이 하락종목을 회복하고 HYG가 양전할 때 분할매수",
+      "strategyType": "CHATGPT_SCHEDULED_BRIEFING",
+      "status": "CONDITIONAL",
+      "score": 80,
+      "confidence": 69,
+      "currentPrice": 774.309998,
+      "referencePrice": 774.93,
+      "currency": "USD",
+      "entryLow": 773.2,
+      "entryHigh": 774.3,
+      "stopLoss": 770,
+      "target1": 779.5,
+      "target2": 785,
+      "holdingPeriod": "1-5 trading days",
+      "committeeVote": "5/7",
+      "catalyst": "S&P500 사상 최고권과 강한 기업이익, RSP 양수 유지",
+      "reason": "SPY는 양수지만 S&P500 하락종목 286개, NYSE·Nasdaq 하락 우위와 HYG 음수라 광범위 위험선호가 아니다. 시장폭 회복 때만 신규 롱을 허용한다.",
+      "risk": "CPI 전 차익실현, 유가·금리 상승, 소수 대형주 집중과 신용시장 약세",
+      "invalidation": "NYSE 하락 우위 지속과 HYG 음수 상태에서 SPY $770 이탈 또는 10년물 4.72% 돌파",
+      "quoteStatus": "US_INTRADAY_LIVE",
+      "priceTimestampKst": "2026-08-10T23:47:14+09:00",
+      "previousClose": 773.26001,
+      "todayChangePct": 0.136,
+      "recentCloses": [
+        741.0,
+        746.77002,
+        745.76001,
+        744.780029,
+        751.280029,
+        747.710022,
+        745.400024,
+        751.710022,
+        754.950012,
+        749.169983,
+        751.830017,
+        754.809998,
+        750.719971,
+        743.289978,
+        742.090027,
+        748.280029,
+        747.409973,
+        738.179993,
+        738.929993,
+        739.090027,
+        740.859985,
+        729.460022,
+        741.690002,
+        747.030029,
+        757.669983,
+        771.330017,
+        769.789978,
+        768.559998,
+        773.26001,
+        774.309998
+      ],
+      "currentPriceDate": "2026-08-11"
+    },
     {
       "id": "20260810-0930KST-229200-LONG",
       "date": "2026-08-10",
@@ -359,7 +692,7 @@
         64844.886719,
         64720.441406
       ],
-      "currentPriceDate": "2026-08-10"
+      "currentPriceDate": "2026-08-11"
     },
     {
       "id": "20260810-2100KST-360750-DEFENSIVE",
@@ -458,7 +791,7 @@
         76.212128,
         76.440002
       ],
-      "currentPriceDate": "2026-08-10"
+      "currentPriceDate": "2026-08-11"
     },
     {
       "id": "20260810-0730KST-360750-DEFENSIVE",
@@ -653,7 +986,7 @@
         64844.886719,
         64720.441406
       ],
-      "currentPriceDate": "2026-08-10"
+      "currentPriceDate": "2026-08-11"
     },
     {
       "id": "20260810-1200KST-132030-DEFENSIVE",
@@ -976,7 +1309,7 @@
         76.212128,
         76.440002
       ],
-      "currentPriceDate": "2026-08-10"
+      "currentPriceDate": "2026-08-11"
     },
     {
       "id": "20260809-2100KST-SOL-USD-LONG",
@@ -1043,7 +1376,7 @@
         76.212128,
         76.440002
       ],
-      "currentPriceDate": "2026-08-10"
+      "currentPriceDate": "2026-08-11"
     },
     {
       "id": "20260809-0730KST-BTC-USD-LONG",
@@ -1110,7 +1443,7 @@
         64844.886719,
         64720.441406
       ],
-      "currentPriceDate": "2026-08-10"
+      "currentPriceDate": "2026-08-11"
     },
     {
       "id": "20260809-0000KST-BTC-USD-LONG",
@@ -1177,7 +1510,7 @@
         64844.886719,
         64720.441406
       ],
-      "currentPriceDate": "2026-08-10"
+      "currentPriceDate": "2026-08-11"
     },
     {
       "id": "20260809-0930KST-BTC-USD-LONG",
@@ -1244,7 +1577,7 @@
         64844.886719,
         64720.441406
       ],
-      "currentPriceDate": "2026-08-10"
+      "currentPriceDate": "2026-08-11"
     },
     {
       "id": "20260809-0000KST-132030-DEFENSIVE",
@@ -1439,7 +1772,7 @@
         76.212128,
         76.440002
       ],
-      "currentPriceDate": "2026-08-10"
+      "currentPriceDate": "2026-08-11"
     },
     {
       "id": "20260809-1500KST-132030-DEFENSIVE",
@@ -1794,7 +2127,7 @@
         64844.886719,
         64720.441406
       ],
-      "currentPriceDate": "2026-08-10"
+      "currentPriceDate": "2026-08-11"
     },
     {
       "id": "20260809-2100KST-BTC-USD-LONG",
@@ -1861,7 +2194,7 @@
         64844.886719,
         64720.441406
       ],
-      "currentPriceDate": "2026-08-10"
+      "currentPriceDate": "2026-08-11"
     },
     {
       "id": "20260809-0930KST-BNB-USD-LONG",
@@ -1960,7 +2293,7 @@
         64844.886719,
         64720.441406
       ],
-      "currentPriceDate": "2026-08-10"
+      "currentPriceDate": "2026-08-11"
     },
     {
       "id": "TXG-LONG-20260807T1500000000-EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
@@ -2060,7 +2393,7 @@
       },
       "reason": "3/6/12개월 절대 모멘텀 양수, 200일선 상단, 자산군 상대강도 93백분위, breakout=True; reclaim=False; volume=1.62x/1.35x; ICT=BULLISH/BOS_UP/NONE",
       "guardrail": "자동 추천은 주문이 아니다. 실시간 호가·슬리피지·공시·거래 가능 여부를 확인한다.",
-      "currentPriceDate": "2026-08-10",
+      "currentPriceDate": "2026-08-11",
       "expiredAtKst": "2026-08-08T01:12:27.279263+09:00"
     },
     {
@@ -2161,7 +2494,7 @@
       },
       "reason": "3/6/12개월 절대 모멘텀 양수, 200일선 상단, 자산군 상대강도 84백분위, breakout=True; reclaim=False; volume=2.33x/1.35x; ICT=BULLISH/BOS_UP/NONE",
       "guardrail": "자동 추천은 주문이 아니다. 실시간 호가·슬리피지·공시·거래 가능 여부를 확인한다.",
-      "currentPriceDate": "2026-08-10",
+      "currentPriceDate": "2026-08-11",
       "expiredAtKst": "2026-08-08T01:12:27.279275+09:00"
     },
     {
@@ -2262,7 +2595,7 @@
       },
       "reason": "3/6/12개월 절대 모멘텀 양수, 200일선 상단, 자산군 상대강도 84백분위, breakout=True; reclaim=False; volume=1.61x/1.35x; ICT=BULLISH/BOS_UP/NONE",
       "guardrail": "자동 추천은 주문이 아니다. 실시간 호가·슬리피지·공시·거래 가능 여부를 확인한다.",
-      "currentPriceDate": "2026-08-10",
+      "currentPriceDate": "2026-08-11",
       "expiredAtKst": "2026-08-08T02:12:48.509552+09:00"
     },
     {
@@ -2330,7 +2663,7 @@
         64844.886719,
         64720.441406
       ],
-      "currentPriceDate": "2026-08-10"
+      "currentPriceDate": "2026-08-11"
     },
     {
       "id": "20260808-2100KST-BTC-USD-LONG",
@@ -2397,7 +2730,7 @@
         64844.886719,
         64720.441406
       ],
-      "currentPriceDate": "2026-08-10"
+      "currentPriceDate": "2026-08-11"
     },
     {
       "id": "20260808-1500KST-132030-DEFENSIVE",
@@ -2625,7 +2958,7 @@
       },
       "reason": "3/6/12개월 절대 모멘텀 양수, 200일선 상단, 자산군 상대강도 88백분위, breakout=True; reclaim=False; volume=4.87x/1.35x; ICT=BULLISH/BOS_UP/NONE",
       "guardrail": "자동 추천은 주문이 아니다. 실시간 호가·슬리피지·공시·거래 가능 여부를 확인한다.",
-      "currentPriceDate": "2026-08-10",
+      "currentPriceDate": "2026-08-11",
       "expiredAtKst": "2026-08-08T06:04:06.356343+09:00"
     },
     {
@@ -2790,7 +3123,7 @@
       },
       "reason": "3/6/12개월 절대 모멘텀 양수, 200일선 상단, 자산군 상대강도 84백분위, breakout=True; reclaim=False; volume=23.13x/1.35x; ICT=BULLISH/BOS_UP/NONE",
       "guardrail": "자동 추천은 주문이 아니다. 실시간 호가·슬리피지·공시·거래 가능 여부를 확인한다.",
-      "currentPriceDate": "2026-08-10",
+      "currentPriceDate": "2026-08-11",
       "expiredAtKst": "2026-08-08T00:04:44.254853+09:00"
     },
     {
@@ -3023,7 +3356,7 @@
         483.359985,
         478.970001
       ],
-      "currentPriceDate": "2026-08-10"
+      "currentPriceDate": "2026-08-11"
     },
     {
       "id": "20260806-0000KST-TLT-DEFENSIVE",
@@ -3090,7 +3423,7 @@
         82.760002,
         82.285004
       ],
-      "currentPriceDate": "2026-08-10"
+      "currentPriceDate": "2026-08-11"
     },
     {
       "id": "APGE-LONG-20260805T1845000000-EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
@@ -3190,7 +3523,7 @@
       },
       "reason": "3/6/12개월 절대 모멘텀 양수, 200일선 상단, 자산군 상대강도 85백분위, breakout=True; reclaim=False; volume=5.01x/1.35x; ICT=NEUTRAL/BOS_UP/NONE",
       "guardrail": "자동 추천은 주문이 아니다. 실시간 호가·슬리피지·공시·거래 가능 여부를 확인한다.",
-      "currentPriceDate": "2026-08-10",
+      "currentPriceDate": "2026-08-11",
       "expiredAtKst": "2026-08-06T05:38:58.870867+09:00"
     },
     {
@@ -3354,7 +3687,7 @@
         773.26001,
         774.309998
       ],
-      "currentPriceDate": "2026-08-10"
+      "currentPriceDate": "2026-08-11"
     },
     {
       "id": "20260805-1500KST-360750-DEFENSIVE",
@@ -3613,7 +3946,7 @@
         483.359985,
         478.970001
       ],
-      "currentPriceDate": "2026-08-10"
+      "currentPriceDate": "2026-08-11"
     },
     {
       "id": "20260805-1200KST-360750-DEFENSIVE",
@@ -3712,7 +4045,7 @@
         82.760002,
         82.285004
       ],
-      "currentPriceDate": "2026-08-10"
+      "currentPriceDate": "2026-08-11"
     },
     {
       "id": "20260805-0930KST-445290-LONG",
@@ -3875,7 +4208,7 @@
         57.5,
         59.18
       ],
-      "currentPriceDate": "2026-08-10"
+      "currentPriceDate": "2026-08-11"
     },
     {
       "id": "20260802-0730KST-XLE-LONG",
@@ -3942,7 +4275,7 @@
         57.5,
         59.18
       ],
-      "currentPriceDate": "2026-08-10"
+      "currentPriceDate": "2026-08-11"
     },
     {
       "id": "20260802-0930KST-XLE-LONG",
@@ -4009,7 +4342,7 @@
         57.5,
         59.18
       ],
-      "currentPriceDate": "2026-08-10"
+      "currentPriceDate": "2026-08-11"
     },
     {
       "id": "20260802-1200KST-XLE-LONG",
@@ -4076,7 +4409,7 @@
         57.5,
         59.18
       ],
-      "currentPriceDate": "2026-08-10"
+      "currentPriceDate": "2026-08-11"
     },
     {
       "id": "20260802-0730KST-BTC-USD-SHORT",
@@ -4143,7 +4476,7 @@
         64844.886719,
         64720.441406
       ],
-      "currentPriceDate": "2026-08-10"
+      "currentPriceDate": "2026-08-11"
     },
     {
       "id": "20260802-0000KST-SOXS-INVERSE",
@@ -4210,7 +4543,7 @@
         42.080002,
         43.02
       ],
-      "currentPriceDate": "2026-08-10"
+      "currentPriceDate": "2026-08-11"
     },
     {
       "id": "20260802-0730KST-SOXS-INVERSE",
@@ -4277,7 +4610,7 @@
         42.080002,
         43.02
       ],
-      "currentPriceDate": "2026-08-10"
+      "currentPriceDate": "2026-08-11"
     },
     {
       "id": "20260802-0930KST-BTC-USD-SHORT",
@@ -4344,7 +4677,7 @@
         64844.886719,
         64720.441406
       ],
-      "currentPriceDate": "2026-08-10"
+      "currentPriceDate": "2026-08-11"
     },
     {
       "id": "20260802-0930KST-SOXS-INVERSE",
@@ -4411,7 +4744,7 @@
         42.080002,
         43.02
       ],
-      "currentPriceDate": "2026-08-10"
+      "currentPriceDate": "2026-08-11"
     },
     {
       "id": "20260802-1200KST-SOXS-INVERSE",
@@ -4478,7 +4811,7 @@
         42.080002,
         43.02
       ],
-      "currentPriceDate": "2026-08-10"
+      "currentPriceDate": "2026-08-11"
     },
     {
       "id": "20260802-1200KST-BTC-USD-SHORT",
@@ -4545,7 +4878,7 @@
         64844.886719,
         64720.441406
       ],
-      "currentPriceDate": "2026-08-10"
+      "currentPriceDate": "2026-08-11"
     },
     {
       "id": "20260802-0000KST-BTC-USD-SHORT",
@@ -4612,7 +4945,7 @@
         64844.886719,
         64720.441406
       ],
-      "currentPriceDate": "2026-08-10"
+      "currentPriceDate": "2026-08-11"
     },
     {
       "id": "20260802-0000KST-GLD-DEFENSIVE",
@@ -4679,7 +5012,7 @@
         398.470001,
         398.592194
       ],
-      "currentPriceDate": "2026-08-10"
+      "currentPriceDate": "2026-08-11"
     },
     {
       "id": "20260802-0730KST-GLD-DEFENSIVE",
@@ -4746,7 +5079,7 @@
         398.470001,
         398.592194
       ],
-      "currentPriceDate": "2026-08-10"
+      "currentPriceDate": "2026-08-11"
     },
     {
       "id": "20260802-0930KST-GLD-DEFENSIVE",
@@ -4813,7 +5146,7 @@
         398.470001,
         398.592194
       ],
-      "currentPriceDate": "2026-08-10"
+      "currentPriceDate": "2026-08-11"
     },
     {
       "id": "20260802-1200KST-GLD-DEFENSIVE",
@@ -4880,7 +5213,7 @@
         398.470001,
         398.592194
       ],
-      "currentPriceDate": "2026-08-10"
+      "currentPriceDate": "2026-08-11"
     },
     {
       "id": "20260801-1500KST-XLE-LONG",
@@ -4947,7 +5280,7 @@
         57.5,
         59.18
       ],
-      "currentPriceDate": "2026-08-10"
+      "currentPriceDate": "2026-08-11"
     },
     {
       "id": "20260801-2100KST-XLE-LONG",
@@ -5014,7 +5347,7 @@
         57.5,
         59.18
       ],
-      "currentPriceDate": "2026-08-10"
+      "currentPriceDate": "2026-08-11"
     },
     {
       "id": "DVA-LONG-20260731T1700000000-EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
@@ -5182,7 +5515,7 @@
         42.080002,
         43.02
       ],
-      "currentPriceDate": "2026-08-10"
+      "currentPriceDate": "2026-08-11"
     },
     {
       "id": "20260801-2100KST-SOXS-INVERSE",
@@ -5249,7 +5582,7 @@
         42.080002,
         43.02
       ],
-      "currentPriceDate": "2026-08-10"
+      "currentPriceDate": "2026-08-11"
     },
     {
       "id": "20260801-2100KST-BTC-USD-SHORT",
@@ -5316,7 +5649,7 @@
         64844.886719,
         64720.441406
       ],
-      "currentPriceDate": "2026-08-10"
+      "currentPriceDate": "2026-08-11"
     },
     {
       "id": "20260801-1500KST-BTC-USD-SHORT",
@@ -5383,7 +5716,7 @@
         64844.886719,
         64720.441406
       ],
-      "currentPriceDate": "2026-08-10"
+      "currentPriceDate": "2026-08-11"
     },
     {
       "id": "20260801-1500KST-GLD-DEFENSIVE",
@@ -5450,7 +5783,7 @@
         398.470001,
         398.592194
       ],
-      "currentPriceDate": "2026-08-10"
+      "currentPriceDate": "2026-08-11"
     },
     {
       "id": "20260801-2100KST-GLD-DEFENSIVE",
@@ -5517,7 +5850,7 @@
         398.470001,
         398.592194
       ],
-      "currentPriceDate": "2026-08-10"
+      "currentPriceDate": "2026-08-11"
     },
     {
       "id": "ORKA-LONG-20260730T1945000000-EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
@@ -5818,7 +6151,7 @@
       },
       "reason": "3/6/12개월 절대 모멘텀 양수, 200일선 상단, 자산군 상대강도 93백분위, breakout=True; reclaim=False; volume=3.10x; ICT=BULLISH/BOS_UP/NONE",
       "guardrail": "자동 추천은 주문이 아니다. 실시간 호가·슬리피지·공시·거래 가능 여부를 확인한다.",
-      "currentPriceDate": "2026-08-10",
+      "currentPriceDate": "2026-08-11",
       "expiredAtKst": "2026-07-30T04:50:32.364080+09:00"
     },
     {
@@ -5916,7 +6249,7 @@
       },
       "reason": "3/6/12개월 절대 모멘텀 양수, 200일선 상단, 자산군 상대강도 90백분위, breakout=True; reclaim=False; volume=5.43x; ICT=BULLISH/BOS_UP/NONE",
       "guardrail": "자동 추천은 주문이 아니다. 실시간 호가·슬리피지·공시·거래 가능 여부를 확인한다.",
-      "currentPriceDate": "2026-08-10",
+      "currentPriceDate": "2026-08-11",
       "expiredAtKst": "2026-07-29T19:10:08.556139+09:00"
     },
     {
@@ -6308,7 +6641,7 @@
       },
       "reason": "3/6/12개월 절대 모멘텀 양수, 200일선 상단, 자산군 상대강도 88백분위, breakout=True; reclaim=False; volume=5.56x; ICT=BULLISH/BOS_UP/NONE",
       "guardrail": "자동 추천은 주문이 아니다. 실시간 호가·슬리피지·공시·거래 가능 여부를 확인한다.",
-      "currentPriceDate": "2026-08-10",
+      "currentPriceDate": "2026-08-11",
       "expiredAtKst": "2026-07-29T19:10:08.556166+09:00"
     },
     {
@@ -6504,7 +6837,7 @@
       },
       "reason": "3/6/12개월 절대 모멘텀 양수, 200일선 상단, 자산군 상대강도 84백분위, breakout=True; reclaim=False; volume=9.74x; ICT=BULLISH/BOS_UP/NONE",
       "guardrail": "자동 추천은 주문이 아니다. 실시간 호가·슬리피지·공시·거래 가능 여부를 확인한다.",
-      "currentPriceDate": "2026-08-10",
+      "currentPriceDate": "2026-08-11",
       "expiredAtKst": "2026-07-29T19:10:08.556174+09:00"
     },
     {
@@ -6602,7 +6935,7 @@
       },
       "reason": "3/6/12개월 절대 모멘텀 양수, 200일선 상단, 자산군 상대강도 82백분위, breakout=True; reclaim=False; volume=7.64x; ICT=NEUTRAL/CHOCH_UP/NONE",
       "guardrail": "자동 추천은 주문이 아니다. 실시간 호가·슬리피지·공시·거래 가능 여부를 확인한다.",
-      "currentPriceDate": "2026-08-10",
+      "currentPriceDate": "2026-08-11",
       "expiredAtKst": "2026-07-29T19:10:08.556181+09:00"
     },
     {
@@ -6994,7 +7327,7 @@
       },
       "reason": "3/6/12개월 절대 모멘텀 양수, 200일선 상단, 자산군 상대강도 90백분위, breakout=True; reclaim=False; volume=1.38x; ICT=BULLISH/BOS_UP/NONE",
       "guardrail": "자동 추천은 주문이 아니다. 실시간 호가·슬리피지·공시·거래 가능 여부를 확인한다.",
-      "currentPriceDate": "2026-08-10",
+      "currentPriceDate": "2026-08-11",
       "expiredAtKst": "2026-07-29T19:10:08.556194+09:00"
     },
     {
@@ -7288,7 +7621,7 @@
       },
       "reason": "3/6/12개월 절대 모멘텀 양수, 200일선 상단, 자산군 상대강도 83백분위, breakout=True; reclaim=False; volume=1.39x; ICT=BULLISH/BOS_UP/NONE",
       "guardrail": "자동 추천은 주문이 아니다. 실시간 호가·슬리피지·공시·거래 가능 여부를 확인한다.",
-      "currentPriceDate": "2026-08-10",
+      "currentPriceDate": "2026-08-11",
       "expiredAtKst": "2026-07-29T19:10:08.556203+09:00"
     }
   ]
