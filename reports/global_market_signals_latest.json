@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-08-11T23:45:55.618131+09:00",
+  "generatedAtKst": "2026-08-12T00:10:54.410511+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
@@ -17,7 +17,7 @@
     "scannerSignalCount": 0,
     "chatgptSignalCount": 4,
     "krEtfSignalCount": 0,
-    "dailyCacheHit": false,
+    "dailyCacheHit": true,
     "maxSignalAgeMinutes": 45
   },
   "marketRegime": {
@@ -29,132 +29,132 @@
   },
   "signals": [
     {
-      "id": "20260811-2100KST-XLE-LONG",
-      "date": "2026-08-11",
-      "generatedAtKst": "2026-08-11T21:04:22+09:00",
-      "briefingSlot": "2100",
+      "id": "20260812-0009KST-XSD-LONG",
+      "date": "2026-08-12",
+      "generatedAtKst": "2026-08-12T00:09:27+09:00",
+      "briefingSlot": "0000",
+      "assetClass": "US_SEMICONDUCTOR_ETF",
+      "market": "NYSE_ARCA",
+      "ticker": "XSD",
+      "name": "SPDR S&P Semiconductor ETF",
+      "direction": "LONG",
+      "strategy": "$532.00~534.50 눌림에서 개장가 $533.38과 VWAP를 회복하고 QQQ가 전일 종가 위일 때 분할매수",
+      "strategyType": "CHATGPT_SCHEDULED_BRIEFING",
+      "status": "CONDITIONAL",
+      "score": 90,
+      "confidence": 80,
+      "currentPrice": 534.44,
+      "referencePrice": 534.44,
+      "currency": "USD",
+      "entryLow": 532,
+      "entryHigh": 534.5,
+      "stopLoss": 526.5,
+      "target1": 541,
+      "target2": 552,
+      "holdingPeriod": "1-5 trading days",
+      "committeeVote": "6/7",
+      "catalyst": "XSD 장중 +1.72%로 QQQ·S&P500을 크게 앞선 반도체 시장폭 확산",
+      "reason": "동일가중 반도체가 대형주 지수보다 강해 단일 메가캡 의존도가 낮다. 다만 장중 고점 $537.22 추격은 피하고 개장가·VWAP 재확인형으로만 진입한다.",
+      "risk": "CPI 상방, 10년물 재상승, 저유동성 ETF의 호가 괴리와 반도체 차익실현",
+      "invalidation": "$526.50 이탈 또는 XSD가 개장가·VWAP를 동시에 이탈하고 QQQ가 $718.40 아래로 하락",
+      "quoteStatus": "US_INTRADAY_LIVE",
+      "priceTimestampKst": "2026-08-11T23:47:07+09:00"
+    },
+    {
+      "id": "20260812-0009KST-XLE-LONG",
+      "date": "2026-08-12",
+      "generatedAtKst": "2026-08-12T00:09:27+09:00",
+      "briefingSlot": "0000",
       "assetClass": "US_SECTOR_ETF",
       "market": "NYSE_ARCA",
       "ticker": "XLE",
       "name": "Energy Select Sector SPDR Fund",
       "direction": "LONG",
-      "strategy": "$59.85~60.05에서 지지하고 WTI $82·Brent $87 위를 유지할 때 분할매수",
+      "strategy": "$60.20~60.50 눌림에서 개장가 $59.99와 VWAP 위를 유지할 때만 분할매수",
       "strategyType": "CHATGPT_SCHEDULED_BRIEFING",
-      "status": "IMMEDIATE",
-      "score": 91,
-      "confidence": 81,
-      "currentPrice": 60.02,
-      "referencePrice": 60.02,
+      "status": "CONDITIONAL",
+      "score": 88,
+      "confidence": 77,
+      "currentPrice": 60.62,
+      "referencePrice": 60.62,
       "currency": "USD",
-      "entryLow": 59.85,
-      "entryHigh": 60.05,
-      "stopLoss": 59.2,
-      "target1": 60.9,
+      "entryLow": 60.2,
+      "entryHigh": 60.5,
+      "stopLoss": 59.7,
+      "target1": 61.2,
       "target2": 62,
       "holdingPeriod": "2-10 trading days",
       "committeeVote": "6/7",
-      "catalyst": "호르무즈 협상 교착과 WTI $84 부근·Brent $89 부근의 공급위험 프리미엄",
-      "reason": "유가 상승이 지속되는 가운데 XLE는 전일 급등 후 프리마켓에서 과도한 추가 갭이 없어 원유 선물 직접 추격보다 손익비가 우월하다.",
-      "risk": "미·이란 협상 타결, 유가 급락, CPI 이후 경기침체 우려와 에너지주 차익실현",
-      "invalidation": "$59.20 이탈 또는 WTI $80·Brent $85 동반 이탈",
-      "quoteStatus": "US_PREMARKET_INDICATIVE",
-      "priceTimestampKst": "2026-08-11T21:03:00+09:00"
+      "catalyst": "유가가 장중 고점에서 후퇴해도 XLE가 +0.73%로 상대강도를 유지",
+      "reason": "원유 급등분 일부 반납에도 에너지 주식이 개장가와 전일 종가 위를 지켜 원유 직접 추격보다 견조하다. 새 진입은 눌림에서만 허용한다.",
+      "risk": "미·이란 합의 진전, WTI 급락, 유가와 에너지주 상관 붕괴 및 전일 급등 후 이익실현",
+      "invalidation": "$59.70 이탈 또는 WTI가 $80 아래로 하락하면서 XLE가 개장가를 이탈",
+      "quoteStatus": "US_INTRADAY_LIVE",
+      "priceTimestampKst": "2026-08-11T23:53:58+09:00"
     },
     {
-      "id": "20260811-2100KST-SPY-LONG",
-      "date": "2026-08-11",
-      "generatedAtKst": "2026-08-11T21:04:22+09:00",
-      "briefingSlot": "2100",
-      "assetClass": "US_INDEX_ETF",
-      "market": "NYSE_ARCA",
-      "ticker": "SPY",
-      "name": "SPDR S&P 500 ETF Trust",
-      "direction": "LONG",
-      "strategy": "$772.80~773.80 눌림에서 프리마켓 VWAP를 회복하고 미국 10년물이 4.75% 아래일 때 분할매수",
-      "strategyType": "CHATGPT_SCHEDULED_BRIEFING",
-      "status": "CONDITIONAL",
-      "score": 86,
-      "confidence": 74,
-      "currentPrice": 774.13,
-      "referencePrice": 774.13,
-      "currency": "USD",
-      "entryLow": 772.8,
-      "entryHigh": 773.8,
-      "stopLoss": 769.5,
-      "target1": 778,
-      "target2": 785,
-      "holdingPeriod": "2-10 trading days",
-      "committeeVote": "5/7",
-      "catalyst": "S&P500 선물 소폭 상승과 강한 2분기 이익, 지수의 기록권 유지",
-      "reason": "선물은 강보합이지만 CPI와 4.7%대 금리 때문에 현재가 추격보다 전일 종가 부근 눌림 확인이 필요하다.",
-      "risk": "예상보다 높은 CPI, 10년물 4.75% 돌파, 유가발 스태그플레이션과 좁은 시장폭",
-      "invalidation": "$769.50 이탈 또는 미국 10년물 4.80% 돌파와 VIX 17 상회",
-      "quoteStatus": "US_PREMARKET_INDICATIVE",
-      "priceTimestampKst": "2026-08-11T21:03:00+09:00"
-    },
-    {
-      "id": "20260811-2100KST-GLD-DEFENSIVE",
-      "date": "2026-08-11",
-      "generatedAtKst": "2026-08-11T21:04:22+09:00",
-      "briefingSlot": "2100",
+      "id": "20260812-0009KST-GLD-DEFENSIVE",
+      "date": "2026-08-12",
+      "generatedAtKst": "2026-08-12T00:09:27+09:00",
+      "briefingSlot": "0000",
       "assetClass": "COMMODITY_ETF",
       "market": "NYSE_ARCA",
       "ticker": "GLD",
       "name": "SPDR Gold Shares",
       "direction": "DEFENSIVE",
-      "strategy": "$401.50~402.60에서 지지하고 금 현물 $4,380을 유지할 때 분할매수",
+      "strategy": "$402.30~403.20에서 지지하고 미국 10년물이 4.75% 아래일 때 분할매수",
       "strategyType": "CHATGPT_SCHEDULED_BRIEFING",
       "status": "CONDITIONAL",
       "score": 84,
-      "confidence": 73,
-      "currentPrice": 402.53,
-      "referencePrice": 402.53,
+      "confidence": 72,
+      "currentPrice": 403.03,
+      "referencePrice": 403.03,
       "currency": "USD",
-      "entryLow": 401.5,
-      "entryHigh": 402.6,
-      "stopLoss": 398.5,
+      "entryLow": 402.3,
+      "entryHigh": 403.2,
+      "stopLoss": 399.5,
       "target1": 406,
       "target2": 412,
       "holdingPeriod": "3-15 trading days",
       "committeeVote": "5/7",
-      "catalyst": "호르무즈 지정학 위험과 금의 두 달 고점, 중앙은행·구조적 수요",
-      "reason": "지정학 헤지는 유효하지만 10년물 4.7%대 상승과 현물 금의 고점 후퇴가 있어 즉시 추격 대신 지지 확인이 필요하다.",
-      "risk": "CPI 상방과 금리·달러 동반 상승, 지정학 완화, 두 달 고점에서의 이익실현",
-      "invalidation": "$398.50 이탈 또는 금 현물 $4,350 이탈",
-      "quoteStatus": "US_PREMARKET_INDICATIVE",
-      "priceTimestampKst": "2026-08-11T21:03:00+09:00"
+      "catalyst": "지정학 불확실성과 금의 두 달 고점권, 장중 10년물 4.7% 안팎의 높은 변동성",
+      "reason": "협상 헤드라인이 엇갈리고 CPI 이벤트가 남아 포트폴리오 꼬리위험 방어가 필요하다. 장중 저가 $399.70에서 회복했지만 현재가 위 추격은 하지 않는다.",
+      "risk": "CPI 상방과 실질금리·달러 동반 상승, 지정학 완화, 장중 변동성 확대",
+      "invalidation": "$399.50 이탈 또는 미국 10년물 4.80% 돌파와 달러 동반 급등",
+      "quoteStatus": "US_INTRADAY_LIVE",
+      "priceTimestampKst": "2026-08-11T23:54:11+09:00"
     },
     {
-      "id": "20260811-2100KST-TLT-SHORT",
-      "date": "2026-08-11",
-      "generatedAtKst": "2026-08-11T21:04:22+09:00",
-      "briefingSlot": "2100",
-      "assetClass": "US_BOND_ETF",
-      "market": "NASDAQ",
-      "ticker": "TLT",
-      "name": "iShares 20+ Year Treasury Bond ETF",
-      "direction": "SHORT",
-      "strategy": "$81.95~82.15 반등 후 프리마켓 VWAP 재이탈과 미국 10년물 4.70% 이상을 확인할 때 숏",
+      "id": "20260812-0009KST-SPY-LONG",
+      "date": "2026-08-12",
+      "generatedAtKst": "2026-08-12T00:09:27+09:00",
+      "briefingSlot": "0000",
+      "assetClass": "US_INDEX_ETF",
+      "market": "NYSE_ARCA",
+      "ticker": "SPY",
+      "name": "SPDR S&P 500 ETF Trust",
+      "direction": "LONG",
+      "strategy": "$772.50~773.50 눌림에서 VWAP 재회복과 VIX 16 아래를 확인할 때 분할매수",
       "strategyType": "CHATGPT_SCHEDULED_BRIEFING",
       "status": "CONDITIONAL",
-      "score": 82,
-      "confidence": 71,
-      "currentPrice": 81.97,
-      "referencePrice": 81.97,
+      "score": 83,
+      "confidence": 70,
+      "currentPrice": 773.76,
+      "referencePrice": 773.76,
       "currency": "USD",
-      "entryLow": 81.95,
-      "entryHigh": 82.15,
-      "stopLoss": 82.65,
-      "target1": 81.2,
-      "target2": 80.2,
-      "holdingPeriod": "1-5 trading days",
+      "entryLow": 772.5,
+      "entryHigh": 773.5,
+      "stopLoss": 769.5,
+      "target1": 778,
+      "target2": 785,
+      "holdingPeriod": "2-10 trading days",
       "committeeVote": "5/7",
-      "catalyst": "미국 10년물 4.717%와 유가 상승에 따른 인플레이션 재가속 위험",
-      "reason": "장기채는 금리 상승에 가장 민감하며 CPI 전 방어수요보다 유가발 인플레이션 압력이 우세하다. 반등 실패 확인 후에만 진입한다.",
-      "risk": "CPI 하방 서프라이즈, 지정학적 안전자산 매수, 고용 둔화에 따른 금리 급락",
-      "invalidation": "$82.65 돌파 또는 미국 10년물 4.60% 하회",
-      "quoteStatus": "US_PREMARKET_INDICATIVE",
-      "priceTimestampKst": "2026-08-11T21:03:00+09:00"
+      "catalyst": "S&P500이 사상 최고권에서 보합을 유지하고 VIX가 15.51로 낮은 수준",
+      "reason": "개장 후 지수는 보합이지만 반도체·산업재 내부 강세가 하방을 지지한다. CPI 전 금리 민감도가 높아 전일 종가 부근 눌림과 VWAP 회복이 동시에 필요하다.",
+      "risk": "예상보다 높은 CPI, 10년물 4.75% 재돌파, 유가 재급등과 좁은 지수 시장폭",
+      "invalidation": "$769.50 이탈 또는 VIX 17 상회와 미국 10년물 4.80% 돌파",
+      "quoteStatus": "US_INTRADAY_LIVE",
+      "priceTimestampKst": "2026-08-11T23:54:14+09:00"
     }
   ],
   "topEvaluated": [
@@ -183,7 +183,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 497.4
+        "ageMinutes": 521.0
       }
     },
     {
@@ -211,7 +211,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 512.4
+        "ageMinutes": 536.0
       }
     },
     {
@@ -239,7 +239,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 497.4
+        "ageMinutes": 521.0
       }
     },
     {
@@ -267,7 +267,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 512.4
+        "ageMinutes": 536.0
       }
     },
     {
@@ -295,7 +295,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 497.4
+        "ageMinutes": 521.0
       }
     },
     {
@@ -323,7 +323,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 497.4
+        "ageMinutes": 521.0
       }
     },
     {
@@ -351,7 +351,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 512.4
+        "ageMinutes": 536.0
       }
     },
     {
@@ -379,7 +379,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 512.4
+        "ageMinutes": 536.0
       }
     },
     {
@@ -407,7 +407,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 512.4
+        "ageMinutes": 536.0
       }
     },
     {
@@ -435,7 +435,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 497.4
+        "ageMinutes": 521.0
       }
     },
     {
@@ -463,7 +463,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 497.4
+        "ageMinutes": 521.0
       }
     },
     {
@@ -491,7 +491,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 497.4
+        "ageMinutes": 521.0
       }
     },
     {
@@ -519,7 +519,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 497.4
+        "ageMinutes": 521.0
       }
     },
     {
@@ -547,7 +547,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 497.4
+        "ageMinutes": 521.0
       }
     },
     {
@@ -575,7 +575,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 512.4
+        "ageMinutes": 536.0
       }
     },
     {
@@ -603,7 +603,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 497.4
+        "ageMinutes": 521.0
       }
     },
     {
@@ -631,7 +631,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 497.4
+        "ageMinutes": 521.0
       }
     },
     {
@@ -659,7 +659,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 512.4
+        "ageMinutes": 536.0
       }
     },
     {
@@ -687,7 +687,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 497.4
+        "ageMinutes": 521.0
       }
     },
     {
@@ -715,7 +715,7 @@
           "score": -5
         },
         "fresh": false,
-        "ageMinutes": 512.4
+        "ageMinutes": 536.0
       }
     },
     {
@@ -743,7 +743,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 497.4
+        "ageMinutes": 521.0
       }
     },
     {
@@ -771,7 +771,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 497.4
+        "ageMinutes": 521.0
       }
     },
     {
@@ -799,7 +799,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 497.4
+        "ageMinutes": 521.0
       }
     },
     {
@@ -827,7 +827,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 497.4
+        "ageMinutes": 521.0
       }
     },
     {
@@ -855,7 +855,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 497.4
+        "ageMinutes": 521.0
       }
     },
     {
@@ -883,7 +883,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 497.4
+        "ageMinutes": 521.0
       }
     },
     {
@@ -911,7 +911,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 512.4
+        "ageMinutes": 536.0
       }
     },
     {
@@ -939,7 +939,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 512.4
+        "ageMinutes": 536.0
       }
     },
     {
@@ -952,12 +952,12 @@
         "ready": false,
         "breakout": true,
         "reclaim": false,
-        "volumeRatio": 0.513,
+        "volumeRatio": 1.735,
         "volumeThreshold": 1.35,
-        "ema20": 79.522771,
-        "ema50": 79.511598,
-        "lastTimestamp": "2026-08-11T14:45:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=0.51x/1.35x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 79.523835,
+        "ema50": 79.512407,
+        "lastTimestamp": "2026-08-11T15:00:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=1.74x/1.35x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
@@ -967,7 +967,7 @@
           "score": 1
         },
         "fresh": true,
-        "ageMinutes": 2.4
+        "ageMinutes": 11.0
       }
     },
     {
@@ -980,12 +980,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.166,
+        "volumeRatio": 1.659,
         "volumeThreshold": 1.35,
-        "ema20": 103.93991,
-        "ema50": 103.346042,
-        "lastTimestamp": "2026-08-11T14:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.17x/1.35x; ICT=NEUTRAL/CHOCH_UP/NONE",
+        "ema20": 103.968308,
+        "ema50": 103.381085,
+        "lastTimestamp": "2026-08-11T15:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=1.66x/1.35x; ICT=NEUTRAL/CHOCH_UP/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "BEARISH_LH_LL",
@@ -995,11 +995,11 @@
           "score": 1
         },
         "fresh": true,
-        "ageMinutes": 2.4
+        "ageMinutes": 11.0
       }
     }
   ],
-  "historyRecordCount": 152,
+  "historyRecordCount": 156,
   "researchBasis": [
     "time-series momentum",
     "cross-sectional momentum",
