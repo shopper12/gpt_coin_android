@@ -52,6 +52,7 @@ class HomeActivity : ComponentActivity() {
                     onStock = { startActivity(Intent(this, StockActivity::class.java)) },
                     onRecommendationHistory = { startActivity(Intent(this, RecommendationHistoryActivity::class.java)) },
                     onMyStocks = { startActivity(Intent(this, MyStocksActivity::class.java)) },
+                    onSettings = { startActivity(Intent(this, GlobalSettingsActivity::class.java)) },
                     onBtcMonitor = { startActivity(Intent(this, BacktestMonitorActivity::class.java)) },
                     onWorkflow = { workflowRepository.dispatchUnifiedStrategyMonitor() },
                 )
@@ -75,6 +76,7 @@ private fun UnifiedHomeScreen(
     onStock: () -> Unit,
     onRecommendationHistory: () -> Unit,
     onMyStocks: () -> Unit,
+    onSettings: () -> Unit,
     onBtcMonitor: () -> Unit,
     onWorkflow: suspend () -> String,
 ) {
@@ -132,6 +134,14 @@ private fun UnifiedHomeScreen(
                 description = "추천·관심종목을 관리하고 한국투자증권 Open API에서 실제 보유종목을 동기화한 뒤, 보유종목별 추가매수·보유·방어·손절 관리 신호와 ICT 근거를 확인합니다.",
                 button = "내 종목·보유전략 열기",
                 onClick = onMyStocks,
+            )
+        }
+        item {
+            HomeCard(
+                title = "전체 설정",
+                description = "앱 업데이트, GitHub 동기화, 스캐너 시작·정지, 스캔 간격, 표시 개수와 최소 점수를 코인 메뉴와 분리해 관리합니다.",
+                button = "전체 설정 열기",
+                onClick = onSettings,
             )
         }
         item {
