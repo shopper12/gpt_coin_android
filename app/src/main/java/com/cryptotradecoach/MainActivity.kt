@@ -197,7 +197,7 @@ private fun MainScreen(
     onOpenInstallPermissionSettings: () -> Unit,
     onDownloadAndInstallLatestApk: (GitHubSettings) -> Unit,
 ) {
-    val tabs = listOf("Current", "Search", "History", "Rules", "Settings")
+    val tabs = listOf("Current", "Search", "History", "Rules")
     var selectedTab by remember { mutableIntStateOf(0) }
     val openChart: (TradeStrategy) -> Unit = { strategy -> selectedTab = 1; onStrategyChart(strategy) }
     Column(modifier = Modifier.fillMaxSize()) {
@@ -208,7 +208,6 @@ private fun MainScreen(
             1 -> ManualSearchTab(manualStrategy, manualMessage, selectedChartTimeframe, strategyChart, chartMessage, onManualAnalyze, onManualSave, openChart, onChartTimeframeSelected, onClearChart)
             2 -> StrategyHistoryTab(historyBySymbol, performanceRows, backtestResults, evolutionLog, lastEvolvedAt, onPerformanceRefresh, onBacktestRefresh, onEvolutionRefresh, openChart)
             3 -> RulesTab(currentRulesText, settingsMessage, onRulesRefresh, { onRulesDownload(gitHubSettings) }, onRulesSave)
-            4 -> SettingsTab(isRunning, scanIntervalMs, maxDisplayCount, minimumScore, gitHubSettings, settingsMessage, onStart, onStop, onIntervalSelected, onMaxDisplayChanged, onMinimumScoreChanged, onGitHubSettingsSaved, onGitHubSettingsTest, onRulesDownload, onReportUpload, onOpenInstallPermissionSettings, onDownloadAndInstallLatestApk)
         }
     }
 }
@@ -590,7 +589,7 @@ private fun RuleSwitchField(label: String, checked: Boolean, onCheckedChange: (B
 private fun StrategyManualCard() { Card(modifier = Modifier.fillMaxWidth()) { Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) { Text("현재 전략 설명", fontWeight = FontWeight.Bold); Text("Search 탭에서 종목 입력, 전략 분석, 실시간 차트를 한 번에 봅니다."); Text("History 탭은 기존 Performance 기능까지 포함해서 실패/손절/이유/성과/백테스트를 같이 봅니다."); Text("Rules 탭은 JSON을 직접 만지는 대신 각 조건을 입력칸으로 수정합니다.") } } }
 
 @Composable
-private fun SettingsTab(isRunning: Boolean, scanIntervalMs: Long, maxDisplayCount: Int, minimumScore: Double, gitHubSettings: GitHubSettings, settingsMessage: String?, onStart: () -> Unit, onStop: () -> Unit, onIntervalSelected: (Long) -> Unit, onMaxDisplayChanged: (Int) -> Unit, onMinimumScoreChanged: (Double) -> Unit, onGitHubSettingsSaved: (GitHubSettings) -> Unit, onGitHubSettingsTest: (GitHubSettings) -> Unit, onRulesDownload: (GitHubSettings) -> Unit, onReportUpload: (GitHubSettings) -> Unit, onOpenInstallPermissionSettings: () -> Unit, onDownloadAndInstallLatestApk: (GitHubSettings) -> Unit) {
+internal fun GlobalSettingsPanel(isRunning: Boolean, scanIntervalMs: Long, maxDisplayCount: Int, minimumScore: Double, gitHubSettings: GitHubSettings, settingsMessage: String?, onStart: () -> Unit, onStop: () -> Unit, onIntervalSelected: (Long) -> Unit, onMaxDisplayChanged: (Int) -> Unit, onMinimumScoreChanged: (Double) -> Unit, onGitHubSettingsSaved: (GitHubSettings) -> Unit, onGitHubSettingsTest: (GitHubSettings) -> Unit, onRulesDownload: (GitHubSettings) -> Unit, onReportUpload: (GitHubSettings) -> Unit, onOpenInstallPermissionSettings: () -> Unit, onDownloadAndInstallLatestApk: (GitHubSettings) -> Unit) {
     var owner by rememberSaveable(gitHubSettings.owner) { mutableStateOf(gitHubSettings.owner) }; var repo by rememberSaveable(gitHubSettings.repo) { mutableStateOf(gitHubSettings.repo) }; var branch by rememberSaveable(gitHubSettings.branch) { mutableStateOf(gitHubSettings.branch) }; var token by rememberSaveable(gitHubSettings.token) { mutableStateOf(gitHubSettings.token) }; var rulesPath by rememberSaveable(gitHubSettings.rulesPath) { mutableStateOf(gitHubSettings.rulesPath) }; var reportPath by rememberSaveable(gitHubSettings.reportPath) { mutableStateOf(gitHubSettings.reportPath) }; var autoUploadReport by rememberSaveable(gitHubSettings.autoUploadReport) { mutableStateOf(gitHubSettings.autoUploadReport) }
     fun currentSettings() = GitHubSettings(owner = owner, repo = repo, branch = branch, rulesPath = rulesPath, reportPath = reportPath, token = token, autoUploadReport = autoUploadReport)
     LazyColumn(modifier = Modifier.fillMaxSize().navigationBarsPadding().imePadding().padding(horizontal = 16.dp), contentPadding = PaddingValues(top = 16.dp, bottom = 32.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {

@@ -376,7 +376,7 @@ private fun AddWatchlistCard(onAdd: (String, String) -> Unit) {
 private fun WatchlistCard(item: WatchlistItem, onRemove: () -> Unit) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text("${item.name} (${item.ticker})", fontWeight = FontWeight.Bold)
+            KoreanStockIdentityLabel(ticker = item.ticker, preferredName = item.name)
             Text(
                 listOf(item.market, item.assetClass, item.direction)
                     .filter(String::isNotBlank)
@@ -447,7 +447,7 @@ private fun HoldingsSummaryCard(
 private fun HoldingCard(item: KisHolding) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text("${item.name} (${item.ticker})", fontWeight = FontWeight.Bold)
+            KoreanStockIdentityLabel(ticker = item.ticker, preferredName = item.name)
             Text("보유 ${formatQuantity(item.quantity)}주 / 주문가능 ${formatQuantity(item.orderableQuantity)}주")
             Text("평균단가 ${formatWon(item.averagePrice)} / 현재가 ${formatWon(item.currentPrice)}")
             Text("평가금액 ${formatWon(item.evaluationAmount)} / 매입금액 ${formatWon(item.purchaseAmount)}")
@@ -502,7 +502,7 @@ private fun HoldingStrategySummaryCard(
 private fun HoldingStrategyCard(signal: HoldingStrategySignal, holding: KisHolding?) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
-            Text("${signal.name} (${signal.ticker})", fontWeight = FontWeight.Bold)
+            KoreanStockIdentityLabel(ticker = signal.ticker, preferredName = holding?.name ?: signal.name)
             Text("보유전략: ${signal.holdingSignal}", fontWeight = FontWeight.Bold)
             Text(signal.holdingSignalReason)
             if (holding != null) {

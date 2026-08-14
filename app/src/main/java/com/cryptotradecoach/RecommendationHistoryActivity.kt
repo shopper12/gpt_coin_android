@@ -350,7 +350,13 @@ private fun RecommendationTableRow(
     onAddToMyStocks: () -> Unit,
 ) {
     Row(modifier = Modifier.padding(vertical = 6.dp)) {
-        TableCell("${record.name} (${record.ticker})", 190.dp, true)
+        KoreanStockIdentityLabel(
+            ticker = record.ticker,
+            preferredName = record.name,
+            modifier = Modifier.width(190.dp).padding(horizontal = 4.dp),
+            bold = true,
+            resolveKoreanCode = record.assetClass in setOf("KR_STOCK", "KR_ETF"),
+        )
         OutlinedButton(
             onClick = onAddToMyStocks,
             enabled = !saved,
