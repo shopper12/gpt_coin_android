@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-08-15T07:43:09.086406+09:00",
+  "generatedAtKst": "2026-08-15T07:52:17.721890+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
-    "shortlistCount": 414,
+    "shortlistCount": 404,
     "krEtfShortlistCount": 34,
     "dailyMetricsCount": 391,
     "dailyCandidateCount": 34,
@@ -167,13 +167,13 @@
       "trigger": {
         "ready": false,
         "breakout": false,
-        "reclaim": false,
-        "volumeRatio": 0.662,
+        "reclaim": true,
+        "volumeRatio": 0.327,
         "volumeThreshold": 1.2,
-        "ema20": 16121.383404,
-        "ema50": 16069.71174,
-        "lastTimestamp": "2026-08-14T06:15:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.66x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 16126.01038,
+        "ema50": 16073.907823,
+        "lastTimestamp": "2026-08-14T06:30:00+00:00",
+        "reason": "breakout=False; reclaim=True; volume=0.33x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
@@ -183,7 +183,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 988.2
+        "ageMinutes": 982.3
       }
     },
     {
@@ -211,7 +211,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 988.2
+        "ageMinutes": 997.3
       }
     },
     {
@@ -239,7 +239,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 988.2
+        "ageMinutes": 997.3
       }
     },
     {
@@ -267,7 +267,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 973.2
+        "ageMinutes": 982.3
       }
     },
     {
@@ -295,7 +295,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 973.2
+        "ageMinutes": 982.3
       }
     },
     {
@@ -310,8 +310,8 @@
         "reclaim": false,
         "volumeRatio": 0.527,
         "volumeThreshold": 1.2,
-        "ema20": 112332.797067,
-        "ema50": 109903.419342,
+        "ema20": 112332.797094,
+        "ema50": 109903.42323,
         "lastTimestamp": "2026-08-14T06:30:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.53x/1.20x; ICT=BULLISH/NONE/NONE",
         "ict": {
@@ -323,7 +323,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 973.2
+        "ageMinutes": 982.3
       }
     },
     {
@@ -336,12 +336,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.935,
+        "volumeRatio": 0.918,
         "volumeThreshold": 1.2,
         "ema20": 133239.432703,
         "ema50": 131824.099262,
         "lastTimestamp": "2026-08-14T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.93x/1.20x; ICT=BULLISH/NONE/NONE",
+        "reason": "breakout=False; reclaim=False; volume=0.92x/1.20x; ICT=BULLISH/NONE/NONE",
         "ict": {
           "bias": "BULLISH",
           "structure": "BULLISH_HH_HL",
@@ -351,7 +351,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 973.2
+        "ageMinutes": 982.3
       }
     },
     {
@@ -362,17 +362,24 @@
       "dailySignalEligible": false,
       "trigger": {
         "ready": false,
-        "reason": "15분봉 부족",
+        "breakout": false,
+        "reclaim": false,
+        "volumeRatio": 1.668,
+        "volumeThreshold": 1.2,
+        "ema20": 14674.878653,
+        "ema50": 14565.025326,
+        "lastTimestamp": "2026-08-14T06:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=1.67x/1.20x; ICT=BULLISH/NONE/NONE",
         "ict": {
-          "bias": "UNKNOWN",
-          "structure": "INSUFFICIENT_DATA",
+          "bias": "BULLISH",
+          "structure": "BULLISH_HH_HL",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "NONE",
-          "score": 0
+          "fvg": "BULLISH 14795.0000~14850.0000",
+          "score": 3
         },
         "fresh": false,
-        "ageMinutes": null
+        "ageMinutes": 982.3
       }
     },
     {
@@ -385,12 +392,12 @@
         "ready": false,
         "breakout": true,
         "reclaim": false,
-        "volumeRatio": 0.013,
+        "volumeRatio": 0.022,
         "volumeThreshold": 1.2,
         "ema20": 28114.917591,
         "ema50": 28029.502375,
         "lastTimestamp": "2026-08-14T06:30:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=0.01x/1.20x; ICT=BULLISH/BOS_UP/NONE",
+        "reason": "breakout=True; reclaim=False; volume=0.02x/1.20x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
           "bias": "BULLISH",
           "structure": "RANGE",
@@ -400,7 +407,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 973.2
+        "ageMinutes": 982.3
       }
     },
     {
@@ -428,7 +435,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 988.2
+        "ageMinutes": 997.3
       }
     },
     {
@@ -439,24 +446,24 @@
       "dailySignalEligible": false,
       "trigger": {
         "ready": false,
-        "breakout": true,
+        "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.011,
+        "volumeRatio": 0.079,
         "volumeThreshold": 1.2,
-        "ema20": 24863.430158,
-        "ema50": 24817.896184,
-        "lastTimestamp": "2026-08-14T06:30:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=0.01x/1.20x; ICT=BULLISH/BOS_UP/NONE",
+        "ema20": 24858.528069,
+        "ema50": 24814.136844,
+        "lastTimestamp": "2026-08-14T06:15:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.08x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
-          "bias": "BULLISH",
+          "bias": "NEUTRAL",
           "structure": "RANGE",
-          "event": "BOS_UP",
+          "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BULLISH 24895.0000~24910.0000",
-          "score": 3
+          "fvg": "BULLISH 24865.0000~24880.0000",
+          "score": 1
         },
         "fresh": false,
-        "ageMinutes": 973.2
+        "ageMinutes": 997.3
       }
     },
     {
@@ -484,7 +491,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 973.2
+        "ageMinutes": 982.3
       }
     },
     {
@@ -512,7 +519,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 973.2
+        "ageMinutes": 982.3
       }
     },
     {
@@ -525,12 +532,12 @@
         "ready": false,
         "breakout": true,
         "reclaim": false,
-        "volumeRatio": 0.331,
+        "volumeRatio": 0.314,
         "volumeThreshold": 1.2,
         "ema20": 6782.678408,
         "ema50": 6767.514972,
         "lastTimestamp": "2026-08-14T06:30:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=0.33x/1.20x; ICT=BULLISH/BOS_UP/NONE",
+        "reason": "breakout=True; reclaim=False; volume=0.31x/1.20x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
           "bias": "BULLISH",
           "structure": "BULLISH_HH_HL",
@@ -540,7 +547,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 973.2
+        "ageMinutes": 982.3
       }
     },
     {
@@ -568,7 +575,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 988.2
+        "ageMinutes": 997.3
       }
     },
     {
@@ -596,7 +603,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 973.2
+        "ageMinutes": 982.3
       }
     },
     {
@@ -609,12 +616,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 6.186,
+        "volumeRatio": 0.373,
         "volumeThreshold": 1.2,
-        "ema20": 30071.280735,
-        "ema50": 29876.566635,
-        "lastTimestamp": "2026-08-14T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=6.19x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 30062.99446,
+        "ema50": 29864.896359,
+        "lastTimestamp": "2026-08-14T06:15:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.37x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
@@ -624,7 +631,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 973.2
+        "ageMinutes": 997.3
       }
     },
     {
@@ -637,22 +644,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.691,
+        "volumeRatio": 0.144,
         "volumeThreshold": 1.2,
-        "ema20": 10120.729079,
-        "ema50": 10034.716134,
-        "lastTimestamp": "2026-08-14T06:15:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.69x/1.20x; ICT=BULLISH/BOS_UP/NONE",
+        "ema20": 10135.897746,
+        "ema50": 10044.46294,
+        "lastTimestamp": "2026-08-14T06:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.14x/1.20x; ICT=BULLISH/NONE/NONE",
         "ict": {
           "bias": "BULLISH",
-          "structure": "RANGE",
-          "event": "BOS_UP",
+          "structure": "BULLISH_HH_HL",
+          "event": "NONE",
           "liquidity": "NONE",
           "fvg": "BULLISH 10220.0000~10270.0000",
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 988.2
+        "ageMinutes": 982.3
       }
     },
     {
@@ -680,7 +687,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 973.2
+        "ageMinutes": 982.3
       }
     },
     {
@@ -708,7 +715,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 973.2
+        "ageMinutes": 982.3
       }
     },
     {
@@ -736,7 +743,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 973.2
+        "ageMinutes": 982.3
       }
     },
     {
@@ -751,8 +758,8 @@
         "reclaim": false,
         "volumeRatio": 0.308,
         "volumeThreshold": 1.2,
-        "ema20": 7714.660964,
-        "ema50": 7710.938788,
+        "ema20": 7714.897295,
+        "ema50": 7711.086975,
         "lastTimestamp": "2026-08-14T06:15:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.31x/1.20x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
@@ -764,7 +771,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 988.2
+        "ageMinutes": 997.3
       }
     },
     {
@@ -792,7 +799,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 973.2
+        "ageMinutes": 982.3
       }
     },
     {
@@ -820,7 +827,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 973.2
+        "ageMinutes": 982.3
       }
     },
     {
@@ -833,22 +840,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 1.296,
+        "volumeRatio": 0.707,
         "volumeThreshold": 1.2,
-        "ema20": 2322.748355,
-        "ema50": 2322.56263,
-        "lastTimestamp": "2026-08-14T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=1.30x/1.20x; ICT=BEARISH/NONE/NONE",
+        "ema20": 2324.616599,
+        "ema50": 2323.232818,
+        "lastTimestamp": "2026-08-14T06:15:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.71x/1.20x; ICT=BEARISH/BOS_DOWN/NONE",
         "ict": {
           "bias": "BEARISH",
-          "structure": "BEARISH_LH_LL",
-          "event": "NONE",
+          "structure": "RANGE",
+          "event": "BOS_DOWN",
           "liquidity": "NONE",
           "fvg": "BEARISH 2330.0000~2335.0000",
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 973.2
+        "ageMinutes": 997.3
       }
     },
     {
@@ -876,7 +883,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 973.2
+        "ageMinutes": 982.3
       }
     },
     {
@@ -889,12 +896,12 @@
         "ready": false,
         "breakout": true,
         "reclaim": false,
-        "volumeRatio": 0.405,
+        "volumeRatio": 0.402,
         "volumeThreshold": 1.2,
-        "ema20": 19475.404364,
-        "ema50": 19429.774473,
+        "ema20": 19475.409132,
+        "ema50": 19429.805606,
         "lastTimestamp": "2026-08-14T06:30:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=0.41x/1.20x; ICT=BULLISH/BOS_UP/NONE",
+        "reason": "breakout=True; reclaim=False; volume=0.40x/1.20x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
           "bias": "BULLISH",
           "structure": "BULLISH_HH_HL",
@@ -904,7 +911,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 973.2
+        "ageMinutes": 982.3
       }
     },
     {
@@ -919,9 +926,9 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.35,
-        "ema20": 79.690722,
-        "ema50": 79.718396,
-        "lastTimestamp": "2026-08-14T22:30:00+00:00",
+        "ema20": 79.686843,
+        "ema50": 79.715631,
+        "lastTimestamp": "2026-08-14T22:50:08+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
@@ -932,7 +939,7 @@
           "score": -1
         },
         "fresh": true,
-        "ageMinutes": 13.2
+        "ageMinutes": 2.2
       }
     },
     {
@@ -959,8 +966,8 @@
           "fvg": "BULLISH 202.4000~203.7100",
           "score": -1
         },
-        "fresh": true,
-        "ageMinutes": 43.2
+        "fresh": false,
+        "ageMinutes": 52.3
       }
     },
     {
@@ -988,7 +995,7 @@
           "score": 3
         },
         "fresh": true,
-        "ageMinutes": 13.2
+        "ageMinutes": 22.3
       }
     }
   ],
