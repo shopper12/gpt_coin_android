@@ -86,6 +86,11 @@ class HoldingStrategyRepository {
             )
         )
         val resolvedCode = base.optString("code", code).filter(Char::isDigit).padStart(6, '0')
+        val displayName = preferredDisplayName(
+            kisName = holding.name,
+            strategyName = base.optString("name", ""),
+            code = resolvedCode,
+        )
         val ict = fetchIctAnalysis(resolvedCode)
         val baseScore = base.optDouble("score", 0.0)
         val threshold = base.optDouble("threshold", 0.0)
@@ -116,7 +121,7 @@ class HoldingStrategyRepository {
         }
         return HoldingStrategySignal(
             ticker = resolvedCode,
-            name = base.optString("name", holding.name).ifBlank { holding.name },
+            name = displayName,
             holdingSignal = holdingDecision.first,
             holdingSignalReason = holdingDecision.second,
             baseAction = adjustedAction,
@@ -137,6 +142,21 @@ class HoldingStrategyRepository {
             momentum20dPct = metrics.optDouble("momentum_20d_pct", 0.0),
             ict = ict,
         )
+    }
+
+    private fun preferredDisplayName(kisName: String, strategyName: String, code: String): String {
+        val normalizedCode = code.filter(Char::isDigit).padStart(6, '0')
+        return humanNameOrNull(kisName, normalizedCode)
+            ?: humanNameOrNull(strategyName, normalizedCode)
+            ?: normalizedCode
+    }
+
+    private fun humanNameOrNull(value: String, code: String): String? {
+        val name = value.trim()
+        if (name.isBlank()) return null
+        val digits = name.filter(Char::isDigit)
+        if (name == code || (name.all(Char::isDigit) && digits.padStart(6, '0') == code)) return null
+        return name
     }
 
     private fun fetchIctAnalysis(code: String): IctAnalysis {
