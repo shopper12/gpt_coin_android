@@ -121,7 +121,7 @@ internal object KisBalanceParser {
                 add(
                     KisHolding(
                         ticker = ticker,
-                        name = item.optString("prdt_name").trim().ifBlank { ticker },
+                        name = item.optKisProductName(ticker),
                         quantity = quantity,
                         orderableQuantity = item.optApiDecimal("ord_psbl_qty"),
                         averagePrice = item.optApiDecimal("pchs_avg_pric"),
@@ -186,4 +186,16 @@ internal fun JSONObject.optApiDecimal(key: String): BigDecimal {
         .trim()
         .toBigDecimalOrNull()
         ?: BigDecimal.ZERO
+}
+
+private fun JSONObject.optKisProductName(ticker: String): String {
+    val candidates = sequenceOf(
+        optString("prdt_name"),
+        optString("prdt_abrv_name"),
+        optString("hts_kor_isnm"),
+        optString("item_name"),
+    ).map { it.trim() }
+        .filter { it.isNotBlank() }
+        .filterNot { it == ticker || it.all(Char::isDigit) }
+    return candidates.firstOrNull() ?: ticker
 }
