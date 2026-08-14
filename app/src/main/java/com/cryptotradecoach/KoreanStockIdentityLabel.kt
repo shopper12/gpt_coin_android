@@ -28,15 +28,23 @@ internal fun KoreanStockIdentityLabel(
     val code = ticker.trim()
     val preferred = preferredHumanName(preferredName, code)
     var displayName by remember(code, preferredName) { mutableStateOf(preferred) }
+    var resolutionFinished by remember(code, preferredName) {
+        mutableStateOf(preferred != null || !resolveKoreanCode || !isSixDigitKrCode(code))
+    }
 
     LaunchedEffect(code, preferredName, resolveKoreanCode) {
         if (resolveKoreanCode && isSixDigitKrCode(code) && displayName == null) {
-            val resolved = withContext(Dispatchers.IO) { KoreanStockNameResolver.resolve(code) }
-            if (!resolved.isNullOrBlank()) displayName = resolved
+            displayName = withContext(Dispatchers.IO) { KoreanStockNameResolver.resolve(code) }
         }
+        resolutionFinished = true
     }
 
-    val text = displayName?.let { "$it ($code)" } ?: code
+    val text = when {
+        displayName != null -> "${displayName} ($code)"
+        resolveKoreanCode && isSixDigitKrCode(code) && !resolutionFinished -> "종목명 조회 중 ($code)"
+        resolveKoreanCode && isSixDigitKrCode(code) -> "종목명 미확인 ($code)"
+        else -> code
+    }
     Text(
         text = text,
         modifier = modifier,
@@ -62,7 +70,12 @@ private object KoreanStockNameResolver {
         return try {
             if (connection.responseCode !in 200..299) return null
             val text = connection.inputStream.bufferedReader(Charsets.UTF_8).use { it.readText() }
-            val name = JSONObject(text).optString("stockName").trim()
+            val root = JSONObject(text)
+            val name = sequenceOf(
+                root.optString("stockName"),
+                root.optString("itemName"),
+                root.optString("name"),
+            ).map { it.trim() }.firstOrNull { preferredHumanName(it, code) != null }
             preferredHumanName(name, code)?.also { cache[code] = it }
         } catch (_: Exception) {
             null
