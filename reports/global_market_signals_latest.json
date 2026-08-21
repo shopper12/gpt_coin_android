@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-08-21T22:27:55.706822+09:00",
+  "generatedAtKst": "2026-08-21T23:09:21.024551+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
@@ -13,8 +13,8 @@
     "krEtfSignalEligibleCount": 0,
     "intradayEvaluatedCount": 13,
     "krEtfIntradayEvaluatedCount": 3,
-    "signalCount": 4,
-    "scannerSignalCount": 0,
+    "signalCount": 5,
+    "scannerSignalCount": 1,
     "chatgptSignalCount": 4,
     "krEtfSignalCount": 0,
     "dailyCacheHit": false,
@@ -24,7 +24,7 @@
     "panic": false,
     "riskOff": false,
     "equityBelow200Count": 0,
-    "realizedVolatility20Annualized": 0.224,
+    "realizedVolatility20Annualized": 0.2192,
     "reason": "광의 추세와 변동성 정상"
   },
   "signals": [
@@ -155,6 +155,105 @@
       "invalidation": "303.20달러 회복 또는 미국 시장폭 상승종목 우위 전환",
       "quoteStatus": "US_REGULAR_CLOSE_VERIFIED",
       "priceTimestampKst": "2026-08-21T07:35:00+09:00"
+    },
+    {
+      "id": "XBI-LONG-20260821T1400000000-EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
+      "date": "2026-08-21",
+      "generatedAtKst": "2026-08-21T23:09:21.024551+09:00",
+      "signalTimestamp": "2026-08-21T14:00:00+00:00",
+      "assetClass": "ETF",
+      "market": "US",
+      "ticker": "XBI",
+      "name": "SPDR S&P Biotech ETF",
+      "direction": "LONG",
+      "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM: 절대추세+상대모멘텀+15분 트리거+변동성 목표",
+      "strategyType": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
+      "referencePrice": 166.764999,
+      "currentPrice": 166.764999,
+      "previousClose": 163.380005,
+      "todayChangePct": 2.072,
+      "recentCloses": [
+        155.339996,
+        155.449997,
+        156.220001,
+        152.0,
+        154.259995,
+        150.940002,
+        154.5,
+        152.110001,
+        152.229996,
+        150.479996,
+        150.589996,
+        149.779999,
+        147.910004,
+        151.460007,
+        147.009995,
+        147.309998,
+        151.880005,
+        153.009995,
+        154.5,
+        157.369995,
+        158.029999,
+        158.070007,
+        159.389999,
+        156.860001,
+        157.410004,
+        159.529999,
+        160.110001,
+        169.550003,
+        163.380005,
+        166.764999
+      ],
+      "currency": "USD",
+      "status": "ACTIVE_SIGNAL",
+      "score": 86.9,
+      "confidence": 8.7,
+      "relativeStrengthPercentile": 0.8784,
+      "entryLow": 165.097349,
+      "entryHigh": 167.648003,
+      "stopLoss": 157.051962,
+      "target1": 186.191075,
+      "target2": 197.84672,
+      "riskPct": 5.82,
+      "volatilityTargetExposurePct": 37.1,
+      "regime": {
+        "panic": false,
+        "riskOff": false,
+        "equityBelow200Count": 0,
+        "realizedVolatility20Annualized": 0.2192,
+        "reason": "광의 추세와 변동성 정상"
+      },
+      "ict": {
+        "bias": "BULLISH",
+        "structure": "RANGE",
+        "event": "BOS_UP",
+        "liquidity": "NONE",
+        "fvg": "BULLISH 165.9650~166.1400",
+        "score": 3
+      },
+      "trigger": {
+        "ready": true,
+        "breakout": true,
+        "reclaim": false,
+        "volumeRatio": 6.03,
+        "volumeThreshold": 1.35,
+        "ema20": 165.168433,
+        "ema50": 164.886662,
+        "lastTimestamp": "2026-08-21T14:00:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=6.03x/1.35x; ICT=BULLISH/BOS_UP/NONE",
+        "ict": {
+          "bias": "BULLISH",
+          "structure": "RANGE",
+          "event": "BOS_UP",
+          "liquidity": "NONE",
+          "fvg": "BULLISH 165.9650~166.1400",
+          "score": 3
+        },
+        "fresh": true,
+        "ageMinutes": 11.6
+      },
+      "reason": "3/6/12개월 절대 모멘텀 양수, 200일선 상단, 자산군 상대강도 88백분위, breakout=True; reclaim=False; volume=6.03x/1.35x; ICT=BULLISH/BOS_UP/NONE",
+      "guardrail": "자동 추천은 주문이 아니다. 실시간 호가·슬리피지·공시·거래 가능 여부를 확인한다."
     }
   ],
   "topEvaluated": [
@@ -183,7 +282,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 420.2
+        "ageMinutes": 461.6
       }
     },
     {
@@ -211,7 +310,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 420.2
+        "ageMinutes": 461.6
       }
     },
     {
@@ -239,7 +338,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 435.2
+        "ageMinutes": 476.6
       }
     },
     {
@@ -250,24 +349,24 @@
       "dailySignalEligible": true,
       "trigger": {
         "ready": false,
-        "breakout": true,
+        "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.0,
+        "volumeRatio": 7.617,
         "volumeThreshold": 1.35,
-        "ema20": 79.581189,
-        "ema50": 79.573767,
-        "lastTimestamp": "2026-08-21T13:30:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 79.575952,
+        "ema50": 79.571783,
+        "lastTimestamp": "2026-08-21T14:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=7.62x/1.35x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BEARISH 79.6300~79.6531",
+          "fvg": "BEARISH 79.5900~79.6000",
           "score": -1
         },
         "fresh": true,
-        "ageMinutes": 0.2
+        "ageMinutes": 11.6
       }
     },
     {
@@ -280,12 +379,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.0,
+        "volumeRatio": 5.702,
         "volumeThreshold": 1.35,
-        "ema20": 212.950806,
-        "ema50": 212.625618,
-        "lastTimestamp": "2026-08-21T13:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 212.741609,
+        "ema50": 212.569081,
+        "lastTimestamp": "2026-08-21T14:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=5.70x/1.35x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
@@ -295,7 +394,7 @@
           "score": 1
         },
         "fresh": true,
-        "ageMinutes": 0.2
+        "ageMinutes": 11.6
       }
     },
     {
@@ -308,22 +407,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.0,
+        "volumeRatio": 1.166,
         "volumeThreshold": 1.35,
-        "ema20": 64.803637,
-        "ema50": 64.752481,
-        "lastTimestamp": "2026-08-21T13:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=BULLISH/BOS_UP/NONE",
+        "ema20": 64.893692,
+        "ema50": 64.794008,
+        "lastTimestamp": "2026-08-21T14:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=1.17x/1.35x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
-          "bias": "BULLISH",
+          "bias": "NEUTRAL",
           "structure": "RANGE",
-          "event": "BOS_UP",
+          "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BULLISH 64.5495~64.7800",
-          "score": 3
+          "fvg": "BULLISH 65.0399~65.2100",
+          "score": 1
         },
         "fresh": true,
-        "ageMinutes": 0.2
+        "ageMinutes": 11.6
       }
     },
     {
@@ -335,107 +434,135 @@
       "trigger": {
         "ready": false,
         "breakout": false,
-        "reclaim": true,
-        "volumeRatio": 0.0,
+        "reclaim": false,
+        "volumeRatio": 3.074,
         "volumeThreshold": 1.35,
-        "ema20": 105.060062,
-        "ema50": 104.702483,
-        "lastTimestamp": "2026-08-21T13:30:00+00:00",
-        "reason": "breakout=False; reclaim=True; volume=0.00x/1.35x; ICT=NEUTRAL/CHOCH_DOWN/NONE",
+        "ema20": 104.986548,
+        "ema50": 104.699582,
+        "lastTimestamp": "2026-08-21T14:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=3.07x/1.35x; ICT=BEARISH/BOS_DOWN/NONE",
         "ict": {
-          "bias": "NEUTRAL",
-          "structure": "BULLISH_HH_HL",
-          "event": "CHOCH_DOWN",
+          "bias": "BEARISH",
+          "structure": "RANGE",
+          "event": "BOS_DOWN",
           "liquidity": "NONE",
-          "fvg": "BEARISH 105.1400~105.2600",
-          "score": -1
+          "fvg": "BEARISH 105.0300~105.4700",
+          "score": -3
         },
         "fresh": true,
-        "ageMinutes": 0.2
+        "ageMinutes": 11.6
       }
     },
     {
       "ticker": "HPE",
       "name": "Hewlett Packard Enterprise Company Common Stock",
-      "dailyScore": 81.92,
-      "relativeStrengthPercentile": 0.8983050847457628,
+      "dailyScore": 81.7,
+      "relativeStrengthPercentile": 0.8940677966101694,
       "dailySignalEligible": true,
       "trigger": {
         "ready": false,
-        "breakout": true,
+        "breakout": false,
         "reclaim": true,
-        "volumeRatio": 0.0,
+        "volumeRatio": 3.289,
         "volumeThreshold": 1.35,
-        "ema20": 53.450453,
-        "ema50": 53.307,
-        "lastTimestamp": "2026-08-21T13:30:00+00:00",
-        "reason": "breakout=True; reclaim=True; volume=0.00x/1.35x; ICT=BULLISH/BOS_UP/NONE",
+        "ema20": 53.431007,
+        "ema50": 53.304964,
+        "lastTimestamp": "2026-08-21T14:00:00+00:00",
+        "reason": "breakout=False; reclaim=True; volume=3.29x/1.35x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
-          "bias": "BULLISH",
+          "bias": "NEUTRAL",
           "structure": "RANGE",
-          "event": "BOS_UP",
+          "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BULLISH 53.7000~53.9600",
-          "score": 3
+          "fvg": "BEARISH 53.4800~53.5500",
+          "score": -1
         },
         "fresh": true,
-        "ageMinutes": 0.2
+        "ageMinutes": 11.6
       }
     },
     {
       "ticker": "TNA",
       "name": "Direxion Small Cap Bull 3X ETF",
-      "dailyScore": 80.92,
-      "relativeStrengthPercentile": 0.8783783783783784,
+      "dailyScore": 81.59,
+      "relativeStrengthPercentile": 0.8918918918918919,
       "dailySignalEligible": true,
       "trigger": {
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.0,
+        "volumeRatio": 3.758,
         "volumeThreshold": 1.35,
-        "ema20": 72.901642,
-        "ema50": 72.628544,
-        "lastTimestamp": "2026-08-21T13:15:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/SELL_SIDE_SWEEP",
+        "ema20": 72.839748,
+        "ema50": 72.623354,
+        "lastTimestamp": "2026-08-21T14:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=3.76x/1.35x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
-          "structure": "RANGE",
+          "structure": "BEARISH_LH_LL",
           "event": "NONE",
-          "liquidity": "SELL_SIDE_SWEEP",
-          "fvg": "BEARISH 73.0763~73.1500",
-          "score": 1
+          "liquidity": "NONE",
+          "fvg": "BULLISH 72.9599~73.1500",
+          "score": -1
         },
         "fresh": true,
-        "ageMinutes": 15.2
+        "ageMinutes": 11.6
       }
     },
     {
       "ticker": "XBI",
       "name": "SPDR S&P Biotech ETF",
-      "dailyScore": 80.24,
-      "relativeStrengthPercentile": 0.8648648648648649,
+      "dailyScore": 80.92,
+      "relativeStrengthPercentile": 0.8783783783783784,
       "dailySignalEligible": true,
       "trigger": {
-        "ready": false,
-        "breakout": false,
+        "ready": true,
+        "breakout": true,
         "reclaim": false,
-        "volumeRatio": 0.0,
+        "volumeRatio": 6.03,
         "volumeThreshold": 1.35,
-        "ema20": 164.768779,
-        "ema50": 164.710169,
-        "lastTimestamp": "2026-08-21T13:15:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=BULLISH/BOS_UP/NONE",
+        "ema20": 165.168433,
+        "ema50": 164.886662,
+        "lastTimestamp": "2026-08-21T14:00:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=6.03x/1.35x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
           "bias": "BULLISH",
           "structure": "RANGE",
           "event": "BOS_UP",
           "liquidity": "NONE",
-          "fvg": "BULLISH 164.7000~164.8000",
+          "fvg": "BULLISH 165.9650~166.1400",
           "score": 3
         },
         "fresh": true,
-        "ageMinutes": 15.2
+        "ageMinutes": 11.6
+      }
+    },
+    {
+      "ticker": "VLUE",
+      "name": "iShares MSCI USA Value Factor ETF",
+      "dailyScore": 79.57,
+      "relativeStrengthPercentile": 0.8513513513513513,
+      "dailySignalEligible": true,
+      "trigger": {
+        "ready": false,
+        "breakout": false,
+        "reclaim": false,
+        "volumeRatio": 2.062,
+        "volumeThreshold": 1.35,
+        "ema20": 202.464707,
+        "ema50": 201.90602,
+        "lastTimestamp": "2026-08-21T14:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=2.06x/1.35x; ICT=NEUTRAL/NONE/NONE",
+        "ict": {
+          "bias": "NEUTRAL",
+          "structure": "RANGE",
+          "event": "NONE",
+          "liquidity": "NONE",
+          "fvg": "BEARISH 203.4300~204.4019",
+          "score": -1
+        },
+        "fresh": true,
+        "ageMinutes": 11.6
       }
     },
     {
@@ -448,50 +575,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.0,
+        "volumeRatio": 1.121,
         "volumeThreshold": 1.35,
-        "ema20": 158.823275,
-        "ema50": 160.186158,
-        "lastTimestamp": "2026-08-20T20:00:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/BOS_DOWN/NONE",
+        "ema20": 156.645705,
+        "ema50": 158.216074,
+        "lastTimestamp": "2026-08-21T14:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=1.12x/1.35x; ICT=BEARISH/NONE/NONE",
         "ict": {
-          "bias": "NEUTRAL",
-          "structure": "RANGE",
-          "event": "BOS_DOWN",
-          "liquidity": "NONE",
-          "fvg": "BULLISH 158.6800~158.7300",
-          "score": -1
-        },
-        "fresh": false,
-        "ageMinutes": 1050.2
-      }
-    },
-    {
-      "ticker": "VLUE",
-      "name": "iShares MSCI USA Value Factor ETF",
-      "dailyScore": 78.89,
-      "relativeStrengthPercentile": 0.8378378378378378,
-      "dailySignalEligible": true,
-      "trigger": {
-        "ready": false,
-        "breakout": false,
-        "reclaim": false,
-        "volumeRatio": 0.0,
-        "volumeThreshold": 1.35,
-        "ema20": 201.3566,
-        "ema50": 201.273678,
-        "lastTimestamp": "2026-08-20T20:00:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/SELL_SIDE_SWEEP",
-        "ict": {
-          "bias": "NEUTRAL",
+          "bias": "BEARISH",
           "structure": "BEARISH_LH_LL",
           "event": "NONE",
-          "liquidity": "SELL_SIDE_SWEEP",
-          "fvg": "BULLISH 201.3400~201.3500",
-          "score": 1
+          "liquidity": "NONE",
+          "fvg": "BEARISH 156.8100~157.2100",
+          "score": -3
         },
-        "fresh": false,
-        "ageMinutes": 1050.2
+        "fresh": true,
+        "ageMinutes": 11.6
       }
     },
     {
@@ -504,26 +603,26 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.0,
+        "volumeRatio": 2.204,
         "volumeThreshold": 1.35,
-        "ema20": 351.862359,
-        "ema50": 351.975475,
-        "lastTimestamp": "2026-08-21T13:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 350.699417,
+        "ema50": 351.458259,
+        "lastTimestamp": "2026-08-21T14:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=2.20x/1.35x; ICT=NEUTRAL/CHOCH_DOWN/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "BULLISH_HH_HL",
-          "event": "NONE",
+          "event": "CHOCH_DOWN",
           "liquidity": "NONE",
-          "fvg": "BEARISH 352.0300~352.1100",
-          "score": 1
+          "fvg": "BEARISH 347.9200~349.5600",
+          "score": -1
         },
         "fresh": true,
-        "ageMinutes": 0.2
+        "ageMinutes": 11.6
       }
     }
   ],
-  "historyRecordCount": 377,
+  "historyRecordCount": 378,
   "researchBasis": [
     "time-series momentum",
     "cross-sectional momentum",
