@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-08-23T07:33:45.621552+09:00",
+  "generatedAtKst": "2026-08-23T07:49:43.563398+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
@@ -17,7 +17,7 @@
     "scannerSignalCount": 0,
     "chatgptSignalCount": 4,
     "krEtfSignalCount": 1,
-    "dailyCacheHit": true,
+    "dailyCacheHit": false,
     "maxSignalAgeMinutes": 45
   },
   "marketRegime": {
@@ -29,22 +29,22 @@
   },
   "signals": [
     {
-      "id": "20260822-1130KST-GDX-LONG",
-      "date": "2026-08-22",
-      "generatedAtKst": "2026-08-22T11:30:00+09:00",
-      "briefingSlot": "1130",
+      "id": "20260823-0750KST-GDX-LONG",
+      "date": "2026-08-23",
+      "generatedAtKst": "2026-08-23T07:50:00+09:00",
+      "briefingSlot": "0750",
       "assetClass": "US_GOLD_MINERS_ETF",
       "market": "NYSEARCA",
       "ticker": "GDX",
       "name": "VanEck Gold Miners ETF",
       "direction": "LONG",
-      "strategy": "월요일 100.5~102.5달러 눌림 분할; 103.5달러 이상 추격 금지",
+      "strategy": "월요일 100.5~102.5달러 눌림 분할; 103.5달러 이상 갭상승 추격 금지",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
       "score": 92,
       "confidence": 86,
-      "currentPrice": 102.7,
-      "referencePrice": 102.7,
+      "currentPrice": 102.83,
+      "referencePrice": 102.83,
       "currency": "USD",
       "entryLow": 100.5,
       "entryHigh": 102.5,
@@ -53,18 +53,18 @@
       "target2": 113.0,
       "holdingPeriod": "3~15거래일",
       "committeeVote": "6/7",
-      "catalyst": "금 현물 3개월 고점, 달러 약세, 금광주 상대강도와 거래량 확대",
-      "reason": "미국·한국 현물시장은 주말 휴장이라 07:50 이후 새 가격은 없지만 금 현물의 8/21 +2.4%와 GDX의 최근 5거래일 약 +14% 리더십이 유지된다",
+      "catalyst": "금 현물 3개월 고점, 200일선 돌파, 달러 약세, GDX 거래량 동반 상승",
+      "reason": "8/21 GDX 종가 102.83달러(+2.98%, 3,262만주)로 8/19 +9.42%, 8/20 +2.59% 뒤에도 리더십이 유지됐고 금 현물도 +2.4%로 3개월 고점을 확인했다",
       "risk": "금 급등 후 차익실현, 달러 반등, 장기금리 재상승",
       "invalidation": "97.20달러 하회 또는 금이 200일선 아래로 재이탈하며 GDX 상대강도 붕괴",
-      "quoteStatus": "US_LAST_VERIFIED_FRIDAY_SNAPSHOT",
-      "priceTimestampKst": "2026-08-22T03:17:23+09:00"
+      "quoteStatus": "US_REGULAR_CLOSE_VERIFIED",
+      "priceTimestampKst": "2026-08-22T05:00:00+09:00"
     },
     {
-      "id": "20260822-1130KST-BTCUSD-LONG",
-      "date": "2026-08-22",
-      "generatedAtKst": "2026-08-22T11:30:00+09:00",
-      "briefingSlot": "1130",
+      "id": "20260823-0750KST-BTCUSD-LONG",
+      "date": "2026-08-23",
+      "generatedAtKst": "2026-08-23T07:50:00+09:00",
+      "briefingSlot": "0750",
       "assetClass": "CRYPTO",
       "market": "GLOBAL",
       "ticker": "BTC-USD",
@@ -73,10 +73,10 @@
       "strategy": "75,500~77,300달러 눌림 분할; 79,500달러 이상 추격 금지, 최대 8%",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
-      "score": 88,
-      "confidence": 82,
-      "currentPrice": 77375,
-      "referencePrice": 77375,
+      "score": 87,
+      "confidence": 80,
+      "currentPrice": 76958,
+      "referencePrice": 76958,
       "currency": "USD",
       "entryLow": 75500,
       "entryHigh": 77300,
@@ -84,19 +84,19 @@
       "target1": 82000,
       "target2": 86500,
       "holdingPeriod": "1~10일",
-      "committeeVote": "6/7",
-      "catalyst": "주간 약 23% 상승, 달러 약세와 크립토 정책 기대, 관련주 동반 강세",
-      "reason": "24시간 거래 중인 유일한 최종 슬롯이지만 79k대 고점 형성 뒤 주말 횡보로 모멘텀은 유지되면서도 신규 추격 기대값은 낮아졌다",
-      "risk": "주말 유동성, 단기 과열, 숏스퀴즈 소진, 정책 기대 되돌림",
+      "committeeVote": "5/7",
+      "catalyst": "주간 약 24% 급등 후 76~77k 유지, Treasury buyback 신호와 크립토 숏스퀴즈",
+      "reason": "주말 실제 거래 중이며 79.4k 고점 이후 76~77k에서 급등분 대부분을 유지한다. 다만 이틀간 40억달러 이상 숏 청산으로 기계적 상승 비중이 커 신규 추격 기대값은 낮아 CONDITIONAL로 유지",
+      "risk": "숏스퀴즈 소진, 주말 유동성, 75k 이탈 시 급격한 롱 청산",
       "invalidation": "72,800달러 하회 또는 75,500달러 회복 실패",
-      "quoteStatus": "WEEKEND_PUBLISHED_SNAPSHOT_VERIFIED",
-      "priceTimestampKst": "2026-08-22T11:30:00+09:00"
+      "quoteStatus": "WEEKEND_LATEST_PUBLISHED_SNAPSHOT",
+      "priceTimestampKst": "2026-08-23T07:50:00+09:00"
     },
     {
-      "id": "20260822-1130KST-251340-INVERSE",
-      "date": "2026-08-22",
-      "generatedAtKst": "2026-08-22T11:30:00+09:00",
-      "briefingSlot": "1130",
+      "id": "20260823-0750KST-251340-INVERSE",
+      "date": "2026-08-23",
+      "generatedAtKst": "2026-08-23T07:50:00+09:00",
+      "briefingSlot": "0750",
       "assetClass": "KR_ETF",
       "market": "KRX",
       "ticker": "251340",
@@ -105,8 +105,8 @@
       "strategy": "월요일 2,440~2,480원에서 코스닥150 반등 실패 확인 후 진입; 갭상승 추격 금지",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
-      "score": 87,
-      "confidence": 78,
+      "score": 86,
+      "confidence": 77,
       "currentPrice": 2460,
       "referencePrice": 2460,
       "currency": "KRW",
@@ -117,18 +117,18 @@
       "target2": 2740,
       "holdingPeriod": "1~5거래일",
       "committeeVote": "5/7",
-      "catalyst": "8/21 KOSDAQ -4.63%, 인버스 +5.35%, 대형주-중소형주 내부 괴리",
-      "reason": "주말이라 새 한국 수급은 없으며 금요일 코스닥 약세가 월요일에도 이어지는지 확인해야 한다. 미국 금요일 breadth 회복 때문에 무조건 진입이 아니라 반등 실패 조건부다",
-      "risk": "미국 금요일 시장폭 회복의 월요일 전염, 급반등·숏커버",
+      "catalyst": "8/21 KOSDAQ -4.63%, KOSPI +0.88%와 극단적 내부 괴리, 인버스 +5.35%",
+      "reason": "금요일 KOSDAQ 801.94(-4.63%) 및 인버스 2,460원(+5.35%, 4,935만주)으로 상대약세가 확인됐지만 미국 금요일 breadth 개선 때문에 월요일 반등 실패 확인이 필요하다",
+      "risk": "미국 금요일 risk-on 전염, 코스닥 급반등·숏커버",
       "invalidation": "2,360원 하회 또는 코스닥150이 금요일 시가권을 회복하며 시장폭 상승 우위 전환",
       "quoteStatus": "KR_REGULAR_CLOSE_VERIFIED",
       "priceTimestampKst": "2026-08-21T15:30:00+09:00"
     },
     {
-      "id": "20260822-1130KST-ROST-LONG",
-      "date": "2026-08-22",
-      "generatedAtKst": "2026-08-22T11:30:00+09:00",
-      "briefingSlot": "1130",
+      "id": "20260823-0750KST-ROST-LONG",
+      "date": "2026-08-23",
+      "generatedAtKst": "2026-08-23T07:50:00+09:00",
+      "briefingSlot": "0750",
       "assetClass": "US_STOCK",
       "market": "NASDAQ",
       "ticker": "ROST",
@@ -149,9 +149,9 @@
       "target2": 257,
       "holdingPeriod": "3~15거래일",
       "committeeVote": "5/7",
-      "catalyst": "Q2 매출 13% 증가, 동일점매출 +10%, 조정 EPS 상회, 연간 EPS 가이던스 상향",
-      "reason": "8/21 종가 238.87달러(+4.31%)로 프리마켓 급등분을 상당 부분 소화했고 실적·가이던스라는 독립 촉매가 유지된다",
-      "risk": "관세 환급 약 2.53억달러가 실적에 기여, 이벤트 갭 소진, 소비경기 악화",
+      "catalyst": "Q2 매출 13% 증가, 동일점매출 +10%, 연간 EPS 가이던스 상향",
+      "reason": "8/21 종가 238.87달러(+4.31%, 493만주)로 프리마켓 급등을 상당 부분 소화했고 실적·가이던스 기반의 독립 촉매가 유지된다",
+      "risk": "관세 환급 약 2.53억달러의 일회성 기여, 이벤트 갭 소진, 소비경기 악화",
       "invalidation": "229달러 하회 또는 실적 갭 전부 반납",
       "quoteStatus": "US_REGULAR_CLOSE_VERIFIED",
       "priceTimestampKst": "2026-08-22T05:00:00+09:00"
@@ -170,8 +170,8 @@
         "reclaim": false,
         "volumeRatio": 0.105,
         "volumeThreshold": 1.2,
-        "ema20": 136876.834909,
-        "ema50": 136378.863115,
+        "ema20": 136876.843674,
+        "ema50": 136378.968625,
         "lastTimestamp": "2026-08-21T06:30:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.11x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
@@ -183,7 +183,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 2403.8
+        "ageMinutes": 2422.2
       }
     },
     {
@@ -211,7 +211,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 2403.8
+        "ageMinutes": 2422.2
       }
     },
     {
@@ -239,7 +239,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2403.8
+        "ageMinutes": 2422.2
       }
     },
     {
@@ -267,7 +267,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2403.8
+        "ageMinutes": 2422.2
       }
     },
     {
@@ -295,7 +295,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 2403.8
+        "ageMinutes": 2422.2
       }
     },
     {
@@ -310,8 +310,8 @@
         "reclaim": true,
         "volumeRatio": 0.203,
         "volumeThreshold": 1.2,
-        "ema20": 126568.508638,
-        "ema50": 126034.772561,
+        "ema20": 126570.057323,
+        "ema50": 126035.421507,
         "lastTimestamp": "2026-08-21T06:30:00+00:00",
         "reason": "breakout=False; reclaim=True; volume=0.20x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
@@ -323,7 +323,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2403.8
+        "ageMinutes": 2422.2
       }
     },
     {
@@ -351,7 +351,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2403.8
+        "ageMinutes": 2422.2
       }
     },
     {
@@ -366,8 +366,8 @@
         "reclaim": false,
         "volumeRatio": 6.215,
         "volumeThreshold": 1.2,
-        "ema20": 13785.922541,
-        "ema50": 13959.80033,
+        "ema20": 13785.922304,
+        "ema50": 13959.790954,
         "lastTimestamp": "2026-08-21T06:30:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=6.21x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
@@ -379,7 +379,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2403.8
+        "ageMinutes": 2422.2
       }
     },
     {
@@ -395,7 +395,7 @@
         "volumeRatio": 0.127,
         "volumeThreshold": 1.2,
         "ema20": 15563.56084,
-        "ema50": 15553.47408,
+        "ema50": 15553.473727,
         "lastTimestamp": "2026-08-21T06:30:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.13x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
@@ -407,7 +407,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 2403.8
+        "ageMinutes": 2422.2
       }
     },
     {
@@ -422,8 +422,8 @@
         "reclaim": false,
         "volumeRatio": 0.22,
         "volumeThreshold": 1.2,
-        "ema20": 53226.192068,
-        "ema50": 53490.408404,
+        "ema20": 53226.192595,
+        "ema50": 53490.421316,
         "lastTimestamp": "2026-08-21T06:30:00+00:00",
         "reason": "breakout=True; reclaim=False; volume=0.22x/1.20x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
@@ -435,7 +435,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 2403.8
+        "ageMinutes": 2422.2
       }
     },
     {
@@ -450,8 +450,8 @@
         "reclaim": false,
         "volumeRatio": 0.02,
         "volumeThreshold": 1.2,
-        "ema20": 110055.210466,
-        "ema50": 109058.305744,
+        "ema20": 110055.216235,
+        "ema50": 109058.35228,
         "lastTimestamp": "2026-08-21T06:30:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.02x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
@@ -463,7 +463,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2403.8
+        "ageMinutes": 2422.2
       }
     },
     {
@@ -491,7 +491,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2403.8
+        "ageMinutes": 2422.2
       }
     },
     {
@@ -506,8 +506,8 @@
         "reclaim": false,
         "volumeRatio": 0.863,
         "volumeThreshold": 1.2,
-        "ema20": 6792.500126,
-        "ema50": 6992.317584,
+        "ema20": 6792.500131,
+        "ema50": 6992.319477,
         "lastTimestamp": "2026-08-21T06:30:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.86x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
@@ -519,7 +519,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2403.8
+        "ageMinutes": 2422.2
       }
     },
     {
@@ -534,8 +534,8 @@
         "reclaim": false,
         "volumeRatio": 0.26,
         "volumeThreshold": 1.2,
-        "ema20": 14129.475549,
-        "ema50": 14325.209408,
+        "ema20": 14129.476984,
+        "ema50": 14325.228672,
         "lastTimestamp": "2026-08-21T06:30:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.26x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
@@ -547,7 +547,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2403.8
+        "ageMinutes": 2422.2
       }
     },
     {
@@ -575,7 +575,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2403.8
+        "ageMinutes": 2422.2
       }
     },
     {
@@ -603,7 +603,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2403.8
+        "ageMinutes": 2422.2
       }
     },
     {
@@ -618,8 +618,8 @@
         "reclaim": false,
         "volumeRatio": 1.168,
         "volumeThreshold": 1.2,
-        "ema20": 109816.93576,
-        "ema50": 108826.759858,
+        "ema20": 109816.935741,
+        "ema50": 108826.755464,
         "lastTimestamp": "2026-08-21T06:30:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=1.17x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
@@ -631,7 +631,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2403.8
+        "ageMinutes": 2422.2
       }
     },
     {
@@ -646,8 +646,8 @@
         "reclaim": false,
         "volumeRatio": 0.251,
         "volumeThreshold": 1.2,
-        "ema20": 52606.361211,
-        "ema50": 53705.430363,
+        "ema20": 52606.374159,
+        "ema50": 53705.473075,
         "lastTimestamp": "2026-08-21T06:30:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.25x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
@@ -659,7 +659,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 2403.8
+        "ageMinutes": 2422.2
       }
     },
     {
@@ -687,7 +687,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 2403.8
+        "ageMinutes": 2422.2
       }
     },
     {
@@ -715,7 +715,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2403.8
+        "ageMinutes": 2422.2
       }
     },
     {
@@ -730,8 +730,8 @@
         "reclaim": false,
         "volumeRatio": 0.02,
         "volumeThreshold": 1.2,
-        "ema20": 23877.547182,
-        "ema50": 23999.792762,
+        "ema20": 23877.547277,
+        "ema50": 23999.796512,
         "lastTimestamp": "2026-08-21T06:30:00+00:00",
         "reason": "breakout=True; reclaim=False; volume=0.02x/1.20x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
@@ -743,7 +743,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 2403.8
+        "ageMinutes": 2422.2
       }
     },
     {
@@ -771,7 +771,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 2403.8
+        "ageMinutes": 2422.2
       }
     },
     {
@@ -799,7 +799,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 2403.8
+        "ageMinutes": 2422.2
       }
     },
     {
@@ -814,8 +814,8 @@
         "reclaim": false,
         "volumeRatio": 0.263,
         "volumeThreshold": 1.2,
-        "ema20": 111874.000911,
-        "ema50": 110015.319534,
+        "ema20": 111874.343572,
+        "ema50": 110015.680576,
         "lastTimestamp": "2026-08-21T06:30:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.26x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
@@ -827,7 +827,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2403.8
+        "ageMinutes": 2422.2
       }
     },
     {
@@ -842,8 +842,8 @@
         "reclaim": false,
         "volumeRatio": 0.111,
         "volumeThreshold": 1.2,
-        "ema20": 18238.033117,
-        "ema50": 18306.352233,
+        "ema20": 18238.422912,
+        "ema50": 18306.530825,
         "lastTimestamp": "2026-08-21T06:30:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.11x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
@@ -855,7 +855,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 2403.8
+        "ageMinutes": 2422.2
       }
     },
     {
@@ -883,7 +883,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 2403.8
+        "ageMinutes": 2422.2
       }
     },
     {
@@ -911,7 +911,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2403.8
+        "ageMinutes": 2422.2
       }
     },
     {
@@ -927,7 +927,7 @@
         "volumeRatio": 0.0,
         "volumeThreshold": 1.35,
         "ema20": 79.574914,
-        "ema50": 79.581446,
+        "ema50": 79.581396,
         "lastTimestamp": "2026-08-21T23:45:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
@@ -939,7 +939,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 1368.8
+        "ageMinutes": 1387.2
       }
     },
     {
@@ -954,8 +954,8 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.35,
-        "ema20": 209.228482,
-        "ema50": 209.943661,
+        "ema20": 209.228477,
+        "ema50": 209.939178,
         "lastTimestamp": "2026-08-21T23:45:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
@@ -967,7 +967,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 1368.8
+        "ageMinutes": 1387.2
       }
     },
     {
@@ -982,8 +982,8 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.35,
-        "ema20": 65.677413,
-        "ema50": 65.459433,
+        "ema20": 65.684988,
+        "ema50": 65.480731,
         "lastTimestamp": "2026-08-21T23:30:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=BEARISH/NONE/NONE",
         "ict": {
@@ -995,11 +995,11 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 1383.8
+        "ageMinutes": 1402.2
       }
     }
   ],
-  "historyRecordCount": 386,
+  "historyRecordCount": 390,
   "researchBasis": [
     "time-series momentum",
     "cross-sectional momentum",
