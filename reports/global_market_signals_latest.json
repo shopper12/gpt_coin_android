@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-08-24T07:33:46.122821+09:00",
+  "generatedAtKst": "2026-08-24T07:53:55.829047+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
@@ -17,7 +17,7 @@
     "scannerSignalCount": 0,
     "chatgptSignalCount": 4,
     "krEtfSignalCount": 1,
-    "dailyCacheHit": true,
+    "dailyCacheHit": false,
     "maxSignalAgeMinutes": 45
   },
   "marketRegime": {
@@ -29,16 +29,16 @@
   },
   "signals": [
     {
-      "id": "20260823-1130KST-GDX-LONG",
-      "date": "2026-08-23",
-      "generatedAtKst": "2026-08-23T11:30:00+09:00",
-      "briefingSlot": "1130",
+      "id": "20260824-0750KST-GDX-LONG",
+      "date": "2026-08-24",
+      "generatedAtKst": "2026-08-24T07:52:00+09:00",
+      "briefingSlot": "0750",
       "assetClass": "US_GOLD_MINERS_ETF",
       "market": "NYSEARCA",
       "ticker": "GDX",
       "name": "VanEck Gold Miners ETF",
       "direction": "LONG",
-      "strategy": "월요일 100.5~102.5달러 눌림 분할; 103.5달러 이상 갭상승 추격 금지",
+      "strategy": "월요일 미국장 100.5~102.5달러 눌림 분할; 103.5달러 이상 갭상승 추격 금지",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
       "score": 92,
@@ -53,60 +53,92 @@
       "target2": 113.0,
       "holdingPeriod": "3~15거래일",
       "committeeVote": "6/7",
-      "catalyst": "금 현물 3개월 고점, 200일선 돌파, 달러 약세, GDX 거래량 동반 상승",
-      "reason": "8/21 GDX 종가 102.83달러(+2.98%, 3,262만주)로 8/19 +9.42%, 8/20 +2.59% 뒤에도 리더십이 유지됐고 금 현물도 +2.4%로 3개월 고점을 확인했다",
+      "catalyst": "금 현물 3개월 고점·200일선 돌파, 달러 약세, 금광주 거래량 동반 리더십",
+      "reason": "8/21 GDX 102.83달러(+2.98%, 3,262만주)로 8/19 +9.42%, 8/20 +2.59% 이후에도 상승 지속; 금 현물도 4,623.94달러(+2.4%)로 기초자산 확인",
       "risk": "금 급등 후 차익실현, 달러 반등, 장기금리 재상승",
-      "invalidation": "97.20달러 하회 또는 금이 200일선 아래로 재이탈하며 GDX 상대강도 붕괴",
+      "invalidation": "97.20달러 하회 또는 금 200일선 재이탈과 GDX 상대강도 동반 붕괴",
       "quoteStatus": "US_REGULAR_CLOSE_VERIFIED",
       "priceTimestampKst": "2026-08-22T05:00:00+09:00"
     },
     {
-      "id": "20260823-1130KST-BTCUSD-LONG",
-      "date": "2026-08-23",
-      "generatedAtKst": "2026-08-23T11:30:00+09:00",
-      "briefingSlot": "1130",
+      "id": "20260824-0750KST-000660-LONG",
+      "date": "2026-08-24",
+      "generatedAtKst": "2026-08-24T07:52:00+09:00",
+      "briefingSlot": "0750",
+      "assetClass": "KR_STOCK",
+      "market": "KRX",
+      "ticker": "000660",
+      "name": "SK하이닉스",
+      "direction": "LONG",
+      "strategy": "한국장 1,700,000~1,730,000원 눌림에서만 분할; 시초 급등 추격 금지",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "status": "CONDITIONAL",
+      "score": 90,
+      "confidence": 82,
+      "currentPrice": 1730000,
+      "referencePrice": 1730000,
+      "currency": "KRW",
+      "entryLow": 1700000,
+      "entryHigh": 1730000,
+      "stopLoss": 1640000,
+      "target1": 1820000,
+      "target2": 1900000,
+      "holdingPeriod": "2~10거래일",
+      "committeeVote": "6/7",
+      "catalyst": "40조원 자사주 매입·소각이 8/20~11/19 실제 집행, 8/21에도 +2.31%로 후속 매수 확인",
+      "reason": "공식 자사주 매입 수요가 지속되고 8/20 +12.73% 이후 8/21에도 1,730,000원(+2.31%)으로 리더십 유지; 다만 미국 반도체는 주간 약세라 눌림 확인 필요",
+      "risk": "미국 반도체 주간 약세, Nvidia 8/26 실적 이벤트, 장기금리 상승",
+      "invalidation": "1,640,000원 하회 또는 자사주 수급에도 시장 대비 상대강도 붕괴",
+      "quoteStatus": "KR_REGULAR_CLOSE_VERIFIED",
+      "priceTimestampKst": "2026-08-21T15:30:00+09:00"
+    },
+    {
+      "id": "20260824-0750KST-BTCUSD-LONG",
+      "date": "2026-08-24",
+      "generatedAtKst": "2026-08-24T07:52:00+09:00",
+      "briefingSlot": "0750",
       "assetClass": "CRYPTO",
       "market": "GLOBAL",
       "ticker": "BTC-USD",
       "name": "Bitcoin",
       "direction": "LONG",
-      "strategy": "75,500~77,300달러 눌림 분할; 79,500달러 이상 추격 금지, 최대 8%",
+      "strategy": "75,000~76,500달러 지지 확인 후 분할; 77,500달러 이상 재추격 금지",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
-      "score": 86,
-      "confidence": 79,
-      "currentPrice": 77104.6,
-      "referencePrice": 77104.6,
+      "score": 85,
+      "confidence": 76,
+      "currentPrice": 76215.89,
+      "referencePrice": 76215.89,
       "currency": "USD",
-      "entryLow": 75500,
-      "entryHigh": 77300,
+      "entryLow": 75000,
+      "entryHigh": 76500,
       "stopLoss": 72800,
-      "target1": 82000,
-      "target2": 86500,
+      "target1": 80500,
+      "target2": 84500,
       "holdingPeriod": "1~10일",
       "committeeVote": "5/7",
-      "catalyst": "주간 약 23% 급등 후 77k대 유지, Treasury buyback 신호와 크립토 숏스퀴즈",
-      "reason": "8/23 공개 실시간 데이터에서 약 77.1k로 주말 급등분을 유지하지만 8/21 79.3k 고점 이후 과열 해소 중이고 단기 상승에 숏 청산 기여가 커 CONDITIONAL 유지",
-      "risk": "숏스퀴즈 소진, 주말 유동성, 75k 이탈 시 급격한 롱 청산",
-      "invalidation": "72,800달러 하회 또는 75,500달러 회복 실패",
-      "quoteStatus": "WEEKEND_REALTIME_PUBLIC_SNAPSHOT",
-      "priceTimestampKst": "2026-08-23T11:24:00+09:00"
+      "catalyst": "주간 강한 리프라이싱 후 76k대 유지, 친크립토 정책·달러 약세",
+      "reason": "현재 76,215.89달러로 24시간 -1.28%; 추세는 강하지만 79k대 고점 이후 모멘텀이 둔화되어 즉시 추격보다 지지 확인이 필요",
+      "risk": "숏스퀴즈 소진, 75k 이탈 시 롱 청산, 주말 급등 후 되돌림",
+      "invalidation": "72,800달러 하회 또는 75,000달러 회복 실패",
+      "quoteStatus": "CRYPTO_REALTIME_PUBLIC_SNAPSHOT",
+      "priceTimestampKst": "2026-08-24T07:50:00+09:00"
     },
     {
-      "id": "20260823-1130KST-251340-INVERSE",
-      "date": "2026-08-23",
-      "generatedAtKst": "2026-08-23T11:30:00+09:00",
-      "briefingSlot": "1130",
+      "id": "20260824-0750KST-251340-INVERSE",
+      "date": "2026-08-24",
+      "generatedAtKst": "2026-08-24T07:52:00+09:00",
+      "briefingSlot": "0750",
       "assetClass": "KR_ETF",
       "market": "KRX",
       "ticker": "251340",
       "name": "KODEX 코스닥150선물인버스",
       "direction": "INVERSE",
-      "strategy": "월요일 2,440~2,480원에서 코스닥150 반등 실패 확인 후 진입; 갭상승 추격 금지",
+      "strategy": "2,440~2,480원에서 코스닥150 반등 실패 및 외국인·기관 동반 매도 재확인 시에만 진입",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
-      "score": 86,
-      "confidence": 77,
+      "score": 84,
+      "confidence": 74,
       "currentPrice": 2460,
       "referencePrice": 2460,
       "currency": "KRW",
@@ -117,44 +149,12 @@
       "target2": 2740,
       "holdingPeriod": "1~5거래일",
       "committeeVote": "5/7",
-      "catalyst": "8/21 KOSDAQ -4.63%, KOSPI +0.88%와 극단적 내부 괴리, 인버스 +5.35%",
-      "reason": "금요일 KOSDAQ 801.94(-4.63%) 및 인버스 2,460원(+5.35%, 4,935만주)으로 상대약세가 확인됐지만 미국 금요일 breadth 개선 때문에 월요일 반등 실패 확인이 필요하다",
-      "risk": "미국 금요일 risk-on 전염, 코스닥 급반등·숏커버",
-      "invalidation": "2,360원 하회 또는 코스닥150이 금요일 시가권을 회복하며 시장폭 상승 우위 전환",
+      "catalyst": "8/21 KOSDAQ -4.63%, 외국인 -2,836억원·기관 -3,465억원, 매도 사이드카",
+      "reason": "KOSPI +0.88%와 달리 KOSDAQ 801.94(-4.63%)로 내부 약세가 극단적이었고 인버스가 +5.35%; 미국 금요일 breadth 반등 때문에 개장 후 실패 확인이 필수",
+      "risk": "월요일 코스닥 숏커버, 미국 risk-on 전염, 800선 기술적 반등",
+      "invalidation": "2,360원 하회 또는 코스닥150이 금요일 시가권을 회복하고 상승종목 확산",
       "quoteStatus": "KR_REGULAR_CLOSE_VERIFIED",
       "priceTimestampKst": "2026-08-21T15:30:00+09:00"
-    },
-    {
-      "id": "20260823-1130KST-ROST-LONG",
-      "date": "2026-08-23",
-      "generatedAtKst": "2026-08-23T11:30:00+09:00",
-      "briefingSlot": "1130",
-      "assetClass": "US_STOCK",
-      "market": "NASDAQ",
-      "ticker": "ROST",
-      "name": "Ross Stores",
-      "direction": "LONG",
-      "strategy": "월요일 235~239달러 눌림 분할; 245달러 이상 추격 금지",
-      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "status": "CONDITIONAL",
-      "score": 86,
-      "confidence": 81,
-      "currentPrice": 238.87,
-      "referencePrice": 238.87,
-      "currency": "USD",
-      "entryLow": 235,
-      "entryHigh": 239,
-      "stopLoss": 229,
-      "target1": 250,
-      "target2": 257,
-      "holdingPeriod": "3~15거래일",
-      "committeeVote": "5/7",
-      "catalyst": "Q2 매출 13% 증가, 동일점매출 +10%, 연간 EPS 가이던스 상향",
-      "reason": "8/21 종가 238.87달러(+4.31%, 493만주)로 프리마켓 급등을 상당 부분 소화했고 실적·가이던스 기반의 독립 촉매가 유지된다",
-      "risk": "관세 환급 약 2.53억달러의 일회성 기여, 이벤트 갭 소진, 소비경기 악화",
-      "invalidation": "229달러 하회 또는 실적 갭 전부 반납",
-      "quoteStatus": "US_REGULAR_CLOSE_VERIFIED",
-      "priceTimestampKst": "2026-08-22T05:00:00+09:00"
     }
   ],
   "topEvaluated": [
@@ -183,7 +183,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 3843.8
+        "ageMinutes": 3866.3
       }
     },
     {
@@ -211,7 +211,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 3843.8
+        "ageMinutes": 3866.3
       }
     },
     {
@@ -239,7 +239,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 3843.8
+        "ageMinutes": 3866.3
       }
     },
     {
@@ -267,7 +267,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 3843.8
+        "ageMinutes": 3866.3
       }
     },
     {
@@ -295,7 +295,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 3843.8
+        "ageMinutes": 3866.3
       }
     },
     {
@@ -323,7 +323,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 3843.8
+        "ageMinutes": 3866.3
       }
     },
     {
@@ -351,7 +351,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 3843.8
+        "ageMinutes": 3866.3
       }
     },
     {
@@ -379,7 +379,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 3843.8
+        "ageMinutes": 3866.3
       }
     },
     {
@@ -407,7 +407,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 3843.8
+        "ageMinutes": 3866.3
       }
     },
     {
@@ -435,7 +435,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 3843.8
+        "ageMinutes": 3866.3
       }
     },
     {
@@ -463,7 +463,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 3843.8
+        "ageMinutes": 3866.3
       }
     },
     {
@@ -491,7 +491,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 3843.8
+        "ageMinutes": 3866.3
       }
     },
     {
@@ -519,7 +519,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 3843.8
+        "ageMinutes": 3866.3
       }
     },
     {
@@ -547,7 +547,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 3843.8
+        "ageMinutes": 3866.3
       }
     },
     {
@@ -575,7 +575,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 3843.8
+        "ageMinutes": 3866.3
       }
     },
     {
@@ -603,7 +603,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 3843.8
+        "ageMinutes": 3866.3
       }
     },
     {
@@ -631,7 +631,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 3843.8
+        "ageMinutes": 3866.3
       }
     },
     {
@@ -659,7 +659,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 3843.8
+        "ageMinutes": 3866.3
       }
     },
     {
@@ -687,7 +687,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 3843.8
+        "ageMinutes": 3866.3
       }
     },
     {
@@ -715,7 +715,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 3843.8
+        "ageMinutes": 3866.3
       }
     },
     {
@@ -743,7 +743,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 3843.8
+        "ageMinutes": 3866.3
       }
     },
     {
@@ -771,7 +771,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 3843.8
+        "ageMinutes": 3866.3
       }
     },
     {
@@ -799,7 +799,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 3843.8
+        "ageMinutes": 3866.3
       }
     },
     {
@@ -827,7 +827,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 3843.8
+        "ageMinutes": 3866.3
       }
     },
     {
@@ -855,7 +855,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 3843.8
+        "ageMinutes": 3866.3
       }
     },
     {
@@ -883,7 +883,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 3843.8
+        "ageMinutes": 3866.3
       }
     },
     {
@@ -911,7 +911,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 3843.8
+        "ageMinutes": 3866.3
       }
     },
     {
@@ -939,7 +939,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2808.8
+        "ageMinutes": 2831.3
       }
     },
     {
@@ -967,7 +967,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2808.8
+        "ageMinutes": 2831.3
       }
     },
     {
@@ -995,11 +995,11 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 2823.8
+        "ageMinutes": 2846.3
       }
     }
   ],
-  "historyRecordCount": 394,
+  "historyRecordCount": 398,
   "researchBasis": [
     "time-series momentum",
     "cross-sectional momentum",
