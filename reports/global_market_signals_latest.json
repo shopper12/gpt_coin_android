@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-08-25T13:56:17.265514+09:00",
+  "generatedAtKst": "2026-08-25T14:39:02.984419+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
@@ -17,7 +17,7 @@
     "scannerSignalCount": 0,
     "chatgptSignalCount": 4,
     "krEtfSignalCount": 0,
-    "dailyCacheHit": false,
+    "dailyCacheHit": true,
     "maxSignalAgeMinutes": 45
   },
   "marketRegime": {
@@ -166,24 +166,24 @@
       "dailySignalEligible": false,
       "trigger": {
         "ready": false,
-        "breakout": true,
-        "reclaim": false,
-        "volumeRatio": 0.797,
+        "breakout": false,
+        "reclaim": true,
+        "volumeRatio": 0.149,
         "volumeThreshold": 1.2,
-        "ema20": 15415.955623,
-        "ema50": 15389.547189,
-        "lastTimestamp": "2026-08-25T04:30:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=0.80x/1.20x; ICT=BULLISH/NONE/NONE",
+        "ema20": 15417.08708,
+        "ema50": 15393.031552,
+        "lastTimestamp": "2026-08-25T05:15:00+00:00",
+        "reason": "breakout=False; reclaim=True; volume=0.15x/1.20x; ICT=BULLISH/NONE/SELL_SIDE_SWEEP",
         "ict": {
           "bias": "BULLISH",
-          "structure": "BULLISH_HH_HL",
+          "structure": "RANGE",
           "event": "NONE",
-          "liquidity": "NONE",
+          "liquidity": "SELL_SIDE_SWEEP",
           "fvg": "BULLISH 15410.0000~15415.0000",
           "score": 3
         },
         "fresh": true,
-        "ageMinutes": 28.3
+        "ageMinutes": 24.1
       }
     },
     {
@@ -196,22 +196,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.267,
+        "volumeRatio": 0.006,
         "volumeThreshold": 1.2,
-        "ema20": 15878.046363,
-        "ema50": 15738.56208,
-        "lastTimestamp": "2026-08-25T04:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.27x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 15882.991498,
+        "ema50": 15756.313516,
+        "lastTimestamp": "2026-08-25T05:15:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.01x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
-          "structure": "RANGE",
+          "structure": "BULLISH_HH_HL",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BULLISH 15585.0000~15590.0000",
+          "fvg": "BEARISH 15925.0000~15935.0000",
           "score": 1
         },
         "fresh": true,
-        "ageMinutes": 28.3
+        "ageMinutes": 24.1
       }
     },
     {
@@ -224,12 +224,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.185,
+        "volumeRatio": 0.023,
         "volumeThreshold": 1.2,
-        "ema20": 10021.155025,
-        "ema50": 9992.541874,
-        "lastTimestamp": "2026-08-25T04:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.18x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 10028.288111,
+        "ema50": 9998.985704,
+        "lastTimestamp": "2026-08-25T05:15:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.02x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
@@ -239,7 +239,7 @@
           "score": 1
         },
         "fresh": true,
-        "ageMinutes": 28.3
+        "ageMinutes": 24.1
       }
     },
     {
@@ -252,22 +252,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.113,
+        "volumeRatio": 0.148,
         "volumeThreshold": 1.2,
-        "ema20": 14331.239061,
-        "ema50": 14313.18212,
-        "lastTimestamp": "2026-08-25T04:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.11x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 14341.754726,
+        "ema50": 14319.873618,
+        "lastTimestamp": "2026-08-25T05:15:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.15x/1.20x; ICT=BULLISH/NONE/NONE",
         "ict": {
-          "bias": "NEUTRAL",
-          "structure": "RANGE",
+          "bias": "BULLISH",
+          "structure": "BULLISH_HH_HL",
           "event": "NONE",
           "liquidity": "NONE",
           "fvg": "BULLISH 14245.0000~14305.0000",
-          "score": 1
+          "score": 3
         },
         "fresh": true,
-        "ageMinutes": 28.3
+        "ageMinutes": 24.1
       }
     },
     {
@@ -278,24 +278,24 @@
       "dailySignalEligible": false,
       "trigger": {
         "ready": false,
-        "breakout": false,
+        "breakout": true,
         "reclaim": false,
-        "volumeRatio": 0.147,
+        "volumeRatio": 0.095,
         "volumeThreshold": 1.2,
-        "ema20": 130032.237263,
-        "ema50": 131663.312221,
-        "lastTimestamp": "2026-08-25T04:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.15x/1.20x; ICT=BULLISH/BOS_UP/NONE",
+        "ema20": 130603.479307,
+        "ema50": 131730.199563,
+        "lastTimestamp": "2026-08-25T05:15:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=0.10x/1.20x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
           "bias": "BULLISH",
           "structure": "BULLISH_HH_HL",
           "event": "BOS_UP",
           "liquidity": "NONE",
-          "fvg": "BULLISH 129930.0000~130795.0000",
+          "fvg": "BULLISH 131925.0000~132070.0000",
           "score": 5
         },
         "fresh": true,
-        "ageMinutes": 28.3
+        "ageMinutes": 24.1
       }
     },
     {
@@ -306,14 +306,14 @@
       "dailySignalEligible": false,
       "trigger": {
         "ready": false,
-        "breakout": false,
+        "breakout": true,
         "reclaim": false,
-        "volumeRatio": 0.33,
+        "volumeRatio": 0.174,
         "volumeThreshold": 1.2,
-        "ema20": 100927.619147,
-        "ema50": 102995.849766,
-        "lastTimestamp": "2026-08-25T04:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.33x/1.20x; ICT=BULLISH/BOS_UP/NONE",
+        "ema20": 101540.09515,
+        "ema50": 103031.061648,
+        "lastTimestamp": "2026-08-25T05:15:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=0.17x/1.20x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
           "bias": "BULLISH",
           "structure": "BULLISH_HH_HL",
@@ -323,7 +323,7 @@
           "score": 5
         },
         "fresh": true,
-        "ageMinutes": 28.3
+        "ageMinutes": 24.1
       }
     },
     {
@@ -334,24 +334,24 @@
       "dailySignalEligible": false,
       "trigger": {
         "ready": false,
-        "breakout": false,
+        "breakout": true,
         "reclaim": false,
-        "volumeRatio": 0.145,
+        "volumeRatio": 0.47,
         "volumeThreshold": 1.2,
-        "ema20": 127648.562737,
-        "ema50": 128807.804204,
-        "lastTimestamp": "2026-08-25T04:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.14x/1.20x; ICT=BULLISH/BOS_UP/NONE",
+        "ema20": 128264.212349,
+        "ema50": 128946.956345,
+        "lastTimestamp": "2026-08-25T05:15:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=0.47x/1.20x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
           "bias": "BULLISH",
-          "structure": "RANGE",
+          "structure": "BULLISH_HH_HL",
           "event": "BOS_UP",
           "liquidity": "NONE",
           "fvg": "BULLISH 128190.0000~129180.0000",
-          "score": 3
+          "score": 5
         },
         "fresh": true,
-        "ageMinutes": 28.3
+        "ageMinutes": 24.1
       }
     },
     {
@@ -362,24 +362,24 @@
       "dailySignalEligible": false,
       "trigger": {
         "ready": false,
-        "breakout": false,
+        "breakout": true,
         "reclaim": false,
-        "volumeRatio": 0.473,
+        "volumeRatio": 0.221,
         "volumeThreshold": 1.2,
-        "ema20": 120687.133195,
-        "ema50": 121804.36642,
-        "lastTimestamp": "2026-08-25T04:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.47x/1.20x; ICT=BULLISH/BOS_UP/NONE",
+        "ema20": 121283.881871,
+        "ema50": 121940.187609,
+        "lastTimestamp": "2026-08-25T05:15:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=0.22x/1.20x; ICT=NEUTRAL/NONE/BUY_SIDE_SWEEP",
         "ict": {
-          "bias": "BULLISH",
+          "bias": "NEUTRAL",
           "structure": "BULLISH_HH_HL",
-          "event": "BOS_UP",
-          "liquidity": "NONE",
+          "event": "NONE",
+          "liquidity": "BUY_SIDE_SWEEP",
           "fvg": "BULLISH 121130.0000~122070.0000",
-          "score": 5
+          "score": 1
         },
         "fresh": true,
-        "ageMinutes": 28.3
+        "ageMinutes": 24.1
       }
     },
     {
@@ -390,24 +390,17 @@
       "dailySignalEligible": false,
       "trigger": {
         "ready": false,
-        "breakout": true,
-        "reclaim": false,
-        "volumeRatio": 0.406,
-        "volumeThreshold": 1.2,
-        "ema20": 27328.530484,
-        "ema50": 27325.559685,
-        "lastTimestamp": "2026-08-25T04:30:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=0.41x/1.20x; ICT=NEUTRAL/CHOCH_UP/NONE",
+        "reason": "15분봉 부족",
         "ict": {
-          "bias": "NEUTRAL",
-          "structure": "BEARISH_LH_LL",
-          "event": "CHOCH_UP",
+          "bias": "UNKNOWN",
+          "structure": "INSUFFICIENT_DATA",
+          "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BULLISH 27440.0000~27455.0000",
-          "score": 1
+          "fvg": "NONE",
+          "score": 0
         },
-        "fresh": true,
-        "ageMinutes": 28.3
+        "fresh": false,
+        "ageMinutes": null
       }
     },
     {
@@ -420,22 +413,22 @@
         "ready": false,
         "breakout": true,
         "reclaim": false,
-        "volumeRatio": 0.424,
+        "volumeRatio": 0.574,
         "volumeThreshold": 1.2,
-        "ema20": 6484.997226,
-        "ema50": 6386.595044,
-        "lastTimestamp": "2026-08-25T04:30:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=0.42x/1.20x; ICT=BULLISH/NONE/NONE",
+        "ema20": 6531.069391,
+        "ema50": 6417.818992,
+        "lastTimestamp": "2026-08-25T05:15:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=0.57x/1.20x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
           "bias": "BULLISH",
           "structure": "BULLISH_HH_HL",
-          "event": "NONE",
+          "event": "BOS_UP",
           "liquidity": "NONE",
           "fvg": "BULLISH 6600.0000~6610.0000",
-          "score": 3
+          "score": 5
         },
         "fresh": true,
-        "ageMinutes": 28.3
+        "ageMinutes": 24.1
       }
     },
     {
@@ -446,24 +439,24 @@
       "dailySignalEligible": false,
       "trigger": {
         "ready": false,
-        "breakout": false,
+        "breakout": true,
         "reclaim": false,
-        "volumeRatio": 1.102,
+        "volumeRatio": 0.034,
         "volumeThreshold": 1.2,
-        "ema20": 51712.696523,
-        "ema50": 52070.648474,
-        "lastTimestamp": "2026-08-25T04:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=1.10x/1.20x; ICT=BULLISH/BOS_UP/NONE",
+        "ema20": 51777.157138,
+        "ema50": 52058.638667,
+        "lastTimestamp": "2026-08-25T05:15:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=0.03x/1.20x; ICT=BULLISH/NONE/NONE",
         "ict": {
           "bias": "BULLISH",
           "structure": "BULLISH_HH_HL",
-          "event": "BOS_UP",
+          "event": "NONE",
           "liquidity": "NONE",
           "fvg": "BULLISH 51835.0000~51900.0000",
-          "score": 5
+          "score": 3
         },
         "fresh": true,
-        "ageMinutes": 28.3
+        "ageMinutes": 24.1
       }
     },
     {
@@ -474,24 +467,24 @@
       "dailySignalEligible": false,
       "trigger": {
         "ready": false,
-        "breakout": false,
+        "breakout": true,
         "reclaim": false,
-        "volumeRatio": 0.161,
+        "volumeRatio": 0.063,
         "volumeThreshold": 1.2,
-        "ema20": 25187.137814,
-        "ema50": 25377.464996,
-        "lastTimestamp": "2026-08-25T04:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.16x/1.20x; ICT=BULLISH/BOS_UP/NONE",
+        "ema20": 25278.048375,
+        "ema50": 25395.943855,
+        "lastTimestamp": "2026-08-25T05:15:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=0.06x/1.20x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
           "bias": "BULLISH",
           "structure": "BULLISH_HH_HL",
           "event": "BOS_UP",
           "liquidity": "NONE",
-          "fvg": "BULLISH 25200.0000~25315.0000",
+          "fvg": "BULLISH 25465.0000~25500.0000",
           "score": 5
         },
         "fresh": true,
-        "ageMinutes": 28.3
+        "ageMinutes": 24.1
       }
     },
     {
@@ -502,14 +495,14 @@
       "dailySignalEligible": false,
       "trigger": {
         "ready": false,
-        "breakout": false,
+        "breakout": true,
         "reclaim": false,
-        "volumeRatio": 0.456,
+        "volumeRatio": 0.194,
         "volumeThreshold": 1.2,
-        "ema20": 104644.428556,
-        "ema50": 105657.860812,
-        "lastTimestamp": "2026-08-25T04:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.46x/1.20x; ICT=BULLISH/BOS_UP/NONE",
+        "ema20": 104961.986005,
+        "ema50": 105682.806833,
+        "lastTimestamp": "2026-08-25T05:15:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=0.19x/1.20x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
           "bias": "BULLISH",
           "structure": "BULLISH_HH_HL",
@@ -519,7 +512,7 @@
           "score": 5
         },
         "fresh": true,
-        "ageMinutes": 28.3
+        "ageMinutes": 24.1
       }
     },
     {
@@ -532,12 +525,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.054,
+        "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
-        "ema20": 37817.795726,
-        "ema50": 38182.007124,
-        "lastTimestamp": "2026-08-25T04:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.05x/1.20x; ICT=BULLISH/BOS_UP/NONE",
+        "ema20": 37967.14494,
+        "ema50": 38195.366239,
+        "lastTimestamp": "2026-08-25T05:19:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
           "bias": "BULLISH",
           "structure": "BULLISH_HH_HL",
@@ -547,7 +540,7 @@
           "score": 5
         },
         "fresh": true,
-        "ageMinutes": 28.3
+        "ageMinutes": 20.1
       }
     },
     {
@@ -560,12 +553,12 @@
         "ready": false,
         "breakout": true,
         "reclaim": false,
-        "volumeRatio": 0.479,
+        "volumeRatio": 0.458,
         "volumeThreshold": 1.2,
-        "ema20": 6843.195026,
-        "ema50": 6873.196935,
-        "lastTimestamp": "2026-08-25T04:30:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=0.48x/1.20x; ICT=BULLISH/BOS_UP/NONE",
+        "ema20": 6900.840344,
+        "ema50": 6895.007893,
+        "lastTimestamp": "2026-08-25T05:15:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=0.46x/1.20x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
           "bias": "BULLISH",
           "structure": "BULLISH_HH_HL",
@@ -575,7 +568,7 @@
           "score": 5
         },
         "fresh": true,
-        "ageMinutes": 28.3
+        "ageMinutes": 24.1
       }
     },
     {
@@ -585,15 +578,15 @@
       "relativeStrengthPercentile": 0.11538461538461539,
       "dailySignalEligible": false,
       "trigger": {
-        "ready": true,
+        "ready": false,
         "breakout": true,
         "reclaim": false,
-        "volumeRatio": 1.216,
+        "volumeRatio": 0.401,
         "volumeThreshold": 1.2,
-        "ema20": 14195.427401,
-        "ema50": 14222.459296,
-        "lastTimestamp": "2026-08-25T04:30:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=1.22x/1.20x; ICT=BULLISH/BOS_UP/NONE",
+        "ema20": 14255.124511,
+        "ema50": 14245.498098,
+        "lastTimestamp": "2026-08-25T05:15:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=0.40x/1.20x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
           "bias": "BULLISH",
           "structure": "BULLISH_HH_HL",
@@ -603,7 +596,7 @@
           "score": 5
         },
         "fresh": true,
-        "ageMinutes": 28.3
+        "ageMinutes": 24.1
       }
     },
     {
@@ -613,15 +606,15 @@
       "relativeStrengthPercentile": 0.15384615384615385,
       "dailySignalEligible": false,
       "trigger": {
-        "ready": true,
+        "ready": false,
         "breakout": true,
         "reclaim": false,
-        "volumeRatio": 2.216,
+        "volumeRatio": 0.267,
         "volumeThreshold": 1.2,
-        "ema20": 13916.069767,
-        "ema50": 13942.514073,
-        "lastTimestamp": "2026-08-25T04:30:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=2.22x/1.20x; ICT=BULLISH/BOS_UP/NONE",
+        "ema20": 13978.572558,
+        "ema50": 13966.879445,
+        "lastTimestamp": "2026-08-25T05:15:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=0.27x/1.20x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
           "bias": "BULLISH",
           "structure": "BULLISH_HH_HL",
@@ -631,7 +624,7 @@
           "score": 5
         },
         "fresh": true,
-        "ageMinutes": 28.3
+        "ageMinutes": 24.1
       }
     },
     {
@@ -642,14 +635,14 @@
       "dailySignalEligible": false,
       "trigger": {
         "ready": false,
-        "breakout": false,
+        "breakout": true,
         "reclaim": false,
-        "volumeRatio": 0.414,
+        "volumeRatio": 0.208,
         "volumeThreshold": 1.2,
-        "ema20": 104426.865041,
-        "ema50": 105435.019392,
-        "lastTimestamp": "2026-08-25T04:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.41x/1.20x; ICT=BULLISH/BOS_UP/NONE",
+        "ema20": 104744.347821,
+        "ema50": 105460.55866,
+        "lastTimestamp": "2026-08-25T05:15:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=0.21x/1.20x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
           "bias": "BULLISH",
           "structure": "BULLISH_HH_HL",
@@ -659,7 +652,7 @@
           "score": 5
         },
         "fresh": true,
-        "ageMinutes": 28.3
+        "ageMinutes": 24.1
       }
     },
     {
@@ -670,24 +663,24 @@
       "dailySignalEligible": false,
       "trigger": {
         "ready": false,
-        "breakout": true,
+        "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.238,
+        "volumeRatio": 0.206,
         "volumeThreshold": 1.2,
-        "ema20": 23868.152904,
-        "ema50": 23885.2389,
-        "lastTimestamp": "2026-08-25T04:30:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=0.24x/1.20x; ICT=BULLISH/BOS_UP/NONE",
+        "ema20": 23871.394517,
+        "ema50": 23884.750346,
+        "lastTimestamp": "2026-08-25T05:15:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.21x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
-          "bias": "BULLISH",
+          "bias": "NEUTRAL",
           "structure": "RANGE",
-          "event": "BOS_UP",
+          "event": "NONE",
           "liquidity": "NONE",
           "fvg": "BULLISH 23825.0000~23845.0000",
-          "score": 3
+          "score": 1
         },
         "fresh": true,
-        "ageMinutes": 28.3
+        "ageMinutes": 24.1
       }
     },
     {
@@ -698,24 +691,24 @@
       "dailySignalEligible": false,
       "trigger": {
         "ready": false,
-        "breakout": true,
+        "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.319,
+        "volumeRatio": 0.322,
         "volumeThreshold": 1.2,
-        "ema20": 26257.839771,
-        "ema50": 26276.444673,
-        "lastTimestamp": "2026-08-25T04:30:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=0.32x/1.20x; ICT=BULLISH/BOS_UP/NONE",
+        "ema20": 26261.1626,
+        "ema50": 26275.812729,
+        "lastTimestamp": "2026-08-25T05:15:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.32x/1.20x; ICT=BULLISH/NONE/NONE",
         "ict": {
           "bias": "BULLISH",
-          "structure": "RANGE",
-          "event": "BOS_UP",
+          "structure": "BULLISH_HH_HL",
+          "event": "NONE",
           "liquidity": "NONE",
           "fvg": "BULLISH 26210.0000~26230.0000",
           "score": 3
         },
         "fresh": true,
-        "ageMinutes": 28.3
+        "ageMinutes": 24.1
       }
     },
     {
@@ -726,24 +719,24 @@
       "dailySignalEligible": false,
       "trigger": {
         "ready": false,
-        "breakout": false,
+        "breakout": true,
         "reclaim": false,
-        "volumeRatio": 0.665,
+        "volumeRatio": 0.747,
         "volumeThreshold": 1.2,
-        "ema20": 26611.817771,
-        "ema50": 26678.249358,
-        "lastTimestamp": "2026-08-25T04:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.66x/1.20x; ICT=BULLISH/BOS_UP/NONE",
+        "ema20": 26622.910779,
+        "ema50": 26675.69605,
+        "lastTimestamp": "2026-08-25T05:15:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=0.75x/1.20x; ICT=BULLISH/NONE/NONE",
         "ict": {
           "bias": "BULLISH",
           "structure": "BULLISH_HH_HL",
-          "event": "BOS_UP",
+          "event": "NONE",
           "liquidity": "NONE",
           "fvg": "BULLISH 26635.0000~26645.0000",
-          "score": 5
+          "score": 3
         },
         "fresh": true,
-        "ageMinutes": 28.3
+        "ageMinutes": 24.1
       }
     },
     {
@@ -756,22 +749,22 @@
         "ready": false,
         "breakout": true,
         "reclaim": false,
-        "volumeRatio": 1.012,
+        "volumeRatio": 0.203,
         "volumeThreshold": 1.2,
-        "ema20": 178013.571231,
-        "ema50": 178455.975895,
-        "lastTimestamp": "2026-08-25T04:30:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=1.01x/1.20x; ICT=BULLISH/BOS_UP/NONE",
+        "ema20": 178084.303218,
+        "ema50": 178437.406221,
+        "lastTimestamp": "2026-08-25T05:15:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=0.20x/1.20x; ICT=BULLISH/NONE/NONE",
         "ict": {
           "bias": "BULLISH",
           "structure": "BULLISH_HH_HL",
-          "event": "BOS_UP",
+          "event": "NONE",
           "liquidity": "NONE",
           "fvg": "BULLISH 178155.0000~178260.0000",
-          "score": 5
+          "score": 3
         },
         "fresh": true,
-        "ageMinutes": 28.3
+        "ageMinutes": 24.1
       }
     },
     {
@@ -782,24 +775,24 @@
       "dailySignalEligible": false,
       "trigger": {
         "ready": false,
-        "breakout": true,
+        "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.262,
+        "volumeRatio": 0.162,
         "volumeThreshold": 1.2,
-        "ema20": 52841.306799,
-        "ema50": 52952.475552,
-        "lastTimestamp": "2026-08-25T04:30:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=0.26x/1.20x; ICT=BULLISH/BOS_UP/NONE",
+        "ema20": 52890.998526,
+        "ema50": 52960.976181,
+        "lastTimestamp": "2026-08-25T05:15:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.16x/1.20x; ICT=BULLISH/NONE/NONE",
         "ict": {
           "bias": "BULLISH",
-          "structure": "RANGE",
-          "event": "BOS_UP",
+          "structure": "BULLISH_HH_HL",
+          "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BULLISH 52780.0000~52840.0000",
+          "fvg": "BULLISH 53080.0000~53085.0000",
           "score": 3
         },
         "fresh": true,
-        "ageMinutes": 28.3
+        "ageMinutes": 24.1
       }
     },
     {
@@ -812,22 +805,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.376,
+        "volumeRatio": 0.312,
         "volumeThreshold": 1.2,
-        "ema20": 1056.365287,
-        "ema50": 1046.999695,
-        "lastTimestamp": "2026-08-25T04:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.38x/1.20x; ICT=BEARISH/BOS_DOWN/NONE",
+        "ema20": 1053.100804,
+        "ema50": 1046.623859,
+        "lastTimestamp": "2026-08-25T05:15:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.31x/1.20x; ICT=BEARISH/NONE/NONE",
         "ict": {
           "bias": "BEARISH",
           "structure": "BEARISH_LH_LL",
-          "event": "BOS_DOWN",
+          "event": "NONE",
           "liquidity": "NONE",
           "fvg": "BEARISH 1052.0000~1055.0000",
-          "score": -5
+          "score": -3
         },
         "fresh": true,
-        "ageMinutes": 28.3
+        "ageMinutes": 24.1
       }
     },
     {
@@ -840,22 +833,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.47,
+        "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
-        "ema20": 18121.124884,
-        "ema50": 18076.002046,
-        "lastTimestamp": "2026-08-25T04:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.47x/1.20x; ICT=BULLISH/NONE/NONE",
+        "ema20": 18206.446405,
+        "ema50": 18121.077543,
+        "lastTimestamp": "2026-08-25T05:19:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
-          "bias": "BULLISH",
-          "structure": "BULLISH_HH_HL",
+          "bias": "NEUTRAL",
+          "structure": "RANGE",
           "event": "NONE",
           "liquidity": "NONE",
           "fvg": "BULLISH 18285.0000~18330.0000",
-          "score": 3
+          "score": 1
         },
         "fresh": true,
-        "ageMinutes": 28.3
+        "ageMinutes": 20.1
       }
     },
     {
@@ -866,14 +859,14 @@
       "dailySignalEligible": false,
       "trigger": {
         "ready": false,
-        "breakout": false,
+        "breakout": true,
         "reclaim": false,
-        "volumeRatio": 0.053,
+        "volumeRatio": 0.064,
         "volumeThreshold": 1.2,
-        "ema20": 41347.570849,
-        "ema50": 41655.201332,
-        "lastTimestamp": "2026-08-25T04:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.05x/1.20x; ICT=BULLISH/BOS_UP/NONE",
+        "ema20": 41412.632336,
+        "ema50": 41648.910049,
+        "lastTimestamp": "2026-08-25T05:15:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=0.06x/1.20x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
           "bias": "BULLISH",
           "structure": "BULLISH_HH_HL",
@@ -883,7 +876,7 @@
           "score": 5
         },
         "fresh": true,
-        "ageMinutes": 28.3
+        "ageMinutes": 24.1
       }
     },
     {
@@ -896,22 +889,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.634,
+        "volumeRatio": 0.263,
         "volumeThreshold": 1.2,
-        "ema20": 2448.549451,
-        "ema50": 2443.968624,
-        "lastTimestamp": "2026-08-25T04:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.63x/1.20x; ICT=BEARISH/BOS_DOWN/NONE",
+        "ema20": 2438.989618,
+        "ema50": 2440.320953,
+        "lastTimestamp": "2026-08-25T05:15:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.26x/1.20x; ICT=BEARISH/NONE/NONE",
         "ict": {
           "bias": "BEARISH",
           "structure": "BEARISH_LH_LL",
-          "event": "BOS_DOWN",
+          "event": "NONE",
           "liquidity": "NONE",
           "fvg": "BEARISH 2425.0000~2432.0000",
-          "score": -5
+          "score": -3
         },
         "fresh": true,
-        "ageMinutes": 28.3
+        "ageMinutes": 24.1
       }
     },
     {
@@ -939,7 +932,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 328.3
+        "ageMinutes": 369.1
       }
     },
     {
@@ -967,7 +960,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 313.3
+        "ageMinutes": 354.1
       }
     },
     {
@@ -995,7 +988,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 313.3
+        "ageMinutes": 354.1
       }
     }
   ],
