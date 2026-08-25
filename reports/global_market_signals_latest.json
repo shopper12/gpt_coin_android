@@ -1,20 +1,20 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-08-25T22:01:43.902546+09:00",
+  "generatedAtKst": "2026-08-25T23:06:27.281346+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
     "shortlistCount": 423,
     "krEtfShortlistCount": 34,
-    "dailyMetricsCount": 400,
-    "dailyCandidateCount": 36,
+    "dailyMetricsCount": 401,
+    "dailyCandidateCount": 40,
     "krEtfDailyCandidateCount": 27,
-    "strictDailyCandidateCount": 9,
+    "strictDailyCandidateCount": 13,
     "krEtfSignalEligibleCount": 0,
-    "intradayEvaluatedCount": 36,
+    "intradayEvaluatedCount": 40,
     "krEtfIntradayEvaluatedCount": 27,
-    "signalCount": 4,
-    "scannerSignalCount": 0,
+    "signalCount": 5,
+    "scannerSignalCount": 1,
     "chatgptSignalCount": 4,
     "krEtfSignalCount": 0,
     "dailyCacheHit": false,
@@ -24,7 +24,7 @@
     "panic": false,
     "riskOff": false,
     "equityBelow200Count": 0,
-    "realizedVolatility20Annualized": 0.2226,
+    "realizedVolatility20Annualized": 0.2189,
     "reason": "광의 추세와 변동성 정상"
   },
   "signals": [
@@ -155,6 +155,105 @@
       "invalidation": "99.2달러 하회 또는 금 현물과 GDX 상대강도 동시 붕괴",
       "quoteStatus": "US_AFTER_HOURS_VERIFIED_0619KST",
       "priceTimestampKst": "2026-08-25T06:19:00+09:00"
+    },
+    {
+      "id": "XBI-LONG-20260825T1400000000-EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
+      "date": "2026-08-25",
+      "generatedAtKst": "2026-08-25T23:06:27.281346+09:00",
+      "signalTimestamp": "2026-08-25T14:00:00+00:00",
+      "assetClass": "ETF",
+      "market": "US",
+      "ticker": "XBI",
+      "name": "SPDR S&P Biotech ETF",
+      "direction": "LONG",
+      "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM: 절대추세+상대모멘텀+15분 트리거+변동성 목표",
+      "strategyType": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
+      "referencePrice": 168.682693,
+      "currentPrice": 168.682693,
+      "previousClose": 164.169998,
+      "todayChangePct": 2.749,
+      "recentCloses": [
+        156.220001,
+        152.0,
+        154.259995,
+        150.940002,
+        154.5,
+        152.110001,
+        152.229996,
+        150.479996,
+        150.589996,
+        149.779999,
+        147.910004,
+        151.460007,
+        147.009995,
+        147.309998,
+        151.880005,
+        153.009995,
+        154.5,
+        157.369995,
+        158.029999,
+        158.070007,
+        159.389999,
+        156.860001,
+        157.410004,
+        159.529999,
+        160.110001,
+        169.550003,
+        163.380005,
+        165.729996,
+        164.169998,
+        168.682693
+      ],
+      "currency": "USD",
+      "status": "ACTIVE_SIGNAL",
+      "score": 88.3,
+      "confidence": 8.8,
+      "relativeStrengthPercentile": 0.9054,
+      "entryLow": 166.995867,
+      "entryHigh": 169.580439,
+      "stopLoss": 158.807493,
+      "target1": 188.433095,
+      "target2": 200.283336,
+      "riskPct": 5.85,
+      "volatilityTargetExposurePct": 36.3,
+      "regime": {
+        "panic": false,
+        "riskOff": false,
+        "equityBelow200Count": 0,
+        "realizedVolatility20Annualized": 0.2189,
+        "reason": "광의 추세와 변동성 정상"
+      },
+      "ict": {
+        "bias": "BULLISH",
+        "structure": "RANGE",
+        "event": "BOS_UP",
+        "liquidity": "NONE",
+        "fvg": "BULLISH 165.6600~167.6600",
+        "score": 3
+      },
+      "trigger": {
+        "ready": true,
+        "breakout": true,
+        "reclaim": false,
+        "volumeRatio": 3.336,
+        "volumeThreshold": 1.35,
+        "ema20": 166.107066,
+        "ema50": 165.393319,
+        "lastTimestamp": "2026-08-25T14:00:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=3.34x/1.35x; ICT=BULLISH/BOS_UP/NONE",
+        "ict": {
+          "bias": "BULLISH",
+          "structure": "RANGE",
+          "event": "BOS_UP",
+          "liquidity": "NONE",
+          "fvg": "BULLISH 165.6600~167.6600",
+          "score": 3
+        },
+        "fresh": true,
+        "ageMinutes": 8.6
+      },
+      "reason": "3/6/12개월 절대 모멘텀 양수, 200일선 상단, 자산군 상대강도 91백분위, breakout=True; reclaim=False; volume=3.34x/1.35x; ICT=BULLISH/BOS_UP/NONE",
+      "guardrail": "자동 추천은 주문이 아니다. 실시간 호가·슬리피지·공시·거래 가능 여부를 확인한다."
     }
   ],
   "topEvaluated": [
@@ -183,7 +282,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 408.8
+        "ageMinutes": 473.6
       }
     },
     {
@@ -211,7 +310,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 393.8
+        "ageMinutes": 458.6
       }
     },
     {
@@ -239,7 +338,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 408.8
+        "ageMinutes": 473.6
       }
     },
     {
@@ -267,7 +366,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 393.8
+        "ageMinutes": 458.6
       }
     },
     {
@@ -295,7 +394,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 393.8
+        "ageMinutes": 458.6
       }
     },
     {
@@ -323,7 +422,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 393.8
+        "ageMinutes": 458.6
       }
     },
     {
@@ -351,7 +450,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 393.8
+        "ageMinutes": 458.6
       }
     },
     {
@@ -379,7 +478,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 408.8
+        "ageMinutes": 473.6
       }
     },
     {
@@ -407,7 +506,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 393.8
+        "ageMinutes": 458.6
       }
     },
     {
@@ -435,7 +534,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 393.8
+        "ageMinutes": 458.6
       }
     },
     {
@@ -463,7 +562,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 408.8
+        "ageMinutes": 473.6
       }
     },
     {
@@ -491,7 +590,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 408.8
+        "ageMinutes": 473.6
       }
     },
     {
@@ -519,7 +618,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 393.8
+        "ageMinutes": 458.6
       }
     },
     {
@@ -547,7 +646,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 393.8
+        "ageMinutes": 458.6
       }
     },
     {
@@ -575,7 +674,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 393.8
+        "ageMinutes": 458.6
       }
     },
     {
@@ -603,7 +702,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 393.8
+        "ageMinutes": 458.6
       }
     },
     {
@@ -631,7 +730,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 408.8
+        "ageMinutes": 473.6
       }
     },
     {
@@ -659,7 +758,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 393.8
+        "ageMinutes": 458.6
       }
     },
     {
@@ -687,7 +786,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 393.8
+        "ageMinutes": 458.6
       }
     },
     {
@@ -715,7 +814,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 393.8
+        "ageMinutes": 458.6
       }
     },
     {
@@ -743,7 +842,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 408.8
+        "ageMinutes": 473.6
       }
     },
     {
@@ -771,7 +870,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 408.8
+        "ageMinutes": 473.6
       }
     },
     {
@@ -799,7 +898,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 393.8
+        "ageMinutes": 458.6
       }
     },
     {
@@ -827,7 +926,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 393.8
+        "ageMinutes": 458.6
       }
     },
     {
@@ -855,7 +954,7 @@
           "score": -5
         },
         "fresh": false,
-        "ageMinutes": 408.8
+        "ageMinutes": 473.6
       }
     },
     {
@@ -883,7 +982,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 393.8
+        "ageMinutes": 458.6
       }
     },
     {
@@ -911,7 +1010,35 @@
           "score": -5
         },
         "fresh": false,
-        "ageMinutes": 408.8
+        "ageMinutes": 473.6
+      }
+    },
+    {
+      "ticker": "TVTX",
+      "name": "Travere Therapeutics, Inc. - Common Stock",
+      "dailyScore": 90.97,
+      "relativeStrengthPercentile": 0.9194915254237288,
+      "dailySignalEligible": true,
+      "trigger": {
+        "ready": false,
+        "breakout": false,
+        "reclaim": false,
+        "volumeRatio": 0.776,
+        "volumeThreshold": 1.35,
+        "ema20": 65.709338,
+        "ema50": 65.488048,
+        "lastTimestamp": "2026-08-25T14:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.78x/1.35x; ICT=NEUTRAL/NONE/NONE",
+        "ict": {
+          "bias": "NEUTRAL",
+          "structure": "RANGE",
+          "event": "NONE",
+          "liquidity": "NONE",
+          "fvg": "BULLISH 65.6500~65.7400",
+          "score": 1
+        },
+        "fresh": true,
+        "ageMinutes": 8.6
       }
     },
     {
@@ -924,82 +1051,54 @@
         "ready": false,
         "breakout": true,
         "reclaim": false,
-        "volumeRatio": 0.0,
+        "volumeRatio": 1.464,
         "volumeThreshold": 1.35,
-        "ema20": 79.75047,
-        "ema50": 79.7086,
-        "lastTimestamp": "2026-08-25T12:45:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 79.753099,
+        "ema50": 79.715357,
+        "lastTimestamp": "2026-08-25T14:00:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=1.46x/1.35x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BEARISH 79.7700~79.8500",
-          "score": -1
+          "fvg": "BULLISH 79.7600~79.7750",
+          "score": 1
         },
         "fresh": true,
-        "ageMinutes": 18.8
+        "ageMinutes": 8.6
       }
     },
     {
       "ticker": "RVMD",
       "name": "Revolution Medicines, Inc. - Common Stock",
-      "dailyScore": 84.88,
-      "relativeStrengthPercentile": 0.9576271186440678,
+      "dailyScore": 84.46,
+      "relativeStrengthPercentile": 0.9491525423728814,
       "dailySignalEligible": true,
       "trigger": {
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.0,
+        "volumeRatio": 3.03,
         "volumeThreshold": 1.35,
-        "ema20": 212.103008,
-        "ema50": 211.221403,
-        "lastTimestamp": "2026-08-25T13:02:07+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 212.815065,
+        "ema50": 211.666214,
+        "lastTimestamp": "2026-08-25T14:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=3.03x/1.35x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BULLISH 212.9110~213.0000",
+          "fvg": "BULLISH 213.0000~213.7800",
           "score": 1
         },
         "fresh": true,
-        "ageMinutes": 1.7
-      }
-    },
-    {
-      "ticker": "TVTX",
-      "name": "Travere Therapeutics, Inc. - Common Stock",
-      "dailyScore": 82.76,
-      "relativeStrengthPercentile": 0.9152542372881356,
-      "dailySignalEligible": true,
-      "trigger": {
-        "ready": false,
-        "breakout": false,
-        "reclaim": false,
-        "volumeRatio": 0.0,
-        "volumeThreshold": 1.35,
-        "ema20": 65.274654,
-        "ema50": 65.291789,
-        "lastTimestamp": "2026-08-25T12:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=BEARISH/BOS_DOWN/NONE",
-        "ict": {
-          "bias": "BEARISH",
-          "structure": "RANGE",
-          "event": "BOS_DOWN",
-          "liquidity": "NONE",
-          "fvg": "BEARISH 65.6600~65.8217",
-          "score": -3
-        },
-        "fresh": true,
-        "ageMinutes": 18.8
+        "ageMinutes": 8.6
       }
     }
   ],
-  "historyRecordCount": 410,
+  "historyRecordCount": 411,
   "researchBasis": [
     "time-series momentum",
     "cross-sectional momentum",
