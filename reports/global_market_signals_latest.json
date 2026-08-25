@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-08-25T10:54:34.475829+09:00",
+  "generatedAtKst": "2026-08-25T11:30:54.058122+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
-    "shortlistCount": 422,
+    "shortlistCount": 423,
     "krEtfShortlistCount": 34,
     "dailyMetricsCount": 396,
     "dailyCandidateCount": 36,
@@ -17,7 +17,7 @@
     "scannerSignalCount": 0,
     "chatgptSignalCount": 4,
     "krEtfSignalCount": 0,
-    "dailyCacheHit": false,
+    "dailyCacheHit": true,
     "maxSignalAgeMinutes": 45
   },
   "marketRegime": {
@@ -29,10 +29,106 @@
   },
   "signals": [
     {
-      "id": "20260825-0750KST-GDX-LONG",
+      "id": "20260825-1130KST-000880-LONG",
       "date": "2026-08-25",
-      "generatedAtKst": "2026-08-25T07:50:00+09:00",
-      "briefingSlot": "0750",
+      "generatedAtKst": "2026-08-25T11:30:00+09:00",
+      "briefingSlot": "1130",
+      "assetClass": "KR_STOCK",
+      "market": "KRX",
+      "ticker": "000880",
+      "name": "한화",
+      "direction": "LONG",
+      "strategy": "115000~121000원 눌림에서 분할; 재상장 첫날 125000원 이상 재급등 추격 금지",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "status": "CONDITIONAL",
+      "score": 95,
+      "confidence": 84,
+      "currentPrice": 117300,
+      "referencePrice": 117300,
+      "currency": "KRW",
+      "entryLow": 115000,
+      "entryHigh": 121000,
+      "stopLoss": 108000,
+      "target1": 130000,
+      "target2": 140000,
+      "holdingPeriod": "1~10거래일",
+      "committeeVote": "6/7",
+      "catalyst": "인적분할 후 재상장 첫날 구조적 할인 축소와 주주환원 재평가",
+      "reason": "시장 급락 속 한화와 신설법인이 동반 급등. 09:50 한화 117300원(+16.60%)으로 확인되며 시장 대비 독립 RS가 압도적",
+      "risk": "재상장 첫날 가격발견 변동성, 오전 고점 12만원대 후 차익실현, 시장 전반 급락",
+      "invalidation": "108000원 하회 또는 신설법인 동반 강세 붕괴",
+      "quoteStatus": "KR_INTRADAY_VERIFIED_0950KST",
+      "priceTimestampKst": "2026-08-25T09:50:00+09:00"
+    },
+    {
+      "id": "20260825-1130KST-105560-LONG",
+      "date": "2026-08-25",
+      "generatedAtKst": "2026-08-25T11:30:00+09:00",
+      "briefingSlot": "1130",
+      "assetClass": "KR_STOCK",
+      "market": "KRX",
+      "ticker": "105560",
+      "name": "KB금융",
+      "direction": "LONG",
+      "strategy": "163000~166000원에서 시장대비 상대강도 유지 시 분할",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "status": "CONDITIONAL",
+      "score": 89,
+      "confidence": 80,
+      "currentPrice": 165800,
+      "referencePrice": 165800,
+      "currency": "KRW",
+      "entryLow": 163000,
+      "entryHigh": 166000,
+      "stopLoss": 158000,
+      "target1": 172000,
+      "target2": 178000,
+      "holdingPeriod": "2~15거래일",
+      "committeeVote": "5/7",
+      "catalyst": "급락장 금융·보험 상대강도, 7000억원 자사주 취득 계약 및 견조한 상반기 실적",
+      "reason": "11:04 확인가 165800원. KOSPI -1.91%, KOSPI200 -2.13% 시점에도 KB금융은 전일 추천가 대비 +1.84%로 방어력 확인",
+      "risk": "시장 전반 추가 투매, 금융주 동반 차익실현, 감독당국 검사 이벤트",
+      "invalidation": "158000원 하회 또는 금융/보험 상대강도 붕괴",
+      "quoteStatus": "KR_INTRADAY_VERIFIED_1104KST",
+      "priceTimestampKst": "2026-08-25T11:04:00+09:00"
+    },
+    {
+      "id": "20260825-1130KST-SSG-INVERSE",
+      "date": "2026-08-25",
+      "generatedAtKst": "2026-08-25T11:30:00+09:00",
+      "briefingSlot": "1130",
+      "assetClass": "US_ETF",
+      "market": "NYSEARCA",
+      "ticker": "SSG",
+      "name": "ProShares UltraShort Semiconductors",
+      "direction": "INVERSE",
+      "strategy": "13.2~13.5달러 구간에서 반도체 약세 지속 확인 시 진입; NVDA 강반전 시 취소",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "status": "CONDITIONAL",
+      "score": 91,
+      "confidence": 82,
+      "currentPrice": 13.41,
+      "referencePrice": 13.41,
+      "currency": "USD",
+      "entryLow": 13.2,
+      "entryHigh": 13.5,
+      "stopLoss": 12.55,
+      "target1": 14.5,
+      "target2": 15.8,
+      "holdingPeriod": "1~5거래일",
+      "committeeVote": "6/7",
+      "catalyst": "SOX -2.70%, NVDA·MU·AVGO 약세에 이어 한국 삼성전자·SK하이닉스 오전 동반 급락",
+      "reason": "미국 반도체 약세가 한국 오전장으로 실제 전염돼 글로벌 반도체 risk-off가 교차확인됨",
+      "risk": "Nvidia 실적 기대 숏커버, 레버리지 ETF 일일 재설정, 금리 하락에 따른 성장주 급반등",
+      "invalidation": "12.55달러 하회 또는 SOX/한국 반도체 동반 강반전",
+      "quoteStatus": "US_AFTER_HOURS_VERIFIED_0600KST",
+      "priceTimestampKst": "2026-08-25T06:00:00+09:00"
+    },
+    {
+      "id": "20260825-1130KST-GDX-LONG",
+      "date": "2026-08-25",
+      "generatedAtKst": "2026-08-25T11:30:00+09:00",
+      "briefingSlot": "1130",
       "assetClass": "US_ETF",
       "market": "NYSEARCA",
       "ticker": "GDX",
@@ -41,8 +137,8 @@
       "strategy": "102.3~103.8달러 눌림에서만 분할; 105달러 이상 추격 금지",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
-      "score": 94,
-      "confidence": 87,
+      "score": 90,
+      "confidence": 84,
       "currentPrice": 103.67,
       "referencePrice": 103.67,
       "currency": "USD",
@@ -53,108 +149,12 @@
       "target2": 112.0,
       "holdingPeriod": "3~15거래일",
       "committeeVote": "6/7",
-      "catalyst": "현물 금 3개월 고점권 지속·미 장기금리 하락·기술주 약세 속 안전자산 상대강도",
-      "reason": "8/24 정규장 103.54(+0.69%) 마감 후 애프터마켓 103.67. 8/19 이후 급등 뒤에도 후속 매수 유지, 금 현물도 4647달러대 강세로 기초자산 확인",
-      "risk": "4거래일 누적 급등에 따른 과열, 금리 반등, 달러 반등",
+      "catalyst": "금 4거래일 연속 강세·미국 재정/달러 불안 헤지·주식 변동성 확대",
+      "reason": "Comex 금 8/24 4640.80달러로 4거래일 연속 상승. 한국 오전 risk-off에서도 하드에셋 방어 논리가 유지",
+      "risk": "금 누적 급등 과열, 달러 반등, 실질금리 상승",
       "invalidation": "99.2달러 하회 또는 금 현물과 GDX 상대강도 동시 붕괴",
       "quoteStatus": "US_AFTER_HOURS_VERIFIED_0619KST",
       "priceTimestampKst": "2026-08-25T06:19:00+09:00"
-    },
-    {
-      "id": "20260825-0750KST-128940-LONG",
-      "date": "2026-08-25",
-      "generatedAtKst": "2026-08-25T07:50:00+09:00",
-      "briefingSlot": "0750",
-      "assetClass": "KR_STOCK",
-      "market": "KRX",
-      "ticker": "128940",
-      "name": "한미약품",
-      "direction": "LONG",
-      "strategy": "510000~530000원 범위에서 갭 과열 해소·지지 확인 시 분할; 상한가 연장 추격 금지",
-      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "status": "CONDITIONAL",
-      "score": 93,
-      "confidence": 82,
-      "currentPrice": 540000,
-      "referencePrice": 540000,
-      "currency": "KRW",
-      "entryLow": 510000,
-      "entryHigh": 530000,
-      "stopLoss": 488000,
-      "target1": 590000,
-      "target2": 640000,
-      "holdingPeriod": "2~15거래일",
-      "committeeVote": "6/7",
-      "catalyst": "제넨텍과 비만 신약 HM17321 기술이전 계약, 총 계약 규모 23.05억달러",
-      "reason": "8/24 상한가 540000원(+29.96%), 거래량 514547주로 전일 대비 크게 증가. 단 가격 extension이 커 눌림 확인 없이는 실행하지 않음",
-      "risk": "상한가 다음날 갭 반락, 기술이전 세부 마일스톤 불확실성, 단기 과열",
-      "invalidation": "488000원 하회 또는 전일 상한가 돌파 실패 후 대량거래 음봉 전환",
-      "quoteStatus": "KR_EOD_VERIFIED_1530",
-      "priceTimestampKst": "2026-08-24T15:30:00+09:00"
-    },
-    {
-      "id": "20260825-0750KST-MA-LONG",
-      "date": "2026-08-25",
-      "generatedAtKst": "2026-08-25T07:50:00+09:00",
-      "briefingSlot": "0750",
-      "assetClass": "US_STOCK",
-      "market": "NYSE",
-      "ticker": "MA",
-      "name": "Mastercard",
-      "direction": "LONG",
-      "strategy": "595~602달러에서 600달러 돌파 유지 확인 후 분할; 장대양봉 추격 금지",
-      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "status": "CONDITIONAL",
-      "score": 91,
-      "confidence": 84,
-      "currentPrice": 599.86,
-      "referencePrice": 599.86,
-      "currency": "USD",
-      "entryLow": 595.0,
-      "entryHigh": 602.0,
-      "stopLoss": 582.0,
-      "target1": 620.0,
-      "target2": 640.0,
-      "holdingPeriod": "3~20거래일",
-      "committeeVote": "6/7",
-      "catalyst": "미 기술주 약세와 무관한 결제 네트워크 상대강도·소비지출 견조·신고가권 돌파",
-      "reason": "8/24 599.86달러(+3.31%), 장중 599.99달러, 52주 고점 601.62달러에 근접. 1개월 +11.16%, 3개월 +21.67%로 다기간 RS 우수",
-      "risk": "600달러 심리적 저항, 소비 둔화, 시장 전반 risk-off 확대",
-      "invalidation": "582달러 하회 또는 600달러 돌파 후 종가 기준 빠른 실패",
-      "quoteStatus": "US_CLOSE_VERIFIED_0510KST",
-      "priceTimestampKst": "2026-08-25T05:10:00+09:00"
-    },
-    {
-      "id": "20260825-0750KST-SSG-INVERSE",
-      "date": "2026-08-25",
-      "generatedAtKst": "2026-08-25T07:50:00+09:00",
-      "briefingSlot": "0750",
-      "assetClass": "US_ETF",
-      "market": "NYSEARCA",
-      "ticker": "SSG",
-      "name": "ProShares UltraShort Semiconductors",
-      "direction": "INVERSE",
-      "strategy": "13.2~13.5달러에서 반도체 지수 약세 지속 확인 시만 진입; NVDA 급반등 시 취소",
-      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "status": "CONDITIONAL",
-      "score": 87,
-      "confidence": 75,
-      "currentPrice": 13.41,
-      "referencePrice": 13.41,
-      "currency": "USD",
-      "entryLow": 13.2,
-      "entryHigh": 13.5,
-      "stopLoss": 12.55,
-      "target1": 14.5,
-      "target2": 15.8,
-      "holdingPeriod": "1~5거래일",
-      "committeeVote": "5/7",
-      "catalyst": "NVDA -2.9%, MU -5.8%, AVGO -2.6%로 미국 반도체 동반 약세; Nvidia 실적 전 이벤트 리스크",
-      "reason": "8/24 정규장 13.37(+5.94%) 후 애프터 13.41. 주간 +19.06%로 반도체 하락 베타가 확인됐으나 레버리지 인버스라 짧게 운용",
-      "risk": "Nvidia 실적 기대 재유입, 금리 하락에 따른 성장주 숏커버, 일일 재설정 손실",
-      "invalidation": "12.55달러 하회 또는 SOX/SMH 강한 반전",
-      "quoteStatus": "US_AFTER_HOURS_VERIFIED_0600KST",
-      "priceTimestampKst": "2026-08-25T06:00:00+09:00"
     }
   ],
   "topEvaluated": [
@@ -166,14 +166,14 @@
       "dailySignalEligible": false,
       "trigger": {
         "ready": false,
-        "breakout": true,
+        "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.765,
+        "volumeRatio": 0.908,
         "volumeThreshold": 1.2,
-        "ema20": 15386.33923,
-        "ema50": 15366.465523,
-        "lastTimestamp": "2026-08-25T01:30:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=0.76x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 15391.144336,
+        "ema50": 15369.992281,
+        "lastTimestamp": "2026-08-25T02:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.91x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
@@ -183,7 +183,7 @@
           "score": 1
         },
         "fresh": true,
-        "ageMinutes": 27.1
+        "ageMinutes": 31.0
       }
     },
     {
@@ -194,24 +194,24 @@
       "dailySignalEligible": false,
       "trigger": {
         "ready": false,
-        "breakout": true,
+        "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.324,
+        "volumeRatio": 0.508,
         "volumeThreshold": 1.2,
-        "ema20": 15696.872345,
-        "ema50": 15608.040054,
-        "lastTimestamp": "2026-08-25T01:30:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=0.32x/1.20x; ICT=NEUTRAL/NONE/BUY_SIDE_SWEEP",
+        "ema20": 15735.186185,
+        "ema50": 15631.102126,
+        "lastTimestamp": "2026-08-25T02:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.51x/1.20x; ICT=BULLISH/NONE/NONE",
         "ict": {
-          "bias": "NEUTRAL",
+          "bias": "BULLISH",
           "structure": "BULLISH_HH_HL",
           "event": "NONE",
-          "liquidity": "BUY_SIDE_SWEEP",
+          "liquidity": "NONE",
           "fvg": "BULLISH 15585.0000~15590.0000",
-          "score": 1
+          "score": 3
         },
         "fresh": true,
-        "ageMinutes": 27.1
+        "ageMinutes": 31.0
       }
     },
     {
@@ -224,22 +224,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.284,
+        "volumeRatio": 0.19,
         "volumeThreshold": 1.2,
-        "ema20": 10045.474449,
-        "ema50": 9983.448518,
-        "lastTimestamp": "2026-08-25T01:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.28x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 10033.330284,
+        "ema50": 9982.960059,
+        "lastTimestamp": "2026-08-25T02:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.19x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
-          "structure": "BEARISH_LH_LL",
+          "structure": "RANGE",
           "event": "NONE",
           "liquidity": "NONE",
           "fvg": "BULLISH 9870.0000~9990.0000",
-          "score": -1
+          "score": 1
         },
         "fresh": true,
-        "ageMinutes": 27.1
+        "ageMinutes": 31.0
       }
     },
     {
@@ -252,22 +252,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.272,
+        "volumeRatio": 0.32,
         "volumeThreshold": 1.2,
-        "ema20": 14389.407031,
-        "ema50": 14322.289152,
-        "lastTimestamp": "2026-08-25T01:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.27x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 14361.298418,
+        "ema50": 14315.350869,
+        "lastTimestamp": "2026-08-25T02:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.32x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
-          "structure": "BEARISH_LH_LL",
+          "structure": "RANGE",
           "event": "NONE",
           "liquidity": "NONE",
           "fvg": "BULLISH 14125.0000~14285.0000",
-          "score": -1
+          "score": 1
         },
         "fresh": true,
-        "ageMinutes": 27.1
+        "ageMinutes": 31.0
       }
     },
     {
@@ -280,22 +280,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.16,
+        "volumeRatio": 0.14,
         "volumeThreshold": 1.2,
-        "ema20": 130669.723459,
-        "ema50": 132969.236942,
-        "lastTimestamp": "2026-08-25T01:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.16x/1.20x; ICT=BEARISH/NONE/NONE",
+        "ema20": 130275.491081,
+        "ema50": 132626.349288,
+        "lastTimestamp": "2026-08-25T02:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.14x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
-          "bias": "BEARISH",
-          "structure": "BEARISH_LH_LL",
+          "bias": "NEUTRAL",
+          "structure": "RANGE",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BEARISH 127615.0000~127630.0000",
-          "score": -3
+          "fvg": "BULLISH 127615.0000~128400.0000",
+          "score": 1
         },
         "fresh": true,
-        "ageMinutes": 27.1
+        "ageMinutes": 31.0
       }
     },
     {
@@ -308,22 +308,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.735,
+        "volumeRatio": 14.429,
         "volumeThreshold": 1.2,
-        "ema20": 101442.473064,
-        "ema50": 104557.23259,
-        "lastTimestamp": "2026-08-25T01:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.74x/1.20x; ICT=BEARISH/NONE/NONE",
+        "ema20": 101052.144176,
+        "ema50": 104153.201321,
+        "lastTimestamp": "2026-08-25T02:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=14.43x/1.20x; ICT=NEUTRAL/NONE/BUY_SIDE_SWEEP",
         "ict": {
-          "bias": "BEARISH",
-          "structure": "BEARISH_LH_LL",
+          "bias": "NEUTRAL",
+          "structure": "RANGE",
           "event": "NONE",
-          "liquidity": "NONE",
-          "fvg": "BEARISH 98085.0000~104015.0000",
-          "score": -3
+          "liquidity": "BUY_SIDE_SWEEP",
+          "fvg": "BULLISH 97855.0000~99130.0000",
+          "score": -1
         },
         "fresh": true,
-        "ageMinutes": 27.1
+        "ageMinutes": 31.0
       }
     },
     {
@@ -336,22 +336,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.104,
+        "volumeRatio": 0.1,
         "volumeThreshold": 1.2,
-        "ema20": 127152.823287,
-        "ema50": 129536.823586,
-        "lastTimestamp": "2026-08-25T01:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.10x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 127025.887343,
+        "ema50": 129302.438784,
+        "lastTimestamp": "2026-08-25T02:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.10x/1.20x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
-          "bias": "NEUTRAL",
-          "structure": "BEARISH_LH_LL",
-          "event": "NONE",
+          "bias": "BULLISH",
+          "structure": "RANGE",
+          "event": "BOS_UP",
           "liquidity": "NONE",
-          "fvg": "BULLISH 124070.0000~124135.0000",
-          "score": -1
+          "fvg": "BULLISH 124755.0000~125950.0000",
+          "score": 3
         },
         "fresh": true,
-        "ageMinutes": 27.1
+        "ageMinutes": 31.0
       }
     },
     {
@@ -364,22 +364,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.395,
+        "volumeRatio": 0.289,
         "volumeThreshold": 1.2,
-        "ema20": 120313.328527,
-        "ema50": 122544.371844,
-        "lastTimestamp": "2026-08-25T01:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.40x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 120117.130207,
+        "ema50": 122291.350315,
+        "lastTimestamp": "2026-08-25T02:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.29x/1.20x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
-          "bias": "NEUTRAL",
-          "structure": "BEARISH_LH_LL",
-          "event": "NONE",
+          "bias": "BULLISH",
+          "structure": "RANGE",
+          "event": "BOS_UP",
           "liquidity": "NONE",
-          "fvg": "BULLISH 117322.0000~117345.0000",
-          "score": -1
+          "fvg": "BULLISH 117855.0000~118965.0000",
+          "score": 3
         },
         "fresh": true,
-        "ageMinutes": 27.1
+        "ageMinutes": 31.0
       }
     },
     {
@@ -392,22 +392,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.496,
+        "volumeRatio": 1.314,
         "volumeThreshold": 1.2,
-        "ema20": 6301.731039,
-        "ema50": 6284.678225,
-        "lastTimestamp": "2026-08-25T01:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.50x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 6330.61041,
+        "ema50": 6298.181208,
+        "lastTimestamp": "2026-08-25T02:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=1.31x/1.20x; ICT=BULLISH/NONE/NONE",
         "ict": {
-          "bias": "NEUTRAL",
-          "structure": "RANGE",
+          "bias": "BULLISH",
+          "structure": "BULLISH_HH_HL",
           "event": "NONE",
           "liquidity": "NONE",
           "fvg": "BULLISH 6377.0000~6380.0000",
-          "score": 1
+          "score": 3
         },
         "fresh": true,
-        "ageMinutes": 27.1
+        "ageMinutes": 31.0
       }
     },
     {
@@ -420,22 +420,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.81,
+        "volumeRatio": 0.495,
         "volumeThreshold": 1.2,
-        "ema20": 51741.627732,
-        "ema50": 52317.864662,
-        "lastTimestamp": "2026-08-25T01:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.81x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 51698.683695,
+        "ema50": 52255.250282,
+        "lastTimestamp": "2026-08-25T02:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.49x/1.20x; ICT=BEARISH/NONE/BUY_SIDE_SWEEP",
         "ict": {
-          "bias": "NEUTRAL",
+          "bias": "BEARISH",
           "structure": "BEARISH_LH_LL",
           "event": "NONE",
-          "liquidity": "NONE",
-          "fvg": "BULLISH 51185.0000~51350.0000",
-          "score": -1
+          "liquidity": "BUY_SIDE_SWEEP",
+          "fvg": "BULLISH 51420.0000~51445.0000",
+          "score": -3
         },
         "fresh": true,
-        "ageMinutes": 27.1
+        "ageMinutes": 31.0
       }
     },
     {
@@ -448,22 +448,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.172,
+        "volumeRatio": 0.372,
         "volumeThreshold": 1.2,
-        "ema20": 25195.137053,
-        "ema50": 25511.889502,
-        "lastTimestamp": "2026-08-25T01:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.17x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 25170.754119,
+        "ema50": 25477.453807,
+        "lastTimestamp": "2026-08-25T02:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.37x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
-          "structure": "BEARISH_LH_LL",
+          "structure": "RANGE",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BULLISH 24835.0000~24885.0000",
-          "score": -1
+          "fvg": "BULLISH 24935.0000~25030.0000",
+          "score": 1
         },
         "fresh": true,
-        "ageMinutes": 27.1
+        "ageMinutes": 31.0
       }
     },
     {
@@ -476,22 +476,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.977,
+        "volumeRatio": 0.911,
         "volumeThreshold": 1.2,
-        "ema20": 104885.287437,
-        "ema50": 106423.942537,
-        "lastTimestamp": "2026-08-25T01:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.98x/1.20x; ICT=BEARISH/NONE/NONE",
+        "ema20": 104687.528726,
+        "ema50": 106222.299347,
+        "lastTimestamp": "2026-08-25T02:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.91x/1.20x; ICT=NEUTRAL/NONE/BUY_SIDE_SWEEP",
         "ict": {
-          "bias": "BEARISH",
-          "structure": "BEARISH_LH_LL",
+          "bias": "NEUTRAL",
+          "structure": "RANGE",
           "event": "NONE",
-          "liquidity": "NONE",
-          "fvg": "BEARISH 103180.0000~106215.0000",
-          "score": -3
+          "liquidity": "BUY_SIDE_SWEEP",
+          "fvg": "BULLISH 103050.0000~103735.0000",
+          "score": -1
         },
         "fresh": true,
-        "ageMinutes": 27.1
+        "ageMinutes": 31.0
       }
     },
     {
@@ -504,22 +504,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.551,
+        "volumeRatio": 0.361,
         "volumeThreshold": 1.2,
-        "ema20": 104670.813464,
-        "ema50": 106197.49588,
-        "lastTimestamp": "2026-08-25T01:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.55x/1.20x; ICT=BEARISH/NONE/NONE",
+        "ema20": 104475.897459,
+        "ema50": 105998.077965,
+        "lastTimestamp": "2026-08-25T02:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.36x/1.20x; ICT=NEUTRAL/NONE/BUY_SIDE_SWEEP",
         "ict": {
-          "bias": "BEARISH",
-          "structure": "BEARISH_LH_LL",
+          "bias": "NEUTRAL",
+          "structure": "RANGE",
           "event": "NONE",
-          "liquidity": "NONE",
-          "fvg": "BEARISH 102970.0000~105995.0000",
-          "score": -3
+          "liquidity": "BUY_SIDE_SWEEP",
+          "fvg": "BULLISH 102875.0000~103530.0000",
+          "score": -1
         },
         "fresh": true,
-        "ageMinutes": 27.1
+        "ageMinutes": 31.0
       }
     },
     {
@@ -532,22 +532,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.523,
+        "volumeRatio": 0.231,
         "volumeThreshold": 1.2,
-        "ema20": 6779.820351,
-        "ema50": 6891.023037,
-        "lastTimestamp": "2026-08-25T01:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.52x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 6759.687727,
+        "ema50": 6874.03016,
+        "lastTimestamp": "2026-08-25T02:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.23x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
-          "structure": "BEARISH_LH_LL",
+          "structure": "RANGE",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BULLISH 6540.0000~6605.0000",
-          "score": -1
+          "fvg": "BULLISH 6620.0000~6650.0000",
+          "score": 1
         },
         "fresh": true,
-        "ageMinutes": 27.1
+        "ageMinutes": 31.0
       }
     },
     {
@@ -560,22 +560,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.564,
+        "volumeRatio": 0.342,
         "volumeThreshold": 1.2,
-        "ema20": 14123.943422,
-        "ema50": 14237.021766,
-        "lastTimestamp": "2026-08-25T01:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.56x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 14104.790524,
+        "ema50": 14220.321158,
+        "lastTimestamp": "2026-08-25T02:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.34x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
-          "structure": "BEARISH_LH_LL",
+          "structure": "RANGE",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BULLISH 13870.0000~13940.0000",
-          "score": -1
+          "fvg": "BULLISH 13950.0000~13995.0000",
+          "score": 1
         },
         "fresh": true,
-        "ageMinutes": 27.1
+        "ageMinutes": 31.0
       }
     },
     {
@@ -588,22 +588,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.237,
+        "volumeRatio": 0.253,
         "volumeThreshold": 1.2,
-        "ema20": 13849.352054,
-        "ema50": 13958.011794,
-        "lastTimestamp": "2026-08-25T01:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.24x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 13829.345415,
+        "ema50": 13941.276795,
+        "lastTimestamp": "2026-08-25T02:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.25x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
-          "structure": "BEARISH_LH_LL",
+          "structure": "RANGE",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BULLISH 13605.0000~13670.0000",
-          "score": -1
+          "fvg": "BULLISH 13685.0000~13720.0000",
+          "score": 1
         },
         "fresh": true,
-        "ageMinutes": 27.1
+        "ageMinutes": 31.0
       }
     },
     {
@@ -616,22 +616,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.256,
+        "volumeRatio": 0.913,
         "volumeThreshold": 1.2,
-        "ema20": 23848.768131,
-        "ema50": 23893.35714,
-        "lastTimestamp": "2026-08-25T01:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.26x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 23847.813538,
+        "ema50": 23889.431474,
+        "lastTimestamp": "2026-08-25T02:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.91x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
-          "structure": "RANGE",
+          "structure": "BEARISH_LH_LL",
           "event": "NONE",
           "liquidity": "NONE",
           "fvg": "BULLISH 23825.0000~23845.0000",
-          "score": 1
+          "score": -1
         },
         "fresh": true,
-        "ageMinutes": 27.1
+        "ageMinutes": 31.0
       }
     },
     {
@@ -644,22 +644,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.547,
+        "volumeRatio": 0.725,
         "volumeThreshold": 1.2,
-        "ema20": 26235.475131,
-        "ema50": 26285.195066,
-        "lastTimestamp": "2026-08-25T01:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.55x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 26234.210877,
+        "ema50": 26280.727006,
+        "lastTimestamp": "2026-08-25T02:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.73x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
-          "structure": "RANGE",
+          "structure": "BEARISH_LH_LL",
           "event": "NONE",
           "liquidity": "NONE",
           "fvg": "BULLISH 26210.0000~26230.0000",
-          "score": 1
+          "score": -1
         },
         "fresh": true,
-        "ageMinutes": 27.1
+        "ageMinutes": 31.0
       }
     },
     {
@@ -672,22 +672,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.0,
+        "volumeRatio": 0.303,
         "volumeThreshold": 1.2,
-        "ema20": 37862.313302,
-        "ema50": 38417.600861,
-        "lastTimestamp": "2026-08-25T01:37:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 37836.999565,
+        "ema50": 38385.758145,
+        "lastTimestamp": "2026-08-25T02:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.30x/1.20x; ICT=NEUTRAL/NONE/BUY_SIDE_SWEEP",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
           "event": "NONE",
-          "liquidity": "NONE",
-          "fvg": "BULLISH 37250.0000~37420.0000",
-          "score": 1
+          "liquidity": "BUY_SIDE_SWEEP",
+          "fvg": "BULLISH 37250.0000~37500.0000",
+          "score": -1
         },
         "fresh": true,
-        "ageMinutes": 20.1
+        "ageMinutes": 31.0
       }
     },
     {
@@ -700,22 +700,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 1.252,
+        "volumeRatio": 1.378,
         "volumeThreshold": 1.2,
-        "ema20": 26602.359386,
-        "ema50": 26721.948486,
-        "lastTimestamp": "2026-08-25T01:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=1.25x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 26591.334247,
+        "ema50": 26707.93614,
+        "lastTimestamp": "2026-08-25T02:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=1.38x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
-          "structure": "BEARISH_LH_LL",
+          "structure": "RANGE",
           "event": "NONE",
           "liquidity": "NONE",
           "fvg": "BULLISH 26510.0000~26545.0000",
-          "score": -1
+          "score": 1
         },
         "fresh": true,
-        "ageMinutes": 27.1
+        "ageMinutes": 31.0
       }
     },
     {
@@ -728,22 +728,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 2.206,
+        "volumeRatio": 1.492,
         "volumeThreshold": 1.2,
-        "ema20": 177945.330811,
-        "ema50": 178745.308491,
-        "lastTimestamp": "2026-08-25T01:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=2.21x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 177873.55281,
+        "ema50": 178652.439342,
+        "lastTimestamp": "2026-08-25T02:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=1.49x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
-          "structure": "BEARISH_LH_LL",
+          "structure": "RANGE",
           "event": "NONE",
           "liquidity": "NONE",
           "fvg": "BULLISH 177315.0000~177565.0000",
-          "score": -1
+          "score": 1
         },
         "fresh": true,
-        "ageMinutes": 27.1
+        "ageMinutes": 31.0
       }
     },
     {
@@ -756,22 +756,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.321,
+        "volumeRatio": 0.496,
         "volumeThreshold": 1.2,
-        "ema20": 52737.231754,
-        "ema50": 53011.431292,
-        "lastTimestamp": "2026-08-25T01:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.32x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 52748.785631,
+        "ema50": 52995.665958,
+        "lastTimestamp": "2026-08-25T02:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.50x/1.20x; ICT=BULLISH/NONE/NONE",
         "ict": {
-          "bias": "NEUTRAL",
-          "structure": "RANGE",
+          "bias": "BULLISH",
+          "structure": "BULLISH_HH_HL",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BEARISH 53015.0000~53055.0000",
-          "score": -1
+          "fvg": "BULLISH 52720.0000~52730.0000",
+          "score": 3
         },
         "fresh": true,
-        "ageMinutes": 27.1
+        "ageMinutes": 31.0
       }
     },
     {
@@ -784,22 +784,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.591,
+        "volumeRatio": 0.904,
         "volumeThreshold": 1.2,
-        "ema20": 1054.06365,
-        "ema50": 1039.827162,
-        "lastTimestamp": "2026-08-25T01:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.59x/1.20x; ICT=BULLISH/NONE/NONE",
+        "ema20": 1056.082122,
+        "ema50": 1041.775461,
+        "lastTimestamp": "2026-08-25T02:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.90x/1.20x; ICT=NEUTRAL/NONE/SELL_SIDE_SWEEP",
         "ict": {
-          "bias": "BULLISH",
-          "structure": "BULLISH_HH_HL",
+          "bias": "NEUTRAL",
+          "structure": "RANGE",
           "event": "NONE",
-          "liquidity": "NONE",
-          "fvg": "BULLISH 1040.0000~1070.0000",
-          "score": 3
+          "liquidity": "SELL_SIDE_SWEEP",
+          "fvg": "BEARISH 1066.0000~1072.0000",
+          "score": 1
         },
         "fresh": true,
-        "ageMinutes": 27.1
+        "ageMinutes": 31.0
       }
     },
     {
@@ -812,22 +812,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.294,
+        "volumeRatio": 0.299,
         "volumeThreshold": 1.2,
-        "ema20": 27165.076244,
-        "ema50": 27294.288714,
-        "lastTimestamp": "2026-08-25T01:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.29x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 27174.4102,
+        "ema50": 27288.125575,
+        "lastTimestamp": "2026-08-25T02:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.30x/1.20x; ICT=BULLISH/NONE/NONE",
         "ict": {
-          "bias": "NEUTRAL",
-          "structure": "RANGE",
+          "bias": "BULLISH",
+          "structure": "BULLISH_HH_HL",
           "event": "NONE",
           "liquidity": "NONE",
           "fvg": "BULLISH 27075.0000~27200.0000",
-          "score": 1
+          "score": 3
         },
         "fresh": true,
-        "ageMinutes": 27.1
+        "ageMinutes": 31.0
       }
     },
     {
@@ -840,12 +840,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.306,
+        "volumeRatio": 0.091,
         "volumeThreshold": 1.2,
-        "ema20": 17911.105038,
-        "ema50": 18010.054132,
-        "lastTimestamp": "2026-08-25T01:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.31x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 17921.535174,
+        "ema50": 18006.740939,
+        "lastTimestamp": "2026-08-25T02:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.09x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
@@ -855,7 +855,7 @@
           "score": 1
         },
         "fresh": true,
-        "ageMinutes": 27.1
+        "ageMinutes": 31.0
       }
     },
     {
@@ -868,22 +868,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 1.533,
+        "volumeRatio": 0.322,
         "volumeThreshold": 1.2,
-        "ema20": 41331.147544,
-        "ema50": 41859.182564,
-        "lastTimestamp": "2026-08-25T01:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=1.53x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 41295.452911,
+        "ema50": 41803.283155,
+        "lastTimestamp": "2026-08-25T02:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.32x/1.20x; ICT=NEUTRAL/NONE/BUY_SIDE_SWEEP",
         "ict": {
           "bias": "NEUTRAL",
-          "structure": "BEARISH_LH_LL",
+          "structure": "RANGE",
           "event": "NONE",
-          "liquidity": "NONE",
-          "fvg": "BULLISH 40900.0000~41020.0000",
+          "liquidity": "BUY_SIDE_SWEEP",
+          "fvg": "BULLISH 41070.0000~41080.0000",
           "score": -1
         },
         "fresh": true,
-        "ageMinutes": 27.1
+        "ageMinutes": 31.0
       }
     },
     {
@@ -896,22 +896,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.41,
+        "volumeRatio": 0.23,
         "volumeThreshold": 1.2,
-        "ema20": 2459.00072,
-        "ema50": 2441.163477,
-        "lastTimestamp": "2026-08-25T01:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.41x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 2462.506691,
+        "ema50": 2443.996915,
+        "lastTimestamp": "2026-08-25T02:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.23x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
-          "structure": "BULLISH_HH_HL",
+          "structure": "RANGE",
           "event": "NONE",
           "liquidity": "NONE",
           "fvg": "BEARISH 2495.0000~2500.0000",
-          "score": 1
+          "score": -1
         },
         "fresh": true,
-        "ageMinutes": 27.1
+        "ageMinutes": 31.0
       }
     },
     {
@@ -939,7 +939,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 147.1
+        "ageMinutes": 181.0
       }
     },
     {
@@ -967,7 +967,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 132.1
+        "ageMinutes": 166.0
       }
     },
     {
@@ -995,11 +995,11 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 132.1
+        "ageMinutes": 166.0
       }
     }
   ],
-  "historyRecordCount": 406,
+  "historyRecordCount": 410,
   "researchBasis": [
     "time-series momentum",
     "cross-sectional momentum",
