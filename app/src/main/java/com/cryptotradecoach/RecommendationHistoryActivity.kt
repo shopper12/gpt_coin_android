@@ -4,22 +4,19 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -31,10 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.cryptotradecoach.data.MyStocksRepository
 import com.cryptotradecoach.data.WatchlistItem
@@ -81,11 +75,9 @@ class RecommendationHistoryActivity : ComponentActivity() {
 }
 
 private enum class HistorySortKey(val label: String) {
+    DATE("최신순"),
     RETURN("수익률"),
     SCORE("점수"),
-    DATE("날짜"),
-    NAME("이름"),
-    TODAY_CHANGE("오늘 등락"),
 }
 
 private data class RecommendationRecord(
@@ -148,12 +140,10 @@ private fun RecommendationHistoryScreen(
     onAddToMyStocks: (RecommendationRecord) -> Boolean,
 ) {
     val scope = rememberCoroutineScope()
-    val tableScrollState = rememberScrollState()
     var state by remember { mutableStateOf(HistoryUiState()) }
     var assetFilter by remember { mutableStateOf("ALL") }
     var statusFilter by remember { mutableStateOf("ALL") }
     var sortKey by remember { mutableStateOf(HistorySortKey.DATE) }
-    var sortDescending by remember { mutableStateOf(true) }
     var priceRefreshRunning by remember { mutableStateOf(false) }
     var watchlistTickers by remember { mutableStateOf(initialWatchlistTickers) }
 
@@ -169,7 +159,7 @@ private fun RecommendationHistoryScreen(
                         declaredCount = payload.declaredCount,
                         records = payload.records,
                         loadedSources = payload.loadedSources,
-                        message = "통합 추천·자동 시그널 ${payload.records.size}건을 불러왔습니다.",
+                        message = "추천·자동 시그널 ${payload.records.size}건을 불러왔습니다.",
                     )
                 }
                 .onFailure { error ->
@@ -182,7 +172,7 @@ private fun RecommendationHistoryScreen(
         if (priceRefreshRunning) return
         scope.launch {
             priceRefreshRunning = true
-            state = state.copy(error = null, message = "기존 추천 현재가와 간략차트 갱신을 요청하는 중입니다.")
+            state = state.copy(error = null, message = "기존 추천 현재가 갱신을 요청했습니다.")
             runCatching { onPriceRefresh() }
                 .onSuccess { state = state.copy(message = it) }
                 .onFailure { state = state.copy(error = it.message ?: it.javaClass.simpleName, message = null) }
@@ -195,7 +185,7 @@ private fun RecommendationHistoryScreen(
             .onSuccess { saved ->
                 if (saved) {
                     watchlistTickers = watchlistTickers + record.ticker.uppercase()
-                    state = state.copy(message = "${record.name}(${record.ticker})을 내 종목의 관심종목에 담았습니다.", error = null)
+                    state = state.copy(message = "${record.name}(${record.ticker})을 내 종목에 담았습니다.", error = null)
                 } else {
                     state = state.copy(error = "관심종목을 저장하지 못했습니다.", message = null)
                 }
@@ -208,238 +198,161 @@ private fun RecommendationHistoryScreen(
     LaunchedEffect(Unit) { refresh() }
 
     val filtered = state.records.filter { record ->
-        val assetOk = assetFilter == "ALL" || record.assetClass == assetFilter
+        val assetOk = when (assetFilter) {
+            "KR" -> record.assetClass in setOf("KR_ETF", "KR_STOCK")
+            "US" -> record.assetClass in setOf("US_STOCK", "ETF", "BOND", "COMMODITY", "FX")
+            "CRYPTO" -> record.assetClass == "CRYPTO"
+            else -> true
+        }
         val statusOk = when (statusFilter) {
-            "ACTIVE_SIGNAL" -> record.status == "ACTIVE_SIGNAL"
             "EXECUTED" -> record.isExecuted
-            "CONDITIONAL" -> !record.isExecuted
+            "WAIT" -> !record.isExecuted
             else -> true
         }
         assetOk && statusOk
     }
-    val sorted = sortRecords(filtered, sortKey, sortDescending)
+
+    val sorted = when (sortKey) {
+        HistorySortKey.DATE -> filtered.sortedByDescending { it.generatedAtKst.ifBlank { it.date } }
+        HistorySortKey.RETURN -> filtered.sortedWith(compareByDescending<RecommendationRecord> { it.returnPct ?: Double.NEGATIVE_INFINITY })
+        HistorySortKey.SCORE -> filtered.sortedWith(compareByDescending<RecommendationRecord> { it.score ?: Double.NEGATIVE_INFINITY })
+    }
     val measurable = filtered.mapNotNull { it.returnPct }
     val winners = measurable.count { it > 0.0 }
     val avg = measurable.takeIf { it.isNotEmpty() }?.average()
+    val winRate = measurable.takeIf { it.isNotEmpty() }?.let { winners * 100.0 / it.size }
+    val waiting = filtered.count { !it.isExecuted }
 
     LazyColumn(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         item {
-            Row(
-                modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                OutlinedButton(onClick = onBack) { Text("← 홈") }
-                OutlinedButton(onClick = onOpenMyStocks) { Text("내 종목 열기") }
-                Button(onClick = { refresh() }, enabled = !state.loading) {
-                    Text(if (state.loading) "불러오는 중" else "추천 목록 새로고침")
-                }
-                OutlinedButton(onClick = { requestPriceRefresh() }, enabled = !priceRefreshRunning) {
-                    Text(if (priceRefreshRunning) "요청 중" else "기존 이력 가격 갱신")
-                }
+            Column(modifier = Modifier.padding(top = 16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text("추천·성과", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
+                Text("표를 읽지 말고, 결과가 좋아지고 있는지만 확인하세요.")
             }
         }
+
         item {
-            Text("통합 추천·전세계 자동 시그널", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
-            Text("기존 추천과 15분마다 생성되는 전세계 주식·ETF·채권·원자재·FX·코인 시그널을 한 표로 표시합니다.")
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedButton(onClick = onBack) { Text("← 홈") }
+                OutlinedButton(onClick = onOpenMyStocks) { Text("내 종목") }
+            }
         }
+
         item {
             Card(modifier = Modifier.fillMaxWidth()) {
-                Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
-                    Text("아카이브·성과 요약", fontWeight = FontWeight.Bold)
-                    Text("기간 ${state.coverageStart.ifBlank { "미확인" }} ~ ${state.coverageEnd.ifBlank { "미확인" }}")
-                    Text("통합 ${state.declaredCount}건 / 현재 표시 ${filtered.size}건 / 수익률 계산 가능 ${measurable.size}건")
-                    Text("평균 ${avg?.let { signed(it) } ?: "계산 불가"} / 승률 ${if (measurable.isEmpty()) "계산 불가" else "%.1f%%".format(winners * 100.0 / measurable.size)}")
-                    if (state.loadedSources.isNotEmpty()) Text("데이터: ${state.loadedSources.joinToString(" + ")}", style = MaterialTheme.typography.bodySmall)
-                }
-            }
-        }
-        item {
-            Row(
-                modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-            ) {
-                listOf("ALL", "KR_ETF", "KR_STOCK", "US_STOCK", "ETF", "BOND", "COMMODITY", "FX", "CRYPTO").forEach { key ->
-                    FilterChip(selected = assetFilter == key, onClick = { assetFilter = key }, label = { Text(key) })
-                }
-            }
-        }
-        item {
-            Row(
-                modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-            ) {
-                listOf("ALL", "ACTIVE_SIGNAL", "EXECUTED", "CONDITIONAL").forEach { key ->
-                    FilterChip(selected = statusFilter == key, onClick = { statusFilter = key }, label = { Text(key) })
-                }
-            }
-        }
-        item {
-            Row(
-                modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-            ) {
-                Text("정렬", fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 10.dp))
-                HistorySortKey.entries.forEach { key ->
-                    FilterChip(
-                        selected = sortKey == key,
-                        onClick = {
-                            if (sortKey == key) {
-                                sortDescending = !sortDescending
-                            } else {
-                                sortKey = key
-                                sortDescending = key != HistorySortKey.NAME
-                            }
+                Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Text("성과 한눈에", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                    Text("평균 ${avg?.let { signed(it) } ?: "계산 전"}  ·  승률 ${winRate?.let { "%.1f%%".format(it) } ?: "계산 전"}", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+                    Text("현재 표시 ${filtered.size}건 · 체결성과 ${measurable.size}건 · 조건대기 $waiting건")
+                    Text("기간 ${state.coverageStart.ifBlank { "-" }} ~ ${state.coverageEnd.ifBlank { "-" }}", style = MaterialTheme.typography.bodySmall)
+                    Text(
+                        when {
+                            measurable.size < 10 -> "판단: 표본이 아직 적습니다. 승률보다 규칙 준수를 봅니다."
+                            avg != null && avg > 0.0 -> "판단: 현재 계산 가능한 추천은 평균 플러스입니다."
+                            avg != null -> "판단: 평균 성과가 음수입니다. 새 매매보다 실패원인 점검이 우선입니다."
+                            else -> "판단: 현재가 갱신 후 성과를 계산할 수 있습니다."
                         },
-                        label = { Text(key.label) },
+                        fontWeight = FontWeight.Bold,
                     )
                 }
-                OutlinedButton(onClick = { sortDescending = !sortDescending }) {
-                    Text(if (sortDescending) "내림차순" else "오름차순")
+            }
+        }
+
+        item {
+            Row(
+                modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                FilterChip(selected = assetFilter == "ALL", onClick = { assetFilter = "ALL" }, label = { Text("전체") })
+                FilterChip(selected = assetFilter == "KR", onClick = { assetFilter = "KR" }, label = { Text("한국") })
+                FilterChip(selected = assetFilter == "US", onClick = { assetFilter = "US" }, label = { Text("미국·글로벌") })
+                FilterChip(selected = assetFilter == "CRYPTO", onClick = { assetFilter = "CRYPTO" }, label = { Text("코인") })
+            }
+        }
+
+        item {
+            Row(
+                modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                FilterChip(selected = statusFilter == "ALL", onClick = { statusFilter = "ALL" }, label = { Text("전체 상태") })
+                FilterChip(selected = statusFilter == "EXECUTED", onClick = { statusFilter = "EXECUTED" }, label = { Text("체결·진행") })
+                FilterChip(selected = statusFilter == "WAIT", onClick = { statusFilter = "WAIT" }, label = { Text("조건대기") })
+            }
+        }
+
+        item {
+            Row(
+                modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                HistorySortKey.entries.forEach { key ->
+                    FilterChip(selected = sortKey == key, onClick = { sortKey = key }, label = { Text(key.label) })
                 }
             }
         }
-        if (state.error != null) item { InfoHistoryCard("오류: ${state.error}") }
-        if (state.message != null) item { InfoHistoryCard(state.message ?: "") }
-        if (!state.loading && sorted.isEmpty()) item { InfoHistoryCard("표시할 추천 이력이 없습니다.") }
-        if (sorted.isNotEmpty()) {
-            item {
-                Column(
-                    modifier = Modifier.fillMaxWidth().horizontalScroll(tableScrollState),
-                ) {
-                    RecommendationTableHeader()
-                    sorted.forEach { record ->
-                        RecommendationTableRow(
-                            record = record,
-                            saved = record.ticker.uppercase() in watchlistTickers,
-                            onAddToMyStocks = { addToMyStocks(record) },
-                        )
-                    }
+
+        item {
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Button(onClick = { refresh() }, enabled = !state.loading) { Text(if (state.loading) "불러오는 중" else "목록 새로고침") }
+                OutlinedButton(onClick = { requestPriceRefresh() }, enabled = !priceRefreshRunning) {
+                    Text(if (priceRefreshRunning) "갱신 요청 중" else "현재가 갱신")
                 }
             }
+        }
+
+        state.error?.let { item { HistoryInfoCard("오류: $it") } }
+        state.message?.let { item { HistoryInfoCard(it) } }
+        if (!state.loading && sorted.isEmpty()) item { HistoryInfoCard("표시할 추천 이력이 없습니다.") }
+
+        items(sorted, key = { it.id }) { record ->
+            RecommendationCard(
+                record = record,
+                saved = record.ticker.uppercase() in watchlistTickers,
+                onAddToMyStocks = { addToMyStocks(record) },
+            )
         }
     }
 }
 
 @Composable
-private fun RecommendationTableHeader() {
-    Row(modifier = Modifier.padding(vertical = 8.dp)) {
-        TableCell("종목", 190.dp, true)
-        TableCell("내 종목", 120.dp, true)
-        TableCell("현재가", 130.dp, true)
-        TableCell("추천가", 130.dp, true)
-        TableCell("추천가부터 수익률", 150.dp, true)
-        TableCell("점수", 75.dp, true)
-        TableCell("간략차트", 170.dp, true)
-        TableCell("추천일", 115.dp, true)
-        TableCell("오늘 등락", 105.dp, true)
-        TableCell("자산", 110.dp, true)
-        TableCell("방향", 85.dp, true)
-        TableCell("상태", 155.dp, true)
-        TableCell("전략", 390.dp, true)
-    }
-    HorizontalDivider()
-}
-
-@Composable
-private fun RecommendationTableRow(
+private fun RecommendationCard(
     record: RecommendationRecord,
     saved: Boolean,
     onAddToMyStocks: () -> Unit,
 ) {
-    Row(modifier = Modifier.padding(vertical = 6.dp)) {
-        KoreanStockIdentityLabel(
-            ticker = record.ticker,
-            preferredName = record.name,
-            modifier = Modifier.width(190.dp).padding(horizontal = 4.dp),
-            bold = true,
-            resolveKoreanCode = record.assetClass in setOf("KR_STOCK", "KR_ETF"),
-        )
-        OutlinedButton(
-            onClick = onAddToMyStocks,
-            enabled = !saved,
-            modifier = Modifier.width(120.dp).padding(horizontal = 4.dp),
-        ) {
-            Text(if (saved) "담김" else "내 종목 담기", maxLines = 1)
-        }
-        TableCell(price(record.currentPrice, record.currency), 130.dp)
-        TableCell(price(record.referencePrice, record.currency), 130.dp)
-        TableCell(record.returnPct?.let { signed(it) } ?: if (record.isExecuted) "계산 불가" else "미체결", 150.dp, true)
-        TableCell(record.score?.let { "%.1f".format(it) } ?: "-", 75.dp)
-        SparklineCell(record.recentCloses, 170.dp)
-        TableCell(record.generatedAtKst.ifBlank { record.date }.take(16), 115.dp)
-        TableCell(record.todayChangePct?.let { signed(it) } ?: "미확인", 105.dp)
-        TableCell(record.assetClass, 110.dp)
-        TableCell(record.direction, 85.dp)
-        TableCell(record.status, 155.dp)
-        TableCell(record.strategy, 390.dp)
-    }
-    HorizontalDivider()
-}
-
-@Composable
-private fun TableCell(text: String, width: Dp, bold: Boolean = false) {
-    Text(
-        text = text,
-        modifier = Modifier.width(width).padding(horizontal = 4.dp),
-        fontWeight = if (bold) FontWeight.Bold else FontWeight.Normal,
-        maxLines = 1,
-    )
-}
-
-@Composable
-private fun SparklineCell(values: List<Double>, width: Dp) {
-    if (values.size < 2) {
-        TableCell("갱신 필요", width)
-        return
-    }
-    val minValue = values.minOrNull() ?: return
-    val maxValue = values.maxOrNull() ?: return
-    val range = (maxValue - minValue).takeIf { it > 0.0 } ?: 1.0
-    val lineColor = if (values.last() >= values.first()) Color(0xFF2E7D32) else Color(0xFFC62828)
-    Canvas(
-        modifier = Modifier.width(width).height(42.dp).padding(horizontal = 8.dp, vertical = 6.dp),
-    ) {
-        val step = if (values.size <= 1) 0f else size.width / (values.size - 1)
-        for (index in 1 until values.size) {
-            val previousX = (index - 1) * step
-            val currentX = index * step
-            val previousY = size.height - ((values[index - 1] - minValue) / range).toFloat() * size.height
-            val currentY = size.height - ((values[index] - minValue) / range).toFloat() * size.height
-            drawLine(lineColor, Offset(previousX, previousY), Offset(currentX, currentY), strokeWidth = 3f)
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            KoreanStockIdentityLabel(
+                ticker = record.ticker,
+                preferredName = record.name,
+                modifier = Modifier.fillMaxWidth(),
+                bold = true,
+                resolveKoreanCode = record.assetClass in setOf("KR_STOCK", "KR_ETF"),
+            )
+            Text("${directionKoreanHistory(record.direction)} · ${statusKoreanHistory(record.status)} · 점수 ${record.score?.let { "%.0f".format(it) } ?: "-"}")
+            Text(
+                "추천 이후 ${record.returnPct?.let { signed(it) } ?: if (record.isExecuted) "계산 전" else "미체결"}",
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+            )
+            Text("현재 ${price(record.currentPrice, record.currency)}  ·  추천 ${price(record.referencePrice, record.currency)}")
+            record.todayChangePct?.let { Text("오늘 ${signed(it)}") }
+            Text("추천 ${record.generatedAtKst.ifBlank { record.date }.take(16)} · ${record.assetClass}", style = MaterialTheme.typography.bodySmall)
+            if (record.strategy.isNotBlank()) Text("전략: ${record.strategy}", style = MaterialTheme.typography.bodySmall)
+            OutlinedButton(onClick = onAddToMyStocks, enabled = !saved, modifier = Modifier.fillMaxWidth()) {
+                Text(if (saved) "내 종목에 담김" else "내 종목에 담기")
+            }
         }
     }
 }
 
 @Composable
-private fun InfoHistoryCard(text: String) {
+private fun HistoryInfoCard(text: String) {
     Card(modifier = Modifier.fillMaxWidth()) { Text(text, modifier = Modifier.padding(12.dp)) }
-}
-
-private fun sortRecords(
-    records: List<RecommendationRecord>,
-    sortKey: HistorySortKey,
-    descending: Boolean,
-): List<RecommendationRecord> {
-    val comparator = Comparator<RecommendationRecord> { a, b ->
-        when (sortKey) {
-            HistorySortKey.RETURN -> compareNullable(a.returnPct, b.returnPct, descending)
-            HistorySortKey.SCORE -> compareNullable(a.score, b.score, descending)
-            HistorySortKey.TODAY_CHANGE -> compareNullable(a.todayChangePct, b.todayChangePct, descending)
-            HistorySortKey.DATE -> if (descending) b.generatedAtKst.ifBlank { b.date }.compareTo(a.generatedAtKst.ifBlank { a.date }) else a.generatedAtKst.ifBlank { a.date }.compareTo(b.generatedAtKst.ifBlank { b.date })
-            HistorySortKey.NAME -> if (descending) b.name.lowercase().compareTo(a.name.lowercase()) else a.name.lowercase().compareTo(b.name.lowercase())
-        }
-    }
-    return records.sortedWith(comparator)
-}
-
-private fun compareNullable(a: Double?, b: Double?, descending: Boolean): Int {
-    if (a == null && b == null) return 0
-    if (a == null) return 1
-    if (b == null) return -1
-    return if (descending) b.compareTo(a) else a.compareTo(b)
 }
 
 private suspend fun loadRecommendationHistory(): HistoryPayload = withContext(Dispatchers.IO) {
@@ -536,6 +449,24 @@ private fun JSONObject.optNullableDouble(key: String): Double? {
     if (!has(key) || isNull(key)) return null
     val value = optDouble(key, Double.NaN)
     return if (value.isFinite()) value else null
+}
+
+private fun directionKoreanHistory(value: String): String = when (value.uppercase()) {
+    "LONG" -> "상승 전략"
+    "SHORT" -> "하락 전략"
+    "INVERSE" -> "인버스"
+    "DEFENSIVE" -> "방어"
+    else -> value
+}
+
+private fun statusKoreanHistory(value: String): String = when (value.uppercase()) {
+    "IMMEDIATE", "ACTIVE_SIGNAL" -> "실행·진행"
+    "CONDITIONAL", "UNTRIGGERED" -> "조건 대기"
+    "WATCH", "SOURCE_REVIEW_REQUIRED" -> "관찰만"
+    "STOPPED_OUT" -> "손절 종료"
+    "HIT_TARGET", "TARGET1_HIT" -> "목표 도달"
+    "EXPIRED" -> "만료"
+    else -> value.ifBlank { "기록" }
 }
 
 private fun signed(value: Double): String = "%+.2f%%".format(value)
