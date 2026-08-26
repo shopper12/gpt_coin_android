@@ -246,7 +246,7 @@ private fun RecommendationHistoryScreen(
                 Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     Text("성과 한눈에", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
                     Text("평균 ${avg?.let { signed(it) } ?: "계산 전"}  ·  승률 ${winRate?.let { "%.1f%%".format(it) } ?: "계산 전"}", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
-                    Text("현재 표시 ${filtered.size}건 · 체결성과 ${measurable.size}건 · 조건대기 $waiting건")
+                    Text("현재 표시 ${filtered.size}건 · 체결성과 ${measurable.size}건 · 조건대기 ${waiting}건")
                     Text("기간 ${state.coverageStart.ifBlank { "-" }} ~ ${state.coverageEnd.ifBlank { "-" }}", style = MaterialTheme.typography.bodySmall)
                     Text(
                         when {
