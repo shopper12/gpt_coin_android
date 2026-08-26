@@ -5,6 +5,7 @@ plugins {
     id("com.google.devtools.ksp")
 }
 
+// UX checkpoint: build the complete money-dashboard, briefing, notification, and performance-card flow together.
 val ciKeystoreFile = System.getenv("CI_KEYSTORE_FILE")
 val ciKeystorePassword = System.getenv("CI_KEYSTORE_PASSWORD")
 val ciKeyAlias = System.getenv("CI_KEY_ALIAS")
