@@ -10,16 +10,20 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,7 +36,14 @@ import androidx.core.content.ContextCompat
 import com.cryptotradecoach.data.WorkflowDispatchRepository
 import com.cryptotradecoach.service.GlobalMarketSignalScheduler
 import com.cryptotradecoach.service.SignalNotificationHelper
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.json.JSONObject
+import java.net.HttpURLConnection
+import java.net.URL
+
+private const val LATEST_BRIEFING_URL = "https://raw.githubusercontent.com/shopper12/gpt_coin_android/main/reports/chatgpt_recommendations_latest.json"
 
 class HomeActivity : ComponentActivity() {
     private val notificationPermissionLauncher = registerForActivityResult(
@@ -47,7 +58,7 @@ class HomeActivity : ComponentActivity() {
         val workflowRepository = WorkflowDispatchRepository(this)
         setContent {
             MaterialTheme {
-                UnifiedHomeScreen(
+                MoneyDashboardScreen(
                     onCoin = { startActivity(Intent(this, MainActivity::class.java)) },
                     onStock = { startActivity(Intent(this, StockActivity::class.java)) },
                     onRecommendationHistory = { startActivity(Intent(this, RecommendationHistoryActivity::class.java)) },
@@ -70,8 +81,32 @@ class HomeActivity : ComponentActivity() {
     }
 }
 
+private data class DashboardSignal(
+    val name: String,
+    val ticker: String,
+    val direction: String,
+    val status: String,
+    val score: Int,
+    val confidence: Int,
+    val currency: String,
+    val currentPrice: Double?,
+    val entryLow: Double?,
+    val entryHigh: Double?,
+    val stopLoss: Double?,
+    val target1: Double?,
+    val target2: Double?,
+    val reason: String,
+    val risk: String,
+)
+
+private data class DashboardPayload(
+    val generatedAtKst: String = "",
+    val briefingSlot: String = "",
+    val signals: List<DashboardSignal> = emptyList(),
+)
+
 @Composable
-private fun UnifiedHomeScreen(
+private fun MoneyDashboardScreen(
     onCoin: () -> Unit,
     onStock: () -> Unit,
     onRecommendationHistory: () -> Unit,
@@ -81,8 +116,20 @@ private fun UnifiedHomeScreen(
     onWorkflow: suspend () -> String,
 ) {
     val scope = rememberCoroutineScope()
+    var dashboard by remember { mutableStateOf(DashboardPayload()) }
+    var loading by remember { mutableStateOf(false) }
+    var loadError by remember { mutableStateOf<String?>(null) }
     var workflowRunning by remember { mutableStateOf(false) }
     var workflowMessage by remember { mutableStateOf<String?>(null) }
+
+    suspend fun refreshDashboard() {
+        loading = true
+        loadError = null
+        runCatching { loadLatestBriefing() }
+            .onSuccess { dashboard = it }
+            .onFailure { loadError = it.message ?: it.javaClass.simpleName }
+        loading = false
+    }
 
     fun runWorkflow() {
         if (workflowRunning) return
@@ -96,88 +143,247 @@ private fun UnifiedHomeScreen(
         }
     }
 
+    LaunchedEffect(Unit) { refreshDashboard() }
+
+    val ranked = dashboard.signals.sortedByDescending { it.score }
+    val first = ranked.firstOrNull()
+
     LazyColumn(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
+        modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         item {
-            Text("Unified Trading Coach", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
-            Text("전세계 시장은 서버에서 15분마다 감시하고, 앱은 새 시그널을 백그라운드로 확인해 알림을 표시합니다.", style = MaterialTheme.typography.bodyMedium)
+            Column(modifier = Modifier.padding(top = 18.dp, bottom = 2.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text("내 돈 대시보드", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
+                Text("공부하지 말고, 오늘 필요한 것만 보세요.", style = MaterialTheme.typography.bodyLarge)
+                Text(
+                    "브리핑 ${friendlyTimestamp(dashboard.generatedAtKst)} · 슬롯 ${friendlySlot(dashboard.briefingSlot)}",
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
+        }
+
+        item {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+            ) {
+                Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text("지금 할 일 1개", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                    if (first == null) {
+                        Text(if (loading) "최신 브리핑을 불러오는 중입니다." else "지금 확인된 실행 전략이 없습니다. 새로고침만 한 번 해주세요.")
+                    } else {
+                        Text("${first.name} (${first.ticker})", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+                        Text("${directionKorean(first.direction)} · ${statusKorean(first.status)} · 점수 ${first.score} · 신뢰 ${first.confidence}%")
+                        Text(actionSentence(first), fontWeight = FontWeight.Bold)
+                        Text("진입 ${rangeText(first.entryLow, first.entryHigh, first.currency)}  ·  손절 ${priceText(first.stopLoss, first.currency)}")
+                    }
+                    Button(
+                        onClick = { scope.launch { refreshDashboard() } },
+                        enabled = !loading,
+                        modifier = Modifier.fillMaxWidth(),
+                    ) { Text(if (loading) "불러오는 중" else "최신 브리핑 새로고침") }
+                    loadError?.let { Text("불러오기 오류: $it", color = MaterialTheme.colorScheme.error) }
+                }
+            }
+        }
+
+        item {
+            Card(modifier = Modifier.fillMaxWidth()) {
+                Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Text("오늘 이것만 지키기", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                    Text("① 4개 전략만 본다. 새 종목을 더 찾지 않는다.")
+                    Text("② 진입구간 밖에서는 아무리 좋아 보여도 추격하지 않는다.")
+                    Text("③ 손절 가격을 먼저 보고, 감당 안 되면 매수하지 않는다.")
+                }
+            }
+        }
+
+        item {
+            Text("오늘의 4개 전략", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+        }
+
+        if (ranked.isEmpty()) {
+            item { SimpleInfoCard("브리핑 카드가 아직 없습니다. 최신 브리핑 새로고침을 눌러주세요.") }
+        } else {
+            items(ranked.take(4)) { signal -> DashboardSignalCard(signal) }
+        }
+
+        item {
+            Text("필요할 때만 열기", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 4.dp))
+            Text("분석 메뉴는 아래로 내렸습니다. 첫 화면에서는 돈 결정을 먼저 보세요.", style = MaterialTheme.typography.bodySmall)
+        }
+
+        item {
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Button(onClick = onRecommendationHistory, modifier = Modifier.weight(1f)) { Text("추천·성과") }
+                Button(onClick = onMyStocks, modifier = Modifier.weight(1f)) { Text("내 종목") }
+            }
         }
         item {
-            HomeCard(
-                title = "코인 메뉴",
-                description = "Upbit KRW 코인 스캔, ACTIVE 신호, 차트, 성과 추적, 룰 편집, 코인 백테스트 진화 로그를 봅니다.",
-                button = "코인 전략 열기",
-                onClick = onCoin,
-            )
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedButton(onClick = onStock, modifier = Modifier.weight(1f)) { Text("주식 분석") }
+                OutlinedButton(onClick = onCoin, modifier = Modifier.weight(1f)) { Text("코인 분석") }
+            }
         }
         item {
-            HomeCard(
-                title = "주식 메뉴 + ICT",
-                description = "한국 단기 후보·성과·백테스트와 단일 종목의 BOS/CHOCH, 유동성 스윕, FVG, 프리미엄·디스카운트 분석을 봅니다.",
-                button = "주식 전략 열기",
-                onClick = onStock,
-            )
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedButton(onClick = onBtcMonitor, modifier = Modifier.weight(1f)) { Text("BTC 모니터") }
+                OutlinedButton(onClick = onSettings, modifier = Modifier.weight(1f)) { Text("설정") }
+            }
         }
-        item {
-            HomeCard(
-                title = "통합 추천·자동 매매 시그널",
-                description = "한국 ETF 전용 슬롯을 포함한 주식·ETF·채권·원자재·FX·코인 자동 시그널을 한 줄 표로 확인합니다. 새 시그널은 고우선순위 알림으로 표시됩니다.",
-                button = "추천 목록 열기",
-                onClick = onRecommendationHistory,
-            )
-        }
-        item {
-            HomeCard(
-                title = "내 종목 · 한투 보유전략",
-                description = "추천·관심종목을 관리하고 한국투자증권 Open API에서 실제 보유종목을 동기화한 뒤, 보유종목별 추가매수·보유·방어·손절 관리 신호와 ICT 근거를 확인합니다.",
-                button = "내 종목·보유전략 열기",
-                onClick = onMyStocks,
-            )
-        }
-        item {
-            HomeCard(
-                title = "전체 설정",
-                description = "앱 업데이트, GitHub 동기화, 스캐너 시작·정지, 스캔 간격, 표시 개수와 최소 점수를 코인 메뉴와 분리해 관리합니다.",
-                button = "전체 설정 열기",
-                onClick = onSettings,
-            )
-        }
-        item {
-            HomeCard(
-                title = "BTC 24시간 백테스트 모니터",
-                description = "매시간 Binance 5분봉 진입 조건과 일 1회 최적화 백테스트 결과를 앱에서 확인합니다.",
-                button = "BTC 모니터 열기",
-                onClick = onBtcMonitor,
-            )
-        }
+
         item {
             Card(modifier = Modifier.fillMaxWidth()) {
                 Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("통합 백테스트/전략 진화", fontWeight = FontWeight.Bold)
-                    Text("버튼을 누르면 GitHub 웹페이지를 열지 않고 코인·주식 자가검증 workflow를 즉시 요청합니다.")
+                    Text("시스템 점검", fontWeight = FontWeight.Bold)
+                    Text("전략이 이상해 보일 때만 실행하세요. 평소에는 건드릴 필요 없습니다.", style = MaterialTheme.typography.bodySmall)
                     OutlinedButton(
                         onClick = { runWorkflow() },
                         enabled = !workflowRunning,
                         modifier = Modifier.fillMaxWidth(),
                     ) {
-                        Text(if (workflowRunning) "실행 요청 중" else "코인·주식 자가검증 실행")
+                        Text(if (workflowRunning) "자가검증 요청 중" else "코인·주식 자가검증 실행")
                     }
                     workflowMessage?.let { Text(it, style = MaterialTheme.typography.bodySmall) }
                 }
             }
         }
+
+        item { Text("", modifier = Modifier.padding(bottom = 16.dp)) }
     }
 }
 
 @Composable
-private fun HomeCard(title: String, description: String, button: String, onClick: () -> Unit) {
+private fun DashboardSignalCard(signal: DashboardSignal) {
     Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(title, fontWeight = FontWeight.Bold)
-            Text(description)
-            Button(onClick = onClick, modifier = Modifier.fillMaxWidth()) { Text(button) }
+        Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text("${signal.name} (${signal.ticker})", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                    Text("${directionKorean(signal.direction)} · ${statusKorean(signal.status)}", fontWeight = FontWeight.Bold)
+                }
+                Text("${signal.score}점", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+            }
+            Text(actionSentence(signal), fontWeight = FontWeight.Bold)
+            Text("진입  ${rangeText(signal.entryLow, signal.entryHigh, signal.currency)}")
+            Text("손절  ${priceText(signal.stopLoss, signal.currency)}")
+            Text("목표  ${priceText(signal.target1, signal.currency)} → ${priceText(signal.target2, signal.currency)}")
+            if (signal.reason.isNotBlank()) Text("왜? ${signal.reason}", style = MaterialTheme.typography.bodySmall)
+            if (signal.risk.isNotBlank()) Text("주의: ${signal.risk}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error)
         }
     }
+}
+
+@Composable
+private fun SimpleInfoCard(text: String) {
+    Card(modifier = Modifier.fillMaxWidth()) { Text(text, modifier = Modifier.padding(14.dp)) }
+}
+
+private fun actionSentence(signal: DashboardSignal): String = when (signal.status.uppercase()) {
+    "IMMEDIATE", "ACTIVE_SIGNAL" -> "지금 행동: 진입조건을 다시 확인한 뒤 분할로만 접근"
+    "CONDITIONAL" -> "지금 행동: 기다리기. 진입구간에 들어오기 전에는 매수하지 않기"
+    "WATCH" -> "지금 행동: 매수 금지. 조건이 바뀌는지만 관찰"
+    else -> "지금 행동: 조건 확인 전에는 아무것도 하지 않기"
+}
+
+private fun directionKorean(value: String): String = when (value.uppercase()) {
+    "LONG" -> "상승 전략"
+    "SHORT" -> "하락 전략"
+    "INVERSE" -> "인버스"
+    "DEFENSIVE" -> "방어"
+    else -> value
+}
+
+private fun statusKorean(value: String): String = when (value.uppercase()) {
+    "IMMEDIATE", "ACTIVE_SIGNAL" -> "실행 가능"
+    "CONDITIONAL" -> "조건 대기"
+    "WATCH" -> "관찰만"
+    else -> value
+}
+
+private fun friendlySlot(slot: String): String = when (slot) {
+    "0750" -> "아침 07:50"
+    "1130" -> "점심 11:30"
+    "2050" -> "저녁 20:50"
+    "2330" -> "밤 23:30"
+    else -> slot.ifBlank { "-" }
+}
+
+private fun friendlyTimestamp(value: String): String = value
+    .replace("T", " ")
+    .replace("+09:00", "")
+    .take(16)
+    .ifBlank { "업데이트 시각 미확인" }
+
+private fun rangeText(low: Double?, high: Double?, currency: String): String {
+    if (low == null && high == null) return "조건 확인"
+    if (low == null) return "~ ${priceText(high, currency)}"
+    if (high == null) return "${priceText(low, currency)} ~"
+    return "${priceText(low, currency)} ~ ${priceText(high, currency)}"
+}
+
+private fun priceText(value: Double?, currency: String): String {
+    if (value == null) return "-"
+    return when (currency.uppercase()) {
+        "KRW" -> "%,.0f원".format(value)
+        "USD" -> "$%,.2f".format(value)
+        else -> "%,.2f %s".format(value, currency)
+    }
+}
+
+private suspend fun loadLatestBriefing(): DashboardPayload = withContext(Dispatchers.IO) {
+    val connection = (URL(LATEST_BRIEFING_URL).openConnection() as HttpURLConnection).apply {
+        requestMethod = "GET"
+        connectTimeout = 12000
+        readTimeout = 12000
+        setRequestProperty("Accept", "application/json")
+        setRequestProperty("User-Agent", "UnifiedTradingCoach-Android")
+    }
+    try {
+        val code = connection.responseCode
+        val stream = if (code in 200..299) connection.inputStream else connection.errorStream
+        val body = stream?.bufferedReader(Charsets.UTF_8)?.use { it.readText() }.orEmpty()
+        if (code !in 200..299) error("HTTP $code")
+        val root = JSONObject(body)
+        val rows = root.optJSONArray("signals")
+        val signals = buildList {
+            if (rows != null) {
+                for (i in 0 until rows.length()) {
+                    val row = rows.optJSONObject(i) ?: continue
+                    add(
+                        DashboardSignal(
+                            name = row.optString("name", row.optString("ticker", "-")),
+                            ticker = row.optString("ticker", "-"),
+                            direction = row.optString("direction", ""),
+                            status = row.optString("status", ""),
+                            score = row.optInt("score", 0),
+                            confidence = row.optInt("confidence", 0),
+                            currency = row.optString("currency", ""),
+                            currentPrice = row.optNullableDouble("currentPrice"),
+                            entryLow = row.optNullableDouble("entryLow"),
+                            entryHigh = row.optNullableDouble("entryHigh"),
+                            stopLoss = row.optNullableDouble("stopLoss"),
+                            target1 = row.optNullableDouble("target1"),
+                            target2 = row.optNullableDouble("target2"),
+                            reason = row.optString("reason", ""),
+                            risk = row.optString("risk", ""),
+                        )
+                    )
+                }
+            }
+        }
+        DashboardPayload(
+            generatedAtKst = root.optString("generatedAtKst", ""),
+            briefingSlot = root.optString("briefingSlot", ""),
+            signals = signals,
+        )
+    } finally {
+        connection.disconnect()
+    }
+}
+
+private fun JSONObject.optNullableDouble(key: String): Double? {
+    if (!has(key) || isNull(key)) return null
+    return runCatching { getDouble(key) }.getOrNull()
 }
