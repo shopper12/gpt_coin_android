@@ -1,6 +1,7 @@
 package com.cryptotradecoach
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -22,6 +23,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
@@ -43,8 +46,10 @@ import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
+import kotlin.math.max
 
 private const val LATEST_BRIEFING_URL = "https://raw.githubusercontent.com/shopper12/gpt_coin_android/main/reports/chatgpt_recommendations_latest.json"
+private const val MONEY_PREFS = "money_dashboard_checkin"
 
 class HomeActivity : ComponentActivity() {
     private val notificationPermissionLauncher = registerForActivityResult(
@@ -156,13 +161,15 @@ private fun MoneyDashboardScreen(
         item {
             Column(modifier = Modifier.padding(top = 18.dp, bottom = 2.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text("내 돈 대시보드", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
-                Text("공부하지 말고, 오늘 필요한 것만 보세요.", style = MaterialTheme.typography.bodyLarge)
+                Text("돈이 먼저, 매매는 그 다음.", style = MaterialTheme.typography.bodyLarge)
                 Text(
-                    "브리핑 ${friendlyTimestamp(dashboard.generatedAtKst)} · 슬롯 ${friendlySlot(dashboard.briefingSlot)}",
+                    "시장 브리핑 ${friendlyTimestamp(dashboard.generatedAtKst)} · ${friendlySlot(dashboard.briefingSlot)}",
                     style = MaterialTheme.typography.bodySmall,
                 )
             }
         }
+
+        item { MoneyProgressCard() }
 
         item {
             Card(
@@ -170,7 +177,7 @@ private fun MoneyDashboardScreen(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
             ) {
                 Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("지금 할 일 1개", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                    Text("시장에서는 지금 할 일 1개", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
                     if (first == null) {
                         Text(if (loading) "최신 브리핑을 불러오는 중입니다." else "지금 확인된 실행 전략이 없습니다. 새로고침만 한 번 해주세요.")
                     } else {
@@ -193,9 +200,9 @@ private fun MoneyDashboardScreen(
             Card(modifier = Modifier.fillMaxWidth()) {
                 Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     Text("오늘 이것만 지키기", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                    Text("① 4개 전략만 본다. 새 종목을 더 찾지 않는다.")
-                    Text("② 진입구간 밖에서는 아무리 좋아 보여도 추격하지 않는다.")
-                    Text("③ 손절 가격을 먼저 보고, 감당 안 되면 매수하지 않는다.")
+                    Text("① 월급에서 자산을 먼저 남긴다.")
+                    Text("② 오늘의 4개 밖에서 새 종목을 계속 찾지 않는다.")
+                    Text("③ 진입구간 밖 추격·손절 없는 매수는 하지 않는다.")
                 }
             }
         }
@@ -210,7 +217,7 @@ private fun MoneyDashboardScreen(
 
         item {
             Text("필요할 때만 열기", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 4.dp))
-            Text("분석 메뉴는 아래로 내렸습니다. 첫 화면에서는 돈 결정을 먼저 보세요.", style = MaterialTheme.typography.bodySmall)
+            Text("분석 메뉴는 아래로 내렸습니다. 첫 화면에서는 돈 상태와 행동만 확인하세요.", style = MaterialTheme.typography.bodySmall)
         }
 
         item {
@@ -248,6 +255,89 @@ private fun MoneyDashboardScreen(
         }
 
         item { Text("", modifier = Modifier.padding(bottom = 16.dp)) }
+    }
+}
+
+@Composable
+private fun MoneyProgressCard() {
+    val context = LocalContext.current
+    val prefs = remember { context.getSharedPreferences(MONEY_PREFS, Context.MODE_PRIVATE) }
+    var incomeText by remember { mutableStateOf(prefs.getString("income_man", "") ?: "") }
+    var assetizedText by remember { mutableStateOf(prefs.getString("assetized_man", "") ?: "") }
+    var netWorthText by remember { mutableStateOf(prefs.getString("net_worth_man", "") ?: "") }
+    var targetText by remember { mutableStateOf(prefs.getString("target_rate", "20") ?: "20") }
+    var editing by remember { mutableStateOf(incomeText.isBlank() || assetizedText.isBlank()) }
+
+    val income = incomeText.cleanNumber()
+    val assetized = assetizedText.cleanNumber()
+    val netWorth = netWorthText.cleanNumber()
+    val targetRate = targetText.cleanNumber().takeIf { it > 0.0 } ?: 20.0
+    val currentRate = if (income > 0.0) assetized / income * 100.0 else 0.0
+    val targetAmount = income * targetRate / 100.0
+    val gap = max(targetAmount - assetized, 0.0)
+
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text("내 돈 상태", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+            if (income <= 0.0) {
+                Text("이번 달 숫자 30초만 입력하면, 매매보다 먼저 돈이 실제로 남고 있는지 보여줍니다.", fontWeight = FontWeight.Bold)
+            } else {
+                Text("이번 달 자산화율 ${"%.1f".format(currentRate)}%  ·  목표 ${"%.0f".format(targetRate)}%", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+                if (netWorth > 0.0) Text("현재 순자산  ${formatManwon(netWorth)}")
+                Text("세후수입 ${formatManwon(income)}  ·  저축·투자 ${formatManwon(assetized)}")
+                Text(
+                    if (gap > 0.0) "지금 할 일: 목표까지 ${formatManwon(gap)} 더 자산으로 남기기"
+                    else "지금 할 일: 이번 달 자산화 목표 달성. 추가 매매는 조건이 있을 때만.",
+                    fontWeight = FontWeight.Bold,
+                )
+            }
+            Text("이 숫자는 휴대폰에만 저장하며 GitHub로 보내지 않습니다.", style = MaterialTheme.typography.bodySmall)
+
+            if (editing) {
+                OutlinedTextField(
+                    value = incomeText,
+                    onValueChange = { incomeText = it },
+                    label = { Text("이번 달 세후수입 (만원)") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                )
+                OutlinedTextField(
+                    value = assetizedText,
+                    onValueChange = { assetizedText = it },
+                    label = { Text("이번 달 저축·투자액 (만원)") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                )
+                OutlinedTextField(
+                    value = netWorthText,
+                    onValueChange = { netWorthText = it },
+                    label = { Text("현재 순자산 (만원, 선택)") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                )
+                OutlinedTextField(
+                    value = targetText,
+                    onValueChange = { targetText = it },
+                    label = { Text("목표 자산화율 (%)") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                )
+                Button(
+                    onClick = {
+                        prefs.edit()
+                            .putString("income_man", incomeText.trim())
+                            .putString("assetized_man", assetizedText.trim())
+                            .putString("net_worth_man", netWorthText.trim())
+                            .putString("target_rate", targetText.trim().ifBlank { "20" })
+                            .apply()
+                        editing = false
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                ) { Text("저장하고 돈 상태 보기") }
+            } else {
+                OutlinedButton(onClick = { editing = true }, modifier = Modifier.fillMaxWidth()) { Text("이번 달 숫자 수정") }
+            }
+        }
     }
 }
 
@@ -312,6 +402,13 @@ private fun friendlyTimestamp(value: String): String = value
     .replace("+09:00", "")
     .take(16)
     .ifBlank { "업데이트 시각 미확인" }
+
+private fun String.cleanNumber(): Double = replace(",", "").trim().toDoubleOrNull() ?: 0.0
+
+private fun formatManwon(value: Double): String = when {
+    value >= 10_000 -> "%,.2f억원".format(value / 10_000.0)
+    else -> "%,.0f만원".format(value)
+}
 
 private fun rangeText(low: Double?, high: Double?, currency: String): String {
     if (low == null && high == null) return "조건 확인"
