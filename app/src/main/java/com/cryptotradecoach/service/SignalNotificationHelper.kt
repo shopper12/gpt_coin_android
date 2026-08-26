@@ -24,35 +24,25 @@ class SignalNotificationHelper(private val context: Context) {
     fun ensureChannels() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             manager.createNotificationChannel(
-                NotificationChannel(
-                    CHANNEL_SERVICE,
-                    "백그라운드 시장 감시",
-                    NotificationManager.IMPORTANCE_LOW,
-                ),
+                NotificationChannel(CHANNEL_SERVICE, "백그라운드 시장 감시", NotificationManager.IMPORTANCE_LOW),
             )
             manager.createNotificationChannel(
-                NotificationChannel(
-                    CHANNEL_STRATEGY,
-                    "코인 전략 변화",
-                    NotificationManager.IMPORTANCE_HIGH,
-                ),
+                NotificationChannel(CHANNEL_STRATEGY, "코인 전략 변화", NotificationManager.IMPORTANCE_HIGH),
             )
             manager.createNotificationChannel(
-                NotificationChannel(
-                    CHANNEL_GLOBAL_MARKET,
-                    "지금 확인할 거래기회",
-                    NotificationManager.IMPORTANCE_HIGH,
-                ).apply {
+                NotificationChannel(CHANNEL_GLOBAL_MARKET, "지금 확인할 거래기회", NotificationManager.IMPORTANCE_HIGH).apply {
                     description = "전세계 시장에서 실제로 확인할 가치가 있는 신규 거래기회만 알립니다."
                     enableVibration(true)
                 },
             )
             manager.createNotificationChannel(
-                NotificationChannel(
-                    CHANNEL_APP_UPDATE,
-                    "앱 업데이트",
-                    NotificationManager.IMPORTANCE_HIGH,
-                ),
+                NotificationChannel(CHANNEL_BRIEFING, "돈 대시보드 브리핑", NotificationManager.IMPORTANCE_HIGH).apply {
+                    description = "07:50·11:30·20:50·23:30 금융 브리핑이 새로 갱신되면 핵심 행동만 알립니다."
+                    enableVibration(true)
+                },
+            )
+            manager.createNotificationChannel(
+                NotificationChannel(CHANNEL_APP_UPDATE, "앱 업데이트", NotificationManager.IMPORTANCE_HIGH),
             )
         }
     }
@@ -133,6 +123,56 @@ class SignalNotificationHelper(private val context: Context) {
         notifyIfAllowed(notificationId, notification)
     }
 
+    fun notifyMoneyBriefing(
+        notificationId: Int,
+        slot: String,
+        ticker: String,
+        name: String,
+        direction: String,
+        status: String,
+        score: Double,
+        currency: String,
+        entryLow: Double,
+        entryHigh: Double,
+        stopLoss: Double,
+        target1: Double,
+    ) {
+        val slotText = when (slot) {
+            "0750" -> "아침 07:50"
+            "1130" -> "점심 11:30"
+            "2050" -> "저녁 20:50"
+            "2330" -> "밤 23:30"
+            else -> slot.ifBlank { "새" }
+        }
+        val statusText = statusKorean(status)
+        val action = when (status.uppercase()) {
+            "IMMEDIATE", "ACTIVE_SIGNAL" -> "손절까지 확인한 뒤 분할로만 접근"
+            "CONDITIONAL", "UNTRIGGERED" -> "진입구간 전에는 사지 말고 기다리기"
+            else -> "지금은 매수하지 말고 조건 변화만 보기"
+        }
+        val title = "$slotText 돈 대시보드 · $statusText"
+        val text = "${name.ifBlank { ticker }} ${directionKorean(direction)} · ${String.format(Locale.US, "%.0f", score)}점"
+        val detail = buildString {
+            append("지금 할 일: ").append(action).append("\n")
+            append(text).append("\n")
+            append("진입 ").append(formatPrice(entryLow, currency)).append("~").append(formatPrice(entryHigh, currency))
+            append(" · 손절 ").append(formatPrice(stopLoss, currency)).append("\n")
+            append("1차 목표 ").append(formatPrice(target1, currency)).append("\n")
+            append("탭하면 내 돈 상태와 오늘의 4개를 한 화면에서 봅니다.")
+        }
+        val notification = NotificationCompat.Builder(context, CHANNEL_BRIEFING)
+            .setSmallIcon(android.R.drawable.stat_notify_more)
+            .setContentTitle(title)
+            .setContentText(text)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(detail))
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setCategory(NotificationCompat.CATEGORY_RECOMMENDATION)
+            .setContentIntent(openMoneyDashboardPendingIntent(notificationId))
+            .setAutoCancel(true)
+            .build()
+        notifyIfAllowed(notificationId, notification)
+    }
+
     fun notifyAppUpdateAvailable(info: AppUpdateRepository.ReleaseApkInfo) {
         val text = "현재 ${info.currentVersionCode}, 최신 ${info.versionCode} (${info.versionName})"
         val notification = NotificationCompat.Builder(context, CHANNEL_APP_UPDATE)
@@ -151,34 +191,26 @@ class SignalNotificationHelper(private val context: Context) {
         if (
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
-        ) {
-            return
-        }
+        ) return
         manager.notify(id, notification)
     }
 
     private fun openMoneyDashboardPendingIntent(requestCode: Int): PendingIntent {
         val intent = Intent(context, HomeActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or
-                Intent.FLAG_ACTIVITY_CLEAR_TOP or
-                Intent.FLAG_ACTIVITY_SINGLE_TOP
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
         }
         return PendingIntent.getActivity(context, requestCode, intent, pendingIntentFlags())
     }
 
     private fun openCoinDetailPendingIntent(requestCode: Int): PendingIntent {
         val intent = Intent(context, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or
-                Intent.FLAG_ACTIVITY_CLEAR_TOP or
-                Intent.FLAG_ACTIVITY_SINGLE_TOP
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
         }
         return PendingIntent.getActivity(context, requestCode, intent, pendingIntentFlags())
     }
 
-    private fun pendingIntentFlags(): Int {
-        return PendingIntent.FLAG_UPDATE_CURRENT or
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
-    }
+    private fun pendingIntentFlags(): Int = PendingIntent.FLAG_UPDATE_CURRENT or
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
 
     private fun directionKorean(value: String): String = when (value.uppercase()) {
         "LONG" -> "상승"
@@ -186,6 +218,13 @@ class SignalNotificationHelper(private val context: Context) {
         "INVERSE" -> "인버스"
         "DEFENSIVE" -> "방어"
         else -> value
+    }
+
+    private fun statusKorean(value: String): String = when (value.uppercase()) {
+        "IMMEDIATE", "ACTIVE_SIGNAL" -> "실행 가능"
+        "CONDITIONAL", "UNTRIGGERED" -> "조건 대기"
+        "WATCH", "SOURCE_REVIEW_REQUIRED" -> "관찰만"
+        else -> value.ifBlank { "새 브리핑" }
     }
 
     private fun formatPrice(value: Double, currency: String): String {
@@ -205,6 +244,7 @@ class SignalNotificationHelper(private val context: Context) {
         const val CHANNEL_SERVICE = "scanner_service"
         const val CHANNEL_STRATEGY = "strategy_events"
         const val CHANNEL_GLOBAL_MARKET = "global_market_signals"
+        const val CHANNEL_BRIEFING = "money_dashboard_briefing"
         const val CHANNEL_APP_UPDATE = "app_updates"
     }
 }
