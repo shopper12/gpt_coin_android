@@ -11,8 +11,8 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import com.cryptotradecoach.HomeActivity
 import com.cryptotradecoach.MainActivity
-import com.cryptotradecoach.RecommendationHistoryActivity
 import com.cryptotradecoach.data.AppUpdateRepository
 import com.cryptotradecoach.data.local.StrategyEventType
 import com.cryptotradecoach.data.local.StrategyHistoryEntity
@@ -26,31 +26,31 @@ class SignalNotificationHelper(private val context: Context) {
             manager.createNotificationChannel(
                 NotificationChannel(
                     CHANNEL_SERVICE,
-                    "Coin Scanner Service",
+                    "백그라운드 시장 감시",
                     NotificationManager.IMPORTANCE_LOW,
                 ),
             )
             manager.createNotificationChannel(
                 NotificationChannel(
                     CHANNEL_STRATEGY,
-                    "Strategy Events",
+                    "코인 전략 변화",
                     NotificationManager.IMPORTANCE_HIGH,
                 ),
             )
             manager.createNotificationChannel(
                 NotificationChannel(
                     CHANNEL_GLOBAL_MARKET,
-                    "Global Market Trade Signals",
+                    "지금 확인할 거래기회",
                     NotificationManager.IMPORTANCE_HIGH,
                 ).apply {
-                    description = "전세계 주식·ETF·원자재·채권·FX·코인 자동 매매 후보 알림"
+                    description = "전세계 시장에서 실제로 확인할 가치가 있는 신규 거래기회만 알립니다."
                     enableVibration(true)
                 },
             )
             manager.createNotificationChannel(
                 NotificationChannel(
                     CHANNEL_APP_UPDATE,
-                    "App Updates",
+                    "앱 업데이트",
                     NotificationManager.IMPORTANCE_HIGH,
                 ),
             )
@@ -60,26 +60,26 @@ class SignalNotificationHelper(private val context: Context) {
     fun foregroundNotification(scanIntervalMs: Long): Notification {
         return NotificationCompat.Builder(context, CHANNEL_SERVICE)
             .setSmallIcon(android.R.drawable.stat_notify_sync)
-            .setContentTitle("코인 스캐너 실행 중")
-            .setContentText("Upbit KRW 시장을 ${scanIntervalMs / 1000}초 주기로 자동 스캔합니다.")
-            .setContentIntent(openAppPendingIntent(REQUEST_CODE_SERVICE))
+            .setContentTitle("시장 감시 중")
+            .setContentText("앱을 계속 보고 있을 필요 없습니다. 의미 있는 변화만 알립니다.")
+            .setContentIntent(openMoneyDashboardPendingIntent(REQUEST_CODE_SERVICE))
             .setOngoing(true)
             .build()
     }
 
     fun notifyStrategyEvent(event: StrategyHistoryEntity, id: Int) {
         val title = when (event.eventType) {
-            StrategyEventType.NEW_ACTIVE -> "${event.symbol} 신규 전략"
-            StrategyEventType.RANK_UP -> "${event.symbol} 순위 상승"
-            StrategyEventType.PRICE_PLAN_CHANGED -> "${event.symbol} 매매전략 변경"
-            StrategyEventType.WATCH_ONLY -> "${event.symbol} 관찰 전환"
-            StrategyEventType.INVALIDATED -> "${event.symbol} 전략 무효화"
-            StrategyEventType.TARGET1_HIT -> "${event.symbol} 1차 목표 도달"
-            StrategyEventType.TRAILING_STOP_HIT -> "${event.symbol} 트레일링 스탑"
-            StrategyEventType.HIT_TARGET -> "${event.symbol} 목표가 도달"
-            StrategyEventType.STOPPED_OUT -> "${event.symbol} 손절가 도달"
-            StrategyEventType.EXPIRED -> "${event.symbol} 전략 만료"
-            else -> "${event.symbol} 전략 알림"
+            StrategyEventType.NEW_ACTIVE -> "${event.symbol} · 실행조건 확인"
+            StrategyEventType.RANK_UP -> "${event.symbol} · 우선순위 상승"
+            StrategyEventType.PRICE_PLAN_CHANGED -> "${event.symbol} · 진입/손절 변경"
+            StrategyEventType.WATCH_ONLY -> "${event.symbol} · 지금은 관찰만"
+            StrategyEventType.INVALIDATED -> "${event.symbol} · 전략 폐기"
+            StrategyEventType.TARGET1_HIT -> "${event.symbol} · 1차 목표 도달"
+            StrategyEventType.TRAILING_STOP_HIT -> "${event.symbol} · 이익보호 조건 도달"
+            StrategyEventType.HIT_TARGET -> "${event.symbol} · 목표가 도달"
+            StrategyEventType.STOPPED_OUT -> "${event.symbol} · 손절 조건 도달"
+            StrategyEventType.EXPIRED -> "${event.symbol} · 전략 만료"
+            else -> "${event.symbol} · 전략 변화"
         }
         val text = event.message
         val detail = listOfNotNull(event.message, event.newSummary).joinToString("\n")
@@ -89,7 +89,7 @@ class SignalNotificationHelper(private val context: Context) {
             .setContentText(text)
             .setStyle(NotificationCompat.BigTextStyle().bigText(detail))
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setContentIntent(openAppPendingIntent(id))
+            .setContentIntent(openCoinDetailPendingIntent(id))
             .setAutoCancel(true)
             .build()
         notifyIfAllowed(id, notification)
@@ -110,23 +110,24 @@ class SignalNotificationHelper(private val context: Context) {
         target2: Double,
         reason: String,
     ) {
-        val title = "$ticker $direction 시그널 · 점수 ${String.format(Locale.US, "%.1f", score)}"
-        val priceText = "현재 ${formatPrice(currentPrice, currency)} · 진입 ${formatPrice(entryLow, currency)}~${formatPrice(entryHigh, currency)}"
+        val directionText = directionKorean(direction)
+        val scoreText = String.format(Locale.US, "%.0f", score)
+        val title = "확인할 것 · ${name.ifBlank { ticker }} $directionText · ${scoreText}점"
+        val entryText = "진입 ${formatPrice(entryLow, currency)}~${formatPrice(entryHigh, currency)} · 손절 ${formatPrice(stopLoss, currency)}"
         val detail = buildString {
-            append(name).append(" (").append(ticker).append(")\n")
-            append(priceText).append("\n")
-            append("손절 ").append(formatPrice(stopLoss, currency))
-            append(" · 목표 ").append(formatPrice(target1, currency)).append(" → ").append(formatPrice(target2, currency))
-            if (reason.isNotBlank()) append("\n").append(reason)
+            append("지금 행동: 진입구간이면 손절을 먼저 확인, 아니면 기다리기\n")
+            append("현재 ").append(formatPrice(currentPrice, currency)).append(" · ").append(entryText).append("\n")
+            append("목표 ").append(formatPrice(target1, currency)).append(" → ").append(formatPrice(target2, currency))
+            if (reason.isNotBlank()) append("\n왜? ").append(reason)
         }
         val notification = NotificationCompat.Builder(context, CHANNEL_GLOBAL_MARKET)
             .setSmallIcon(android.R.drawable.stat_notify_more)
             .setContentTitle(title)
-            .setContentText(priceText)
+            .setContentText(entryText)
             .setStyle(NotificationCompat.BigTextStyle().bigText(detail))
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setCategory(NotificationCompat.CATEGORY_RECOMMENDATION)
-            .setContentIntent(openRecommendationHistoryPendingIntent(notificationId))
+            .setContentIntent(openMoneyDashboardPendingIntent(notificationId))
             .setAutoCancel(true)
             .build()
         notifyIfAllowed(notificationId, notification)
@@ -136,11 +137,11 @@ class SignalNotificationHelper(private val context: Context) {
         val text = "현재 ${info.currentVersionCode}, 최신 ${info.versionCode} (${info.versionName})"
         val notification = NotificationCompat.Builder(context, CHANNEL_APP_UPDATE)
             .setSmallIcon(android.R.drawable.stat_sys_download_done)
-            .setContentTitle("새 앱 업데이트가 있습니다")
+            .setContentTitle("내 돈 대시보드 업데이트")
             .setContentText(text)
-            .setStyle(NotificationCompat.BigTextStyle().bigText("$text\nSettings 탭에서 Download and install latest APK를 누르세요."))
+            .setStyle(NotificationCompat.BigTextStyle().bigText("$text\n앱의 설정에서 최신 APK를 설치할 수 있습니다."))
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setContentIntent(openAppPendingIntent(REQUEST_CODE_APP_UPDATE))
+            .setContentIntent(openMoneyDashboardPendingIntent(REQUEST_CODE_APP_UPDATE))
             .setAutoCancel(true)
             .build()
         notifyIfAllowed(NOTIFICATION_ID_APP_UPDATE, notification)
@@ -156,8 +157,8 @@ class SignalNotificationHelper(private val context: Context) {
         manager.notify(id, notification)
     }
 
-    private fun openAppPendingIntent(requestCode: Int): PendingIntent {
-        val intent = Intent(context, MainActivity::class.java).apply {
+    private fun openMoneyDashboardPendingIntent(requestCode: Int): PendingIntent {
+        val intent = Intent(context, HomeActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or
                 Intent.FLAG_ACTIVITY_CLEAR_TOP or
                 Intent.FLAG_ACTIVITY_SINGLE_TOP
@@ -165,8 +166,8 @@ class SignalNotificationHelper(private val context: Context) {
         return PendingIntent.getActivity(context, requestCode, intent, pendingIntentFlags())
     }
 
-    private fun openRecommendationHistoryPendingIntent(requestCode: Int): PendingIntent {
-        val intent = Intent(context, RecommendationHistoryActivity::class.java).apply {
+    private fun openCoinDetailPendingIntent(requestCode: Int): PendingIntent {
+        val intent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or
                 Intent.FLAG_ACTIVITY_CLEAR_TOP or
                 Intent.FLAG_ACTIVITY_SINGLE_TOP
@@ -177,6 +178,14 @@ class SignalNotificationHelper(private val context: Context) {
     private fun pendingIntentFlags(): Int {
         return PendingIntent.FLAG_UPDATE_CURRENT or
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
+    }
+
+    private fun directionKorean(value: String): String = when (value.uppercase()) {
+        "LONG" -> "상승"
+        "SHORT" -> "하락"
+        "INVERSE" -> "인버스"
+        "DEFENSIVE" -> "방어"
+        else -> value
     }
 
     private fun formatPrice(value: Double, currency: String): String {
