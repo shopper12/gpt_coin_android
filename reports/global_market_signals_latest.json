@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-08-27T07:26:18.778001+09:00",
+  "generatedAtKst": "2026-08-27T07:52:22.789472+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
@@ -17,7 +17,7 @@
     "scannerSignalCount": 0,
     "chatgptSignalCount": 4,
     "krEtfSignalCount": 0,
-    "dailyCacheHit": false,
+    "dailyCacheHit": true,
     "maxSignalAgeMinutes": 45
   },
   "marketRegime": {
@@ -29,132 +29,132 @@
   },
   "signals": [
     {
-      "id": "20260826-1130KST-034020-LONG",
-      "date": "2026-08-26",
-      "generatedAtKst": "2026-08-26T11:30:00+09:00",
-      "briefingSlot": "1130",
+      "id": "20260827-0750KST-CRWD-LONG",
+      "date": "2026-08-27",
+      "generatedAtKst": "2026-08-27T07:50:00+09:00",
+      "briefingSlot": "0750",
+      "assetClass": "US_STOCK",
+      "market": "NASDAQ",
+      "ticker": "CRWD",
+      "name": "CrowdStrike Holdings",
+      "direction": "LONG",
+      "strategy": "실적 갭 이후 201~207달러 눌림·지지 확인 시 분할; 211달러 이상 추격 금지",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "status": "CONDITIONAL",
+      "score": 95,
+      "confidence": 86,
+      "currentPrice": 189.18,
+      "referencePrice": 189.18,
+      "currency": "USD",
+      "entryLow": 201.0,
+      "entryHigh": 207.0,
+      "stopLoss": 194.0,
+      "target1": 218.0,
+      "target2": 227.0,
+      "holdingPeriod": "2~15거래일",
+      "committeeVote": "6/7",
+      "catalyst": "Q2 매출·ARR 호조와 연간 매출 가이던스 상향, AI 보안 수요",
+      "reason": "8/26 정규장 189.18달러(+2.05%) 후 실적 발표 뒤 애프터마켓에서 10% 이상 급등. ARR 25% 증가와 연간 전망 상향이 가격 반응과 동행",
+      "risk": "고밸류에이션, 실적 갭 과열, 52주 고점 227.50달러 부근 공급",
+      "invalidation": "194달러 하회 또는 실적 갭의 절반 이상 반납과 소프트웨어 breadth 약화 동시 발생",
+      "quoteStatus": "US_REGULAR_CLOSE_VERIFIED_PLUS_AH_MOVE_VERIFIED",
+      "priceTimestampKst": "2026-08-27T05:00:00+09:00"
+    },
+    {
+      "id": "20260827-0750KST-000660-LONG",
+      "date": "2026-08-27",
+      "generatedAtKst": "2026-08-27T07:50:00+09:00",
+      "briefingSlot": "0750",
+      "assetClass": "KR_STOCK",
+      "market": "KRX",
+      "ticker": "000660",
+      "name": "SK하이닉스",
+      "direction": "LONG",
+      "strategy": "1700000~1740000원 눌림·지지 확인 시 분할; 장초반 +5% 이상 갭 추격 금지",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "status": "CONDITIONAL",
+      "score": 93,
+      "confidence": 84,
+      "currentPrice": 1688000,
+      "referencePrice": 1688000,
+      "currency": "KRW",
+      "entryLow": 1700000,
+      "entryHigh": 1740000,
+      "stopLoss": 1640000,
+      "target1": 1800000,
+      "target2": 1880000,
+      "holdingPeriod": "1~10거래일",
+      "committeeVote": "6/7",
+      "catalyst": "Nvidia Q2 beat·Q3 1080억달러 가이던스와 AI 인프라 수요 재확인, SK하이닉스 자사주 매입",
+      "reason": "8/26 종가 1688000원(+0.60%)으로 대형 반도체가 KOSPI 상승을 지지했고, 장후 Nvidia 데이터센터 매출 890억달러 및 가이던스 상향으로 한국 메모리 선행신호가 강화됨",
+      "risk": "Nvidia 마진 압박, 장초반 과도한 갭, 외국인 차익실현",
+      "invalidation": "1640000원 하회 또는 Nvidia 실적 호재에도 삼성전자·SK하이닉스 동반 갭 반납",
+      "quoteStatus": "KR_REGULAR_CLOSE_VERIFIED_US_NVDA_AH_CATALYST_VERIFIED",
+      "priceTimestampKst": "2026-08-26T15:30:00+09:00"
+    },
+    {
+      "id": "20260827-0750KST-034020-LONG",
+      "date": "2026-08-27",
+      "generatedAtKst": "2026-08-27T07:50:00+09:00",
+      "briefingSlot": "0750",
       "assetClass": "KR_STOCK",
       "market": "KRX",
       "ticker": "034020",
       "name": "두산에너빌리티",
       "direction": "LONG",
-      "strategy": "81500~83000원 눌림·지지 확인 시 분할; 84100원 장중 고점 위 추격 금지",
-      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "status": "CONDITIONAL",
-      "score": 93,
-      "confidence": 82,
-      "currentPrice": 80700,
-      "referencePrice": 80700,
-      "currency": "KRW",
-      "entryLow": 81500,
-      "entryHigh": 83000,
-      "stopLoss": 79800,
-      "target1": 86500,
-      "target2": 90000,
-      "holdingPeriod": "1~10거래일",
-      "committeeVote": "6/7",
-      "catalyst": "원전/전력 섹터 강세 확산, 웨스팅하우스 관련 기대, 전일 +10.55% 뒤 장중 후속 강세",
-      "reason": "8/25 종가 80700원(+10.55%) 뒤 8/26 09:26에도 +3.22%, 장중 고가 84100원. 한국전력·한전기술 등 원전/전력주가 동반 강세여서 개별주가 아닌 섹터 breadth가 확인됨",
-      "risk": "산업부가 한미 공동출자 웨스팅하우스 지분인수 보도를 공식 부인, 전일 급등 후 차익실현, 높은 밸류에이션",
-      "invalidation": "79800원 하회 또는 원전/전력 섹터 동반 약화와 외국인 매도 확대",
-      "quoteStatus": "KR_INTRADAY_PARTIAL_VERIFIED_0926KST_REFERENCE_CLOSE_0825",
-      "priceTimestampKst": "2026-08-26T09:26:00+09:00"
-    },
-    {
-      "id": "20260826-1130KST-GDX-LONG",
-      "date": "2026-08-26",
-      "generatedAtKst": "2026-08-26T11:30:00+09:00",
-      "briefingSlot": "1130",
-      "assetClass": "US_ETF",
-      "market": "NYSEARCA",
-      "ticker": "GDX",
-      "name": "VanEck Gold Miners ETF",
-      "direction": "LONG",
-      "strategy": "103.5~105.0달러 눌림에서 분할; 106.5달러 이상 갭/급등 추격 금지",
+      "strategy": "83500~85800원 눌림에서 원전 breadth 유지 확인 시 분할; 87000원 이상 추격 금지",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
       "score": 91,
-      "confidence": 83,
-      "currentPrice": 105.02,
-      "referencePrice": 105.02,
-      "currency": "USD",
-      "entryLow": 103.5,
-      "entryHigh": 105.0,
-      "stopLoss": 100.8,
-      "target1": 110.0,
-      "target2": 114.0,
-      "holdingPeriod": "3~15거래일",
+      "confidence": 81,
+      "currentPrice": 85800,
+      "referencePrice": 85800,
+      "currency": "KRW",
+      "entryLow": 83500,
+      "entryHigh": 85800,
+      "stopLoss": 80700,
+      "target1": 90000,
+      "target2": 94500,
+      "holdingPeriod": "2~10거래일",
       "committeeVote": "6/7",
-      "catalyst": "장기금리·유가 하락, 금 고점권, 금광주 추세 지속",
-      "reason": "미국장은 아직 미개장이라 8/25 종가 105.02달러를 기준으로 유지. 장기금리와 유가 하락이 하드에셋/금광주 환경을 훼손하지 않음",
-      "risk": "단기 과열, PCE·Jackson Hole, 달러 반등",
-      "invalidation": "100.8달러 하회 또는 금 현물과 GDX 상대강도 동시 붕괴",
-      "quoteStatus": "US_REGULAR_CLOSE_CROSS_VERIFIED_0825_MARKET_CLOSED",
-      "priceTimestampKst": "2026-08-26T05:00:00+09:00"
+      "catalyst": "원전·전력·건설 순환매의 이틀 연속 확산",
+      "reason": "8/25 +10.55% 뒤 8/26에도 85800원(+6.32%) 마감. 한국전력·건설·전력 업종 강세와 동행해 단일 종목 숏커버보다 섹터 continuation 성격이 강함",
+      "risk": "웨스팅하우스 관련 보도 공식 부인, 이틀 급등 후 차익실현",
+      "invalidation": "80700원 하회 또는 한국전력·한전기술 등 원전 breadth 동반 붕괴",
+      "quoteStatus": "KR_REGULAR_CLOSE_CROSS_VERIFIED_0826",
+      "priceTimestampKst": "2026-08-26T15:30:00+09:00"
     },
     {
-      "id": "20260826-1130KST-INTU-SHORT",
-      "date": "2026-08-26",
-      "generatedAtKst": "2026-08-26T11:30:00+09:00",
-      "briefingSlot": "1130",
+      "id": "20260827-0750KST-CRM-LONG",
+      "date": "2026-08-27",
+      "generatedAtKst": "2026-08-27T07:50:00+09:00",
+      "briefingSlot": "0750",
       "assetClass": "US_STOCK",
-      "market": "NASDAQ",
-      "ticker": "INTU",
-      "name": "Intuit",
-      "direction": "SHORT",
-      "strategy": "326~334달러 반등 실패 시 숏; 갭다운 저점 추격 금지",
+      "market": "NYSE",
+      "ticker": "CRM",
+      "name": "Salesforce",
+      "direction": "LONG",
+      "strategy": "실적 갭 이후 222~228달러 눌림·지지 확인 시 분할; 233달러 이상 추격 금지",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
       "score": 90,
-      "confidence": 81,
-      "currentPrice": 323.45,
-      "referencePrice": 323.45,
+      "confidence": 80,
+      "currentPrice": 204.77,
+      "referencePrice": 204.77,
       "currency": "USD",
-      "entryLow": 326.0,
-      "entryHigh": 334.0,
-      "stopLoss": 344.0,
-      "target1": 305.0,
-      "target2": 290.0,
-      "holdingPeriod": "1~7거래일",
-      "committeeVote": "6/7",
-      "catalyst": "FY2027 매출·EPS 가이던스 컨센서스 하회",
-      "reason": "정규장 357.46달러 뒤 애프터마켓 323.45달러로 하락. 미국장 재개 전이라 thesis는 유지하되 반등 실패 확인 조건을 유지",
-      "risk": "큰 갭다운 후 숏커버, AI 전략 재평가, 시장 전체 기술주 강세",
-      "invalidation": "344달러 회복 또는 가이던스 우려를 상쇄하는 상향정보 발생",
-      "quoteStatus": "US_AFTER_HOURS_CROSS_VERIFIED_0825_MARKET_CLOSED",
-      "priceTimestampKst": "2026-08-26T07:00:00+09:00"
-    },
-    {
-      "id": "20260826-1130KST-BTCUSD-LONG",
-      "date": "2026-08-26",
-      "generatedAtKst": "2026-08-26T11:30:00+09:00",
-      "briefingSlot": "1130",
-      "assetClass": "CRYPTO",
-      "market": "GLOBAL",
-      "ticker": "BTC-USD",
-      "name": "Bitcoin",
-      "direction": "LONG",
-      "strategy": "78000~79000달러 지지 확인 시 분할; 80000달러 재돌파 전 추격 금지",
-      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "status": "CONDITIONAL",
-      "score": 86,
-      "confidence": 75,
-      "currentPrice": 78738.68,
-      "referencePrice": 78738.68,
-      "currency": "USD",
-      "entryLow": 78000,
-      "entryHigh": 79000,
-      "stopLoss": 76000,
-      "target1": 83000,
-      "target2": 87000,
-      "holdingPeriod": "1~10일",
+      "entryLow": 222.0,
+      "entryHigh": 228.0,
+      "stopLoss": 214.0,
+      "target1": 238.0,
+      "target2": 250.0,
+      "holdingPeriod": "2~15거래일",
       "committeeVote": "5/7",
-      "catalyst": "달러 약세·하드에셋 선호·현물 수요",
-      "reason": "11:14 KST 실시간 파생지수 약 78739달러. 24시간 78.3~79.0K 범위에서 급등 후 숨고르기이며 80K 위 추격보다 지지 확인의 기대값이 높음",
-      "risk": "단기 급등 피로, 80~83K 저항, PCE·Fed 이벤트",
-      "invalidation": "76000달러 하회 또는 78K 지지 붕괴와 현물 수요 둔화 동시 발생",
-      "quoteStatus": "CRYPTO_REALTIME_CROSS_VERIFIED_1114KST",
-      "priceTimestampKst": "2026-08-26T11:14:46+09:00"
+      "catalyst": "Q2 beat·Q3 및 FY27 가이던스 상향, Agentforce/Data 360 AI 매출 가속",
+      "reason": "8/26 정규장 약 204.77달러 이후 애프터마켓에서 11~13% 급등. Agentforce/Data 360 ARR 고성장과 가이던스 상향으로 SaaS 약세 내러티브가 반전",
+      "risk": "실적 갭 과열, EPS에 Anthropic 투자이익 포함, 장기 SaaS 성장률 논쟁",
+      "invalidation": "214달러 하회 또는 실적 갭 대부분 반납과 소프트웨어 섹터 breadth 약화",
+      "quoteStatus": "US_REGULAR_CLOSE_VERIFIED_PLUS_AH_MOVE_VERIFIED",
+      "priceTimestampKst": "2026-08-27T05:00:00+09:00"
     }
   ],
   "topEvaluated": [
@@ -183,7 +183,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 958.4
+        "ageMinutes": 982.4
       }
     },
     {
@@ -211,7 +211,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 958.4
+        "ageMinutes": 982.4
       }
     },
     {
@@ -239,7 +239,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 958.4
+        "ageMinutes": 982.4
       }
     },
     {
@@ -267,7 +267,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 958.4
+        "ageMinutes": 982.4
       }
     },
     {
@@ -295,7 +295,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 958.4
+        "ageMinutes": 982.4
       }
     },
     {
@@ -323,7 +323,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 958.4
+        "ageMinutes": 982.4
       }
     },
     {
@@ -351,7 +351,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 958.5
+        "ageMinutes": 982.4
       }
     },
     {
@@ -379,7 +379,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 958.5
+        "ageMinutes": 982.4
       }
     },
     {
@@ -407,7 +407,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 958.5
+        "ageMinutes": 982.4
       }
     },
     {
@@ -435,7 +435,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 958.5
+        "ageMinutes": 982.4
       }
     },
     {
@@ -463,7 +463,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 958.5
+        "ageMinutes": 982.4
       }
     },
     {
@@ -491,7 +491,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 958.5
+        "ageMinutes": 982.4
       }
     },
     {
@@ -519,7 +519,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 958.5
+        "ageMinutes": 982.4
       }
     },
     {
@@ -547,7 +547,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 958.5
+        "ageMinutes": 982.4
       }
     },
     {
@@ -575,7 +575,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 958.5
+        "ageMinutes": 982.4
       }
     },
     {
@@ -603,7 +603,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 958.5
+        "ageMinutes": 982.4
       }
     },
     {
@@ -631,7 +631,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 958.5
+        "ageMinutes": 982.4
       }
     },
     {
@@ -659,7 +659,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 958.5
+        "ageMinutes": 982.4
       }
     },
     {
@@ -687,7 +687,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 958.5
+        "ageMinutes": 982.4
       }
     },
     {
@@ -715,7 +715,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 958.5
+        "ageMinutes": 982.5
       }
     },
     {
@@ -743,7 +743,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 958.5
+        "ageMinutes": 982.5
       }
     },
     {
@@ -771,7 +771,7 @@
           "score": -5
         },
         "fresh": false,
-        "ageMinutes": 958.5
+        "ageMinutes": 982.5
       }
     },
     {
@@ -799,7 +799,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 958.5
+        "ageMinutes": 982.5
       }
     },
     {
@@ -827,7 +827,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 958.5
+        "ageMinutes": 982.5
       }
     },
     {
@@ -855,7 +855,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 958.5
+        "ageMinutes": 982.5
       }
     },
     {
@@ -883,7 +883,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 958.5
+        "ageMinutes": 982.5
       }
     },
     {
@@ -911,7 +911,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 958.5
+        "ageMinutes": 982.5
       }
     },
     {
@@ -938,8 +938,8 @@
           "fvg": "BULLISH 67.2000~67.2100",
           "score": 3
         },
-        "fresh": true,
-        "ageMinutes": 28.5
+        "fresh": false,
+        "ageMinutes": 52.5
       }
     },
     {
@@ -954,20 +954,20 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.35,
-        "ema20": 79.884087,
-        "ema50": 79.871035,
-        "lastTimestamp": "2026-08-26T21:45:00+00:00",
+        "ema20": 79.888788,
+        "ema50": 79.874093,
+        "lastTimestamp": "2026-08-26T22:32:12+00:00",
         "reason": "breakout=True; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
-          "structure": "BULLISH_HH_HL",
+          "structure": "RANGE",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BEARISH 79.9000~79.9500",
+          "fvg": "BULLISH 79.9000~79.9100",
           "score": 1
         },
         "fresh": true,
-        "ageMinutes": 43.5
+        "ageMinutes": 20.3
       }
     },
     {
@@ -982,9 +982,9 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.35,
-        "ema20": 214.931871,
-        "ema50": 213.345098,
-        "lastTimestamp": "2026-08-26T22:15:00+00:00",
+        "ema20": 215.362513,
+        "ema50": 213.650225,
+        "lastTimestamp": "2026-08-26T22:45:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
@@ -995,11 +995,11 @@
           "score": 1
         },
         "fresh": true,
-        "ageMinutes": 13.5
+        "ageMinutes": 7.5
       }
     }
   ],
-  "historyRecordCount": 420,
+  "historyRecordCount": 424,
   "researchBasis": [
     "time-series momentum",
     "cross-sectional momentum",
