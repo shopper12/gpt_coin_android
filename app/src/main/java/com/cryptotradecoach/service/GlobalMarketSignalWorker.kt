@@ -15,16 +15,15 @@ class GlobalMarketSignalWorker(
 ) : CoroutineWorker(appContext, workerParams) {
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
-        runCatching {
-            val preferences = applicationContext.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
-            val notifier = SignalNotificationHelper(applicationContext)
-            notifier.ensureChannels()
-            processGlobalSignals(preferences, notifier)
-            processMoneyBriefing(preferences, notifier)
-            Result.success()
-        }.getOrElse {
-            Result.retry()
-        }
+        val preferences = applicationContext.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
+        val notifier = SignalNotificationHelper(applicationContext)
+        notifier.ensureChannels()
+
+        // Keep the two alert feeds independent: a transient failure in one JSON must not hide the other.
+        val globalSignalsOk = runCatching { processGlobalSignals(preferences, notifier) }.isSuccess
+        val moneyBriefingOk = runCatching { processMoneyBriefing(preferences, notifier) }.isSuccess
+
+        if (globalSignalsOk || moneyBriefingOk) Result.success() else Result.retry()
     }
 
     private fun processGlobalSignals(
