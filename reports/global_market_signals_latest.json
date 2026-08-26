@@ -1,20 +1,20 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-08-26T21:17:13.853855+09:00",
+  "generatedAtKst": "2026-08-26T22:36:32.538580+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
-    "shortlistCount": 423,
+    "shortlistCount": 422,
     "krEtfShortlistCount": 34,
     "dailyMetricsCount": 398,
-    "dailyCandidateCount": 40,
+    "dailyCandidateCount": 39,
     "krEtfDailyCandidateCount": 27,
-    "strictDailyCandidateCount": 13,
+    "strictDailyCandidateCount": 12,
     "krEtfSignalEligibleCount": 0,
-    "intradayEvaluatedCount": 40,
+    "intradayEvaluatedCount": 39,
     "krEtfIntradayEvaluatedCount": 27,
-    "signalCount": 4,
-    "scannerSignalCount": 0,
+    "signalCount": 5,
+    "scannerSignalCount": 1,
     "chatgptSignalCount": 4,
     "krEtfSignalCount": 0,
     "dailyCacheHit": false,
@@ -24,7 +24,7 @@
     "panic": false,
     "riskOff": false,
     "equityBelow200Count": 0,
-    "realizedVolatility20Annualized": 0.219,
+    "realizedVolatility20Annualized": 0.203,
     "reason": "광의 추세와 변동성 정상"
   },
   "signals": [
@@ -155,6 +155,105 @@
       "invalidation": "76000달러 하회 또는 78K 지지 붕괴와 현물 수요 둔화 동시 발생",
       "quoteStatus": "CRYPTO_REALTIME_CROSS_VERIFIED_1114KST",
       "priceTimestampKst": "2026-08-26T11:14:46+09:00"
+    },
+    {
+      "id": "GH-LONG-20260826T1330000000-EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
+      "date": "2026-08-26",
+      "generatedAtKst": "2026-08-26T22:36:32.538580+09:00",
+      "signalTimestamp": "2026-08-26T13:30:00+00:00",
+      "assetClass": "US_STOCK",
+      "market": "US",
+      "ticker": "GH",
+      "name": "Guardant Health, Inc. - Common Stock",
+      "direction": "LONG",
+      "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM: 절대추세+상대모멘텀+15분 트리거+변동성 목표",
+      "strategyType": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
+      "referencePrice": 166.600006,
+      "currentPrice": 166.600006,
+      "previousClose": 164.919998,
+      "todayChangePct": 1.019,
+      "recentCloses": [
+        155.0,
+        155.869995,
+        148.070007,
+        152.289993,
+        150.75,
+        150.199997,
+        147.330002,
+        145.470001,
+        143.619995,
+        144.070007,
+        152.350006,
+        161.990005,
+        158.830002,
+        159.789993,
+        163.179993,
+        157.580002,
+        168.479996,
+        167.210007,
+        165.089996,
+        165.110001,
+        159.539993,
+        157.210007,
+        161.669998,
+        160.119995,
+        163.339996,
+        167.880005,
+        170.690002,
+        163.179993,
+        164.919998,
+        166.600006
+      ],
+      "currency": "USD",
+      "status": "ACTIVE_SIGNAL",
+      "score": 80.5,
+      "confidence": 8.1,
+      "relativeStrengthPercentile": 0.8305,
+      "entryLow": 164.934006,
+      "entryHigh": 168.059393,
+      "stopLoss": 150.546748,
+      "target1": 198.706523,
+      "target2": 217.970433,
+      "riskPct": 9.64,
+      "volatilityTargetExposurePct": 24.5,
+      "regime": {
+        "panic": false,
+        "riskOff": false,
+        "equityBelow200Count": 0,
+        "realizedVolatility20Annualized": 0.203,
+        "reason": "광의 추세와 변동성 정상"
+      },
+      "ict": {
+        "bias": "NEUTRAL",
+        "structure": "RANGE",
+        "event": "BOS_UP",
+        "liquidity": "NONE",
+        "fvg": "BEARISH 166.4259~166.7700",
+        "score": 1
+      },
+      "trigger": {
+        "ready": true,
+        "breakout": false,
+        "reclaim": true,
+        "volumeRatio": 4.976,
+        "volumeThreshold": 1.35,
+        "ema20": 165.667807,
+        "ema50": 165.453109,
+        "lastTimestamp": "2026-08-26T13:30:00+00:00",
+        "reason": "breakout=False; reclaim=True; volume=4.98x/1.35x; ICT=NEUTRAL/BOS_UP/NONE",
+        "ict": {
+          "bias": "NEUTRAL",
+          "structure": "RANGE",
+          "event": "BOS_UP",
+          "liquidity": "NONE",
+          "fvg": "BEARISH 166.4259~166.7700",
+          "score": 1
+        },
+        "fresh": true,
+        "ageMinutes": 8.7
+      },
+      "reason": "3/6/12개월 절대 모멘텀 양수, 200일선 상단, 자산군 상대강도 83백분위, breakout=False; reclaim=True; volume=4.98x/1.35x; ICT=NEUTRAL/BOS_UP/NONE",
+      "guardrail": "자동 추천은 주문이 아니다. 실시간 호가·슬리피지·공시·거래 가능 여부를 확인한다."
     }
   ],
   "topEvaluated": [
@@ -183,7 +282,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 364.4
+        "ageMinutes": 443.7
       }
     },
     {
@@ -211,7 +310,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 349.4
+        "ageMinutes": 428.7
       }
     },
     {
@@ -239,7 +338,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 349.4
+        "ageMinutes": 428.7
       }
     },
     {
@@ -267,7 +366,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 364.4
+        "ageMinutes": 443.7
       }
     },
     {
@@ -295,7 +394,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 349.4
+        "ageMinutes": 428.7
       }
     },
     {
@@ -323,7 +422,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 349.4
+        "ageMinutes": 428.7
       }
     },
     {
@@ -351,7 +450,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 364.4
+        "ageMinutes": 443.7
       }
     },
     {
@@ -379,7 +478,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 364.4
+        "ageMinutes": 443.7
       }
     },
     {
@@ -407,7 +506,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 364.4
+        "ageMinutes": 443.7
       }
     },
     {
@@ -435,7 +534,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 364.4
+        "ageMinutes": 443.7
       }
     },
     {
@@ -463,7 +562,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 364.4
+        "ageMinutes": 443.7
       }
     },
     {
@@ -491,7 +590,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 349.4
+        "ageMinutes": 428.7
       }
     },
     {
@@ -519,7 +618,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 349.4
+        "ageMinutes": 428.7
       }
     },
     {
@@ -547,7 +646,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 349.4
+        "ageMinutes": 428.7
       }
     },
     {
@@ -575,7 +674,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 349.4
+        "ageMinutes": 428.7
       }
     },
     {
@@ -603,7 +702,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 364.4
+        "ageMinutes": 443.7
       }
     },
     {
@@ -631,7 +730,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 364.4
+        "ageMinutes": 443.7
       }
     },
     {
@@ -659,7 +758,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 364.4
+        "ageMinutes": 443.7
       }
     },
     {
@@ -687,7 +786,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 349.4
+        "ageMinutes": 428.7
       }
     },
     {
@@ -715,7 +814,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 364.4
+        "ageMinutes": 443.7
       }
     },
     {
@@ -743,7 +842,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 349.4
+        "ageMinutes": 428.7
       }
     },
     {
@@ -771,7 +870,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 364.4
+        "ageMinutes": 443.7
       }
     },
     {
@@ -799,7 +898,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 349.4
+        "ageMinutes": 428.7
       }
     },
     {
@@ -827,7 +926,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 349.4
+        "ageMinutes": 428.7
       }
     },
     {
@@ -855,7 +954,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 349.4
+        "ageMinutes": 428.7
       }
     },
     {
@@ -883,7 +982,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 349.4
+        "ageMinutes": 428.7
       }
     },
     {
@@ -911,63 +1010,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 349.4
-      }
-    },
-    {
-      "ticker": "TVTX",
-      "name": "Travere Therapeutics, Inc. - Common Stock",
-      "dailyScore": 90.97,
-      "relativeStrengthPercentile": 0.9194915254237288,
-      "dailySignalEligible": true,
-      "trigger": {
-        "ready": false,
-        "breakout": false,
-        "reclaim": false,
-        "volumeRatio": 0.0,
-        "volumeThreshold": 1.35,
-        "ema20": 67.156447,
-        "ema50": 66.595466,
-        "lastTimestamp": "2026-08-26T11:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/NONE",
-        "ict": {
-          "bias": "NEUTRAL",
-          "structure": "RANGE",
-          "event": "NONE",
-          "liquidity": "NONE",
-          "fvg": "BULLISH 67.2100~67.4473",
-          "score": 1
-        },
-        "fresh": true,
-        "ageMinutes": 34.4
-      }
-    },
-    {
-      "ticker": "XBI",
-      "name": "SPDR S&P Biotech ETF",
-      "dailyScore": 90.27,
-      "relativeStrengthPercentile": 0.9054054054054054,
-      "dailySignalEligible": true,
-      "trigger": {
-        "ready": false,
-        "breakout": false,
-        "reclaim": true,
-        "volumeRatio": 0.0,
-        "volumeThreshold": 1.35,
-        "ema20": 169.010353,
-        "ema50": 168.64611,
-        "lastTimestamp": "2026-08-26T12:15:00+00:00",
-        "reason": "breakout=False; reclaim=True; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/NONE",
-        "ict": {
-          "bias": "NEUTRAL",
-          "structure": "RANGE",
-          "event": "NONE",
-          "liquidity": "NONE",
-          "fvg": "BULLISH 168.8600~169.0000",
-          "score": 1
-        },
-        "fresh": true,
-        "ageMinutes": 4.4
+        "ageMinutes": 428.7
       }
     },
     {
@@ -982,24 +1025,80 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.35,
-        "ema20": 79.919364,
-        "ema50": 79.884936,
-        "lastTimestamp": "2026-08-26T11:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=BEARISH/NONE/BUY_SIDE_SWEEP",
+        "ema20": 79.904924,
+        "ema50": 79.88686,
+        "lastTimestamp": "2026-08-26T13:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=BEARISH/BOS_DOWN/NONE",
         "ict": {
           "bias": "BEARISH",
           "structure": "RANGE",
-          "event": "NONE",
-          "liquidity": "BUY_SIDE_SWEEP",
-          "fvg": "BEARISH 79.9037~79.9100",
+          "event": "BOS_DOWN",
+          "liquidity": "NONE",
+          "fvg": "BEARISH 79.8800~79.8800",
           "score": -3
         },
         "fresh": true,
-        "ageMinutes": 34.4
+        "ageMinutes": 8.7
+      }
+    },
+    {
+      "ticker": "RVMD",
+      "name": "Revolution Medicines, Inc. - Common Stock",
+      "dailyScore": 84.88,
+      "relativeStrengthPercentile": 0.9576271186440678,
+      "dailySignalEligible": true,
+      "trigger": {
+        "ready": false,
+        "breakout": false,
+        "reclaim": false,
+        "volumeRatio": 0.0,
+        "volumeThreshold": 1.35,
+        "ema20": 210.845533,
+        "ema50": 211.110041,
+        "lastTimestamp": "2026-08-26T13:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/CHOCH_DOWN/NONE",
+        "ict": {
+          "bias": "NEUTRAL",
+          "structure": "BULLISH_HH_HL",
+          "event": "CHOCH_DOWN",
+          "liquidity": "NONE",
+          "fvg": "BEARISH 210.6000~214.7500",
+          "score": -1
+        },
+        "fresh": true,
+        "ageMinutes": 8.7
+      }
+    },
+    {
+      "ticker": "TVTX",
+      "name": "Travere Therapeutics, Inc. - Common Stock",
+      "dailyScore": 83.4,
+      "relativeStrengthPercentile": 0.9279661016949152,
+      "dailySignalEligible": true,
+      "trigger": {
+        "ready": false,
+        "breakout": false,
+        "reclaim": false,
+        "volumeRatio": 1.053,
+        "volumeThreshold": 1.35,
+        "ema20": 67.032107,
+        "ema50": 66.628293,
+        "lastTimestamp": "2026-08-26T13:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=1.05x/1.35x; ICT=BEARISH/BOS_DOWN/NONE",
+        "ict": {
+          "bias": "BEARISH",
+          "structure": "BEARISH_LH_LL",
+          "event": "BOS_DOWN",
+          "liquidity": "NONE",
+          "fvg": "BEARISH 67.1700~67.4700",
+          "score": -5
+        },
+        "fresh": true,
+        "ageMinutes": 8.7
       }
     }
   ],
-  "historyRecordCount": 419,
+  "historyRecordCount": 420,
   "researchBasis": [
     "time-series momentum",
     "cross-sectional momentum",
