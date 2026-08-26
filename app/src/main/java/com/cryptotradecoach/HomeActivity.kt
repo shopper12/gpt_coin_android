@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.weight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
@@ -199,9 +200,7 @@ private fun MoneyDashboardScreen(
             }
         }
 
-        item {
-            Text("오늘의 4개 전략", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
-        }
+        item { Text("오늘의 4개 전략", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold) }
 
         if (ranked.isEmpty()) {
             item { SimpleInfoCard("브리핑 카드가 아직 없습니다. 최신 브리핑 새로고침을 눌러주세요.") }
@@ -242,9 +241,7 @@ private fun MoneyDashboardScreen(
                         onClick = { runWorkflow() },
                         enabled = !workflowRunning,
                         modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        Text(if (workflowRunning) "자가검증 요청 중" else "코인·주식 자가검증 실행")
-                    }
+                    ) { Text(if (workflowRunning) "자가검증 요청 중" else "코인·주식 자가검증 실행") }
                     workflowMessage?.let { Text(it, style = MaterialTheme.typography.bodySmall) }
                 }
             }
