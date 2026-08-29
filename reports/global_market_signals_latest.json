@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-08-29T19:59:19.299120+09:00",
+  "generatedAtKst": "2026-08-29T20:48:36.900860+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
-    "shortlistCount": 422,
+    "shortlistCount": 423,
     "krEtfShortlistCount": 34,
     "dailyMetricsCount": 398,
     "dailyCandidateCount": 37,
@@ -17,7 +17,7 @@
     "scannerSignalCount": 0,
     "chatgptSignalCount": 4,
     "krEtfSignalCount": 0,
-    "dailyCacheHit": false,
+    "dailyCacheHit": true,
     "maxSignalAgeMinutes": 45
   },
   "marketRegime": {
@@ -29,132 +29,132 @@
   },
   "signals": [
     {
-      "id": "20260829-1130KST-SOLUSD-LONG",
+      "id": "20260829-2050KST-BTCUSD-SHORT",
       "date": "2026-08-29",
-      "generatedAtKst": "2026-08-29T11:32:23+09:00",
-      "briefingSlot": "1130",
+      "generatedAtKst": "2026-08-29T20:50:00+09:00",
+      "briefingSlot": "2050",
       "assetClass": "CRYPTO",
       "market": "GLOBAL",
-      "ticker": "SOLUSD",
-      "name": "Solana",
-      "direction": "LONG",
-      "strategy": "99~102달러 지지 확인 시 분할; 105달러 이상 추격 금지",
+      "ticker": "BTCUSD",
+      "name": "Bitcoin",
+      "direction": "SHORT",
+      "strategy": "77.8k 회복 실패 또는 77.0k 재이탈 확인 시만 숏; 반등 추격 숏 금지",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
-      "score": 94,
-      "confidence": 84,
-      "currentPrice": 101.0,
-      "referencePrice": 101.0,
+      "score": 93,
+      "confidence": 82,
+      "currentPrice": 77384.0,
+      "referencePrice": 77384.0,
       "currency": "USD",
-      "entryLow": 99.0,
-      "entryHigh": 102.0,
-      "stopLoss": 94.8,
-      "target1": 109.5,
-      "target2": 116.0,
-      "holdingPeriod": "6시간~7일",
+      "entryLow": 77000.0,
+      "entryHigh": 77800.0,
+      "stopLoss": 79200.0,
+      "target1": 74800.0,
+      "target2": 72500.0,
+      "holdingPeriod": "6시간~3일",
       "committeeVote": "6/7",
-      "catalyst": "주말 크립토 반등에서 BTC 대비 강한 상대강도와 거래량 증가",
-      "reason": "CoinGecko 기준 SOL 약 101달러, 24시간 +4.4%, 7일 +20.1%, 24시간 거래량 약 40억달러로 BTC보다 강한 상대모멘텀",
-      "risk": "주말 유동성·미 금리 급등 여파·BTC 재하락",
-      "invalidation": "94.8달러 하회 또는 BTC 79k 붕괴와 SOL 상대강도 동반 소멸",
-      "quoteStatus": "COINGECKO_AGGREGATED_LIVE",
-      "priceTimestampKst": "2026-08-29T11:32:23+09:00"
+      "catalyst": "Warsh 매파 발언 후 금리·달러 강세와 주말 크립토 전반 동반 조정",
+      "reason": "최신 검증 스냅샷에서 BTC 78k 하회·약 77.4k, 금요일 ETF 순유입 연속 기록도 종료",
+      "risk": "주말 숏스퀴즈·저유동성·78k 급회복",
+      "invalidation": "79.2k 회복 또는 78k 위 안착",
+      "quoteStatus": "LATEST_VERIFIED_WEB_SNAPSHOT",
+      "priceTimestampKst": "2026-08-29T20:50:00+09:00"
     },
     {
-      "id": "20260829-1130KST-AAVEUSD-LONG",
+      "id": "20260829-2050KST-XRPUSD-SHORT",
       "date": "2026-08-29",
-      "generatedAtKst": "2026-08-29T11:32:23+09:00",
-      "briefingSlot": "1130",
-      "assetClass": "CRYPTO",
-      "market": "GLOBAL",
-      "ticker": "AAVEUSD",
-      "name": "Aave",
-      "direction": "LONG",
-      "strategy": "122~125달러 지지 확인 시 분할; 129달러 이상 추격 금지",
-      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "status": "CONDITIONAL",
-      "score": 91,
-      "confidence": 78,
-      "currentPrice": 124.63,
-      "referencePrice": 124.63,
-      "currency": "USD",
-      "entryLow": 122.0,
-      "entryHigh": 125.0,
-      "stopLoss": 119.5,
-      "target1": 132.0,
-      "target2": 140.0,
-      "holdingPeriod": "6시간~7일",
-      "committeeVote": "5/7",
-      "catalyst": "7일 상대강도 상위권 DeFi 리더십",
-      "reason": "CoinGecko 기준 약 124.63달러, 7일 +30.6%로 대형·중형 크립토 중 강한 RS 유지",
-      "risk": "중형 코인 변동성·BTC 의존·주말 급반전",
-      "invalidation": "119.5달러 하회 또는 121.5달러 24시간 저점대 이탈",
-      "quoteStatus": "COINGECKO_AGGREGATED",
-      "priceTimestampKst": "2026-08-29T11:32:23+09:00"
-    },
-    {
-      "id": "20260829-1130KST-XRPUSD-LONG",
-      "date": "2026-08-29",
-      "generatedAtKst": "2026-08-29T11:32:23+09:00",
-      "briefingSlot": "1130",
+      "generatedAtKst": "2026-08-29T20:50:00+09:00",
+      "briefingSlot": "2050",
       "assetClass": "CRYPTO",
       "market": "GLOBAL",
       "ticker": "XRPUSD",
       "name": "XRP",
-      "direction": "LONG",
-      "strategy": "1.41~1.45달러 지지 확인 시 분할; 1.48달러 이상 추격 금지",
+      "direction": "SHORT",
+      "strategy": "1.40달러 회복 실패 확인 시만 숏; 1.36 아래 추격 금지",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
-      "score": 89,
-      "confidence": 76,
-      "currentPrice": 1.44,
-      "referencePrice": 1.44,
+      "score": 90,
+      "confidence": 78,
+      "currentPrice": 1.39,
+      "referencePrice": 1.39,
       "currency": "USD",
-      "entryLow": 1.41,
-      "entryHigh": 1.45,
-      "stopLoss": 1.36,
-      "target1": 1.53,
-      "target2": 1.62,
-      "holdingPeriod": "6시간~7일",
+      "entryLow": 1.38,
+      "entryHigh": 1.4,
+      "stopLoss": 1.44,
+      "target1": 1.33,
+      "target2": 1.28,
+      "holdingPeriod": "6시간~3일",
       "committeeVote": "5/7",
-      "catalyst": "BTC 대비 24시간·7일 상대강도 우위",
-      "reason": "CoinGecko 기준 약 1.44달러, 24시간 +6% 안팎·7일 +11.2%로 BTC보다 강한 반등",
-      "risk": "1.47달러 단기저항·주말 변동성·시장 베타",
-      "invalidation": "1.36달러 하회 또는 1.40달러 회복 실패",
-      "quoteStatus": "COINGECKO_AGGREGATED",
-      "priceTimestampKst": "2026-08-29T11:32:23+09:00"
+      "catalyst": "주말 알트 breadth 악화와 1.40달러 하회",
+      "reason": "최신 검증 기사에서 XRP 약 1.39달러·일중 약 -5%, 이전 오전 상대강도 반전",
+      "risk": "알트 급반등·BTC 78k 회복",
+      "invalidation": "1.44달러 회복",
+      "quoteStatus": "LATEST_VERIFIED_WEB_SNAPSHOT",
+      "priceTimestampKst": "2026-08-29T20:50:00+09:00"
     },
     {
-      "id": "20260829-1130KST-ETHUSD-LONG",
+      "id": "20260829-2050KST-SOLUSD-SHORT",
       "date": "2026-08-29",
-      "generatedAtKst": "2026-08-29T11:32:23+09:00",
-      "briefingSlot": "1130",
+      "generatedAtKst": "2026-08-29T20:50:00+09:00",
+      "briefingSlot": "2050",
+      "assetClass": "CRYPTO",
+      "market": "GLOBAL",
+      "ticker": "SOLUSD",
+      "name": "Solana",
+      "direction": "SHORT",
+      "strategy": "104달러 회복 실패 또는 101달러 이탈 확인 시만 숏",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "status": "CONDITIONAL",
+      "score": 87,
+      "confidence": 74,
+      "currentPrice": 103.6,
+      "referencePrice": 103.6,
+      "currency": "USD",
+      "entryLow": 101.0,
+      "entryHigh": 104.0,
+      "stopLoss": 107.5,
+      "target1": 97.0,
+      "target2": 92.0,
+      "holdingPeriod": "6시간~3일",
+      "committeeVote": "5/7",
+      "catalyst": "오전 상대강도 소멸 후 주말 시장과 동반 하락",
+      "reason": "검증 스냅샷에서 SOL 약 -3.4%로 오전 LONG 리더십이 반전",
+      "risk": "높은 베타로 숏스퀴즈 가능",
+      "invalidation": "107.5달러 회복",
+      "quoteStatus": "LATEST_VERIFIED_AGGREGATED_SNAPSHOT",
+      "priceTimestampKst": "2026-08-29T20:50:00+09:00"
+    },
+    {
+      "id": "20260829-2050KST-ETHUSD-SHORT",
+      "date": "2026-08-29",
+      "generatedAtKst": "2026-08-29T20:50:00+09:00",
+      "briefingSlot": "2050",
       "assetClass": "CRYPTO",
       "market": "GLOBAL",
       "ticker": "ETHUSD",
       "name": "Ethereum",
-      "direction": "LONG",
-      "strategy": "2480~2540달러 지지 확인 시 분할; 2580달러 이상 추격 금지",
+      "direction": "SHORT",
+      "strategy": "2450달러 회복 실패 또는 2420달러 이탈 확인 시만 숏",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
-      "score": 87,
-      "confidence": 75,
-      "currentPrice": 2537.53,
-      "referencePrice": 2537.53,
+      "score": 85,
+      "confidence": 72,
+      "currentPrice": 2436.0,
+      "referencePrice": 2436.0,
       "currency": "USD",
-      "entryLow": 2480.0,
-      "entryHigh": 2540.0,
-      "stopLoss": 2420.0,
-      "target1": 2650.0,
-      "target2": 2780.0,
-      "holdingPeriod": "6시간~7일",
+      "entryLow": 2420.0,
+      "entryHigh": 2450.0,
+      "stopLoss": 2510.0,
+      "target1": 2340.0,
+      "target2": 2250.0,
+      "holdingPeriod": "6시간~3일",
       "committeeVote": "5/7",
-      "catalyst": "주말 위험자산 반등과 7일 시장대비 상대강도",
-      "reason": "CoinGecko 기준 약 2,537달러, 7일 +12.5%로 글로벌 크립토 시장 상승률을 상회",
-      "risk": "미 금리·달러 강세·BTC 재하락·주말 유동성",
-      "invalidation": "2,420달러 하회 또는 2,433달러 24시간 저점대 재이탈",
-      "quoteStatus": "COINGECKO_AGGREGATED",
-      "priceTimestampKst": "2026-08-29T11:32:23+09:00"
+      "catalyst": "주말 크립토 전반 하락과 금리·달러 충격 지속",
+      "reason": "검증 스냅샷에서 ETH 약 -2.7%~-2.8%, 오전 LONG 모멘텀 소멸",
+      "risk": "BTC 반등 동조·주말 유동성",
+      "invalidation": "2510달러 회복",
+      "quoteStatus": "LATEST_VERIFIED_AGGREGATED_SNAPSHOT",
+      "priceTimestampKst": "2026-08-29T20:50:00+09:00"
     }
   ],
   "topEvaluated": [
@@ -183,7 +183,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 1711.5
+        "ageMinutes": 1758.7
       }
     },
     {
@@ -211,7 +211,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 1711.5
+        "ageMinutes": 1758.7
       }
     },
     {
@@ -239,7 +239,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 1711.5
+        "ageMinutes": 1758.7
       }
     },
     {
@@ -267,7 +267,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 1711.5
+        "ageMinutes": 1758.7
       }
     },
     {
@@ -295,7 +295,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 1711.5
+        "ageMinutes": 1758.7
       }
     },
     {
@@ -323,7 +323,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 1711.5
+        "ageMinutes": 1758.7
       }
     },
     {
@@ -351,7 +351,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 1711.5
+        "ageMinutes": 1758.7
       }
     },
     {
@@ -379,7 +379,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 1711.5
+        "ageMinutes": 1758.7
       }
     },
     {
@@ -407,7 +407,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 1711.5
+        "ageMinutes": 1758.7
       }
     },
     {
@@ -435,7 +435,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 1711.5
+        "ageMinutes": 1758.7
       }
     },
     {
@@ -463,7 +463,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 1711.5
+        "ageMinutes": 1758.7
       }
     },
     {
@@ -491,7 +491,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 1711.5
+        "ageMinutes": 1758.7
       }
     },
     {
@@ -519,7 +519,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 1711.5
+        "ageMinutes": 1758.7
       }
     },
     {
@@ -547,7 +547,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 1711.5
+        "ageMinutes": 1758.7
       }
     },
     {
@@ -575,7 +575,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 1711.5
+        "ageMinutes": 1758.7
       }
     },
     {
@@ -603,7 +603,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 1711.5
+        "ageMinutes": 1758.7
       }
     },
     {
@@ -631,7 +631,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 1711.5
+        "ageMinutes": 1758.7
       }
     },
     {
@@ -659,7 +659,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 1711.5
+        "ageMinutes": 1758.7
       }
     },
     {
@@ -687,7 +687,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 1711.5
+        "ageMinutes": 1758.7
       }
     },
     {
@@ -715,7 +715,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 1711.5
+        "ageMinutes": 1758.7
       }
     },
     {
@@ -743,7 +743,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 1711.5
+        "ageMinutes": 1758.7
       }
     },
     {
@@ -771,7 +771,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 1711.5
+        "ageMinutes": 1758.7
       }
     },
     {
@@ -799,7 +799,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 1711.5
+        "ageMinutes": 1758.7
       }
     },
     {
@@ -827,7 +827,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 1711.5
+        "ageMinutes": 1758.7
       }
     },
     {
@@ -855,7 +855,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 1711.5
+        "ageMinutes": 1758.7
       }
     },
     {
@@ -883,7 +883,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 1711.5
+        "ageMinutes": 1758.7
       }
     },
     {
@@ -911,7 +911,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 1711.5
+        "ageMinutes": 1758.7
       }
     },
     {
@@ -939,7 +939,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 676.5
+        "ageMinutes": 723.7
       }
     },
     {
@@ -967,7 +967,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 691.5
+        "ageMinutes": 738.7
       }
     },
     {
@@ -995,11 +995,11 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 676.5
+        "ageMinutes": 723.7
       }
     }
   ],
-  "historyRecordCount": 460,
+  "historyRecordCount": 464,
   "researchBasis": [
     "time-series momentum",
     "cross-sectional momentum",
