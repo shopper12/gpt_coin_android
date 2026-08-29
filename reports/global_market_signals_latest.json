@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-08-29T20:48:36.900860+09:00",
+  "generatedAtKst": "2026-08-29T23:34:16.150065+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
@@ -17,7 +17,7 @@
     "scannerSignalCount": 0,
     "chatgptSignalCount": 4,
     "krEtfSignalCount": 0,
-    "dailyCacheHit": true,
+    "dailyCacheHit": false,
     "maxSignalAgeMinutes": 45
   },
   "marketRegime": {
@@ -29,132 +29,132 @@
   },
   "signals": [
     {
-      "id": "20260829-2050KST-BTCUSD-SHORT",
+      "id": "20260829-2330KST-HNTUSD-LONG",
       "date": "2026-08-29",
-      "generatedAtKst": "2026-08-29T20:50:00+09:00",
-      "briefingSlot": "2050",
+      "generatedAtKst": "2026-08-29T23:32:36+09:00",
+      "briefingSlot": "2330",
+      "assetClass": "CRYPTO",
+      "market": "GLOBAL",
+      "ticker": "HNTUSD",
+      "name": "Helium",
+      "direction": "LONG",
+      "strategy": "0.245~0.255 지지 확인 후만 매수; 0.26 이상 추격 금지",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "status": "CONDITIONAL",
+      "score": 92,
+      "confidence": 76,
+      "currentPrice": 0.254145,
+      "referencePrice": 0.254145,
+      "currency": "USD",
+      "entryLow": 0.245,
+      "entryHigh": 0.255,
+      "stopLoss": 0.228,
+      "target1": 0.273,
+      "target2": 0.3,
+      "holdingPeriod": "6시간~3일",
+      "committeeVote": "5/7",
+      "catalyst": "대형 코인 약세 속 24시간 +17.7% 독립 상대강도와 거래량 확대",
+      "reason": "시장 시총 -2.08%에도 코인 breadth는 84% 상승; HNT는 고유동성 대형 코인과 반대로 강한 emerging leadership",
+      "risk": "시총이 작고 24h 고점 0.273 부근 저항·급등 되돌림 위험",
+      "invalidation": "0.228 하회",
+      "quoteStatus": "LATEST_VERIFIED_WEB_SNAPSHOT",
+      "priceTimestampKst": "2026-08-29T21:30:50+09:00"
+    },
+    {
+      "id": "20260829-2330KST-BTCUSD-SHORT",
+      "date": "2026-08-29",
+      "generatedAtKst": "2026-08-29T23:32:36+09:00",
+      "briefingSlot": "2330",
       "assetClass": "CRYPTO",
       "market": "GLOBAL",
       "ticker": "BTCUSD",
       "name": "Bitcoin",
       "direction": "SHORT",
-      "strategy": "77.8k 회복 실패 또는 77.0k 재이탈 확인 시만 숏; 반등 추격 숏 금지",
+      "strategy": "77.8k 회복 실패 또는 77.17k 일중저점 재이탈 확인 시만 숏",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
-      "score": 93,
-      "confidence": 82,
-      "currentPrice": 77384.0,
-      "referencePrice": 77384.0,
+      "score": 91,
+      "confidence": 81,
+      "currentPrice": 77633.0,
+      "referencePrice": 77633.0,
       "currency": "USD",
-      "entryLow": 77000.0,
+      "entryLow": 77170.0,
       "entryHigh": 77800.0,
       "stopLoss": 79200.0,
       "target1": 74800.0,
       "target2": 72500.0,
       "holdingPeriod": "6시간~3일",
       "committeeVote": "6/7",
-      "catalyst": "Warsh 매파 발언 후 금리·달러 강세와 주말 크립토 전반 동반 조정",
-      "reason": "최신 검증 스냅샷에서 BTC 78k 하회·약 77.4k, 금요일 ETF 순유입 연속 기록도 종료",
-      "risk": "주말 숏스퀴즈·저유동성·78k 급회복",
-      "invalidation": "79.2k 회복 또는 78k 위 안착",
+      "catalyst": "Warsh 매파 발언 후 금리 급등과 BTC ETF 9일 순유입 종료",
+      "reason": "24h -2.58%, 일중 77,179 저점, 81k대 돌파 실패 후 77k대로 되밀림",
+      "risk": "주말 저유동성 숏스퀴즈와 알트 breadth 개선",
+      "invalidation": "79.2k 회복·안착",
       "quoteStatus": "LATEST_VERIFIED_WEB_SNAPSHOT",
-      "priceTimestampKst": "2026-08-29T20:50:00+09:00"
+      "priceTimestampKst": "2026-08-29T23:23:00+09:00"
     },
     {
-      "id": "20260829-2050KST-XRPUSD-SHORT",
+      "id": "20260829-2330KST-XRPUSD-SHORT",
       "date": "2026-08-29",
-      "generatedAtKst": "2026-08-29T20:50:00+09:00",
-      "briefingSlot": "2050",
+      "generatedAtKst": "2026-08-29T23:32:36+09:00",
+      "briefingSlot": "2330",
       "assetClass": "CRYPTO",
       "market": "GLOBAL",
       "ticker": "XRPUSD",
       "name": "XRP",
       "direction": "SHORT",
-      "strategy": "1.40달러 회복 실패 확인 시만 숏; 1.36 아래 추격 금지",
+      "strategy": "1.40 회복 실패 또는 1.363 일중저점 이탈 확인 시만 숏",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
-      "score": 90,
-      "confidence": 78,
-      "currentPrice": 1.39,
-      "referencePrice": 1.39,
+      "score": 88,
+      "confidence": 77,
+      "currentPrice": 1.3801,
+      "referencePrice": 1.3801,
       "currency": "USD",
-      "entryLow": 1.38,
-      "entryHigh": 1.4,
-      "stopLoss": 1.44,
+      "entryLow": 1.363,
+      "entryHigh": 1.395,
+      "stopLoss": 1.413,
       "target1": 1.33,
       "target2": 1.28,
       "holdingPeriod": "6시간~3일",
       "committeeVote": "5/7",
-      "catalyst": "주말 알트 breadth 악화와 1.40달러 하회",
-      "reason": "최신 검증 기사에서 XRP 약 1.39달러·일중 약 -5%, 이전 오전 상대강도 반전",
-      "risk": "알트 급반등·BTC 78k 회복",
-      "invalidation": "1.44달러 회복",
+      "catalyst": "대형 알트 중 지속 상대약세와 7일 RS 음전",
+      "reason": "8/29 시가 1.4032, 고가 1.4126, 저가 1.3632, 최신 종가형 스냅샷 1.3801로 반등 탄력 제한",
+      "risk": "ETF 자금유입·BTC 반등 동조",
+      "invalidation": "1.413 상향 돌파·안착",
       "quoteStatus": "LATEST_VERIFIED_WEB_SNAPSHOT",
-      "priceTimestampKst": "2026-08-29T20:50:00+09:00"
+      "priceTimestampKst": "2026-08-29T23:30:00+09:00"
     },
     {
-      "id": "20260829-2050KST-SOLUSD-SHORT",
+      "id": "20260829-2330KST-SOLUSD-SHORT",
       "date": "2026-08-29",
-      "generatedAtKst": "2026-08-29T20:50:00+09:00",
-      "briefingSlot": "2050",
+      "generatedAtKst": "2026-08-29T23:32:36+09:00",
+      "briefingSlot": "2330",
       "assetClass": "CRYPTO",
       "market": "GLOBAL",
       "ticker": "SOLUSD",
       "name": "Solana",
       "direction": "SHORT",
-      "strategy": "104달러 회복 실패 또는 101달러 이탈 확인 시만 숏",
+      "strategy": "104.5 회복 실패 또는 97.5 지지 이탈 확인 시만 숏; 중간가격 추격 금지",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
-      "score": 87,
-      "confidence": 74,
-      "currentPrice": 103.6,
-      "referencePrice": 103.6,
+      "score": 84,
+      "confidence": 70,
+      "currentPrice": 103.54,
+      "referencePrice": 103.54,
       "currency": "USD",
-      "entryLow": 101.0,
-      "entryHigh": 104.0,
-      "stopLoss": 107.5,
-      "target1": 97.0,
+      "entryLow": 97.5,
+      "entryHigh": 104.5,
+      "stopLoss": 107.0,
+      "target1": 97.5,
       "target2": 92.0,
       "holdingPeriod": "6시간~3일",
       "committeeVote": "5/7",
-      "catalyst": "오전 상대강도 소멸 후 주말 시장과 동반 하락",
-      "reason": "검증 스냅샷에서 SOL 약 -3.4%로 오전 LONG 리더십이 반전",
-      "risk": "높은 베타로 숏스퀴즈 가능",
-      "invalidation": "107.5달러 회복",
-      "quoteStatus": "LATEST_VERIFIED_AGGREGATED_SNAPSHOT",
-      "priceTimestampKst": "2026-08-29T20:50:00+09:00"
-    },
-    {
-      "id": "20260829-2050KST-ETHUSD-SHORT",
-      "date": "2026-08-29",
-      "generatedAtKst": "2026-08-29T20:50:00+09:00",
-      "briefingSlot": "2050",
-      "assetClass": "CRYPTO",
-      "market": "GLOBAL",
-      "ticker": "ETHUSD",
-      "name": "Ethereum",
-      "direction": "SHORT",
-      "strategy": "2450달러 회복 실패 또는 2420달러 이탈 확인 시만 숏",
-      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "status": "CONDITIONAL",
-      "score": 85,
-      "confidence": 72,
-      "currentPrice": 2436.0,
-      "referencePrice": 2436.0,
-      "currency": "USD",
-      "entryLow": 2420.0,
-      "entryHigh": 2450.0,
-      "stopLoss": 2510.0,
-      "target1": 2340.0,
-      "target2": 2250.0,
-      "holdingPeriod": "6시간~3일",
-      "committeeVote": "5/7",
-      "catalyst": "주말 크립토 전반 하락과 금리·달러 충격 지속",
-      "reason": "검증 스냅샷에서 ETH 약 -2.7%~-2.8%, 오전 LONG 모멘텀 소멸",
-      "risk": "BTC 반등 동조·주말 유동성",
-      "invalidation": "2510달러 회복",
-      "quoteStatus": "LATEST_VERIFIED_AGGREGATED_SNAPSHOT",
-      "priceTimestampKst": "2026-08-29T20:50:00+09:00"
+      "catalyst": "24h -3.79%로 대형 알트 약세 지속",
+      "reason": "현재 103.54, 7일 +8.58%의 중기 RS는 남아 있어 BTC/XRP보다 숏 확신은 낮음",
+      "risk": "OKX 매수비중 51%와 7일 양의 RS로 반등 가능",
+      "invalidation": "107 상향 돌파",
+      "quoteStatus": "LATEST_VERIFIED_WEB_SNAPSHOT",
+      "priceTimestampKst": "2026-08-29T20:05:00+09:00"
     }
   ],
   "topEvaluated": [
@@ -183,7 +183,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 1758.7
+        "ageMinutes": 1926.5
       }
     },
     {
@@ -211,7 +211,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 1758.7
+        "ageMinutes": 1926.5
       }
     },
     {
@@ -239,7 +239,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 1758.7
+        "ageMinutes": 1926.5
       }
     },
     {
@@ -267,7 +267,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 1758.7
+        "ageMinutes": 1926.5
       }
     },
     {
@@ -295,7 +295,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 1758.7
+        "ageMinutes": 1926.5
       }
     },
     {
@@ -323,7 +323,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 1758.7
+        "ageMinutes": 1926.5
       }
     },
     {
@@ -351,7 +351,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 1758.7
+        "ageMinutes": 1926.5
       }
     },
     {
@@ -379,7 +379,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 1758.7
+        "ageMinutes": 1926.5
       }
     },
     {
@@ -407,7 +407,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 1758.7
+        "ageMinutes": 1926.5
       }
     },
     {
@@ -435,7 +435,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 1758.7
+        "ageMinutes": 1926.5
       }
     },
     {
@@ -463,7 +463,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 1758.7
+        "ageMinutes": 1926.5
       }
     },
     {
@@ -491,7 +491,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 1758.7
+        "ageMinutes": 1926.5
       }
     },
     {
@@ -519,7 +519,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 1758.7
+        "ageMinutes": 1926.5
       }
     },
     {
@@ -547,7 +547,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 1758.7
+        "ageMinutes": 1926.5
       }
     },
     {
@@ -575,7 +575,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 1758.7
+        "ageMinutes": 1926.5
       }
     },
     {
@@ -603,7 +603,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 1758.7
+        "ageMinutes": 1926.5
       }
     },
     {
@@ -631,7 +631,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 1758.7
+        "ageMinutes": 1926.5
       }
     },
     {
@@ -659,7 +659,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 1758.7
+        "ageMinutes": 1926.5
       }
     },
     {
@@ -687,7 +687,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 1758.7
+        "ageMinutes": 1926.5
       }
     },
     {
@@ -715,7 +715,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 1758.7
+        "ageMinutes": 1926.5
       }
     },
     {
@@ -743,7 +743,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 1758.7
+        "ageMinutes": 1926.5
       }
     },
     {
@@ -771,7 +771,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 1758.7
+        "ageMinutes": 1926.5
       }
     },
     {
@@ -799,7 +799,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 1758.7
+        "ageMinutes": 1926.5
       }
     },
     {
@@ -827,7 +827,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 1758.7
+        "ageMinutes": 1926.5
       }
     },
     {
@@ -855,7 +855,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 1758.7
+        "ageMinutes": 1926.5
       }
     },
     {
@@ -883,7 +883,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 1758.7
+        "ageMinutes": 1926.5
       }
     },
     {
@@ -911,7 +911,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 1758.7
+        "ageMinutes": 1926.5
       }
     },
     {
@@ -939,7 +939,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 723.7
+        "ageMinutes": 891.5
       }
     },
     {
@@ -967,7 +967,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 738.7
+        "ageMinutes": 906.5
       }
     },
     {
@@ -995,11 +995,11 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 723.7
+        "ageMinutes": 891.5
       }
     }
   ],
-  "historyRecordCount": 464,
+  "historyRecordCount": 468,
   "researchBasis": [
     "time-series momentum",
     "cross-sectional momentum",
