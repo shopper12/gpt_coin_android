@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-08-30T10:45:10.414787+09:00",
+  "generatedAtKst": "2026-08-30T11:31:23.348249+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
-    "shortlistCount": 423,
+    "shortlistCount": 424,
     "krEtfShortlistCount": 34,
     "dailyMetricsCount": 397,
     "dailyCandidateCount": 39,
@@ -17,7 +17,7 @@
     "scannerSignalCount": 0,
     "chatgptSignalCount": 4,
     "krEtfSignalCount": 0,
-    "dailyCacheHit": false,
+    "dailyCacheHit": true,
     "maxSignalAgeMinutes": 45
   },
   "marketRegime": {
@@ -29,132 +29,132 @@
   },
   "signals": [
     {
-      "id": "20260830-0750KST-SOLUSD-LONG",
+      "id": "20260830-1130KST-HNTUSD-LONG",
       "date": "2026-08-30",
-      "generatedAtKst": "2026-08-30T07:50:00+09:00",
-      "briefingSlot": "0750",
+      "generatedAtKst": "2026-08-30T11:30:20+09:00",
+      "briefingSlot": "1130",
       "assetClass": "CRYPTO",
       "market": "GLOBAL",
-      "ticker": "SOLUSD",
-      "name": "Solana",
+      "ticker": "HNTUSD",
+      "name": "Helium",
       "direction": "LONG",
-      "strategy": "103~105.8 지지 후 105.8 재돌파 확인 시만 매수; 108 이상 추격 금지",
+      "strategy": "급등 추격 금지; 0.33~0.36 눌림 지지 확인 시만 매수",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
-      "score": 93,
-      "confidence": 79,
-      "currentPrice": 105.21,
-      "referencePrice": 105.21,
+      "score": 94,
+      "confidence": 76,
+      "currentPrice": 0.3816,
+      "referencePrice": 0.3816,
       "currency": "USD",
-      "entryLow": 103.0,
-      "entryHigh": 105.8,
-      "stopLoss": 99.4,
-      "target1": 110.0,
-      "target2": 116.0,
+      "entryLow": 0.33,
+      "entryHigh": 0.36,
+      "stopLoss": 0.286,
+      "target1": 0.442,
+      "target2": 0.5,
       "holdingPeriod": "6시간~3일",
-      "committeeVote": "6/7",
-      "catalyst": "주말 대형 알트 중 BTC 대비 상대강도 회복과 거래량 증가",
-      "reason": "24h 약 +1.8%, 7d +11.4%, 거래량 전일 대비 약 +30.7%; 전 슬롯 SHORT 무효화 방향",
-      "risk": "금요일 금리 급등의 상위 매크로 역풍과 주말 유동성",
-      "invalidation": "99.4 하회",
+      "committeeVote": "5/7",
+      "catalyst": "Top400 24h 상승률 1위권과 거래량 폭증",
+      "reason": "24h 약 +64~80%, 거래대금 약 2.86억달러; 독립 상대강도 최상위",
+      "risk": "수직 급등 후 되돌림 위험 매우 큼",
+      "invalidation": "0.286 하회",
       "quoteStatus": "LATEST_VERIFIED_WEB_SNAPSHOT",
-      "priceTimestampKst": "2026-08-30T07:48:00+09:00"
+      "priceTimestampKst": "2026-08-30T10:48:00+09:00"
     },
     {
-      "id": "20260830-0750KST-AAVEUSD-LONG",
+      "id": "20260830-1130KST-UNIUSD-LONG",
       "date": "2026-08-30",
-      "generatedAtKst": "2026-08-30T07:50:00+09:00",
-      "briefingSlot": "0750",
+      "generatedAtKst": "2026-08-30T11:30:20+09:00",
+      "briefingSlot": "1130",
+      "assetClass": "CRYPTO",
+      "market": "GLOBAL",
+      "ticker": "UNIUSD",
+      "name": "Uniswap",
+      "direction": "LONG",
+      "strategy": "4.55~4.68 지지 확인 후 4.70 돌파 시만 매수",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "status": "CONDITIONAL",
+      "score": 91,
+      "confidence": 78,
+      "currentPrice": 4.68,
+      "referencePrice": 4.68,
+      "currency": "USD",
+      "entryLow": 4.55,
+      "entryHigh": 4.68,
+      "stopLoss": 4.34,
+      "target1": 5.05,
+      "target2": 5.4,
+      "holdingPeriod": "6시간~3일",
+      "committeeVote": "6/7",
+      "catalyst": "대형 DeFi 중 높은 24h·7d 상대강도와 충분한 거래대금",
+      "reason": "24h +5.39%, 7d +13.17%, 거래대금 약 1.70억달러",
+      "risk": "4.70 부근 단기 고점 저항과 주말 유동성",
+      "invalidation": "4.34 하회",
+      "quoteStatus": "LATEST_VERIFIED_WEB_SNAPSHOT",
+      "priceTimestampKst": "2026-08-30T10:56:00+09:00"
+    },
+    {
+      "id": "20260830-1130KST-AAVEUSD-LONG",
+      "date": "2026-08-30",
+      "generatedAtKst": "2026-08-30T11:30:20+09:00",
+      "briefingSlot": "1130",
       "assetClass": "CRYPTO",
       "market": "GLOBAL",
       "ticker": "AAVEUSD",
       "name": "Aave",
       "direction": "LONG",
-      "strategy": "122~125 지지 확인 후만 매수; 127 이상 추격 금지",
+      "strategy": "123~126 지지 확인 후 129.2 돌파 시 증액",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
-      "score": 90,
+      "score": 89,
       "confidence": 75,
-      "currentPrice": 124.45,
-      "referencePrice": 124.45,
+      "currentPrice": 125.56,
+      "referencePrice": 125.56,
       "currency": "USD",
-      "entryLow": 122.0,
-      "entryHigh": 125.0,
-      "stopLoss": 119.0,
-      "target1": 131.5,
+      "entryLow": 123.0,
+      "entryHigh": 126.0,
+      "stopLoss": 117.8,
+      "target1": 129.2,
       "target2": 138.0,
       "holdingPeriod": "6시간~3일",
       "committeeVote": "5/7",
-      "catalyst": "DeFi 대형주 상대강도 회복",
-      "reason": "24h +2.4%, 24h 범위 120.51~124.85 상단권으로 회복",
-      "risk": "BTC 재하락 시 고베타 DeFi 동반 하락",
-      "invalidation": "119 하회",
+      "catalyst": "DeFi 상대강도 지속",
+      "reason": "24h +3.36%, 거래대금 약 1.30억달러; 117.84 단기 지지 위",
+      "risk": "129.18 저항과 BTC 재하락 시 고베타 압력",
+      "invalidation": "117.8 하회",
       "quoteStatus": "LATEST_VERIFIED_WEB_SNAPSHOT",
-      "priceTimestampKst": "2026-08-30T07:48:00+09:00"
+      "priceTimestampKst": "2026-08-30T10:14:00+09:00"
     },
     {
-      "id": "20260830-0750KST-ETHUSD-LONG",
+      "id": "20260830-1130KST-HYPEUSD-LONG",
       "date": "2026-08-30",
-      "generatedAtKst": "2026-08-30T07:50:00+09:00",
-      "briefingSlot": "0750",
+      "generatedAtKst": "2026-08-30T11:30:20+09:00",
+      "briefingSlot": "1130",
       "assetClass": "CRYPTO",
       "market": "GLOBAL",
-      "ticker": "ETHUSD",
-      "name": "Ethereum",
+      "ticker": "HYPEUSD",
+      "name": "Hyperliquid",
       "direction": "LONG",
-      "strategy": "2470~2510 지지 확인 후 2515 재돌파 시만 매수",
+      "strategy": "86.6 ATH 돌파·안착 때만 매수; 현재 추격 금지",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
       "score": 87,
       "confidence": 73,
-      "currentPrice": 2501.36,
-      "referencePrice": 2501.36,
+      "currentPrice": 83.22,
+      "referencePrice": 83.22,
       "currency": "USD",
-      "entryLow": 2470.0,
-      "entryHigh": 2510.0,
-      "stopLoss": 2418.0,
-      "target1": 2580.0,
-      "target2": 2660.0,
+      "entryLow": 86.6,
+      "entryHigh": 87.5,
+      "stopLoss": 80.1,
+      "target1": 92.0,
+      "target2": 98.0,
       "holdingPeriod": "6시간~3일",
       "committeeVote": "5/7",
-      "catalyst": "대형 알트 반등과 높은 유동성",
-      "reason": "24h 약 +2.3%, 24h 범위 2433~2558에서 중상단 회복",
-      "risk": "금리·달러 재상승과 BTC 78k 재이탈",
-      "invalidation": "2418 하회",
+      "catalyst": "ATH 인접 장기 모멘텀과 높은 거래대금",
+      "reason": "24h +3.59%, 30d +52.95%, ATH 86.59에서 -3.9%, 거래대금 약 7.60억달러",
+      "risk": "RSI 71.6·스토캐스틱 과열 및 ATH 저항",
+      "invalidation": "80.1 하회",
       "quoteStatus": "LATEST_VERIFIED_WEB_SNAPSHOT",
-      "priceTimestampKst": "2026-08-30T07:48:00+09:00"
-    },
-    {
-      "id": "20260830-0750KST-BTCUSD-LONG",
-      "date": "2026-08-30",
-      "generatedAtKst": "2026-08-30T07:50:00+09:00",
-      "briefingSlot": "0750",
-      "assetClass": "CRYPTO",
-      "market": "GLOBAL",
-      "ticker": "BTCUSD",
-      "name": "Bitcoin",
-      "direction": "LONG",
-      "strategy": "79.2k 회복·안착 후만 매수; 현재 78.26k에서는 관찰",
-      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "status": "CONDITIONAL",
-      "score": 82,
-      "confidence": 68,
-      "currentPrice": 78258.99,
-      "referencePrice": 78258.99,
-      "currency": "USD",
-      "entryLow": 79200.0,
-      "entryHigh": 79800.0,
-      "stopLoss": 77150.0,
-      "target1": 81500.0,
-      "target2": 83500.0,
-      "holdingPeriod": "6시간~3일",
-      "committeeVote": "5/7",
-      "catalyst": "77k대 저점에서 반등했으나 ETF 순유출과 매크로 역풍 공존",
-      "reason": "전 슬롯 SHORT 무효선 79.2k 바로 아래; 회복 확인 전에는 방향성 우위 부족",
-      "risk": "금요일 BTC ETF 201.8M달러 순유출과 매파적 금리 충격",
-      "invalidation": "77.15k 재이탈",
-      "quoteStatus": "LATEST_VERIFIED_WEB_SNAPSHOT",
-      "priceTimestampKst": "2026-08-30T07:48:00+09:00"
+      "priceTimestampKst": "2026-08-30T10:32:00+09:00"
     }
   ],
   "topEvaluated": [
@@ -183,7 +183,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2597.5
+        "ageMinutes": 2641.5
       }
     },
     {
@@ -211,7 +211,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 2597.5
+        "ageMinutes": 2641.5
       }
     },
     {
@@ -239,7 +239,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 2597.5
+        "ageMinutes": 2641.5
       }
     },
     {
@@ -267,7 +267,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 2597.5
+        "ageMinutes": 2641.5
       }
     },
     {
@@ -295,7 +295,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 2597.5
+        "ageMinutes": 2641.5
       }
     },
     {
@@ -323,7 +323,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2597.5
+        "ageMinutes": 2641.5
       }
     },
     {
@@ -351,7 +351,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 2597.5
+        "ageMinutes": 2641.5
       }
     },
     {
@@ -379,7 +379,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 2597.5
+        "ageMinutes": 2641.5
       }
     },
     {
@@ -407,7 +407,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 2597.5
+        "ageMinutes": 2641.5
       }
     },
     {
@@ -435,7 +435,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2597.5
+        "ageMinutes": 2641.5
       }
     },
     {
@@ -463,7 +463,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 2597.5
+        "ageMinutes": 2641.5
       }
     },
     {
@@ -491,7 +491,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2597.5
+        "ageMinutes": 2641.5
       }
     },
     {
@@ -519,7 +519,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2597.5
+        "ageMinutes": 2641.5
       }
     },
     {
@@ -547,7 +547,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 2597.5
+        "ageMinutes": 2641.5
       }
     },
     {
@@ -575,7 +575,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2597.5
+        "ageMinutes": 2641.5
       }
     },
     {
@@ -603,7 +603,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 2597.5
+        "ageMinutes": 2641.5
       }
     },
     {
@@ -631,7 +631,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 2597.5
+        "ageMinutes": 2641.5
       }
     },
     {
@@ -659,7 +659,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 2597.5
+        "ageMinutes": 2641.5
       }
     },
     {
@@ -687,7 +687,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2597.5
+        "ageMinutes": 2641.5
       }
     },
     {
@@ -715,7 +715,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 2597.5
+        "ageMinutes": 2641.5
       }
     },
     {
@@ -743,7 +743,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 2597.5
+        "ageMinutes": 2641.5
       }
     },
     {
@@ -771,7 +771,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 2597.5
+        "ageMinutes": 2641.5
       }
     },
     {
@@ -799,7 +799,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 2597.5
+        "ageMinutes": 2641.5
       }
     },
     {
@@ -827,7 +827,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 2597.5
+        "ageMinutes": 2641.5
       }
     },
     {
@@ -855,7 +855,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 2597.5
+        "ageMinutes": 2641.5
       }
     },
     {
@@ -883,7 +883,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2597.5
+        "ageMinutes": 2641.5
       }
     },
     {
@@ -911,7 +911,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 2597.5
+        "ageMinutes": 2641.5
       }
     },
     {
@@ -939,7 +939,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 1562.5
+        "ageMinutes": 1606.5
       }
     },
     {
@@ -967,7 +967,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 1562.5
+        "ageMinutes": 1606.5
       }
     },
     {
@@ -995,11 +995,11 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 1562.5
+        "ageMinutes": 1606.5
       }
     }
   ],
-  "historyRecordCount": 472,
+  "historyRecordCount": 476,
   "researchBasis": [
     "time-series momentum",
     "cross-sectional momentum",
