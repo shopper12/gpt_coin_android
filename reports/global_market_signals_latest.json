@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-09-05T10:00:52.235679+09:00",
+  "generatedAtKst": "2026-09-05T11:32:08.590615+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
-    "shortlistCount": 421,
+    "shortlistCount": 419,
     "krEtfShortlistCount": 34,
-    "dailyMetricsCount": 398,
+    "dailyMetricsCount": 395,
     "dailyCandidateCount": 41,
     "krEtfDailyCandidateCount": 27,
     "strictDailyCandidateCount": 14,
@@ -24,137 +24,137 @@
     "panic": false,
     "riskOff": false,
     "equityBelow200Count": 0,
-    "realizedVolatility20Annualized": 0.1319,
+    "realizedVolatility20Annualized": 0.1253,
     "reason": "광의 추세와 변동성 정상"
   },
   "signals": [
     {
-      "id": "20260905-0750KST-ZEC-LONG",
+      "id": "20260905-1130KST-DASH-LONG",
       "date": "2026-09-05",
-      "generatedAtKst": "2026-09-05T07:50:00+09:00",
-      "briefingSlot": "0750",
+      "generatedAtKst": "2026-09-05T11:30:17+09:00",
+      "briefingSlot": "1130",
+      "assetClass": "CRYPTO",
+      "market": "GLOBAL",
+      "ticker": "DASH-USD",
+      "name": "Dash",
+      "direction": "LONG",
+      "strategy": "$62.5~66.0 지지 또는 $66 재돌파 후 유지 시 분할 진입",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "status": "CONDITIONAL",
+      "score": 97,
+      "confidence": 87,
+      "currentPrice": 65.91,
+      "referencePrice": 65.91,
+      "currency": "USD",
+      "entryLow": 62.5,
+      "entryHigh": 66.0,
+      "stopLoss": 59.0,
+      "target1": 72.0,
+      "target2": 78.0,
+      "holdingPeriod": "주말~5거래일",
+      "committeeVote": "6/7",
+      "catalyst": "privacy-coin rotation에서 ZEC에서 DASH로 상대강도 확산",
+      "reason": "24h +40.27%, 거래량 $578M, Binance/Coinbase/OKX 약 $65.9로 교차검증; majors 약세와 분리",
+      "risk": "24h +40% 과열, 주말 유동성·급락 위험",
+      "invalidation": "$59 하회 또는 $62.5 회복 실패",
+      "quoteStatus": "WEEKEND_24H_VERIFIED",
+      "priceTimestampKst": "2026-09-05T11:29:00+09:00"
+    },
+    {
+      "id": "20260905-1130KST-ZEC-SHORT",
+      "date": "2026-09-05",
+      "generatedAtKst": "2026-09-05T11:30:17+09:00",
+      "briefingSlot": "1130",
       "assetClass": "CRYPTO",
       "market": "GLOBAL",
       "ticker": "ZEC-USD",
       "name": "Zcash",
-      "direction": "LONG",
-      "strategy": "$995~1,025 유지 및 $1,025 재돌파 시 분할 진입",
-      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "status": "IMMEDIATE",
-      "score": 96,
-      "confidence": 88,
-      "currentPrice": 1020.84,
-      "referencePrice": 1020.84,
-      "currency": "USD",
-      "entryLow": 995.0,
-      "entryHigh": 1025.0,
-      "stopLoss": 960.0,
-      "target1": 1100.0,
-      "target2": 1180.0,
-      "holdingPeriod": "주말~5거래일",
-      "committeeVote": "6/7",
-      "catalyst": "privacy-coin rotation과 short squeeze 이후에도 majors 대비 강한 양의 RS 유지",
-      "reason": "BTC/ETH/SOL/XRP가 NFP 후 하락하는 동안 ZEC는 +7%대, 24h 거래대금 약 $1.09B로 유동성 동반",
-      "risk": "단기 과열과 $1,000 돌파 후 급격한 변동성",
-      "invalidation": "$960 하회 또는 $995 회복 실패",
-      "quoteStatus": "WEEKEND_24H_VERIFIED",
-      "priceTimestampKst": "2026-09-05T07:49:00+09:00"
-    },
-    {
-      "id": "20260905-0750KST-XRP-SHORT",
-      "date": "2026-09-05",
-      "generatedAtKst": "2026-09-05T07:50:00+09:00",
-      "briefingSlot": "0750",
-      "assetClass": "CRYPTO",
-      "market": "GLOBAL",
-      "ticker": "XRP-USD",
-      "name": "XRP",
       "direction": "SHORT",
-      "strategy": "$1.39~1.42 반등 실패 또는 $1.39 재이탈 시 하락 방향 대응",
+      "strategy": "$960~980 반등 실패 또는 $935 재이탈 시 하락 방향 대응",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
       "score": 93,
-      "confidence": 85,
-      "currentPrice": 1.3997,
-      "referencePrice": 1.3997,
+      "confidence": 82,
+      "currentPrice": 950.43,
+      "referencePrice": 950.43,
       "currency": "USD",
-      "entryLow": 1.39,
-      "entryHigh": 1.42,
-      "stopLoss": 1.455,
-      "target1": 1.32,
-      "target2": 1.27,
-      "holdingPeriod": "주말~5거래일",
-      "committeeVote": "6/7",
-      "catalyst": "강한 미국 고용지표 이후 달러·금리 상승과 위험자산 압박",
-      "reason": "24h -3.88%로 BTC와 CoinDesk 20보다 명확한 음의 RS, 거래량 약 $2.39B",
-      "risk": "XRP ETF 자금유입과 높은 단기 변동성에 따른 숏커버",
-      "invalidation": "$1.455 회복 및 시장대비 RS 개선",
+      "entryLow": 935.0,
+      "entryHigh": 980.0,
+      "stopLoss": 1005.0,
+      "target1": 880.0,
+      "target2": 825.0,
+      "holdingPeriod": "주말~3거래일",
+      "committeeVote": "5/7",
+      "catalyst": "$1,023 돌파 후 $950대로 급반락하며 07:50 손절선 $960 이탈",
+      "reason": "24h 여전히 +15%지만 최고점 대비 약 -7% 반락, DASH는 +40%로 프라이버시 순환매 주도권 이동",
+      "risk": "강한 30D 추세와 숏스퀴즈 재발 가능성",
+      "invalidation": "$1,005 회복 및 유지",
       "quoteStatus": "WEEKEND_24H_VERIFIED",
-      "priceTimestampKst": "2026-09-05T07:49:00+09:00"
+      "priceTimestampKst": "2026-09-05T11:29:00+09:00"
     },
     {
-      "id": "20260905-0750KST-SOL-SHORT",
+      "id": "20260905-1130KST-ADA-SHORT",
       "date": "2026-09-05",
-      "generatedAtKst": "2026-09-05T07:50:00+09:00",
-      "briefingSlot": "0750",
+      "generatedAtKst": "2026-09-05T11:30:17+09:00",
+      "briefingSlot": "1130",
       "assetClass": "CRYPTO",
       "market": "GLOBAL",
-      "ticker": "SOL-USD",
-      "name": "Solana",
+      "ticker": "ADA-USD",
+      "name": "Cardano",
       "direction": "SHORT",
-      "strategy": "$101~103 반등 실패 또는 $100.5 재이탈 시 하락 방향 대응",
+      "strategy": "$0.209~0.214 반등 실패 또는 $0.208 재이탈 시 하락 방향 대응",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
-      "score": 90,
+      "score": 91,
       "confidence": 81,
-      "currentPrice": 101.77,
-      "referencePrice": 101.77,
+      "currentPrice": 0.2128,
+      "referencePrice": 0.2128,
       "currency": "USD",
-      "entryLow": 101.0,
-      "entryHigh": 103.0,
-      "stopLoss": 105.5,
-      "target1": 97.0,
-      "target2": 93.0,
+      "entryLow": 0.208,
+      "entryHigh": 0.214,
+      "stopLoss": 0.2215,
+      "target1": 0.198,
+      "target2": 0.188,
       "holdingPeriod": "주말~5거래일",
       "committeeVote": "5/7",
-      "catalyst": "NFP 서프라이즈 이후 금리상승에 고베타 알트코인 압박",
-      "reason": "24h -2.31%, 현물 거래소 교차가격 약 $101.86~101.89로 약세 확인",
-      "risk": "주말 유동성 감소와 알트코인 급반등",
-      "invalidation": "$105.5 회복",
+      "catalyst": "NFP 이후 금리·달러 부담 속 주요 알트 중 강한 음의 RS",
+      "reason": "복수 거래소 약 $0.2128, 24h 약 -5%로 BTC보다 약하고 독립 신규 촉매 부재",
+      "risk": "주말 알트 급반등과 시장 전반 숏커버",
+      "invalidation": "$0.2215 회복",
       "quoteStatus": "WEEKEND_24H_VERIFIED",
-      "priceTimestampKst": "2026-09-05T07:49:00+09:00"
+      "priceTimestampKst": "2026-09-05T11:29:00+09:00"
     },
     {
-      "id": "20260905-0750KST-BTC-SHORT",
+      "id": "20260905-1130KST-BTC-SHORT",
       "date": "2026-09-05",
-      "generatedAtKst": "2026-09-05T07:50:00+09:00",
-      "briefingSlot": "0750",
+      "generatedAtKst": "2026-09-05T11:30:17+09:00",
+      "briefingSlot": "1130",
       "assetClass": "CRYPTO",
       "market": "GLOBAL",
       "ticker": "BTC-USD",
       "name": "Bitcoin",
       "direction": "SHORT",
-      "strategy": "$79.3K~79.8K 반등 실패 또는 $79.3K 재이탈 시 하락 방향 대응",
+      "strategy": "$79.3K~79.9K 반등 실패 또는 $79.3K 재이탈 시 하락 방향 대응",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
       "score": 88,
       "confidence": 79,
-      "currentPrice": 79717.45,
-      "referencePrice": 79717.45,
+      "currentPrice": 79598.24,
+      "referencePrice": 79598.24,
       "currency": "USD",
       "entryLow": 79300.0,
-      "entryHigh": 79800.0,
+      "entryHigh": 79900.0,
       "stopLoss": 81100.0,
       "target1": 77300.0,
       "target2": 75300.0,
       "holdingPeriod": "주말~5거래일",
       "committeeVote": "5/7",
-      "catalyst": "미 8월 NFP +162K로 예상 대폭 상회해 Fed 인상 확률과 미 국채금리 상승",
-      "reason": "$81K 회복 직후 다시 $80K 아래로 밀리고 24h -1.75%; 다만 ETF 자금유입이 하방을 제한해 조건부",
-      "risk": "현물 ETF 수요와 $76K대 active-investor cost basis 지지",
+      "catalyst": "미 8월 NFP +162K 서프라이즈 후 Fed 인상 기대 재상승",
+      "reason": "Coinbase/Binance 약 $79.6K, 24h -1.5%로 $81K 돌파 실패 상태 지속",
+      "risk": "ETF 유입·$76.35K active-investor cost basis 지지",
       "invalidation": "$81.1K 회복 및 유지",
       "quoteStatus": "WEEKEND_24H_VERIFIED",
-      "priceTimestampKst": "2026-09-05T07:49:00+09:00"
+      "priceTimestampKst": "2026-09-05T11:29:00+09:00"
     }
   ],
   "topEvaluated": [
@@ -168,12 +168,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.04,
+        "volumeRatio": 0.074,
         "volumeThreshold": 1.2,
         "ema20": 16456.638021,
         "ema50": 16577.882975,
         "lastTimestamp": "2026-09-04T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.04x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "breakout=False; reclaim=False; volume=0.07x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
@@ -183,7 +183,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 1112.7
+        "ageMinutes": 1204.4
       }
     },
     {
@@ -196,7 +196,7 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.038,
+        "volumeRatio": 0.036,
         "volumeThreshold": 1.2,
         "ema20": 133332.376907,
         "ema50": 132560.870558,
@@ -211,7 +211,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 1112.7
+        "ageMinutes": 1204.4
       }
     },
     {
@@ -239,7 +239,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 1112.7
+        "ageMinutes": 1204.4
       }
     },
     {
@@ -267,7 +267,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 1112.7
+        "ageMinutes": 1204.4
       }
     },
     {
@@ -280,7 +280,7 @@
         "ready": false,
         "breakout": true,
         "reclaim": false,
-        "volumeRatio": 0.516,
+        "volumeRatio": 0.517,
         "volumeThreshold": 1.2,
         "ema20": 6615.297025,
         "ema50": 6588.142571,
@@ -295,7 +295,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 1112.8
+        "ageMinutes": 1204.4
       }
     },
     {
@@ -323,7 +323,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 1112.8
+        "ageMinutes": 1204.4
       }
     },
     {
@@ -336,12 +336,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.075,
+        "volumeRatio": 0.042,
         "volumeThreshold": 1.2,
         "ema20": 105899.811274,
         "ema50": 105556.94326,
         "lastTimestamp": "2026-09-04T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.08x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "breakout=False; reclaim=False; volume=0.04x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "BULLISH_HH_HL",
@@ -351,7 +351,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 1112.8
+        "ageMinutes": 1204.4
       }
     },
     {
@@ -364,12 +364,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.519,
+        "volumeRatio": 0.606,
         "volumeThreshold": 1.2,
         "ema20": 10436.50035,
         "ema50": 10446.568655,
         "lastTimestamp": "2026-09-04T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.52x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "breakout=False; reclaim=False; volume=0.61x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
@@ -379,7 +379,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 1112.8
+        "ageMinutes": 1204.4
       }
     },
     {
@@ -407,7 +407,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 1112.8
+        "ageMinutes": 1204.4
       }
     },
     {
@@ -435,7 +435,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 1112.8
+        "ageMinutes": 1204.4
       }
     },
     {
@@ -448,12 +448,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": true,
-        "volumeRatio": 1.195,
+        "volumeRatio": 1.277,
         "volumeThreshold": 1.2,
         "ema20": 105674.434587,
         "ema50": 105326.742576,
         "lastTimestamp": "2026-09-04T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=True; volume=1.19x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "breakout=False; reclaim=True; volume=1.28x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "BULLISH_HH_HL",
@@ -463,7 +463,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 1112.8
+        "ageMinutes": 1204.4
       }
     },
     {
@@ -476,12 +476,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": true,
-        "volumeRatio": 0.337,
+        "volumeRatio": 0.514,
         "volumeThreshold": 1.2,
         "ema20": 102984.951038,
         "ema50": 102346.456992,
         "lastTimestamp": "2026-09-04T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=True; volume=0.34x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "breakout=False; reclaim=True; volume=0.51x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "BULLISH_HH_HL",
@@ -491,7 +491,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 1112.8
+        "ageMinutes": 1204.4
       }
     },
     {
@@ -504,12 +504,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.04,
+        "volumeRatio": 0.078,
         "volumeThreshold": 1.2,
         "ema20": 40304.586674,
         "ema50": 40249.342348,
         "lastTimestamp": "2026-09-04T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.04x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "breakout=False; reclaim=False; volume=0.08x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "BULLISH_HH_HL",
@@ -519,7 +519,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 1112.8
+        "ageMinutes": 1204.4
       }
     },
     {
@@ -532,12 +532,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.032,
+        "volumeRatio": 0.64,
         "volumeThreshold": 1.2,
         "ema20": 14040.921934,
         "ema50": 13982.569721,
         "lastTimestamp": "2026-09-04T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.03x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "breakout=False; reclaim=False; volume=0.64x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
@@ -547,7 +547,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 1112.8
+        "ageMinutes": 1204.4
       }
     },
     {
@@ -575,7 +575,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 1112.8
+        "ageMinutes": 1204.4
       }
     },
     {
@@ -588,12 +588,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.843,
+        "volumeRatio": 0.622,
         "volumeThreshold": 1.2,
         "ema20": 1041.012598,
         "ema50": 1044.91889,
         "lastTimestamp": "2026-09-04T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.84x/1.20x; ICT=BEARISH/NONE/NONE",
+        "reason": "breakout=False; reclaim=False; volume=0.62x/1.20x; ICT=BEARISH/NONE/NONE",
         "ict": {
           "bias": "BEARISH",
           "structure": "BEARISH_LH_LL",
@@ -603,7 +603,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 1112.8
+        "ageMinutes": 1204.4
       }
     },
     {
@@ -616,12 +616,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.984,
+        "volumeRatio": 1.093,
         "volumeThreshold": 1.2,
         "ema20": 2467.99125,
         "ema50": 2480.72104,
         "lastTimestamp": "2026-09-04T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.98x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "breakout=False; reclaim=False; volume=1.09x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
@@ -631,7 +631,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 1112.8
+        "ageMinutes": 1204.4
       }
     },
     {
@@ -644,7 +644,7 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.3,
+        "volumeRatio": 0.302,
         "volumeThreshold": 1.2,
         "ema20": 18107.643839,
         "ema50": 18050.94762,
@@ -659,7 +659,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 1112.8
+        "ageMinutes": 1204.4
       }
     },
     {
@@ -687,7 +687,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 1112.8
+        "ageMinutes": 1204.4
       }
     },
     {
@@ -700,12 +700,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.203,
+        "volumeRatio": 0.109,
         "volumeThreshold": 1.2,
         "ema20": 51085.278144,
         "ema50": 51031.45086,
         "lastTimestamp": "2026-09-04T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.20x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "breakout=False; reclaim=False; volume=0.11x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
@@ -715,7 +715,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 1112.8
+        "ageMinutes": 1204.4
       }
     },
     {
@@ -743,7 +743,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 1112.8
+        "ageMinutes": 1204.4
       }
     },
     {
@@ -756,12 +756,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.581,
+        "volumeRatio": 0.652,
         "volumeThreshold": 1.2,
         "ema20": 6662.028325,
         "ema50": 6610.726344,
         "lastTimestamp": "2026-09-04T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.58x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "breakout=False; reclaim=False; volume=0.65x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
@@ -771,7 +771,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 1112.8
+        "ageMinutes": 1204.4
       }
     },
     {
@@ -799,7 +799,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 1112.8
+        "ageMinutes": 1204.4
       }
     },
     {
@@ -827,7 +827,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 1112.8
+        "ageMinutes": 1204.4
       }
     },
     {
@@ -840,7 +840,7 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.007,
+        "volumeRatio": 0.01,
         "volumeThreshold": 1.2,
         "ema20": 23646.601053,
         "ema50": 23626.856358,
@@ -855,7 +855,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 1112.8
+        "ageMinutes": 1204.4
       }
     },
     {
@@ -883,7 +883,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 1112.8
+        "ageMinutes": 1204.4
       }
     },
     {
@@ -911,35 +911,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 1112.8
-      }
-    },
-    {
-      "ticker": "DBC",
-      "name": "Invesco DB Commodity Index",
-      "dailyScore": 95.0,
-      "relativeStrengthPercentile": 1.0,
-      "dailySignalEligible": true,
-      "trigger": {
-        "ready": false,
-        "breakout": false,
-        "reclaim": false,
-        "volumeRatio": 0.0,
-        "volumeThreshold": 1.35,
-        "ema20": 31.805161,
-        "ema50": 31.841576,
-        "lastTimestamp": "2026-09-04T23:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=BEARISH/NONE/NONE",
-        "ict": {
-          "bias": "BEARISH",
-          "structure": "BEARISH_LH_LL",
-          "event": "NONE",
-          "liquidity": "NONE",
-          "fvg": "BEARISH 31.6698~31.7000",
-          "score": -3
-        },
-        "fresh": false,
-        "ageMinutes": 77.8
+        "ageMinutes": 1204.4
       }
     },
     {
@@ -967,14 +939,14 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 77.8
+        "ageMinutes": 169.4
       }
     },
     {
-      "ticker": "PRAX",
-      "name": "Praxis Precision Medicines, Inc. - Common Stock",
-      "dailyScore": 85.47,
-      "relativeStrengthPercentile": 0.9694323144104804,
+      "ticker": "EWT",
+      "name": "iShares MSCI Taiwan ETF",
+      "dailyScore": 88.04,
+      "relativeStrengthPercentile": 0.8607594936708861,
       "dailySignalEligible": true,
       "trigger": {
         "ready": false,
@@ -982,24 +954,52 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.35,
-        "ema20": 351.68549,
-        "ema50": 352.730589,
-        "lastTimestamp": "2026-09-04T23:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 111.825554,
+        "ema50": 111.627497,
+        "lastTimestamp": "2026-09-04T23:45:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=BEARISH/BOS_DOWN/NONE",
         "ict": {
-          "bias": "NEUTRAL",
+          "bias": "BEARISH",
+          "structure": "RANGE",
+          "event": "BOS_DOWN",
+          "liquidity": "NONE",
+          "fvg": "BEARISH 111.4600~112.1100",
+          "score": -3
+        },
+        "fresh": false,
+        "ageMinutes": 169.4
+      }
+    },
+    {
+      "ticker": "DBC",
+      "name": "Invesco DB Commodity Index",
+      "dailyScore": 87.0,
+      "relativeStrengthPercentile": 1.0,
+      "dailySignalEligible": true,
+      "trigger": {
+        "ready": false,
+        "breakout": false,
+        "reclaim": false,
+        "volumeRatio": 0.0,
+        "volumeThreshold": 1.35,
+        "ema20": 31.805161,
+        "ema50": 31.841576,
+        "lastTimestamp": "2026-09-04T23:45:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=BEARISH/NONE/NONE",
+        "ict": {
+          "bias": "BEARISH",
           "structure": "BEARISH_LH_LL",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BULLISH 345.1300~351.8100",
-          "score": -1
+          "fvg": "BEARISH 31.6698~31.7000",
+          "score": -3
         },
         "fresh": false,
-        "ageMinutes": 92.8
+        "ageMinutes": 169.4
       }
     }
   ],
-  "historyRecordCount": 571,
+  "historyRecordCount": 575,
   "researchBasis": [
     "time-series momentum",
     "cross-sectional momentum",
