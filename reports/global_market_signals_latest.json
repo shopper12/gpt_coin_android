@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-09-06T21:50:19.495069+09:00",
+  "generatedAtKst": "2026-09-06T23:28:57.182139+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
     "shortlistCount": 424,
     "krEtfShortlistCount": 34,
-    "dailyMetricsCount": 402,
+    "dailyMetricsCount": 403,
     "dailyCandidateCount": 40,
     "krEtfDailyCandidateCount": 27,
     "strictDailyCandidateCount": 13,
@@ -17,7 +17,7 @@
     "scannerSignalCount": 0,
     "chatgptSignalCount": 4,
     "krEtfSignalCount": 0,
-    "dailyCacheHit": true,
+    "dailyCacheHit": false,
     "maxSignalAgeMinutes": 45
   },
   "marketRegime": {
@@ -29,132 +29,132 @@
   },
   "signals": [
     {
-      "id": "20260906-2050KST-ARB-LONG",
+      "id": "20260906-2330KST-ZEC-LONG",
       "date": "2026-09-06",
-      "generatedAtKst": "2026-09-06T20:52:36+09:00",
-      "briefingSlot": "2050",
+      "generatedAtKst": "2026-09-06T23:28:00+09:00",
+      "briefingSlot": "2330",
       "assetClass": "CRYPTO",
       "market": "GLOBAL",
-      "ticker": "ARB-USD",
-      "name": "Arbitrum",
+      "ticker": "ZEC-USD",
+      "name": "Zcash",
       "direction": "LONG",
-      "strategy": "$0.185~0.198 지지 확인 또는 $0.204 돌파 후 유지 시 분할 진입",
+      "strategy": "$1120~1170 지지 확인 또는 $1180 재돌파 후 유지 시 분할 진입",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
-      "score": 97,
-      "confidence": 88,
-      "currentPrice": 0.1968,
-      "referencePrice": 0.1968,
+      "score": 96,
+      "confidence": 87,
+      "currentPrice": 1157.0,
+      "referencePrice": 1157.0,
       "currency": "USD",
-      "entryLow": 0.185,
-      "entryHigh": 0.198,
-      "stopLoss": 0.176,
-      "target1": 0.215,
-      "target2": 0.235,
+      "entryLow": 1120.0,
+      "entryHigh": 1170.0,
+      "stopLoss": 1070.0,
+      "target1": 1220.0,
+      "target2": 1280.0,
       "holdingPeriod": "주말~5거래일",
       "committeeVote": "6/7",
-      "catalyst": "Robinhood Chain 실사용·수수료가 Arbitrum DAO 수익 내러티브로 재평가되며 상위200 24h 최강 RS",
-      "reason": "MetaMask 09:26 UTC $0.1968, 24h +48.99%, 거래량 $939M; CoinMarketCap 분석도 약 $0.195,+47.46%와 $0.181 지지 확인",
-      "risk": "24h +49% 과열·9/16 약 92.6M ARB unlock·주말 유동성",
-      "invalidation": "$0.176 하회 또는 $0.181 회복 실패",
+      "catalyst": "privacy rotation 재가속과 당일 ATH 갱신, BTC 보합 대비 강한 독립 RS",
+      "reason": "CoinLore $1,157,+15.8%, 24h 거래량 약 $1.02B; OKX $1,175.06 및 당일 ATH $1,179.88 교차확인",
+      "risk": "30D +130%권 과열·ATH 직후 변동성·주말 유동성",
+      "invalidation": "$1070 하회 또는 $1120 회복 실패",
       "quoteStatus": "LIVE_WEB_CROSSCHECKED",
-      "priceTimestampKst": "2026-09-06T20:52:36+09:00"
+      "priceTimestampKst": "2026-09-06T23:28:00+09:00"
     },
     {
-      "id": "20260906-2050KST-UNI-LONG",
+      "id": "20260906-2330KST-UNI-LONG",
       "date": "2026-09-06",
-      "generatedAtKst": "2026-09-06T20:52:36+09:00",
-      "briefingSlot": "2050",
+      "generatedAtKst": "2026-09-06T23:28:00+09:00",
+      "briefingSlot": "2330",
       "assetClass": "CRYPTO",
       "market": "GLOBAL",
       "ticker": "UNI-USD",
       "name": "Uniswap",
       "direction": "LONG",
-      "strategy": "$6.80~7.10 지지 또는 $7.20 돌파 후 유지 시 분할 진입",
+      "strategy": "$6.85~7.05 지지 또는 $7.20 돌파 후 유지 시 분할 진입",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
-      "score": 93,
-      "confidence": 84,
-      "currentPrice": 7.06,
-      "referencePrice": 7.06,
+      "score": 94,
+      "confidence": 85,
+      "currentPrice": 7.02,
+      "referencePrice": 7.02,
       "currency": "USD",
-      "entryLow": 6.8,
-      "entryHigh": 7.1,
-      "stopLoss": 6.45,
-      "target1": 7.55,
-      "target2": 7.95,
+      "entryLow": 6.85,
+      "entryHigh": 7.05,
+      "stopLoss": 6.6,
+      "target1": 7.45,
+      "target2": 7.9,
       "holdingPeriod": "주말~5거래일",
       "committeeVote": "6/7",
-      "catalyst": "DEX·Robinhood Chain·tokenized asset 내러티브와 대형 유동성 DeFi 회전",
-      "reason": "실시간 다중소스 $6.97~7.11, 24h 약 +10.6~12.7%, 거래량 약 $0.82~0.90B",
-      "risk": "장중 $7.45 저항 확인·ARB와 DeFi/Robinhood 내러티브 상관",
-      "invalidation": "$6.45 하회 또는 $6.80 회복 실패",
+      "catalyst": "DEX·Robinhood Chain 사용 증가와 UNI burn 내러티브, 거래량 급증",
+      "reason": "CoinMarketCap $7.02,+12.48%, 거래량 $928.6M, 거래량/시총 21.25%",
+      "risk": "당일 $7.46 고점 저항·DeFi 고베타 되돌림",
+      "invalidation": "$6.60 하회 또는 $6.85 회복 실패",
       "quoteStatus": "LIVE_WEB_CROSSCHECKED",
-      "priceTimestampKst": "2026-09-06T20:52:36+09:00"
+      "priceTimestampKst": "2026-09-06T23:28:00+09:00"
     },
     {
-      "id": "20260906-2050KST-SOL-LONG",
+      "id": "20260906-2330KST-ARB-LONG",
       "date": "2026-09-06",
-      "generatedAtKst": "2026-09-06T20:52:36+09:00",
-      "briefingSlot": "2050",
+      "generatedAtKst": "2026-09-06T23:28:00+09:00",
+      "briefingSlot": "2330",
       "assetClass": "CRYPTO",
       "market": "GLOBAL",
-      "ticker": "SOL-USD",
-      "name": "Solana",
+      "ticker": "ARB-USD",
+      "name": "Arbitrum",
       "direction": "LONG",
-      "strategy": "$103.5~106.5 지지 또는 $108 돌파 후 유지 시 분할 진입",
+      "strategy": "$0.184~0.192 지지 확인 또는 $0.200 재돌파 후 유지 시 분할 진입",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
-      "score": 90,
-      "confidence": 81,
-      "currentPrice": 106.56,
-      "referencePrice": 106.56,
+      "score": 92,
+      "confidence": 82,
+      "currentPrice": 0.1904,
+      "referencePrice": 0.1904,
       "currency": "USD",
-      "entryLow": 103.5,
-      "entryHigh": 106.5,
-      "stopLoss": 100.8,
-      "target1": 112.0,
-      "target2": 118.0,
+      "entryLow": 0.184,
+      "entryHigh": 0.192,
+      "stopLoss": 0.176,
+      "target1": 0.204,
+      "target2": 0.215,
       "holdingPeriod": "주말~5거래일",
       "committeeVote": "5/7",
-      "catalyst": "상위 시총 고유동성 알트로 breadth 확산, BTC 대비 초과수익",
-      "reason": "CoinMarketCap live $106.56, 24h +4.18%, 거래량 $3.39B; BTC +0.34% 대비 강한 RS",
-      "risk": "알트장 급반전·BTC $79K 하회 시 베타 확대",
-      "invalidation": "$100.8 하회 또는 $103.5 회복 실패",
+      "catalyst": "L2·Robinhood Chain 내러티브와 당일 top-gainer급 RS 지속",
+      "reason": "CoinMarketCap 동시 페이지 $0.1904,+42.17%; CoinCodex gainers +46.88%로 리더십 교차확인",
+      "risk": "급등 후 고점 이탈·9/16 토큰 unlock·UNI와 테마 상관",
+      "invalidation": "$0.176 하회",
       "quoteStatus": "LIVE_WEB_CROSSCHECKED",
-      "priceTimestampKst": "2026-09-06T20:52:36+09:00"
+      "priceTimestampKst": "2026-09-06T23:28:00+09:00"
     },
     {
-      "id": "20260906-2050KST-PUMP-SHORT",
+      "id": "20260906-2330KST-PUMP-SHORT",
       "date": "2026-09-06",
-      "generatedAtKst": "2026-09-06T20:52:36+09:00",
-      "briefingSlot": "2050",
+      "generatedAtKst": "2026-09-06T23:28:00+09:00",
+      "briefingSlot": "2330",
       "assetClass": "CRYPTO",
       "market": "GLOBAL",
       "ticker": "PUMP-USD",
       "name": "Pump.fun",
       "direction": "SHORT",
-      "strategy": "$0.00395~0.00410 반등 실패 또는 $0.00390 이탈 시 하락 방향 대응",
+      "strategy": "$0.00390~0.00402 반등 실패 또는 $0.00388 이탈 시 하락 방향 대응",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
-      "score": 89,
+      "score": 90,
       "confidence": 80,
-      "currentPrice": 0.00397,
-      "referencePrice": 0.00397,
+      "currentPrice": 0.003908,
+      "referencePrice": 0.003908,
       "currency": "USD",
-      "entryLow": 0.0039,
-      "entryHigh": 0.0041,
-      "stopLoss": 0.00428,
+      "entryLow": 0.00388,
+      "entryHigh": 0.00402,
+      "stopLoss": 0.00415,
       "target1": 0.0036,
-      "target2": 0.00335,
+      "target2": 0.0034,
       "holdingPeriod": "주말~5거래일",
       "committeeVote": "5/7",
-      "catalyst": "93% 상승 breadth 속 top200 하위권 상대약세와 PONS 경쟁 압력",
-      "reason": "CoinMarketCap $0.00397, 24h -5.82%, 거래량 $242.7M; OKX $0.004092,-8.06%로 약세 교차확인",
-      "risk": "broad alt risk-on에 따른 급격한 숏커버·buyback",
-      "invalidation": "$0.00428 회복 및 유지",
-      "quoteStatus": "LIVE_WEB_CROSSCHECKED",
-      "priceTimestampKst": "2026-09-06T20:52:36+09:00"
+      "catalyst": "강한 알트 breadth 속 당일 최하위권 음의 상대강도",
+      "reason": "9/6 시장 mover 집계에서 PUMP $0.003908,-7.43%로 주요 loser",
+      "risk": "broad alt risk-on에 따른 급격한 숏커버·밈/launchpad 순환매",
+      "invalidation": "$0.00415 회복 및 유지",
+      "quoteStatus": "LIVE_WEB_VERIFIED",
+      "priceTimestampKst": "2026-09-06T23:28:00+09:00"
     }
   ],
   "topEvaluated": [
@@ -183,7 +183,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 3260.4
+        "ageMinutes": 3361.4
       }
     },
     {
@@ -211,7 +211,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 3260.4
+        "ageMinutes": 3361.4
       }
     },
     {
@@ -239,7 +239,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 3260.4
+        "ageMinutes": 3361.4
       }
     },
     {
@@ -267,7 +267,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 3260.4
+        "ageMinutes": 3361.4
       }
     },
     {
@@ -295,7 +295,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 3260.4
+        "ageMinutes": 3361.4
       }
     },
     {
@@ -323,7 +323,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 3260.4
+        "ageMinutes": 3361.4
       }
     },
     {
@@ -351,7 +351,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 3260.4
+        "ageMinutes": 3361.4
       }
     },
     {
@@ -379,7 +379,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 3260.4
+        "ageMinutes": 3361.4
       }
     },
     {
@@ -407,7 +407,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 3260.4
+        "ageMinutes": 3361.4
       }
     },
     {
@@ -435,7 +435,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 3260.4
+        "ageMinutes": 3361.4
       }
     },
     {
@@ -463,7 +463,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 3260.4
+        "ageMinutes": 3361.4
       }
     },
     {
@@ -491,7 +491,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 3260.4
+        "ageMinutes": 3361.4
       }
     },
     {
@@ -519,7 +519,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 3260.4
+        "ageMinutes": 3361.4
       }
     },
     {
@@ -547,7 +547,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 3260.4
+        "ageMinutes": 3361.4
       }
     },
     {
@@ -575,7 +575,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 3260.4
+        "ageMinutes": 3361.4
       }
     },
     {
@@ -603,7 +603,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 3260.4
+        "ageMinutes": 3361.4
       }
     },
     {
@@ -631,7 +631,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 3260.4
+        "ageMinutes": 3361.4
       }
     },
     {
@@ -659,7 +659,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 3260.4
+        "ageMinutes": 3361.4
       }
     },
     {
@@ -687,7 +687,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 3260.4
+        "ageMinutes": 3361.4
       }
     },
     {
@@ -715,7 +715,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 3260.4
+        "ageMinutes": 3361.4
       }
     },
     {
@@ -743,7 +743,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 3260.4
+        "ageMinutes": 3361.4
       }
     },
     {
@@ -771,7 +771,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 3260.4
+        "ageMinutes": 3361.4
       }
     },
     {
@@ -799,7 +799,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 3260.4
+        "ageMinutes": 3361.4
       }
     },
     {
@@ -827,7 +827,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 3260.4
+        "ageMinutes": 3361.4
       }
     },
     {
@@ -855,7 +855,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 3260.4
+        "ageMinutes": 3361.4
       }
     },
     {
@@ -883,7 +883,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 3260.4
+        "ageMinutes": 3361.4
       }
     },
     {
@@ -911,7 +911,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 3260.4
+        "ageMinutes": 3361.4
       }
     },
     {
@@ -939,7 +939,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 2225.4
+        "ageMinutes": 2326.4
       }
     },
     {
@@ -967,7 +967,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 2225.4
+        "ageMinutes": 2326.4
       }
     },
     {
@@ -995,11 +995,11 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 2225.4
+        "ageMinutes": 2326.4
       }
     }
   ],
-  "historyRecordCount": 595,
+  "historyRecordCount": 599,
   "researchBasis": [
     "time-series momentum",
     "cross-sectional momentum",
