@@ -1,50 +1,146 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-09-08T20:57:15.007372+09:00",
+  "generatedAtKst": "2026-09-08T23:32:03.608878+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
     "shortlistCount": 423,
     "krEtfShortlistCount": 34,
-    "dailyMetricsCount": 400,
-    "dailyCandidateCount": 39,
+    "dailyMetricsCount": 401,
+    "dailyCandidateCount": 38,
     "krEtfDailyCandidateCount": 26,
-    "strictDailyCandidateCount": 13,
+    "strictDailyCandidateCount": 12,
     "krEtfSignalEligibleCount": 0,
-    "intradayEvaluatedCount": 39,
+    "intradayEvaluatedCount": 38,
     "krEtfIntradayEvaluatedCount": 26,
     "signalCount": 4,
     "scannerSignalCount": 0,
     "chatgptSignalCount": 4,
     "krEtfSignalCount": 0,
-    "dailyCacheHit": true,
+    "dailyCacheHit": false,
     "maxSignalAgeMinutes": 45
   },
   "marketRegime": {
     "panic": false,
     "riskOff": false,
     "equityBelow200Count": 0,
-    "realizedVolatility20Annualized": 0.1253,
+    "realizedVolatility20Annualized": 0.1251,
     "reason": "광의 추세와 변동성 정상"
   },
   "signals": [
     {
-      "id": "20260908-2050KST-COPPER-LONG",
+      "id": "20260908-2330KST-QCOM-LONG",
       "date": "2026-09-08",
-      "generatedAtKst": "2026-09-08T20:52:23+09:00",
-      "briefingSlot": "2050",
+      "generatedAtKst": "2026-09-08T23:30:00+09:00",
+      "briefingSlot": "2330",
+      "assetClass": "US_STOCK",
+      "market": "NASDAQ",
+      "ticker": "QCOM",
+      "name": "Qualcomm",
+      "direction": "LONG",
+      "strategy": "179~183달러 눌림에서 시가/VWAP 재지지 또는 184달러 재돌파 후 유지 시 분할 진입",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "status": "CONDITIONAL",
+      "score": 97,
+      "confidence": 92,
+      "currentPrice": 182.82,
+      "referencePrice": 182.82,
+      "currency": "USD",
+      "entryLow": 179.0,
+      "entryHigh": 183.0,
+      "stopLoss": 174.0,
+      "target1": 194.0,
+      "target2": 205.0,
+      "holdingPeriod": "1~5거래일",
+      "committeeVote": "6/7",
+      "catalyst": "Amazon과 다세대 AI 데이터센터 맞춤형 칩·1.6T 광연결 협력, 최대 600억달러 조달 마일스톤 연계",
+      "reason": "프리마켓 +9.5% 이후 정규장 초반에도 약 +8.3% 유지해 갭 유지가 확인되고, 약세 시장 속 독립 RS가 최상위",
+      "risk": "이벤트 갭 차익실현·Amazon 워런트 희석·고유가/고금리로 성장주 밸류에이션 압박",
+      "invalidation": "174달러 하회 또는 개장 갭의 절반 이상 반납",
+      "quoteStatus": "REGULAR_SESSION_CROSS_VERIFIED",
+      "priceTimestampKst": "2026-09-08T23:10:00+09:00"
+    },
+    {
+      "id": "20260908-2330KST-ROIV-LONG",
+      "date": "2026-09-08",
+      "generatedAtKst": "2026-09-08T23:30:00+09:00",
+      "briefingSlot": "2330",
+      "assetClass": "US_STOCK",
+      "market": "NASDAQ",
+      "ticker": "ROIV",
+      "name": "Roivant Sciences",
+      "direction": "LONG",
+      "strategy": "40.5~41.5달러 눌림 지지 또는 42달러 재돌파 후 유지 시 분할 진입",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "status": "CONDITIONAL",
+      "score": 95,
+      "confidence": 89,
+      "currentPrice": 41.3,
+      "referencePrice": 41.3,
+      "currency": "USD",
+      "entryLow": 40.5,
+      "entryHigh": 41.5,
+      "stopLoss": 38.7,
+      "target1": 45.5,
+      "target2": 49.0,
+      "holdingPeriod": "1~5거래일",
+      "committeeVote": "6/7",
+      "catalyst": "mosliciguat PHocus 2상에서 PVR -56.3%, 6MWD +35.2m로 주요 지표 동시 충족",
+      "reason": "프리마켓 +18.2%에서 정규장 초반에도 약 +18%를 유지해 임상 이벤트 갭이 무너지지 않음",
+      "risk": "바이오 이벤트 갭 과열·3상 재현성·장중 차익실현",
+      "invalidation": "38.7달러 하회 또는 40달러 회복 실패",
+      "quoteStatus": "REGULAR_SESSION_DIRECTION_VERIFIED_PRICE_ANCHORED_TO_OPEN",
+      "priceTimestampKst": "2026-09-08T23:30:00+09:00"
+    },
+    {
+      "id": "20260908-2330KST-NVS-SHORT",
+      "date": "2026-09-08",
+      "generatedAtKst": "2026-09-08T23:30:00+09:00",
+      "briefingSlot": "2330",
+      "assetClass": "US_STOCK",
+      "market": "NYSE",
+      "ticker": "NVS",
+      "name": "Novartis ADR",
+      "direction": "SHORT",
+      "strategy": "140~144달러 반등 실패 또는 139달러 재이탈 시 분할 숏",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "status": "CONDITIONAL",
+      "score": 94,
+      "confidence": 90,
+      "currentPrice": 140.0,
+      "referencePrice": 140.0,
+      "currency": "USD",
+      "entryLow": 140.0,
+      "entryHigh": 144.0,
+      "stopLoss": 148.0,
+      "target1": 132.0,
+      "target2": 126.0,
+      "holdingPeriod": "1~5거래일",
+      "committeeVote": "6/7",
+      "catalyst": "pelacarsen 실패에 이어 120억달러 Avidity 인수 핵심 자산 del-desiran 3상도 1차평가지표 실패",
+      "reason": "정규장 초반에도 약 -13%로 프리마켓 갭을 회복하지 못해 파이프라인 재평가가 지속",
+      "risk": "과매도 숏커버·중기 5~6% 성장 가이던스 유지·방어주 성격",
+      "invalidation": "148달러 회복 또는 갭의 절반 이상 회복",
+      "quoteStatus": "REGULAR_SESSION_DIRECTION_CROSS_VERIFIED",
+      "priceTimestampKst": "2026-09-08T23:20:00+09:00"
+    },
+    {
+      "id": "20260908-2330KST-COPPER-LONG",
+      "date": "2026-09-08",
+      "generatedAtKst": "2026-09-08T23:30:00+09:00",
+      "briefingSlot": "2330",
       "assetClass": "COMMODITY_FUTURE",
       "market": "COMEX",
       "ticker": "HGZ26",
       "name": "Copper Dec 2026",
       "direction": "LONG",
-      "strategy": "6.76~6.82달러 구간에서 6.73 이상 재지지 또는 6.83 돌파 후 유지 시 분할 진입",
+      "strategy": "6.76~6.82달러 재지지 또는 6.83 돌파 후 유지 시 분할 진입",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
-      "score": 97,
-      "confidence": 91,
-      "currentPrice": 6.818,
-      "referencePrice": 6.818,
+      "score": 92,
+      "confidence": 85,
+      "currentPrice": 6.82,
+      "referencePrice": 6.82,
       "currency": "USD_PER_LB",
       "entryLow": 6.76,
       "entryHigh": 6.82,
@@ -52,109 +148,13 @@
       "target1": 7.05,
       "target2": 7.28,
       "holdingPeriod": "1~5거래일",
-      "committeeVote": "6/7",
-      "catalyst": "LME 구리 사상 최고·글로벌 광산 생산 감소·미국 정제구리 관세 가능성·AI/전력망 수요",
-      "reason": "COMEX 12월물 약 +2.0%, 장중 6.827까지 상승하며 사상 최고권과 거래량 확대를 동반",
-      "risk": "CPI/Fed 긴축 재가격으로 달러 반등·관세 기대 소멸·사상 최고 돌파 후 차익실현",
-      "invalidation": "6.63 하회 또는 6.73 돌파구간을 회복하지 못함",
-      "quoteStatus": "LIVE_CROSS_VERIFIED",
-      "priceTimestampKst": "2026-09-08T19:54:19+09:00"
-    },
-    {
-      "id": "20260908-2050KST-ROIV-LONG",
-      "date": "2026-09-08",
-      "generatedAtKst": "2026-09-08T20:52:23+09:00",
-      "briefingSlot": "2050",
-      "assetClass": "US_STOCK",
-      "market": "NASDAQ",
-      "ticker": "ROIV",
-      "name": "Roivant Sciences",
-      "direction": "LONG",
-      "strategy": "40.8~42.5달러 눌림에서 41달러 재지지 또는 43달러 돌파 후 유지 시 분할 진입",
-      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "status": "CONDITIONAL",
-      "score": 96,
-      "confidence": 90,
-      "currentPrice": 42.51,
-      "referencePrice": 42.51,
-      "currency": "USD",
-      "entryLow": 40.8,
-      "entryHigh": 42.5,
-      "stopLoss": 38.7,
-      "target1": 47.5,
-      "target2": 52.0,
-      "holdingPeriod": "1~5거래일",
-      "committeeVote": "6/7",
-      "catalyst": "mosliciguat PHocus 2상 1차·2차 평가지표 동시 충족 및 PHrontier 3상 개시",
-      "reason": "PVR placebo 대비 -56.3%(p<0.0001), 6MWD +35.2m(p=0.0027), 프리마켓 약 +20~22%로 강한 이벤트 리더십",
-      "risk": "바이오 이벤트 갭 과열·08:00 ET 투자자콜 후 차익실현·3상 임상 리스크",
-      "invalidation": "38.7달러 하회 또는 개장 후 40달러를 회복하지 못함",
-      "quoteStatus": "PREMARKET_AND_TRIAL_RESULTS_VERIFIED",
-      "priceTimestampKst": "2026-09-08T20:28:00+09:00"
-    },
-    {
-      "id": "20260908-2050KST-NVS-SHORT",
-      "date": "2026-09-08",
-      "generatedAtKst": "2026-09-08T20:52:23+09:00",
-      "briefingSlot": "2050",
-      "assetClass": "US_STOCK",
-      "market": "NYSE",
-      "ticker": "NVS",
-      "name": "Novartis ADR",
-      "direction": "SHORT",
-      "strategy": "140~145달러 반등 실패 또는 139.5달러 재이탈 시 분할 숏",
-      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "status": "CONDITIONAL",
-      "score": 94,
-      "confidence": 89,
-      "currentPrice": 140.85,
-      "referencePrice": 140.85,
-      "currency": "USD",
-      "entryLow": 140.0,
-      "entryHigh": 145.0,
-      "stopLoss": 149.5,
-      "target1": 132.0,
-      "target2": 125.0,
-      "holdingPeriod": "1~5거래일",
-      "committeeVote": "6/7",
-      "catalyst": "pelacarsen Lp(a)HORIZON 실패에 이어 del-desiran HARBOR 3상도 9월 8일 1차평가지표 실패",
-      "reason": "ADR 프리마켓 약 -12%, 유럽 본주도 약 -9~-10%로 동일 악재를 교차확인; 성장 파이프라인 신뢰 훼손",
-      "risk": "낙폭 과대에 따른 숏커버·회사가 5~6% 중기 매출성장 가이던스를 유지",
-      "invalidation": "149.5달러 회복 또는 개장 후 갭 절반 이상 회복",
-      "quoteStatus": "PREMARKET_AND_PRIMARY_CATALYST_VERIFIED",
-      "priceTimestampKst": "2026-09-08T20:37:18+09:00"
-    },
-    {
-      "id": "20260908-2050KST-BRENT-LONG",
-      "date": "2026-09-08",
-      "generatedAtKst": "2026-09-08T20:52:23+09:00",
-      "briefingSlot": "2050",
-      "assetClass": "COMMODITY_FUTURE",
-      "market": "ICE",
-      "ticker": "BRENT",
-      "name": "Brent Crude",
-      "direction": "LONG",
-      "strategy": "98.0~99.3달러 지지 확인 또는 99.5 돌파 후 재지지 시 분할 진입",
-      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "status": "CONDITIONAL",
-      "score": 92,
-      "confidence": 86,
-      "currentPrice": 99.23,
-      "referencePrice": 99.23,
-      "currency": "USD_PER_BBL",
-      "entryLow": 98.0,
-      "entryHigh": 99.3,
-      "stopLoss": 96.7,
-      "target1": 102.5,
-      "target2": 106.0,
-      "holdingPeriod": "1~5거래일",
       "committeeVote": "5/7",
-      "catalyst": "후티의 사우디 에너지시설 공격·호르무즈 통항 감소·중동 공급차질 위험",
-      "reason": "장중 99.46달러로 다주 최고, WTI도 94달러대까지 동반 상승하며 공급충격이 실제 선물가격에 반영",
-      "risk": "100달러 심리저항·전략비축유 방출/휴전 헤드라인에 따른 지정학 프리미엄 급락",
-      "invalidation": "96.7달러 하회 또는 98달러 돌파구간 상실",
-      "quoteStatus": "LIVE_CROSS_VERIFIED",
-      "priceTimestampKst": "2026-09-08T18:06:00+09:00"
+      "catalyst": "LME 사상 최고·글로벌 광산생산 감소·미국 정제구리 관세 불확실성·AI/전력망 수요",
+      "reason": "COMEX 12월물 약 +2.0%, LME 구리도 1만4600달러대 사상 최고를 기록해 주식 약세와 독립된 원자재 리더십",
+      "risk": "신고가 차익실현·달러 반등·중국 수요 둔화·관세 기대 되돌림",
+      "invalidation": "6.63달러 하회 또는 LME 14400달러 하회",
+      "quoteStatus": "INTRADAY_VERIFIED_NOT_POINT_IN_TIME_2330",
+      "priceTimestampKst": "2026-09-08T19:45:00+09:00"
     }
   ],
   "topEvaluated": [
@@ -183,7 +183,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 327.3
+        "ageMinutes": 484.3
       }
     },
     {
@@ -211,7 +211,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 327.3
+        "ageMinutes": 484.3
       }
     },
     {
@@ -239,7 +239,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 342.3
+        "ageMinutes": 499.3
       }
     },
     {
@@ -267,7 +267,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 327.3
+        "ageMinutes": 484.3
       }
     },
     {
@@ -295,7 +295,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 327.3
+        "ageMinutes": 484.3
       }
     },
     {
@@ -323,7 +323,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 342.3
+        "ageMinutes": 499.3
       }
     },
     {
@@ -351,7 +351,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 342.3
+        "ageMinutes": 499.3
       }
     },
     {
@@ -379,7 +379,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 342.3
+        "ageMinutes": 499.3
       }
     },
     {
@@ -407,7 +407,7 @@
           "score": -5
         },
         "fresh": false,
-        "ageMinutes": 327.3
+        "ageMinutes": 484.3
       }
     },
     {
@@ -435,7 +435,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 342.3
+        "ageMinutes": 499.3
       }
     },
     {
@@ -463,7 +463,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 327.3
+        "ageMinutes": 484.3
       }
     },
     {
@@ -491,7 +491,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 327.3
+        "ageMinutes": 484.3
       }
     },
     {
@@ -519,7 +519,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 342.3
+        "ageMinutes": 499.3
       }
     },
     {
@@ -547,7 +547,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 327.3
+        "ageMinutes": 484.3
       }
     },
     {
@@ -575,7 +575,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 327.3
+        "ageMinutes": 484.3
       }
     },
     {
@@ -603,7 +603,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 327.3
+        "ageMinutes": 484.3
       }
     },
     {
@@ -631,7 +631,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 327.3
+        "ageMinutes": 484.3
       }
     },
     {
@@ -659,7 +659,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 327.3
+        "ageMinutes": 484.3
       }
     },
     {
@@ -687,7 +687,7 @@
           "score": -5
         },
         "fresh": false,
-        "ageMinutes": 327.3
+        "ageMinutes": 484.3
       }
     },
     {
@@ -715,7 +715,7 @@
           "score": -5
         },
         "fresh": false,
-        "ageMinutes": 327.3
+        "ageMinutes": 484.3
       }
     },
     {
@@ -743,7 +743,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 327.3
+        "ageMinutes": 484.3
       }
     },
     {
@@ -771,7 +771,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 327.3
+        "ageMinutes": 484.3
       }
     },
     {
@@ -799,7 +799,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 342.3
+        "ageMinutes": 499.3
       }
     },
     {
@@ -827,7 +827,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 327.3
+        "ageMinutes": 484.3
       }
     },
     {
@@ -855,7 +855,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 342.3
+        "ageMinutes": 499.3
       }
     },
     {
@@ -883,7 +883,35 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 327.3
+        "ageMinutes": 484.3
+      }
+    },
+    {
+      "ticker": "DBC",
+      "name": "Invesco DB Commodity Index",
+      "dailyScore": 95.0,
+      "relativeStrengthPercentile": 1.0,
+      "dailySignalEligible": true,
+      "trigger": {
+        "ready": false,
+        "breakout": false,
+        "reclaim": false,
+        "volumeRatio": 0.565,
+        "volumeThreshold": 1.35,
+        "ema20": 32.229209,
+        "ema50": 32.064974,
+        "lastTimestamp": "2026-09-08T14:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.56x/1.35x; ICT=NEUTRAL/NONE/NONE",
+        "ict": {
+          "bias": "NEUTRAL",
+          "structure": "RANGE",
+          "event": "NONE",
+          "liquidity": "NONE",
+          "fvg": "BEARISH 32.3250~32.7500",
+          "score": -1
+        },
+        "fresh": true,
+        "ageMinutes": 4.3
       }
     },
     {
@@ -896,78 +924,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.0,
+        "volumeRatio": 1.461,
         "volumeThreshold": 1.35,
-        "ema20": 79.251861,
-        "ema50": 79.233475,
-        "lastTimestamp": "2026-09-04T23:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 79.21975,
+        "ema50": 79.222749,
+        "lastTimestamp": "2026-09-08T14:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=1.46x/1.35x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BEARISH 79.2100~79.2300",
-          "score": -1
-        },
-        "fresh": false,
-        "ageMinutes": 5052.3
-      }
-    },
-    {
-      "ticker": "EWT",
-      "name": "iShares MSCI Taiwan ETF",
-      "dailyScore": 88.04,
-      "relativeStrengthPercentile": 0.8607594936708861,
-      "dailySignalEligible": true,
-      "trigger": {
-        "ready": false,
-        "breakout": false,
-        "reclaim": false,
-        "volumeRatio": 0.0,
-        "volumeThreshold": 1.35,
-        "ema20": 111.311814,
-        "ema50": 111.423143,
-        "lastTimestamp": "2026-09-08T11:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/NONE",
-        "ict": {
-          "bias": "NEUTRAL",
-          "structure": "RANGE",
-          "event": "NONE",
-          "liquidity": "NONE",
-          "fvg": "BEARISH 110.9500~111.1500",
+          "fvg": "BEARISH 79.1800~79.3100",
           "score": -1
         },
         "fresh": true,
-        "ageMinutes": 27.3
-      }
-    },
-    {
-      "ticker": "DBC",
-      "name": "Invesco DB Commodity Index",
-      "dailyScore": 87.0,
-      "relativeStrengthPercentile": 1.0,
-      "dailySignalEligible": true,
-      "trigger": {
-        "ready": false,
-        "breakout": true,
-        "reclaim": false,
-        "volumeRatio": 0.0,
-        "volumeThreshold": 1.35,
-        "ema20": 32.031226,
-        "ema50": 31.935968,
-        "lastTimestamp": "2026-09-08T11:30:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=0.00x/1.35x; ICT=BULLISH/BOS_UP/NONE",
-        "ict": {
-          "bias": "BULLISH",
-          "structure": "RANGE",
-          "event": "BOS_UP",
-          "liquidity": "NONE",
-          "fvg": "BULLISH 32.3259~32.7500",
-          "score": 3
-        },
-        "fresh": true,
-        "ageMinutes": 27.3
+        "ageMinutes": 4.3
       }
     },
     {
@@ -980,22 +952,50 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.0,
+        "volumeRatio": 0.532,
         "volumeThreshold": 1.35,
-        "ema20": 1026.564,
-        "ema50": 1014.718943,
-        "lastTimestamp": "2026-09-08T11:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 1024.809006,
+        "ema50": 1018.244888,
+        "lastTimestamp": "2026-09-08T14:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.53x/1.35x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BEARISH 1027.0600~1029.9900",
+          "fvg": "BEARISH 1028.3950~1033.0074",
           "score": -1
         },
         "fresh": true,
-        "ageMinutes": 12.3
+        "ageMinutes": 4.3
+      }
+    },
+    {
+      "ticker": "PRAX",
+      "name": "Praxis Precision Medicines, Inc. - Common Stock",
+      "dailyScore": 85.68,
+      "relativeStrengthPercentile": 0.9736842105263158,
+      "dailySignalEligible": true,
+      "trigger": {
+        "ready": false,
+        "breakout": false,
+        "reclaim": false,
+        "volumeRatio": 0.088,
+        "volumeThreshold": 1.35,
+        "ema20": 350.879038,
+        "ema50": 351.88675,
+        "lastTimestamp": "2026-09-08T14:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.09x/1.35x; ICT=NEUTRAL/NONE/NONE",
+        "ict": {
+          "bias": "NEUTRAL",
+          "structure": "BEARISH_LH_LL",
+          "event": "NONE",
+          "liquidity": "NONE",
+          "fvg": "BULLISH 347.8700~349.3850",
+          "score": -1
+        },
+        "fresh": true,
+        "ageMinutes": 4.3
       }
     }
   ],
