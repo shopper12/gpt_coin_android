@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-09-10T06:58:57.800384+09:00",
+  "generatedAtKst": "2026-09-10T07:52:06.744312+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
@@ -17,7 +17,7 @@
     "scannerSignalCount": 0,
     "chatgptSignalCount": 4,
     "krEtfSignalCount": 0,
-    "dailyCacheHit": false,
+    "dailyCacheHit": true,
     "maxSignalAgeMinutes": 45
   },
   "marketRegime": {
@@ -29,132 +29,132 @@
   },
   "signals": [
     {
-      "id": "20260909-2330KST-CHYM-LONG",
-      "date": "2026-09-09",
-      "generatedAtKst": "2026-09-09T23:32:12+09:00",
-      "briefingSlot": "2330",
-      "assetClass": "US_STOCK",
-      "market": "NASDAQ",
-      "ticker": "CHYM",
-      "name": "Chime Financial",
+      "id": "20260910-0750KST-SOIL-LONG",
+      "date": "2026-09-10",
+      "generatedAtKst": "2026-09-10T07:50:35+09:00",
+      "briefingSlot": "0750",
+      "assetClass": "KR_STOCK",
+      "market": "KRX",
+      "ticker": "010950",
+      "name": "S-Oil",
       "direction": "LONG",
-      "strategy": "34.8~35.6달러 지지 또는 36.0달러 재돌파 유지 시 분할 진입, 36.8달러 이상 추격 금지",
+      "strategy": "163000~167000원 지지 후 전일 고가 168600원 재돌파 시 분할 진입, 171000원 이상 추격 금지",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
-      "score": 97,
-      "confidence": 91,
-      "currentPrice": 35.24,
-      "referencePrice": 35.24,
-      "currency": "USD",
-      "entryLow": 34.8,
-      "entryHigh": 35.6,
-      "stopLoss": 33.6,
-      "target1": 39.5,
-      "target2": 42.5,
+      "score": 96,
+      "confidence": 89,
+      "currentPrice": 165900,
+      "referencePrice": 165900,
+      "currency": "KRW",
+      "entryLow": 163000,
+      "entryHigh": 167000,
+      "stopLoss": 158000,
+      "target1": 177000,
+      "target2": 185000,
       "holdingPeriod": "1~5거래일",
       "committeeVote": "6/7",
-      "catalyst": "Stride Bank 5.9억달러 인수, 1억달러 이상 순시너지, Q3·연간 매출 및 EBITDA 가이던스 상향",
-      "reason": "약세 지수 속에서도 정규장 초반 +9%대 갭을 유지해 프리마켓 촉매가 실제 가격으로 확인됨",
-      "risk": "갭 과열·규제승인·10년물 4.8%대 고금리",
-      "invalidation": "33.6달러 하회 또는 34.8달러 지지 실패",
-      "quoteStatus": "REGULAR_SESSION_VERIFIED_DELAYED",
-      "priceTimestampKst": "2026-09-09T21:20:00+09:00"
+      "catalyst": "Brent 101.21달러 결제·중동 공급차질·미국 에너지섹터 유일 강세",
+      "reason": "원유 공급충격이 밤사이 더 강화됐고 전일 정유주 리더십이 이미 확인됨",
+      "risk": "유가 급반락·외교 완화·최근 상승 과열",
+      "invalidation": "158000원 하회 또는 갭상승 후 시가/VWAP 붕괴",
+      "quoteStatus": "PRIOR_KRX_CLOSE_CROSS_SOURCE",
+      "priceTimestampKst": "2026-09-09T15:30:00+09:00"
     },
     {
-      "id": "20260909-2330KST-BRENT-LONG",
-      "date": "2026-09-09",
-      "generatedAtKst": "2026-09-09T23:32:12+09:00",
-      "briefingSlot": "2330",
+      "id": "20260910-0750KST-HANWHA-AERO-LONG",
+      "date": "2026-09-10",
+      "generatedAtKst": "2026-09-10T07:50:35+09:00",
+      "briefingSlot": "0750",
+      "assetClass": "KR_STOCK",
+      "market": "KRX",
+      "ticker": "012450",
+      "name": "한화에어로스페이스",
+      "direction": "LONG",
+      "strategy": "1030000~1055000원 지지 또는 1060000원 돌파 유지 시 분할 진입",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "status": "CONDITIONAL",
+      "score": 93,
+      "confidence": 86,
+      "currentPrice": 1049000,
+      "referencePrice": 1049000,
+      "currency": "KRW",
+      "entryLow": 1030000,
+      "entryHigh": 1055000,
+      "stopLoss": 1005000,
+      "target1": 1100000,
+      "target2": 1150000,
+      "holdingPeriod": "1~5거래일",
+      "committeeVote": "6/7",
+      "catalyst": "9월10일 크로아티아 천무 계약 서명 일정·한국 최초 크로아티아 방산 수출",
+      "reason": "전일 2.14% 상승에 그쳐 오늘 확정 이벤트의 추가 가격반영 여지가 존재",
+      "risk": "계약 규모 미공개·뉴스 선반영·지수 위험회피",
+      "invalidation": "1005000원 하회 또는 이벤트에도 전일 종가 하회",
+      "quoteStatus": "PRIOR_KRX_CLOSE_VERIFIED",
+      "priceTimestampKst": "2026-09-09T15:30:00+09:00"
+    },
+    {
+      "id": "20260910-0750KST-GOLD-LONG",
+      "date": "2026-09-10",
+      "generatedAtKst": "2026-09-10T07:50:35+09:00",
+      "briefingSlot": "0750",
       "assetClass": "COMMODITY",
-      "market": "ICE",
-      "ticker": "BRENT",
-      "name": "Brent Crude",
+      "market": "GLOBAL",
+      "ticker": "XAUUSD",
+      "name": "Gold",
       "direction": "LONG",
-      "strategy": "100.0~100.8달러 지지 또는 101달러 돌파 후 재지지 시 분할 진입",
+      "strategy": "4380~4415달러 지지 또는 4420달러 재돌파 시 분할 진입",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
-      "score": 95,
-      "confidence": 90,
-      "currentPrice": 100.62,
-      "referencePrice": 100.62,
-      "currency": "USD_PER_BBL",
-      "entryLow": 100.0,
-      "entryHigh": 100.8,
-      "stopLoss": 98.2,
-      "target1": 104.5,
-      "target2": 108.0,
-      "holdingPeriod": "1~5거래일",
-      "committeeVote": "6/7",
-      "catalyst": "중동 충돌 확대·사우디 에너지시설 공격·호르무즈 통항 차질",
-      "reason": "100달러 돌파가 실물 공급차질과 미국 에너지섹터 단독 강세를 동반",
-      "risk": "외교 완화·공급 정상화·100달러 돌파 실패",
-      "invalidation": "98.2달러 하회 또는 100달러 아래 안착",
-      "quoteStatus": "INTRADAY_CROSS_SOURCE_VERIFIED",
-      "priceTimestampKst": "2026-09-09T23:20:00+09:00"
-    },
-    {
-      "id": "20260909-2330KST-TTAN-SHORT",
-      "date": "2026-09-09",
-      "generatedAtKst": "2026-09-09T23:32:12+09:00",
-      "briefingSlot": "2330",
-      "assetClass": "US_STOCK",
-      "market": "NASDAQ",
-      "ticker": "TTAN",
-      "name": "ServiceTitan",
-      "direction": "SHORT",
-      "strategy": "66.5~69.0달러 반등 실패 시 분할 숏, 65달러 하향 재이탈 시 추세 확인",
-      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "status": "CONDITIONAL",
-      "score": 94,
+      "score": 92,
       "confidence": 87,
-      "currentPrice": 65.46,
-      "referencePrice": 65.46,
-      "currency": "USD",
-      "entryLow": 66.5,
-      "entryHigh": 69.0,
-      "stopLoss": 71.5,
-      "target1": 61.0,
-      "target2": 57.0,
+      "currentPrice": 4396,
+      "referencePrice": 4396,
+      "currency": "USD_PER_OZ",
+      "entryLow": 4380,
+      "entryHigh": 4415,
+      "stopLoss": 4340,
+      "target1": 4460,
+      "target2": 4520,
       "holdingPeriod": "1~5거래일",
       "committeeVote": "5/7",
-      "catalyst": "Q3 매출 가이던스 컨센서스 하회·GTV 성장 둔화·애널리스트 목표가 하향",
-      "reason": "프리마켓 -17% 악재가 정규장에서도 약 -20%로 확대되어 갭 회복 실패가 확인됨",
-      "risk": "Q2 실적 beat·FY 가이던스 양호·과매도 숏커버",
-      "invalidation": "71.5달러 상향 회복",
-      "quoteStatus": "REGULAR_SESSION_VERIFIED_DELAYED",
-      "priceTimestampKst": "2026-09-09T22:31:00+09:00"
+      "catalyst": "중동 충돌·유가 100달러 돌파·달러 약세·미국 PPI/CPI 대기",
+      "reason": "주식 breadth 악화와 동시에 금이 약 1% 상승해 방어 자산 상대강도 확인",
+      "risk": "실질금리 상승·인플레이션 지표 충격·달러 반등",
+      "invalidation": "4340달러 하회",
+      "quoteStatus": "US_CLOSE_REUTERS_VERIFIED",
+      "priceTimestampKst": "2026-09-10T05:00:00+09:00"
     },
     {
-      "id": "20260909-2330KST-USDJPY-SHORT",
-      "date": "2026-09-09",
-      "generatedAtKst": "2026-09-09T23:32:12+09:00",
-      "briefingSlot": "2330",
+      "id": "20260910-0750KST-USDJPY-SHORT",
+      "date": "2026-09-10",
+      "generatedAtKst": "2026-09-10T07:50:35+09:00",
+      "briefingSlot": "0750",
       "assetClass": "FX",
       "market": "GLOBAL_FX",
       "ticker": "USDJPY",
       "name": "USD/JPY",
       "direction": "SHORT",
-      "strategy": "153.3~154.0 반등 실패 시 분할 숏, 153.0 하향 이탈 시 추세 확인",
+      "strategy": "153.6~154.1 반등 실패 시 분할 숏, 153.25 하향 이탈 시 추세 확인",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
-      "score": 91,
-      "confidence": 86,
-      "currentPrice": 153.33,
-      "referencePrice": 153.33,
+      "score": 90,
+      "confidence": 85,
+      "currentPrice": 153.651,
+      "referencePrice": 153.651,
       "currency": "JPY_PER_USD",
-      "entryLow": 153.3,
-      "entryHigh": 154.0,
+      "entryLow": 153.6,
+      "entryHigh": 154.1,
       "stopLoss": 155.1,
-      "target1": 151.5,
-      "target2": 149.5,
+      "target1": 152.2,
+      "target2": 150.0,
       "holdingPeriod": "1~5거래일",
       "committeeVote": "5/7",
-      "catalyst": "BOJ 인상 기대·엔캐리 축소·달러 약세·엔화 7개월 최고권",
-      "reason": "주식과 상관이 낮은 독립 하락추세이며 1분·30분·시간·5시간 기술신호가 모두 강한 매도",
-      "risk": "153 부근 과매도 반등·중동 위험의 달러 안전자산 수요",
+      "catalyst": "BOJ 추가 인상 기대·엔화 강세·달러지수 약세",
+      "reason": "9월9일 154.006 고점에서 153.257 저점까지 하락 후 153.651 마감, 하락 구조 유지",
+      "risk": "중동 위험의 달러 안전자산 수요·과매도 반등",
       "invalidation": "155.1 상향 회복",
-      "quoteStatus": "REALTIME_FX_CROSS_SOURCE",
-      "priceTimestampKst": "2026-09-09T23:01:20+09:00"
+      "quoteStatus": "DAILY_FX_CLOSE_VERIFIED",
+      "priceTimestampKst": "2026-09-10T06:00:00+09:00"
     }
   ],
   "topEvaluated": [
@@ -183,7 +183,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 931.3
+        "ageMinutes": 982.2
       }
     },
     {
@@ -211,7 +211,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 931.3
+        "ageMinutes": 982.2
       }
     },
     {
@@ -239,7 +239,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 931.3
+        "ageMinutes": 982.2
       }
     },
     {
@@ -267,7 +267,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 931.3
+        "ageMinutes": 982.2
       }
     },
     {
@@ -295,7 +295,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 931.3
+        "ageMinutes": 982.2
       }
     },
     {
@@ -323,7 +323,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 931.3
+        "ageMinutes": 982.2
       }
     },
     {
@@ -351,7 +351,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 931.3
+        "ageMinutes": 982.2
       }
     },
     {
@@ -379,7 +379,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 931.3
+        "ageMinutes": 982.2
       }
     },
     {
@@ -407,7 +407,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 931.3
+        "ageMinutes": 982.2
       }
     },
     {
@@ -435,7 +435,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 931.3
+        "ageMinutes": 982.2
       }
     },
     {
@@ -463,7 +463,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 931.3
+        "ageMinutes": 982.2
       }
     },
     {
@@ -491,7 +491,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 931.3
+        "ageMinutes": 982.2
       }
     },
     {
@@ -519,7 +519,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 931.3
+        "ageMinutes": 982.2
       }
     },
     {
@@ -547,7 +547,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 931.3
+        "ageMinutes": 982.2
       }
     },
     {
@@ -575,7 +575,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 931.3
+        "ageMinutes": 982.2
       }
     },
     {
@@ -603,7 +603,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 931.3
+        "ageMinutes": 982.2
       }
     },
     {
@@ -631,7 +631,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 931.3
+        "ageMinutes": 982.2
       }
     },
     {
@@ -659,7 +659,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 931.3
+        "ageMinutes": 982.2
       }
     },
     {
@@ -687,7 +687,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 931.3
+        "ageMinutes": 982.2
       }
     },
     {
@@ -715,7 +715,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 931.3
+        "ageMinutes": 982.2
       }
     },
     {
@@ -743,7 +743,7 @@
           "score": -5
         },
         "fresh": false,
-        "ageMinutes": 931.3
+        "ageMinutes": 982.2
       }
     },
     {
@@ -771,7 +771,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 931.3
+        "ageMinutes": 982.2
       }
     },
     {
@@ -799,7 +799,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 931.3
+        "ageMinutes": 982.2
       }
     },
     {
@@ -827,7 +827,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 931.3
+        "ageMinutes": 982.2
       }
     },
     {
@@ -855,7 +855,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 931.3
+        "ageMinutes": 982.2
       }
     },
     {
@@ -883,7 +883,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 931.3
+        "ageMinutes": 982.2
       }
     },
     {
@@ -898,20 +898,20 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.35,
-        "ema20": 66.999992,
-        "ema50": 66.279311,
-        "lastTimestamp": "2026-09-09T21:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/BUY_SIDE_SWEEP",
+        "ema20": 67.148885,
+        "ema50": 66.453516,
+        "lastTimestamp": "2026-09-09T22:45:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
-          "structure": "BULLISH_HH_HL",
+          "structure": "RANGE",
           "event": "NONE",
-          "liquidity": "BUY_SIDE_SWEEP",
+          "liquidity": "NONE",
           "fvg": "BULLISH 67.4800~67.5599",
           "score": 1
         },
         "fresh": true,
-        "ageMinutes": 16.3
+        "ageMinutes": 7.2
       }
     },
     {
@@ -926,9 +926,9 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.35,
-        "ema20": 520.726251,
-        "ema50": 516.600607,
-        "lastTimestamp": "2026-09-09T22:00:00+00:00",
+        "ema20": 520.612278,
+        "ema50": 517.020878,
+        "lastTimestamp": "2026-09-09T22:45:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
@@ -939,7 +939,7 @@
           "score": -1
         },
         "fresh": true,
-        "ageMinutes": 1.3
+        "ageMinutes": 7.2
       }
     },
     {
@@ -954,20 +954,20 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.35,
-        "ema20": 40.958815,
-        "ema50": 40.594683,
-        "lastTimestamp": "2026-09-09T21:32:13+00:00",
+        "ema20": 41.027045,
+        "ema50": 40.678962,
+        "lastTimestamp": "2026-09-09T22:47:33+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
-          "structure": "RANGE",
+          "structure": "BULLISH_HH_HL",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BEARISH 41.2000~41.3046",
-          "score": -1
+          "fvg": "BEARISH 41.1500~41.2600",
+          "score": 1
         },
         "fresh": true,
-        "ageMinutes": 29.1
+        "ageMinutes": 4.6
       }
     },
     {
@@ -984,7 +984,7 @@
         "volumeThreshold": 1.35,
         "ema20": 194.807419,
         "ema50": 194.582883,
-        "lastTimestamp": "2026-09-09T21:44:39+00:00",
+        "lastTimestamp": "2026-09-09T21:30:00+00:00",
         "reason": "breakout=True; reclaim=False; volume=0.00x/1.35x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
           "bias": "BULLISH",
@@ -994,8 +994,8 @@
           "fvg": "BULLISH 195.3000~195.3834",
           "score": 5
         },
-        "fresh": true,
-        "ageMinutes": 16.7
+        "fresh": false,
+        "ageMinutes": 82.2
       }
     }
   ],
