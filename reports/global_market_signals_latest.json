@@ -1,20 +1,20 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-09-11T02:38:19.938816+09:00",
+  "generatedAtKst": "2026-09-11T05:04:48.321331+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
-    "shortlistCount": 412,
+    "shortlistCount": 414,
     "krEtfShortlistCount": 34,
-    "dailyMetricsCount": 391,
-    "dailyCandidateCount": 43,
+    "dailyMetricsCount": 392,
+    "dailyCandidateCount": 42,
     "krEtfDailyCandidateCount": 26,
-    "strictDailyCandidateCount": 17,
+    "strictDailyCandidateCount": 16,
     "krEtfSignalEligibleCount": 0,
-    "intradayEvaluatedCount": 43,
+    "intradayEvaluatedCount": 42,
     "krEtfIntradayEvaluatedCount": 26,
-    "signalCount": 4,
-    "scannerSignalCount": 0,
+    "signalCount": 8,
+    "scannerSignalCount": 4,
     "chatgptSignalCount": 4,
     "krEtfSignalCount": 0,
     "dailyCacheHit": false,
@@ -24,7 +24,7 @@
     "panic": false,
     "riskOff": false,
     "equityBelow200Count": 0,
-    "realizedVolatility20Annualized": 0.1252,
+    "realizedVolatility20Annualized": 0.1268,
     "reason": "광의 추세와 변동성 정상"
   },
   "signals": [
@@ -155,6 +155,402 @@
       "invalidation": "4410 상향 회복",
       "quoteStatus": "REUTERS_POST_PPI_VERIFIED",
       "priceTimestampKst": "2026-09-10T23:20:00+09:00"
+    },
+    {
+      "id": "TGTX-LONG-20260910T2000000000-EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
+      "date": "2026-09-11",
+      "generatedAtKst": "2026-09-11T05:04:48.321331+09:00",
+      "signalTimestamp": "2026-09-10T20:00:00+00:00",
+      "assetClass": "US_STOCK",
+      "market": "US",
+      "ticker": "TGTX",
+      "name": "TG Therapeutics, Inc. - Common Stock",
+      "direction": "LONG",
+      "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM: 절대추세+상대모멘텀+15분 트리거+변동성 목표",
+      "strategyType": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
+      "referencePrice": 55.389999,
+      "currentPrice": 55.389999,
+      "previousClose": 54.650002,
+      "todayChangePct": 1.354,
+      "recentCloses": [
+        53.529999,
+        52.029999,
+        46.169998,
+        48.735001,
+        49.880001,
+        49.549999,
+        49.759998,
+        49.16,
+        49.900002,
+        49.5,
+        47.939999,
+        48.740002,
+        49.279999,
+        50.259998,
+        51.689999,
+        50.560001,
+        54.27,
+        56.009998,
+        55.419998,
+        55.029999,
+        55.720001,
+        53.93,
+        54.299999,
+        56.09,
+        56.900002,
+        56.709999,
+        55.985001,
+        55.740002,
+        54.650002,
+        55.389999
+      ],
+      "currency": "USD",
+      "status": "ACTIVE_SIGNAL",
+      "score": 95.2,
+      "confidence": 9.4,
+      "relativeStrengthPercentile": 0.9651,
+      "entryLow": 54.836099,
+      "entryHigh": 55.863734,
+      "stopLoss": 50.178922,
+      "target1": 65.812155,
+      "target2": 72.065448,
+      "riskPct": 9.41,
+      "volatilityTargetExposurePct": 30.6,
+      "regime": {
+        "panic": false,
+        "riskOff": false,
+        "equityBelow200Count": 0,
+        "realizedVolatility20Annualized": 0.1268,
+        "reason": "광의 추세와 변동성 정상"
+      },
+      "ict": {
+        "bias": "BULLISH",
+        "structure": "BULLISH_HH_HL",
+        "event": "BOS_UP",
+        "liquidity": "NONE",
+        "fvg": "BULLISH 55.0750~55.0800",
+        "score": 5
+      },
+      "trigger": {
+        "ready": true,
+        "breakout": true,
+        "reclaim": false,
+        "volumeRatio": 9.987,
+        "volumeThreshold": 1.35,
+        "ema20": 54.907196,
+        "ema50": 54.87915,
+        "lastTimestamp": "2026-09-10T20:00:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=9.99x/1.35x; ICT=BULLISH/BOS_UP/NONE",
+        "ict": {
+          "bias": "BULLISH",
+          "structure": "BULLISH_HH_HL",
+          "event": "BOS_UP",
+          "liquidity": "NONE",
+          "fvg": "BULLISH 55.0750~55.0800",
+          "score": 5
+        },
+        "fresh": true,
+        "ageMinutes": 7.0
+      },
+      "reason": "3/6/12개월 절대 모멘텀 양수, 200일선 상단, 자산군 상대강도 97백분위, breakout=True; reclaim=False; volume=9.99x/1.35x; ICT=BULLISH/BOS_UP/NONE",
+      "guardrail": "자동 추천은 주문이 아니다. 실시간 호가·슬리피지·공시·거래 가능 여부를 확인한다."
+    },
+    {
+      "id": "DBC-LONG-20260910T1945000000-EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
+      "date": "2026-09-11",
+      "generatedAtKst": "2026-09-11T05:04:48.321331+09:00",
+      "signalTimestamp": "2026-09-10T19:45:00+00:00",
+      "assetClass": "COMMODITY",
+      "market": "GLOBAL",
+      "ticker": "DBC",
+      "name": "Invesco DB Commodity Index",
+      "direction": "LONG",
+      "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM: 절대추세+상대모멘텀+15분 트리거+변동성 목표",
+      "strategyType": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
+      "referencePrice": 33.610001,
+      "currentPrice": 33.610001,
+      "previousClose": 32.849998,
+      "todayChangePct": 2.314,
+      "recentCloses": [
+        29.32,
+        29.450001,
+        28.879999,
+        28.309999,
+        28.48,
+        28.860001,
+        28.91,
+        29.93,
+        29.969999,
+        30.110001,
+        29.780001,
+        30.0,
+        30.559999,
+        30.48,
+        30.76,
+        31.110001,
+        31.26,
+        30.940001,
+        30.43,
+        30.5,
+        30.860001,
+        30.790001,
+        31.299999,
+        31.93,
+        31.93,
+        31.959999,
+        31.9,
+        32.400002,
+        32.849998,
+        33.610001
+      ],
+      "currency": "USD",
+      "status": "ACTIVE_SIGNAL",
+      "score": 93.0,
+      "confidence": 9.3,
+      "relativeStrengthPercentile": 1.0,
+      "entryLow": 33.400467,
+      "entryHigh": 33.703127,
+      "stopLoss": 32.433651,
+      "target1": 35.962701,
+      "target2": 37.374321,
+      "riskPct": 3.5,
+      "volatilityTargetExposurePct": 70.0,
+      "regime": {
+        "panic": false,
+        "riskOff": false,
+        "equityBelow200Count": 0,
+        "realizedVolatility20Annualized": 0.1268,
+        "reason": "광의 추세와 변동성 정상"
+      },
+      "ict": {
+        "bias": "BULLISH",
+        "structure": "BULLISH_HH_HL",
+        "event": "NONE",
+        "liquidity": "NONE",
+        "fvg": "BULLISH 33.5300~33.5709",
+        "score": 3
+      },
+      "trigger": {
+        "ready": true,
+        "breakout": true,
+        "reclaim": false,
+        "volumeRatio": 4.373,
+        "volumeThreshold": 1.35,
+        "ema20": 33.460508,
+        "ema50": 33.211783,
+        "lastTimestamp": "2026-09-10T19:45:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=4.37x/1.35x; ICT=BULLISH/NONE/NONE",
+        "ict": {
+          "bias": "BULLISH",
+          "structure": "BULLISH_HH_HL",
+          "event": "NONE",
+          "liquidity": "NONE",
+          "fvg": "BULLISH 33.5300~33.5709",
+          "score": 3
+        },
+        "fresh": true,
+        "ageMinutes": 22.0
+      },
+      "reason": "3/6/12개월 절대 모멘텀 양수, 200일선 상단, 자산군 상대강도 100백분위, breakout=True; reclaim=False; volume=4.37x/1.35x; ICT=BULLISH/NONE/NONE",
+      "guardrail": "자동 추천은 주문이 아니다. 실시간 호가·슬리피지·공시·거래 가능 여부를 확인한다."
+    },
+    {
+      "id": "CRBG-LONG-20260910T1945000000-EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
+      "date": "2026-09-11",
+      "generatedAtKst": "2026-09-11T05:04:48.321331+09:00",
+      "signalTimestamp": "2026-09-10T19:45:00+00:00",
+      "assetClass": "US_STOCK",
+      "market": "US",
+      "ticker": "CRBG",
+      "name": "Corebridge Financial Inc. Common Stock",
+      "direction": "LONG",
+      "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM: 절대추세+상대모멘텀+15분 트리거+변동성 목표",
+      "strategyType": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
+      "referencePrice": 34.18,
+      "currentPrice": 34.18,
+      "previousClose": 33.82,
+      "todayChangePct": 1.064,
+      "recentCloses": [
+        31.959999,
+        31.190001,
+        31.309999,
+        31.6,
+        33.59,
+        34.009998,
+        33.68,
+        34.490002,
+        33.389999,
+        33.779999,
+        34.299999,
+        34.470001,
+        33.18,
+        33.119999,
+        32.57,
+        31.809999,
+        31.950001,
+        31.959999,
+        31.83,
+        32.529999,
+        32.630001,
+        32.610001,
+        32.540001,
+        32.169998,
+        33.540001,
+        34.75,
+        34.470001,
+        33.75,
+        33.82,
+        34.18
+      ],
+      "currency": "USD",
+      "status": "ACTIVE_SIGNAL",
+      "score": 88.9,
+      "confidence": 8.9,
+      "relativeStrengthPercentile": 0.8384,
+      "entryLow": 33.8382,
+      "entryHigh": 34.343058,
+      "stopLoss": 32.386364,
+      "target1": 37.767274,
+      "target2": 39.919638,
+      "riskPct": 5.25,
+      "volatilityTargetExposurePct": 40.8,
+      "regime": {
+        "panic": false,
+        "riskOff": false,
+        "equityBelow200Count": 0,
+        "realizedVolatility20Annualized": 0.1268,
+        "reason": "광의 추세와 변동성 정상"
+      },
+      "ict": {
+        "bias": "BULLISH",
+        "structure": "BULLISH_HH_HL",
+        "event": "BOS_UP",
+        "liquidity": "NONE",
+        "fvg": "BULLISH 34.0100~34.0150",
+        "score": 5
+      },
+      "trigger": {
+        "ready": true,
+        "breakout": true,
+        "reclaim": false,
+        "volumeRatio": 5.348,
+        "volumeThreshold": 1.35,
+        "ema20": 33.973978,
+        "ema50": 33.949592,
+        "lastTimestamp": "2026-09-10T19:45:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=5.35x/1.35x; ICT=BULLISH/BOS_UP/NONE",
+        "ict": {
+          "bias": "BULLISH",
+          "structure": "BULLISH_HH_HL",
+          "event": "BOS_UP",
+          "liquidity": "NONE",
+          "fvg": "BULLISH 34.0100~34.0150",
+          "score": 5
+        },
+        "fresh": true,
+        "ageMinutes": 22.0
+      },
+      "reason": "3/6/12개월 절대 모멘텀 양수, 200일선 상단, 자산군 상대강도 84백분위, breakout=True; reclaim=False; volume=5.35x/1.35x; ICT=BULLISH/BOS_UP/NONE",
+      "guardrail": "자동 추천은 주문이 아니다. 실시간 호가·슬리피지·공시·거래 가능 여부를 확인한다."
+    },
+    {
+      "id": "BNS-LONG-20260910T1945000000-EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
+      "date": "2026-09-11",
+      "generatedAtKst": "2026-09-11T05:04:48.321331+09:00",
+      "signalTimestamp": "2026-09-10T19:45:00+00:00",
+      "assetClass": "US_STOCK",
+      "market": "US",
+      "ticker": "BNS",
+      "name": "Bank Nova Scotia Halifax Pfd 3 Ordinary Shares",
+      "direction": "LONG",
+      "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM: 절대추세+상대모멘텀+15분 트리거+변동성 목표",
+      "strategyType": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
+      "referencePrice": 92.839996,
+      "currentPrice": 92.839996,
+      "previousClose": 92.110001,
+      "todayChangePct": 0.793,
+      "recentCloses": [
+        87.839996,
+        87.769997,
+        88.300003,
+        87.129997,
+        88.550003,
+        88.32,
+        88.849998,
+        88.559998,
+        88.860001,
+        90.330002,
+        90.650002,
+        91.540001,
+        91.349998,
+        90.129997,
+        87.690002,
+        86.440002,
+        87.57,
+        86.860001,
+        93.099998,
+        93.589996,
+        92.93,
+        92.389999,
+        91.660004,
+        91.190002,
+        93.309998,
+        94.919998,
+        93.82,
+        92.839996,
+        92.110001,
+        92.839996
+      ],
+      "currency": "USD",
+      "status": "ACTIVE_SIGNAL",
+      "score": 82.0,
+      "confidence": 8.2,
+      "relativeStrengthPercentile": 0.8603,
+      "entryLow": 92.054863,
+      "entryHigh": 93.188945,
+      "stopLoss": 89.001565,
+      "target1": 100.51686,
+      "target2": 105.122977,
+      "riskPct": 4.13,
+      "volatilityTargetExposurePct": 37.8,
+      "regime": {
+        "panic": false,
+        "riskOff": false,
+        "equityBelow200Count": 0,
+        "realizedVolatility20Annualized": 0.1268,
+        "reason": "광의 추세와 변동성 정상"
+      },
+      "ict": {
+        "bias": "NEUTRAL",
+        "structure": "BEARISH_LH_LL",
+        "event": "CHOCH_UP",
+        "liquidity": "NONE",
+        "fvg": "BULLISH 92.6800~92.7100",
+        "score": 1
+      },
+      "trigger": {
+        "ready": true,
+        "breakout": true,
+        "reclaim": false,
+        "volumeRatio": 6.109,
+        "volumeThreshold": 1.35,
+        "ema20": 92.604453,
+        "ema50": 92.619876,
+        "lastTimestamp": "2026-09-10T19:45:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=6.11x/1.35x; ICT=NEUTRAL/CHOCH_UP/NONE",
+        "ict": {
+          "bias": "NEUTRAL",
+          "structure": "BEARISH_LH_LL",
+          "event": "CHOCH_UP",
+          "liquidity": "NONE",
+          "fvg": "BULLISH 92.6800~92.7100",
+          "score": 1
+        },
+        "fresh": true,
+        "ageMinutes": 22.0
+      },
+      "reason": "3/6/12개월 절대 모멘텀 양수, 200일선 상단, 자산군 상대강도 86백분위, breakout=True; reclaim=False; volume=6.11x/1.35x; ICT=NEUTRAL/CHOCH_UP/NONE",
+      "guardrail": "자동 추천은 주문이 아니다. 실시간 호가·슬리피지·공시·거래 가능 여부를 확인한다."
     }
   ],
   "topEvaluated": [
@@ -183,7 +579,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 670.4
+        "ageMinutes": 817.0
       }
     },
     {
@@ -211,7 +607,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 670.4
+        "ageMinutes": 817.0
       }
     },
     {
@@ -239,7 +635,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 670.4
+        "ageMinutes": 817.0
       }
     },
     {
@@ -252,12 +648,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 1.238,
+        "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
-        "ema20": 136442.170058,
-        "ema50": 135529.642454,
-        "lastTimestamp": "2026-09-10T06:15:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=1.24x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 136487.677682,
+        "ema50": 135584.323993,
+        "lastTimestamp": "2026-09-10T06:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
@@ -267,7 +663,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 685.4
+        "ageMinutes": 817.0
       }
     },
     {
@@ -295,7 +691,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 670.4
+        "ageMinutes": 817.0
       }
     },
     {
@@ -308,12 +704,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.065,
+        "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
-        "ema20": 111819.358338,
-        "ema50": 111706.690506,
-        "lastTimestamp": "2026-09-10T06:15:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.07x/1.20x; ICT=BULLISH/NONE/NONE",
+        "ema20": 111850.848076,
+        "ema50": 111724.905262,
+        "lastTimestamp": "2026-09-10T06:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=BULLISH/NONE/NONE",
         "ict": {
           "bias": "BULLISH",
           "structure": "BULLISH_HH_HL",
@@ -323,7 +719,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 685.4
+        "ageMinutes": 817.0
       }
     },
     {
@@ -351,7 +747,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 670.4
+        "ageMinutes": 817.0
       }
     },
     {
@@ -379,7 +775,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 670.4
+        "ageMinutes": 817.0
       }
     },
     {
@@ -407,7 +803,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 670.4
+        "ageMinutes": 817.0
       }
     },
     {
@@ -435,7 +831,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 670.4
+        "ageMinutes": 817.0
       }
     },
     {
@@ -463,7 +859,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 670.4
+        "ageMinutes": 817.0
       }
     },
     {
@@ -491,7 +887,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 670.4
+        "ageMinutes": 817.0
       }
     },
     {
@@ -519,7 +915,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 670.4
+        "ageMinutes": 817.0
       }
     },
     {
@@ -547,7 +943,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 670.4
+        "ageMinutes": 817.0
       }
     },
     {
@@ -575,7 +971,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 670.4
+        "ageMinutes": 817.0
       }
     },
     {
@@ -588,12 +984,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.216,
+        "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
-        "ema20": 114326.424927,
-        "ema50": 114141.483316,
-        "lastTimestamp": "2026-09-10T06:15:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.22x/1.20x; ICT=BULLISH/NONE/NONE",
+        "ema20": 114390.575036,
+        "ema50": 114176.677965,
+        "lastTimestamp": "2026-09-10T06:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=BULLISH/NONE/NONE",
         "ict": {
           "bias": "BULLISH",
           "structure": "BULLISH_HH_HL",
@@ -603,7 +999,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 685.4
+        "ageMinutes": 817.0
       }
     },
     {
@@ -631,7 +1027,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 670.4
+        "ageMinutes": 817.0
       }
     },
     {
@@ -659,7 +1055,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 670.4
+        "ageMinutes": 817.0
       }
     },
     {
@@ -687,7 +1083,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 670.4
+        "ageMinutes": 817.0
       }
     },
     {
@@ -715,7 +1111,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 670.4
+        "ageMinutes": 817.0
       }
     },
     {
@@ -743,7 +1139,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 670.4
+        "ageMinutes": 817.0
       }
     },
     {
@@ -771,7 +1167,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 670.4
+        "ageMinutes": 817.0
       }
     },
     {
@@ -799,7 +1195,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 670.4
+        "ageMinutes": 817.0
       }
     },
     {
@@ -827,7 +1223,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 670.4
+        "ageMinutes": 817.0
       }
     },
     {
@@ -855,7 +1251,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 670.4
+        "ageMinutes": 817.0
       }
     },
     {
@@ -883,63 +1279,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 670.4
-      }
-    },
-    {
-      "ticker": "EQNR",
-      "name": "Equinor ASA",
-      "dailyScore": 91.51,
-      "relativeStrengthPercentile": 0.9301310043668122,
-      "dailySignalEligible": true,
-      "trigger": {
-        "ready": false,
-        "breakout": false,
-        "reclaim": false,
-        "volumeRatio": 0.0,
-        "volumeThreshold": 1.35,
-        "ema20": 45.130568,
-        "ema50": 45.025726,
-        "lastTimestamp": "2026-09-10T17:39:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/NONE",
-        "ict": {
-          "bias": "NEUTRAL",
-          "structure": "RANGE",
-          "event": "NONE",
-          "liquidity": "NONE",
-          "fvg": "BULLISH 45.1550~45.2100",
-          "score": 1
-        },
-        "fresh": true,
-        "ageMinutes": 1.4
-      }
-    },
-    {
-      "ticker": "SM",
-      "name": "SM Energy Company Common Stock",
-      "dailyScore": 90.41,
-      "relativeStrengthPercentile": 0.9082969432314411,
-      "dailySignalEligible": true,
-      "trigger": {
-        "ready": false,
-        "breakout": false,
-        "reclaim": false,
-        "volumeRatio": 0.627,
-        "volumeThreshold": 1.35,
-        "ema20": 38.461466,
-        "ema50": 38.292027,
-        "lastTimestamp": "2026-09-10T17:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.63x/1.35x; ICT=NEUTRAL/CHOCH_UP/NONE",
-        "ict": {
-          "bias": "NEUTRAL",
-          "structure": "BEARISH_LH_LL",
-          "event": "CHOCH_UP",
-          "liquidity": "NONE",
-          "fvg": "BULLISH 38.5850~38.5900",
-          "score": 1
-        },
-        "fresh": true,
-        "ageMinutes": 10.4
+        "ageMinutes": 817.0
       }
     },
     {
@@ -949,25 +1289,25 @@
       "relativeStrengthPercentile": 1.0,
       "dailySignalEligible": true,
       "trigger": {
-        "ready": false,
+        "ready": true,
         "breakout": true,
         "reclaim": false,
-        "volumeRatio": 0.227,
+        "volumeRatio": 4.373,
         "volumeThreshold": 1.35,
-        "ema20": 33.317694,
-        "ema50": 33.063178,
-        "lastTimestamp": "2026-09-10T17:30:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=0.23x/1.35x; ICT=BULLISH/NONE/NONE",
+        "ema20": 33.460508,
+        "ema50": 33.211783,
+        "lastTimestamp": "2026-09-10T19:45:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=4.37x/1.35x; ICT=BULLISH/NONE/NONE",
         "ict": {
           "bias": "BULLISH",
           "structure": "BULLISH_HH_HL",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BULLISH 33.4950~33.5000",
+          "fvg": "BULLISH 33.5300~33.5709",
           "score": 3
         },
         "fresh": true,
-        "ageMinutes": 10.4
+        "ageMinutes": 22.0
       }
     },
     {
@@ -977,25 +1317,81 @@
       "relativeStrengthPercentile": 0.9650655021834061,
       "dailySignalEligible": true,
       "trigger": {
-        "ready": false,
-        "breakout": false,
+        "ready": true,
+        "breakout": true,
         "reclaim": false,
-        "volumeRatio": 0.427,
+        "volumeRatio": 9.987,
         "volumeThreshold": 1.35,
-        "ema20": 54.73957,
-        "ema50": 54.834125,
-        "lastTimestamp": "2026-09-10T17:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.43x/1.35x; ICT=BULLISH/NONE/NONE",
+        "ema20": 54.907196,
+        "ema50": 54.87915,
+        "lastTimestamp": "2026-09-10T20:00:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=9.99x/1.35x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
           "bias": "BULLISH",
           "structure": "BULLISH_HH_HL",
-          "event": "NONE",
+          "event": "BOS_UP",
           "liquidity": "NONE",
-          "fvg": "BULLISH 54.6000~54.8900",
-          "score": 3
+          "fvg": "BULLISH 55.0750~55.0800",
+          "score": 5
         },
         "fresh": true,
-        "ageMinutes": 10.4
+        "ageMinutes": 7.0
+      }
+    },
+    {
+      "ticker": "MT",
+      "name": "Arcelor Mittal NY Registry Shares NEW",
+      "dailyScore": 84.38,
+      "relativeStrengthPercentile": 0.9475982532751092,
+      "dailySignalEligible": true,
+      "trigger": {
+        "ready": false,
+        "breakout": false,
+        "reclaim": false,
+        "volumeRatio": 5.755,
+        "volumeThreshold": 1.35,
+        "ema20": 74.92979,
+        "ema50": 75.516221,
+        "lastTimestamp": "2026-09-10T19:45:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=5.75x/1.35x; ICT=NEUTRAL/CHOCH_UP/NONE",
+        "ict": {
+          "bias": "NEUTRAL",
+          "structure": "BEARISH_LH_LL",
+          "event": "CHOCH_UP",
+          "liquidity": "NONE",
+          "fvg": "BULLISH 74.7900~74.8600",
+          "score": 1
+        },
+        "fresh": true,
+        "ageMinutes": 22.0
+      }
+    },
+    {
+      "ticker": "EQNR",
+      "name": "Equinor ASA",
+      "dailyScore": 83.51,
+      "relativeStrengthPercentile": 0.9301310043668122,
+      "dailySignalEligible": true,
+      "trigger": {
+        "ready": false,
+        "breakout": false,
+        "reclaim": false,
+        "volumeRatio": 3.05,
+        "volumeThreshold": 1.35,
+        "ema20": 45.149401,
+        "ema50": 45.065186,
+        "lastTimestamp": "2026-09-10T19:45:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=3.05x/1.35x; ICT=NEUTRAL/NONE/NONE",
+        "ict": {
+          "bias": "NEUTRAL",
+          "structure": "RANGE",
+          "event": "NONE",
+          "liquidity": "NONE",
+          "fvg": "BEARISH 45.1600~45.1700",
+          "score": -1
+        },
+        "fresh": true,
+        "ageMinutes": 22.0
       }
     }
   ],
