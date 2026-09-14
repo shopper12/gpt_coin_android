@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-09-15T07:42:02.807744+09:00",
+  "generatedAtKst": "2026-09-15T07:53:46.399327+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
@@ -17,7 +17,7 @@
     "scannerSignalCount": 0,
     "chatgptSignalCount": 4,
     "krEtfSignalCount": 1,
-    "dailyCacheHit": false,
+    "dailyCacheHit": true,
     "maxSignalAgeMinutes": 45
   },
   "marketRegime": {
@@ -29,118 +29,54 @@
   },
   "signals": [
     {
-      "id": "20260911-1130KST-HEUNGU-LONG",
-      "date": "2026-09-11",
-      "generatedAtKst": "2026-09-11T11:30:00+09:00",
-      "briefingSlot": "1130",
+      "id": "20260915-0750KST-HANWHAERO-LONG",
+      "date": "2026-09-15",
+      "generatedAtKst": "2026-09-15T07:52:00+09:00",
+      "briefingSlot": "0750",
       "assetClass": "KR_STOCK",
-      "market": "KOSDAQ",
-      "ticker": "024060",
-      "name": "흥구석유",
+      "market": "KOSPI",
+      "ticker": "012450",
+      "name": "한화에어로스페이스",
       "direction": "LONG",
-      "strategy": "15000~15250원 및 VWAP 지지 확인 시만 분할 롱; 15710원 이상 추격 금지",
-      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "status": "CONDITIONAL",
-      "score": 97,
-      "confidence": 91,
-      "currentPrice": 15160,
-      "referencePrice": 15160,
-      "currency": "KRW",
-      "entryLow": 15000,
-      "entryHigh": 15250,
-      "stopLoss": 14350,
-      "target1": 15710,
-      "target2": 16500,
-      "holdingPeriod": "당일~2거래일",
-      "committeeVote": "6/7",
-      "catalyst": "Brent 장중 109달러대·중동 공급차질 지속, 오전 흥구석유 +25%대와 대규모 거래량",
-      "reason": "07:50 장전 가설이 실제 오전장에서 갭 반납 없이 재확인됐고 거래대금·상대강도가 동반",
-      "risk": "이틀 급등 과열·유가 급반전·장중 차익실현",
-      "invalidation": "14350 하회 또는 15000/VWAP 이탈 후 회복 실패",
-      "quoteStatus": "WEB_LIVE_REFERENCE_CROSS_CHECKED",
-      "priceTimestampKst": "2026-09-11T11:20:00+09:00"
-    },
-    {
-      "id": "20260911-1130KST-BRENT-LONG",
-      "date": "2026-09-11",
-      "generatedAtKst": "2026-09-11T11:30:00+09:00",
-      "briefingSlot": "1130",
-      "assetClass": "COMMODITY",
-      "market": "ICE",
-      "ticker": "BRENT",
-      "name": "Brent Crude",
-      "direction": "LONG",
-      "strategy": "107.5~109.0달러 눌림 지지 시 분할 롱; 110 이상 추격 금지",
+      "strategy": "전일 종가 1137000원 위 유지 및 개장 후 VWAP 상회 확인 시 분할 롱; 1170000원 이상 추격 금지",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
       "score": 96,
-      "confidence": 92,
-      "currentPrice": 108.68,
-      "referencePrice": 108.68,
-      "currency": "USD_PER_BBL",
-      "entryLow": 107.5,
-      "entryHigh": 109.0,
-      "stopLoss": 104.8,
-      "target1": 112.5,
-      "target2": 118.0,
-      "holdingPeriod": "1~5거래일",
-      "committeeVote": "7/7",
-      "catalyst": "호르무즈·Bab el-Mandeb 공급차질과 주간 +13%대 유가 상승",
-      "reason": "미국 장 마감 후 아시아 세션에서도 108달러대를 유지해 overnight breakout이 오전에도 지속",
-      "risk": "전쟁 완화·OPEC 대응·과매수 조정",
-      "invalidation": "104.8 하회 또는 해상운송 정상화 확인",
-      "quoteStatus": "REUTERS_ASIA_SESSION_VERIFIED",
-      "priceTimestampKst": "2026-09-11T11:20:00+09:00"
-    },
-    {
-      "id": "20260911-1130KST-JUSUNG-LONG",
-      "date": "2026-09-11",
-      "generatedAtKst": "2026-09-11T11:30:00+09:00",
-      "briefingSlot": "1130",
-      "assetClass": "KR_STOCK",
-      "market": "KOSDAQ",
-      "ticker": "036930",
-      "name": "주성엔지니어링",
-      "direction": "LONG",
-      "strategy": "230000~235000원 지지 및 VWAP 상회 유지 시만 분할 롱; 240000원 이상 추격 금지",
-      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "status": "CONDITIONAL",
-      "score": 93,
-      "confidence": 86,
-      "currentPrice": 234500,
-      "referencePrice": 234500,
+      "confidence": 89,
+      "currentPrice": 1137000,
+      "referencePrice": 1137000,
       "currency": "KRW",
-      "entryLow": 230000,
-      "entryHigh": 235000,
-      "stopLoss": 223000,
-      "target1": 246000,
-      "target2": 258000,
+      "entryLow": 1120000,
+      "entryHigh": 1145000,
+      "stopLoss": 1090000,
+      "target1": 1185000,
+      "target2": 1230000,
       "holdingPeriod": "당일~5거래일",
-      "committeeVote": "5/7",
-      "catalyst": "지수·대형 반도체 약세 속 오전 +13%대 독립 상대강도와 거래량 확대",
-      "reason": "삼성전자·SK하이닉스가 약한 오전장에서도 반도체 장비주 내 독립 리더십이 확인됨",
-      "risk": "테마 급등 반납·반도체 대형주 약세 확산·고금리",
-      "invalidation": "223000 하회 또는 VWAP 이탈 후 회복 실패",
-      "quoteStatus": "WEB_LIVE_REFERENCE_VERIFIED",
-      "priceTimestampKst": "2026-09-11T11:20:00+09:00"
+      "committeeVote": "6/7",
+      "catalyst": "9/14 KOSPI -3.26% 급락에도 +5.18% 독립 상대강도; 지정학 위험 지속",
+      "reason": "시장·반도체 급락과 반대로 실제 종가 리더십이 확인된 비AI 독립 모멘텀",
+      "risk": "지정학 완화·전일 급등 반납·시장 전면 투매",
+      "invalidation": "1090000 하회 또는 개장 후 VWAP/전일종가 동시 이탈 후 회복 실패",
+      "quoteStatus": "PREVIOUS_CLOSE_CROSS_CHECKED",
+      "priceTimestampKst": "2026-09-14T15:30:00+09:00"
     },
     {
-      "id": "20260911-1130KST-KODEX200INV2X-LONG",
-      "date": "2026-09-11",
-      "generatedAtKst": "2026-09-11T11:30:00+09:00",
-      "briefingSlot": "1130",
+      "id": "20260915-0750KST-KODEX200INV2X-LONG",
+      "date": "2026-09-15",
+      "generatedAtKst": "2026-09-15T07:52:00+09:00",
+      "briefingSlot": "0750",
       "assetClass": "KR_ETF",
       "market": "KRX",
       "ticker": "252670",
       "name": "KODEX 200선물인버스2X",
       "direction": "LONG",
-      "strategy": "실시간 iNAV 대비 괴리 1% 이내이고 KOSPI200이 시가/VWAP 아래를 유지할 때만 진입; 시장가 추격 금지",
+      "strategy": "개장 후 KOSPI200이 시가/VWAP 아래이고 iNAV 괴리 1% 이내일 때만 진입",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
-      "score": 91,
-      "confidence": 82,
-      "currentPrice": 71,
-      "referencePrice": 71,
+      "score": 94,
+      "confidence": 87,
+      "currentPrice": 78,
+      "referencePrice": 78,
       "currency": "KRW",
       "entryLow": null,
       "entryHigh": null,
@@ -148,13 +84,77 @@
       "target1": null,
       "target2": null,
       "holdingPeriod": "당일",
-      "committeeVote": "5/7",
-      "catalyst": "미10Y 4.97%·Brent 108달러대·아시아 증시 급락·한국 대형 반도체 약세",
-      "reason": "Morning Realized Breadth가 위험회피를 확인하지만 동일시각 ETF 절대호가를 신뢰 가능한 소스로 확보하지 못해 가격조건 대신 iNAV/지수조건으로 제한",
-      "risk": "오전 V자 반등·저가매수·2배 일일재설정·호가 1원 단위 왜곡",
+      "committeeVote": "6/7",
+      "catalyst": "미국 SOX -5.9%, NVDA -3.4%, 한국 반도체 ADR 추가 약세와 미10Y 5% 터치",
+      "reason": "한국 지수의 높은 반도체 집중도에 불리한 overnight lead가 재확인됨",
+      "risk": "전일 -3.26% 급락 뒤 숏커버·정책성 저가매수·2배 일일재설정",
       "invalidation": "KOSPI200이 시가와 VWAP을 동시 회복",
-      "quoteStatus": "CURRENT_QUOTE_UNVERIFIED_PREVIOUS_CLOSE_REFERENCE_ONLY",
-      "priceTimestampKst": "2026-09-10T15:30:00+09:00"
+      "quoteStatus": "PREVIOUS_CLOSE_VERIFIED",
+      "priceTimestampKst": "2026-09-14T15:30:00+09:00"
+    },
+    {
+      "id": "20260915-0750KST-KBFIN-LONG",
+      "date": "2026-09-15",
+      "generatedAtKst": "2026-09-15T07:52:00+09:00",
+      "briefingSlot": "0750",
+      "assetClass": "KR_STOCK",
+      "market": "KOSPI",
+      "ticker": "105560",
+      "name": "KB금융",
+      "direction": "LONG",
+      "strategy": "180000~182500원 지지 및 VWAP 상회 유지 시만 분할 롱",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "status": "CONDITIONAL",
+      "score": 91,
+      "confidence": 83,
+      "currentPrice": 181600,
+      "referencePrice": 181600,
+      "currency": "KRW",
+      "entryLow": 180000,
+      "entryHigh": 182500,
+      "stopLoss": 176500,
+      "target1": 187000,
+      "target2": 192000,
+      "holdingPeriod": "1~5거래일",
+      "committeeVote": "5/7",
+      "catalyst": "9/14 KOSPI -3.26%에도 +2.08%; 고금리 장기화 기대의 상대수혜",
+      "reason": "급락장에서 실제 종가 플러스와 금융업 상대강도가 확인됨",
+      "risk": "미국 BAC -5.1% 투자은행 수수료 우려 전염·한국 금리 하락·외국인 매도",
+      "invalidation": "176500 하회 또는 시장대비 상대강도 소멸",
+      "quoteStatus": "PREVIOUS_CLOSE_VERIFIED",
+      "priceTimestampKst": "2026-09-14T15:30:00+09:00"
+    },
+    {
+      "id": "20260915-0750KST-BRENT-LONG",
+      "date": "2026-09-15",
+      "generatedAtKst": "2026-09-15T07:52:00+09:00",
+      "briefingSlot": "0750",
+      "assetClass": "COMMODITY",
+      "market": "ICE",
+      "ticker": "BRENT",
+      "name": "Brent Crude",
+      "direction": "LONG",
+      "strategy": "105~106달러 지지 확인 시 분할 롱; 109달러 이상 추격 금지",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "status": "CONDITIONAL",
+      "score": 90,
+      "confidence": 86,
+      "currentPrice": 105.68,
+      "referencePrice": 105.68,
+      "currency": "USD_PER_BBL",
+      "entryLow": 105.0,
+      "entryHigh": 106.2,
+      "stopLoss": 102.5,
+      "target1": 109.5,
+      "target2": 114.0,
+      "holdingPeriod": "1~5거래일",
+      "committeeVote": "6/7",
+      "catalyst": "Saudi East-West pipeline outage와 Hormuz 공급위험 지속",
+      "reason": "장중 109달러대에서 반락했지만 공급차질 자체는 해소되지 않았고 105달러대 유지",
+      "risk": "파이프라인 조기복구·외교 진전·장중 고점 대비 모멘텀 둔화",
+      "invalidation": "102.5 하회 또는 공식 공급 정상화",
+      "quoteStatus": "REUTERS_SETTLEMENT_VERIFIED",
+      "priceTimestampKst": "2026-09-15T05:00:00+09:00"
     }
   ],
   "topEvaluated": [
@@ -183,7 +183,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 974.5
+        "ageMinutes": 983.8
       }
     },
     {
@@ -211,7 +211,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 974.5
+        "ageMinutes": 983.8
       }
     },
     {
@@ -239,7 +239,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 974.5
+        "ageMinutes": 983.8
       }
     },
     {
@@ -267,7 +267,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 974.5
+        "ageMinutes": 983.8
       }
     },
     {
@@ -295,7 +295,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 974.5
+        "ageMinutes": 983.8
       }
     },
     {
@@ -323,7 +323,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 974.5
+        "ageMinutes": 983.8
       }
     },
     {
@@ -351,7 +351,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 974.6
+        "ageMinutes": 983.8
       }
     },
     {
@@ -379,7 +379,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 974.6
+        "ageMinutes": 983.8
       }
     },
     {
@@ -407,7 +407,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 974.6
+        "ageMinutes": 983.8
       }
     },
     {
@@ -435,7 +435,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 974.6
+        "ageMinutes": 983.8
       }
     },
     {
@@ -463,7 +463,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 974.6
+        "ageMinutes": 983.8
       }
     },
     {
@@ -491,7 +491,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 974.6
+        "ageMinutes": 983.8
       }
     },
     {
@@ -519,7 +519,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 974.6
+        "ageMinutes": 983.8
       }
     },
     {
@@ -547,7 +547,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 974.6
+        "ageMinutes": 983.8
       }
     },
     {
@@ -575,7 +575,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 974.6
+        "ageMinutes": 983.8
       }
     },
     {
@@ -603,7 +603,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 974.6
+        "ageMinutes": 983.8
       }
     },
     {
@@ -631,7 +631,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 974.6
+        "ageMinutes": 983.8
       }
     },
     {
@@ -659,7 +659,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 974.6
+        "ageMinutes": 983.8
       }
     },
     {
@@ -687,7 +687,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 974.6
+        "ageMinutes": 983.8
       }
     },
     {
@@ -715,7 +715,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 974.6
+        "ageMinutes": 983.8
       }
     },
     {
@@ -743,7 +743,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 974.6
+        "ageMinutes": 983.8
       }
     },
     {
@@ -771,7 +771,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 974.6
+        "ageMinutes": 983.8
       }
     },
     {
@@ -799,7 +799,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 974.6
+        "ageMinutes": 983.8
       }
     },
     {
@@ -827,7 +827,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 974.6
+        "ageMinutes": 983.8
       }
     },
     {
@@ -855,7 +855,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 974.6
+        "ageMinutes": 983.8
       }
     },
     {
@@ -883,7 +883,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 974.6
+        "ageMinutes": 983.8
       }
     },
     {
@@ -911,7 +911,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 974.6
+        "ageMinutes": 983.8
       }
     },
     {
@@ -939,7 +939,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 99.6
+        "ageMinutes": 108.8
       }
     },
     {
@@ -967,7 +967,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 89.6
+        "ageMinutes": 98.8
       }
     },
     {
@@ -994,8 +994,8 @@
           "fvg": "BULLISH 103.7100~103.8992",
           "score": 1
         },
-        "fresh": true,
-        "ageMinutes": 44.6
+        "fresh": false,
+        "ageMinutes": 53.8
       }
     }
   ],
