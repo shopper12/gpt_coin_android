@@ -1,80 +1,48 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-09-16T21:10:01.799864+09:00",
+  "generatedAtKst": "2026-09-16T23:30:05.990105+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
-    "shortlistCount": 422,
+    "shortlistCount": 421,
     "krEtfShortlistCount": 34,
-    "dailyMetricsCount": 402,
-    "dailyCandidateCount": 42,
+    "dailyMetricsCount": 401,
+    "dailyCandidateCount": 45,
     "krEtfDailyCandidateCount": 27,
-    "strictDailyCandidateCount": 15,
+    "strictDailyCandidateCount": 18,
     "krEtfSignalEligibleCount": 0,
-    "intradayEvaluatedCount": 42,
+    "intradayEvaluatedCount": 45,
     "krEtfIntradayEvaluatedCount": 27,
     "signalCount": 4,
     "scannerSignalCount": 0,
     "chatgptSignalCount": 4,
     "krEtfSignalCount": 0,
-    "dailyCacheHit": true,
+    "dailyCacheHit": false,
     "maxSignalAgeMinutes": 45
   },
   "marketRegime": {
     "panic": false,
     "riskOff": false,
     "equityBelow200Count": 0,
-    "realizedVolatility20Annualized": 0.127,
+    "realizedVolatility20Annualized": 0.1176,
     "reason": "광의 추세와 변동성 정상"
   },
   "signals": [
     {
-      "id": "20260916-2050KST-JBHT-SHORT",
+      "id": "20260916-2330KST-INTC-LONG",
       "date": "2026-09-16",
-      "generatedAtKst": "2026-09-16T20:51:23+09:00",
-      "briefingSlot": "2050",
-      "assetClass": "US_STOCK",
-      "market": "NASDAQ",
-      "ticker": "JBHT",
-      "name": "J.B. Hunt Transport Services",
-      "direction": "SHORT",
-      "strategy": "갭다운 추격 금지; 개장 후 VWAP 반등 실패 때만 숏",
-      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "status": "CONDITIONAL",
-      "score": 96,
-      "confidence": 89,
-      "currentPrice": 248.96,
-      "referencePrice": 248.96,
-      "currency": "USD",
-      "entryLow": null,
-      "entryHigh": null,
-      "stopLoss": null,
-      "target1": null,
-      "target2": null,
-      "holdingPeriod": "당일~3거래일",
-      "committeeVote": "6/7",
-      "catalyst": "CFO가 3분기 이익 5~10% 감소 전망, 비용 압박",
-      "reason": "미국 프리마켓 약 -8.8~-10.1%로 대형 유동성 종목 중 가장 강한 독립 하락 촉매",
-      "risk": "과매도 반등, FOMC 이후 금리 하락에 운송주 반등",
-      "invalidation": "정규장 시가 및 VWAP 회복 후 유지",
-      "quoteStatus": "WEB_VERIFIED_PREMARKET",
-      "priceTimestampKst": "2026-09-16T20:50:00+09:00"
-    },
-    {
-      "id": "20260916-2050KST-INTC-LONG",
-      "date": "2026-09-16",
-      "generatedAtKst": "2026-09-16T20:51:23+09:00",
-      "briefingSlot": "2050",
+      "generatedAtKst": "2026-09-16T23:30:00+09:00",
+      "briefingSlot": "2330",
       "assetClass": "US_STOCK",
       "market": "NASDAQ",
       "ticker": "INTC",
       "name": "Intel",
       "direction": "LONG",
-      "strategy": "프리마켓 고가 추격 금지; 정규장 VWAP 위 유지와 반도체 breadth 확인 시 롱",
+      "strategy": "정규장 VWAP 위 유지와 반도체 breadth 지속 시 롱; 급등 추격 금지",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "status": "CONDITIONAL",
-      "score": 92,
-      "confidence": 82,
+      "status": "IMMEDIATE",
+      "score": 96,
+      "confidence": 88,
       "currentPrice": null,
       "referencePrice": null,
       "currency": "USD",
@@ -84,77 +52,109 @@
       "target1": null,
       "target2": null,
       "holdingPeriod": "당일~5거래일",
-      "committeeVote": "5/7",
-      "catalyst": "SK하이닉스와 메모리 협업 가능성 보도",
-      "reason": "프리마켓 약 +4.9~5%로 반도체 반등군 내 독립 촉매와 가격 확인",
-      "risk": "협업 미확정, FOMC 매파 서프라이즈, AI 투자 우려",
-      "invalidation": "정규장 시가·VWAP 이탈 및 SOX breadth 약화",
+      "committeeVote": "6/7",
+      "catalyst": "SK하이닉스와 미국 메모리 생산 협력 탐색 보도",
+      "reason": "정규장 약 +5.6%로 프리마켓 갭 유지, 반도체·하드웨어 동반 강세와 NYSE/Nasdaq 양호 breadth 확인",
+      "risk": "협상 미확정, FOMC 매파 서프라이즈",
+      "invalidation": "VWAP 및 시가 동시 이탈 또는 반도체 breadth 붕괴",
       "quoteStatus": "WEB_VERIFIED_PERCENT_NO_ABSOLUTE_PRICE",
-      "priceTimestampKst": "2026-09-16T20:50:00+09:00"
+      "priceTimestampKst": "2026-09-16T23:28:00+09:00"
     },
     {
-      "id": "20260916-2050KST-GOLD-LONG",
+      "id": "20260916-2330KST-JBHT-SHORT",
       "date": "2026-09-16",
-      "generatedAtKst": "2026-09-16T20:51:23+09:00",
-      "briefingSlot": "2050",
+      "generatedAtKst": "2026-09-16T23:30:00+09:00",
+      "briefingSlot": "2330",
+      "assetClass": "US_STOCK",
+      "market": "NASDAQ",
+      "ticker": "JBHT",
+      "name": "J.B. Hunt Transport Services",
+      "direction": "SHORT",
+      "strategy": "이미 -10% 이상 급락했으므로 반등 후 VWAP 실패 때만 숏",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "status": "CONDITIONAL",
+      "score": 93,
+      "confidence": 86,
+      "currentPrice": null,
+      "referencePrice": null,
+      "currency": "USD",
+      "entryLow": null,
+      "entryHigh": null,
+      "stopLoss": null,
+      "target1": null,
+      "target2": null,
+      "holdingPeriod": "당일~3거래일",
+      "committeeVote": "6/7",
+      "catalyst": "CFO 3분기 이익 5~10% 감소 전망과 비용 증가",
+      "reason": "정규장 약 -10.5~-12%로 프리마켓 악재가 실제 장에서도 유지된 독립 하락 리더",
+      "risk": "과매도 숏커버, 유가·금리 하락에 운송주 반등",
+      "invalidation": "시가와 VWAP 회복 후 유지",
+      "quoteStatus": "WEB_VERIFIED_PERCENT_NO_ABSOLUTE_PRICE",
+      "priceTimestampKst": "2026-09-16T23:28:00+09:00"
+    },
+    {
+      "id": "20260916-2330KST-GOLD-LONG",
+      "date": "2026-09-16",
+      "generatedAtKst": "2026-09-16T23:30:00+09:00",
+      "briefingSlot": "2330",
       "assetClass": "COMMODITY",
       "market": "SPOT",
       "ticker": "XAUUSD",
       "name": "Gold",
       "direction": "LONG",
-      "strategy": "$4325~4345 지지 확인 후 롱; FOMC 직전 급등 추격 금지",
+      "strategy": "$4330~4355 지지 유지 시 롱; FOMC 직전 급등 추격 금지",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
-      "score": 90,
-      "confidence": 82,
-      "currentPrice": 4346.3,
-      "referencePrice": 4346.3,
+      "score": 91,
+      "confidence": 83,
+      "currentPrice": 4353.82,
+      "referencePrice": 4353.82,
       "currency": "USD",
-      "entryLow": 4325.0,
-      "entryHigh": 4345.0,
+      "entryLow": 4330.0,
+      "entryHigh": 4355.0,
       "stopLoss": 4295.0,
       "target1": 4400.0,
       "target2": 4450.0,
       "holdingPeriod": "당일~5거래일",
       "committeeVote": "5/7",
-      "catalyst": "달러·유가·국채금리 동반 완화와 FOMC 이벤트 헤지",
-      "reason": "현물 금 +1% 이상, 달러 완화와 10년물 5% 아래 하락이 동시에 확인",
-      "risk": "Fed 매파 서프라이즈와 실질금리 재상승",
-      "invalidation": "$4295 하향 이탈 또는 DXY·10Y 동반 급등",
+      "catalyst": "유가 하락·장기금리 완화와 FOMC 이벤트 헤지",
+      "reason": "현물 금 +1% 이상으로 정규장 전후 강세 유지",
+      "risk": "Fed 매파 서프라이즈와 실질금리 급등",
+      "invalidation": "$4295 이탈 또는 DXY·10Y 동반 급등",
       "quoteStatus": "WEB_VERIFIED_REUTERS",
-      "priceTimestampKst": "2026-09-16T20:50:00+09:00"
+      "priceTimestampKst": "2026-09-16T23:28:00+09:00"
     },
     {
-      "id": "20260916-2050KST-BRENT-SHORT",
+      "id": "20260916-2330KST-BRENT-SHORT",
       "date": "2026-09-16",
-      "generatedAtKst": "2026-09-16T20:51:23+09:00",
-      "briefingSlot": "2050",
+      "generatedAtKst": "2026-09-16T23:30:00+09:00",
+      "briefingSlot": "2330",
       "assetClass": "COMMODITY",
       "market": "ICE",
       "ticker": "BRENT",
       "name": "Brent crude",
       "direction": "SHORT",
-      "strategy": "$107.5~108.5 반등 실패 시만 숏; 공급 뉴스 급변 시 즉시 종료",
+      "strategy": "$107~108 반등 실패 시 숏; 공급 뉴스 급변 시 즉시 종료",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
-      "score": 88,
-      "confidence": 78,
-      "currentPrice": null,
-      "referencePrice": 107.5,
+      "score": 89,
+      "confidence": 80,
+      "currentPrice": 107.55,
+      "referencePrice": 107.55,
       "currency": "USD",
-      "entryLow": 107.5,
-      "entryHigh": 108.5,
+      "entryLow": 107.0,
+      "entryHigh": 108.0,
       "stopLoss": 110.2,
       "target1": 104.5,
       "target2": 102.0,
       "holdingPeriod": "당일~3거래일",
       "committeeVote": "5/7",
-      "catalyst": "미국 원유재고 +710만배럴과 유가 랠리 일시 중단",
-      "reason": "프리마켓 기준 Brent 약 -1.4%; 공급위험 지속에도 단기 가격·재고가 하락 방향으로 전환",
-      "risk": "Saudi 공급차질 확대·중동 공격 재발",
-      "invalidation": "$110.2 상향 돌파 또는 공급차질 확대 확인",
-      "quoteStatus": "WEB_VERIFIED_APPROX_PREMARKET",
-      "priceTimestampKst": "2026-09-16T20:50:00+09:00"
+      "catalyst": "미국 재고 증가와 Saudi 공급 제안으로 유가 하락",
+      "reason": "Brent -1.1%, S&P 에너지 -2.1%로 원유 약세가 주식 섹터까지 확인",
+      "risk": "중동 공급차질 재확대",
+      "invalidation": "$110.2 돌파 또는 공급차질 확대",
+      "quoteStatus": "WEB_VERIFIED_REUTERS",
+      "priceTimestampKst": "2026-09-16T23:28:00+09:00"
     }
   ],
   "topEvaluated": [
@@ -168,22 +168,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.173,
+        "volumeRatio": 0.247,
         "volumeThreshold": 1.2,
-        "ema20": 16777.634989,
-        "ema50": 16815.696527,
-        "lastTimestamp": "2026-09-16T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.17x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 16777.386049,
+        "ema50": 16817.283121,
+        "lastTimestamp": "2026-09-16T06:15:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.25x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "BEARISH_LH_LL",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BULLISH 16765.0000~16780.0000",
+          "fvg": "BULLISH 16755.0000~16760.0000",
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 340.1
+        "ageMinutes": 497.5
       }
     },
     {
@@ -193,25 +193,25 @@
       "relativeStrengthPercentile": 1.0,
       "dailySignalEligible": false,
       "trigger": {
-        "ready": true,
+        "ready": false,
         "breakout": true,
         "reclaim": false,
-        "volumeRatio": 4.863,
+        "volumeRatio": 0.245,
         "volumeThreshold": 1.2,
-        "ema20": 132557.9272,
-        "ema50": 132352.703493,
-        "lastTimestamp": "2026-09-16T06:15:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=4.86x/1.20x; ICT=BULLISH/BOS_UP/NONE",
+        "ema20": 132730.029502,
+        "ema50": 132433.576047,
+        "lastTimestamp": "2026-09-16T06:30:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=0.25x/1.20x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
           "bias": "BULLISH",
           "structure": "BULLISH_HH_HL",
           "event": "BOS_UP",
           "liquidity": "NONE",
-          "fvg": "BULLISH 133195.0000~133430.0000",
+          "fvg": "BULLISH 133750.0000~134365.0000",
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 355.1
+        "ageMinutes": 482.5
       }
     },
     {
@@ -224,22 +224,22 @@
         "ready": false,
         "breakout": true,
         "reclaim": false,
-        "volumeRatio": 0.892,
+        "volumeRatio": 1.002,
         "volumeThreshold": 1.2,
-        "ema20": 132801.616065,
-        "ema50": 132368.576676,
-        "lastTimestamp": "2026-09-16T06:15:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=0.89x/1.20x; ICT=BULLISH/BOS_UP/NONE",
+        "ema20": 133099.557505,
+        "ema50": 132509.925377,
+        "lastTimestamp": "2026-09-16T06:30:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=1.00x/1.20x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
           "bias": "BULLISH",
           "structure": "RANGE",
           "event": "BOS_UP",
           "liquidity": "NONE",
-          "fvg": "BULLISH 134650.0000~134890.0000",
+          "fvg": "BULLISH 135175.0000~135930.0000",
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 355.1
+        "ageMinutes": 482.5
       }
     },
     {
@@ -267,7 +267,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 355.1
+        "ageMinutes": 497.5
       }
     },
     {
@@ -295,7 +295,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 340.1
+        "ageMinutes": 482.5
       }
     },
     {
@@ -308,22 +308,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.154,
+        "volumeRatio": 0.565,
         "volumeThreshold": 1.2,
-        "ema20": 7203.491557,
-        "ema50": 7242.756793,
-        "lastTimestamp": "2026-09-16T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.15x/1.20x; ICT=BEARISH/NONE/NONE",
+        "ema20": 7207.016981,
+        "ema50": 7245.683261,
+        "lastTimestamp": "2026-09-16T06:15:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.57x/1.20x; ICT=BEARISH/BOS_DOWN/NONE",
         "ict": {
           "bias": "BEARISH",
-          "structure": "BEARISH_LH_LL",
-          "event": "NONE",
+          "structure": "RANGE",
+          "event": "BOS_DOWN",
           "liquidity": "NONE",
           "fvg": "BEARISH 7225.0000~7230.0000",
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 340.1
+        "ageMinutes": 497.5
       }
     },
     {
@@ -351,7 +351,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 355.1
+        "ageMinutes": 497.5
       }
     },
     {
@@ -379,7 +379,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 355.1
+        "ageMinutes": 497.5
       }
     },
     {
@@ -407,7 +407,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 340.1
+        "ageMinutes": 482.5
       }
     },
     {
@@ -420,12 +420,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.28,
+        "volumeRatio": 0.323,
         "volumeThreshold": 1.2,
-        "ema20": 14754.825604,
-        "ema50": 14780.719534,
-        "lastTimestamp": "2026-09-16T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.28x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 14760.596712,
+        "ema50": 14783.901896,
+        "lastTimestamp": "2026-09-16T06:15:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.32x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
@@ -435,7 +435,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 340.1
+        "ageMinutes": 497.5
       }
     },
     {
@@ -463,7 +463,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 355.1
+        "ageMinutes": 497.5
       }
     },
     {
@@ -476,22 +476,22 @@
         "ready": false,
         "breakout": true,
         "reclaim": false,
-        "volumeRatio": 0.019,
+        "volumeRatio": 0.127,
         "volumeThreshold": 1.2,
-        "ema20": 13890.888585,
-        "ema50": 13900.081953,
-        "lastTimestamp": "2026-09-16T06:30:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=0.02x/1.20x; ICT=BULLISH/BOS_UP/NONE",
+        "ema20": 13878.350529,
+        "ema50": 13895.431352,
+        "lastTimestamp": "2026-09-16T06:15:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=0.13x/1.20x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
           "bias": "BULLISH",
           "structure": "RANGE",
           "event": "BOS_UP",
           "liquidity": "NONE",
-          "fvg": "BULLISH 13995.0000~14010.0000",
+          "fvg": "BULLISH 13905.0000~13925.0000",
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 340.1
+        "ageMinutes": 497.5
       }
     },
     {
@@ -519,7 +519,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 355.1
+        "ageMinutes": 497.5
       }
     },
     {
@@ -547,7 +547,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 355.1
+        "ageMinutes": 497.5
       }
     },
     {
@@ -558,24 +558,24 @@
       "dailySignalEligible": false,
       "trigger": {
         "ready": false,
-        "breakout": true,
+        "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.038,
+        "volumeRatio": 0.105,
         "volumeThreshold": 1.2,
-        "ema20": 39952.557251,
-        "ema50": 39876.185463,
-        "lastTimestamp": "2026-09-16T06:30:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=0.04x/1.20x; ICT=BULLISH/NONE/NONE",
+        "ema20": 39933.879065,
+        "ema50": 39865.799767,
+        "lastTimestamp": "2026-09-16T06:15:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.11x/1.20x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
           "bias": "BULLISH",
           "structure": "BULLISH_HH_HL",
-          "event": "NONE",
+          "event": "BOS_UP",
           "liquidity": "NONE",
           "fvg": "BULLISH 40070.0000~40095.0000",
-          "score": 3
+          "score": 5
         },
         "fresh": false,
-        "ageMinutes": 340.1
+        "ageMinutes": 497.5
       }
     },
     {
@@ -588,22 +588,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.897,
+        "volumeRatio": 0.536,
         "volumeThreshold": 1.2,
-        "ema20": 2480.150361,
-        "ema50": 2480.392021,
-        "lastTimestamp": "2026-09-16T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.90x/1.20x; ICT=BEARISH/BOS_DOWN/NONE",
+        "ema20": 2483.324086,
+        "ema50": 2481.667069,
+        "lastTimestamp": "2026-09-16T06:15:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.54x/1.20x; ICT=NEUTRAL/BOS_DOWN/NONE",
         "ict": {
-          "bias": "BEARISH",
+          "bias": "NEUTRAL",
           "structure": "RANGE",
           "event": "BOS_DOWN",
           "liquidity": "NONE",
-          "fvg": "BEARISH 2450.0000~2460.0000",
-          "score": -3
+          "fvg": "BULLISH 2470.0000~2495.0000",
+          "score": -1
         },
         "fresh": false,
-        "ageMinutes": 340.1
+        "ageMinutes": 497.5
       }
     },
     {
@@ -631,7 +631,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 355.1
+        "ageMinutes": 497.5
       }
     },
     {
@@ -659,7 +659,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 355.1
+        "ageMinutes": 497.5
       }
     },
     {
@@ -687,7 +687,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 340.1
+        "ageMinutes": 482.5
       }
     },
     {
@@ -700,12 +700,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.191,
+        "volumeRatio": 15.078,
         "volumeThreshold": 1.2,
         "ema20": 26909.675457,
         "ema50": 27232.891669,
         "lastTimestamp": "2026-09-16T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.19x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "breakout=False; reclaim=False; volume=15.08x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "BEARISH_LH_LL",
@@ -715,7 +715,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 340.1
+        "ageMinutes": 482.5
       }
     },
     {
@@ -743,7 +743,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 355.1
+        "ageMinutes": 497.5
       }
     },
     {
@@ -756,22 +756,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.04,
+        "volumeRatio": 0.013,
         "volumeThreshold": 1.2,
-        "ema20": 25755.144108,
-        "ema50": 25684.502464,
-        "lastTimestamp": "2026-09-16T06:15:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.04x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 25759.416098,
+        "ema50": 25689.0434,
+        "lastTimestamp": "2026-09-16T06:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.01x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
-          "structure": "BEARISH_LH_LL",
+          "structure": "RANGE",
           "event": "NONE",
           "liquidity": "NONE",
           "fvg": "BULLISH 25750.0000~25775.0000",
-          "score": -1
+          "score": 1
         },
         "fresh": false,
-        "ageMinutes": 355.1
+        "ageMinutes": 482.5
       }
     },
     {
@@ -784,22 +784,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.004,
+        "volumeRatio": 0.017,
         "volumeThreshold": 1.2,
-        "ema20": 23415.695912,
-        "ema50": 23351.662356,
-        "lastTimestamp": "2026-09-16T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 23411.558639,
+        "ema50": 23347.435854,
+        "lastTimestamp": "2026-09-16T06:15:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.02x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
-          "structure": "RANGE",
+          "structure": "BEARISH_LH_LL",
           "event": "NONE",
           "liquidity": "NONE",
           "fvg": "BULLISH 23410.0000~23430.0000",
-          "score": 1
+          "score": -1
         },
         "fresh": false,
-        "ageMinutes": 340.1
+        "ageMinutes": 497.5
       }
     },
     {
@@ -827,7 +827,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 355.1
+        "ageMinutes": 497.5
       }
     },
     {
@@ -855,7 +855,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 340.1
+        "ageMinutes": 482.5
       }
     },
     {
@@ -868,22 +868,22 @@
         "ready": false,
         "breakout": true,
         "reclaim": false,
-        "volumeRatio": 0.696,
+        "volumeRatio": 0.381,
         "volumeThreshold": 1.2,
-        "ema20": 6504.991555,
-        "ema50": 6511.807397,
-        "lastTimestamp": "2026-09-16T06:30:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=0.70x/1.20x; ICT=BULLISH/BOS_UP/NONE",
+        "ema20": 6492.359077,
+        "ema50": 6507.040419,
+        "lastTimestamp": "2026-09-16T06:15:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=0.38x/1.20x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
           "bias": "BULLISH",
           "structure": "RANGE",
           "event": "BOS_UP",
           "liquidity": "NONE",
-          "fvg": "BULLISH 6595.0000~6625.0000",
+          "fvg": "BULLISH 6520.0000~6540.0000",
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 340.1
+        "ageMinutes": 497.5
       }
     },
     {
@@ -896,78 +896,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.258,
+        "volumeRatio": 0.643,
         "volumeThreshold": 1.2,
-        "ema20": 50258.884001,
-        "ema50": 50673.025923,
-        "lastTimestamp": "2026-09-16T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.26x/1.20x; ICT=NEUTRAL/NONE/NONE",
-        "ict": {
-          "bias": "NEUTRAL",
-          "structure": "BEARISH_LH_LL",
-          "event": "NONE",
-          "liquidity": "NONE",
-          "fvg": "BULLISH 50125.0000~50130.0000",
-          "score": -1
-        },
-        "fresh": false,
-        "ageMinutes": 340.1
-      }
-    },
-    {
-      "ticker": "EQNR",
-      "name": "Equinor ASA",
-      "dailyScore": 91.29,
-      "relativeStrengthPercentile": 0.925764192139738,
-      "dailySignalEligible": true,
-      "trigger": {
-        "ready": false,
-        "breakout": false,
-        "reclaim": false,
-        "volumeRatio": 0.0,
-        "volumeThreshold": 1.35,
-        "ema20": 45.452577,
-        "ema50": 45.394202,
-        "lastTimestamp": "2026-09-16T12:00:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=BEARISH/NONE/NONE",
+        "ema20": 50272.450749,
+        "ema50": 50695.354397,
+        "lastTimestamp": "2026-09-16T06:15:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.64x/1.20x; ICT=BEARISH/NONE/NONE",
         "ict": {
           "bias": "BEARISH",
           "structure": "BEARISH_LH_LL",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BEARISH 45.3100~45.3300",
+          "fvg": "BEARISH 50125.0000~50140.0000",
           "score": -3
         },
-        "fresh": true,
-        "ageMinutes": 10.1
-      }
-    },
-    {
-      "ticker": "CRBG",
-      "name": "Corebridge Financial Inc. Common Stock",
-      "dailyScore": 87.58,
-      "relativeStrengthPercentile": 0.851528384279476,
-      "dailySignalEligible": true,
-      "trigger": {
-        "ready": false,
-        "breakout": false,
-        "reclaim": false,
-        "volumeRatio": 4.857,
-        "volumeThreshold": 1.35,
-        "ema20": 35.009142,
-        "ema50": 34.926886,
-        "lastTimestamp": "2026-09-15T20:00:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=4.86x/1.35x; ICT=NEUTRAL/NONE/NONE",
-        "ict": {
-          "bias": "NEUTRAL",
-          "structure": "RANGE",
-          "event": "NONE",
-          "liquidity": "NONE",
-          "fvg": "BEARISH 35.0350~35.0500",
-          "score": -1
-        },
         "fresh": false,
-        "ageMinutes": 970.1
+        "ageMinutes": 497.5
       }
     },
     {
@@ -980,22 +924,78 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.0,
+        "volumeRatio": 0.099,
         "volumeThreshold": 1.35,
-        "ema20": 33.736018,
-        "ema50": 33.599003,
-        "lastTimestamp": "2026-09-16T11:25:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 33.643165,
+        "ema50": 33.576366,
+        "lastTimestamp": "2026-09-16T14:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.10x/1.35x; ICT=BEARISH/BOS_DOWN/NONE",
+        "ict": {
+          "bias": "BEARISH",
+          "structure": "RANGE",
+          "event": "BOS_DOWN",
+          "liquidity": "NONE",
+          "fvg": "BEARISH 33.5650~33.8500",
+          "score": -3
+        },
+        "fresh": true,
+        "ageMinutes": 2.5
+      }
+    },
+    {
+      "ticker": "TGTX",
+      "name": "TG Therapeutics, Inc. - Common Stock",
+      "dailyScore": 85.69,
+      "relativeStrengthPercentile": 0.9737991266375546,
+      "dailySignalEligible": true,
+      "trigger": {
+        "ready": false,
+        "breakout": false,
+        "reclaim": false,
+        "volumeRatio": 0.231,
+        "volumeThreshold": 1.35,
+        "ema20": 54.362131,
+        "ema50": 53.832889,
+        "lastTimestamp": "2026-09-16T14:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.23x/1.35x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
-          "structure": "RANGE",
+          "structure": "BULLISH_HH_HL",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BULLISH 33.6800~33.8500",
+          "fvg": "BEARISH 56.2800~56.4200",
           "score": 1
         },
-        "fresh": false,
-        "ageMinutes": 45.1
+        "fresh": true,
+        "ageMinutes": 2.5
+      }
+    },
+    {
+      "ticker": "BRKR",
+      "name": "Bruker Corporation - Common Stock",
+      "dailyScore": 85.25,
+      "relativeStrengthPercentile": 0.9650655021834061,
+      "dailySignalEligible": true,
+      "trigger": {
+        "ready": false,
+        "breakout": false,
+        "reclaim": false,
+        "volumeRatio": 0.152,
+        "volumeThreshold": 1.35,
+        "ema20": 56.69078,
+        "ema50": 55.464625,
+        "lastTimestamp": "2026-09-16T14:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.15x/1.35x; ICT=BULLISH/NONE/NONE",
+        "ict": {
+          "bias": "BULLISH",
+          "structure": "BULLISH_HH_HL",
+          "event": "NONE",
+          "liquidity": "NONE",
+          "fvg": "BULLISH 56.6500~57.8900",
+          "score": 3
+        },
+        "fresh": true,
+        "ageMinutes": 2.5
       }
     }
   ],
