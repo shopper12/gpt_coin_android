@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-09-18T05:22:08.692234+09:00",
+  "generatedAtKst": "2026-09-18T07:52:24.139422+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
@@ -29,23 +29,23 @@
   },
   "signals": [
     {
-      "id": "20260917-2330KST-ARM-LONG",
-      "date": "2026-09-17",
-      "generatedAtKst": "2026-09-17T23:32:21+09:00",
-      "briefingSlot": "2330",
-      "assetClass": "US_STOCK",
-      "market": "NASDAQ",
-      "ticker": "ARM",
-      "name": "Arm Holdings",
+      "id": "20260918-0750KST-SKHYNIX-LONG",
+      "date": "2026-09-18",
+      "generatedAtKst": "2026-09-18T07:50:54+09:00",
+      "briefingSlot": "0750",
+      "assetClass": "KR_STOCK",
+      "market": "KOSPI",
+      "ticker": "000660",
+      "name": "SK hynix",
       "direction": "LONG",
-      "strategy": "정규장 갭 확대와 반도체 breadth가 유지되는 동안 VWAP 위 눌림 매수",
+      "strategy": "미국 SOX +3.1%와 메모리·AI 반도체 동반 강세를 한국 개장 후 시가·VWAP·외국인 수급으로 확인한 뒤 눌림 매수",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "status": "IMMEDIATE",
-      "score": 97,
-      "confidence": 92,
-      "currentPrice": null,
-      "referencePrice": null,
-      "currency": "USD",
+      "status": "CONDITIONAL",
+      "score": 96,
+      "confidence": 90,
+      "currentPrice": 1745000,
+      "referencePrice": 1745000,
+      "currency": "KRW",
       "entryLow": null,
       "entryHigh": null,
       "stopLoss": null,
@@ -53,108 +53,108 @@
       "target2": null,
       "holdingPeriod": "당일~5거래일",
       "committeeVote": "6/7",
-      "catalyst": "CEO가 데이터센터 칩 수요 약 20억달러 충족 자신감을 표명",
-      "reason": "프리마켓 약 +4%대에서 정규장 약 +8.4%로 갭 확대; Nasdaq +1.25%와 강한 breadth가 동시 확인",
-      "risk": "이미 급등한 가격과 Fed 추가인상 경로",
-      "invalidation": "VWAP·시가 동시 이탈 후 회복 실패 또는 반도체 breadth 급격 악화",
-      "quoteStatus": "WEB_VERIFIED_PERCENT_NO_ABSOLUTE_QUOTE",
-      "priceTimestampKst": "2026-09-17T23:30:00+09:00"
+      "catalyst": "SOX +3.1%, AMD +6.4%, Intel +7.7%, Astera Labs +9.1%; 미국 반도체 breadth 강세",
+      "reason": "전일 한국 -0.8%와 반대로 미국 정규장에서 반도체가 시장을 크게 아웃퍼폼해 장전 갭/리더십 후보 1위",
+      "risk": "전일 외국인 KOSPI 2.27조원 순매도와 오늘 BOJ 금리결정",
+      "invalidation": "개장 후 시가·VWAP 동시 이탈, 반도체 업종 breadth 약화, 외국인 현선물 동반매도 지속",
+      "quoteStatus": "PREVIOUS_KRX_CLOSE_WEB_VERIFIED",
+      "priceTimestampKst": "2026-09-17T15:30:00+09:00"
     },
     {
-      "id": "20260917-2330KST-GNRC-LONG",
-      "date": "2026-09-17",
-      "generatedAtKst": "2026-09-17T23:32:21+09:00",
-      "briefingSlot": "2330",
-      "assetClass": "US_STOCK",
-      "market": "NYSE",
-      "ticker": "GNRC",
-      "name": "Generac Holdings",
+      "id": "20260918-0750KST-XAUUSD-LONG",
+      "date": "2026-09-18",
+      "generatedAtKst": "2026-09-18T07:50:54+09:00",
+      "briefingSlot": "0750",
+      "assetClass": "COMMODITY",
+      "market": "SPOT",
+      "ticker": "XAUUSD",
+      "name": "Gold",
       "direction": "LONG",
-      "strategy": "프리마켓 +30%대 대비 정규장 +21%대로 갭이 축소되어 VWAP 지지와 재가속 때만 롱",
+      "strategy": "미 10년물 4.95% 하락과 달러 약화가 유지되고 4350달러대 지지가 확인될 때 롱",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
-      "score": 94,
+      "score": 93,
       "confidence": 88,
-      "currentPrice": null,
-      "referencePrice": null,
+      "currentPrice": 4350.37,
+      "referencePrice": 4350.37,
       "currency": "USD",
-      "entryLow": null,
-      "entryHigh": null,
-      "stopLoss": null,
-      "target1": null,
-      "target2": null,
+      "entryLow": 4335,
+      "entryHigh": 4360,
+      "stopLoss": 4305,
+      "target1": 4400,
+      "target2": 4450,
       "holdingPeriod": "당일~10거래일",
       "committeeVote": "6/7",
-      "catalyst": "Amazon과 초기 24억달러 데이터센터 백업발전기 공급계약; 구매규모 최대 80억달러 연동",
-      "reason": "대형 확정계약과 S&P500 최상위 상승 유지, 다만 프리마켓 대비 갭 일부 반납",
-      "risk": "gap exhaustion과 차익실현",
-      "invalidation": "VWAP 이탈 후 반등 실패 또는 정규장 상승률이 프리마켓 갭의 절반 이하로 축소",
-      "quoteStatus": "WEB_VERIFIED_PERCENT_NO_ABSOLUTE_QUOTE",
-      "priceTimestampKst": "2026-09-17T23:30:00+09:00"
+      "catalyst": "현물 금 +2.07% 반등, 10년물 4.949%로 하락, 달러 약화",
+      "reason": "FOMC 직후 급락을 하루 만에 되돌린 강한 reversal과 금리 하락의 교차확인",
+      "risk": "BOJ 이후 글로벌 금리 급등 또는 달러 재강세",
+      "invalidation": "4305달러 이탈 또는 미10년물·DXY 동반 급등",
+      "quoteStatus": "REUTERS_US_CLOSE_VERIFIED",
+      "priceTimestampKst": "2026-09-18T05:00:00+09:00"
     },
     {
-      "id": "20260917-2330KST-FLNC-SHORT",
-      "date": "2026-09-17",
-      "generatedAtKst": "2026-09-17T23:32:21+09:00",
-      "briefingSlot": "2330",
-      "assetClass": "US_STOCK",
-      "market": "NASDAQ",
-      "ticker": "FLNC",
-      "name": "Fluence Energy",
+      "id": "20260918-0750KST-USDJPY-SHORT",
+      "date": "2026-09-18",
+      "generatedAtKst": "2026-09-18T07:50:54+09:00",
+      "briefingSlot": "0750",
+      "assetClass": "FX",
+      "market": "FX",
+      "ticker": "USDJPY",
+      "name": "USD/JPY",
       "direction": "SHORT",
-      "strategy": "프리마켓 -21%대에서 정규장 -16%대로 일부 회복했으므로 VWAP 반등 실패 때만 숏",
+      "strategy": "BOJ 25bp 인상과 추가긴축 가이던스가 확인될 경우 엔화강세 방향으로 USDJPY 숏",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
-      "score": 92,
-      "confidence": 86,
-      "currentPrice": null,
-      "referencePrice": null,
-      "currency": "USD",
+      "score": 91,
+      "confidence": 85,
+      "currentPrice": 155.75,
+      "referencePrice": 155.75,
+      "currency": "JPY",
       "entryLow": null,
       "entryHigh": null,
       "stopLoss": null,
       "target1": null,
       "target2": null,
       "holdingPeriod": "당일~5거래일",
-      "committeeVote": "6/7",
-      "catalyst": "FY2026 매출 가이던스 약 24억달러로 하향, 조정 EBITDA 약 -2억달러 전망; 복수 애널리스트 하향",
-      "reason": "펀더멘털 하향은 강하지만 개장 후 갭 일부 회복으로 추격 숏 기대값 감점",
-      "risk": "강한 전체 breadth 속 short-covering",
-      "invalidation": "시가·VWAP 회복 후 유지",
-      "quoteStatus": "WEB_VERIFIED_PERCENT_NO_ABSOLUTE_QUOTE",
-      "priceTimestampKst": "2026-09-17T23:30:00+09:00"
+      "committeeVote": "5/7",
+      "catalyst": "BOJ가 1.00%에서 1.25%로 인상할 것이란 강한 컨센서스와 추가긴축 가능성",
+      "reason": "미10년물 하락과 BOJ 정상화가 엔화 강세에 우호적이나 결정 전 선반영 위험 때문에 조건부",
+      "risk": "25bp 인상이 완전 선반영됐거나 BOJ 가이던스가 비둘기파일 경우 USDJPY 급반등",
+      "invalidation": "BOJ 인상 후에도 USDJPY가 발표 직전 고점을 회복·유지",
+      "quoteStatus": "WEB_VERIFIED_PRE_BOJ_REFERENCE",
+      "priceTimestampKst": "2026-09-18T07:50:00+09:00"
     },
     {
-      "id": "20260917-2330KST-BRENT-SHORT",
-      "date": "2026-09-17",
-      "generatedAtKst": "2026-09-17T23:32:21+09:00",
-      "briefingSlot": "2330",
+      "id": "20260918-0750KST-BRENT-SHORT",
+      "date": "2026-09-18",
+      "generatedAtKst": "2026-09-18T07:50:54+09:00",
+      "briefingSlot": "0750",
       "assetClass": "COMMODITY",
       "market": "ICE",
       "ticker": "BRENT",
       "name": "Brent Crude",
       "direction": "SHORT",
-      "strategy": "102.9달러 부근 반등 실패 시 하락 방향 유지",
+      "strategy": "104~105달러 반등이 막히고 공급우려 완화가 유지될 때 하락 추세 추종",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
-      "score": 90,
-      "confidence": 84,
-      "currentPrice": 102.9,
-      "referencePrice": 102.9,
+      "score": 89,
+      "confidence": 83,
+      "currentPrice": 104.82,
+      "referencePrice": 104.82,
       "currency": "USD",
-      "entryLow": null,
-      "entryHigh": null,
-      "stopLoss": null,
-      "target1": 100.0,
-      "target2": null,
+      "entryLow": 104,
+      "entryHigh": 105,
+      "stopLoss": 106.5,
+      "target1": 102,
+      "target2": 100,
       "holdingPeriod": "당일~5거래일",
       "committeeVote": "5/7",
-      "catalyst": "Saudi 추가공급 기대와 공급우려 완화로 이틀째 하락",
-      "reason": "Brent 약 -3%와 11개 S&P 섹터 전부 상승이 oil-shock 완화를 교차확인",
+      "catalyst": "중동 공급우려 완화와 이틀 연속 유가 압력 완화",
+      "reason": "Brent -1%대 마감과 미국 금리·주식 동시 안정이 oil-shock 완화를 확인",
       "risk": "중동 공급차질 재격화",
-      "invalidation": "105달러 이상 회복·유지 또는 공급차질 뉴스 재강화",
-      "quoteStatus": "REUTERS_INTRADAY_DELAYED",
-      "priceTimestampKst": "2026-09-17T23:30:00+09:00"
+      "invalidation": "106.5달러 회복·유지 또는 실제 공급차질 뉴스 강화",
+      "quoteStatus": "REUTERS_CLOSE_VERIFIED",
+      "priceTimestampKst": "2026-09-18T05:00:00+09:00"
     }
   ],
   "topEvaluated": [
@@ -168,12 +168,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.075,
+        "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
         "ema20": 16866.499771,
         "ema50": 16871.304271,
         "lastTimestamp": "2026-09-17T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.08x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "BEARISH_LH_LL",
@@ -183,7 +183,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 834.1
+        "ageMinutes": 984.6
       }
     },
     {
@@ -196,12 +196,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.512,
+        "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
         "ema20": 135156.333592,
         "ema50": 134343.297324,
         "lastTimestamp": "2026-09-17T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.51x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
@@ -211,7 +211,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 834.1
+        "ageMinutes": 984.6
       }
     },
     {
@@ -239,7 +239,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 834.1
+        "ageMinutes": 984.6
       }
     },
     {
@@ -252,12 +252,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.046,
+        "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
         "ema20": 106787.11903,
         "ema50": 106581.48429,
         "lastTimestamp": "2026-09-17T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.05x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
@@ -267,7 +267,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 834.1
+        "ageMinutes": 984.6
       }
     },
     {
@@ -295,7 +295,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 834.1
+        "ageMinutes": 984.6
       }
     },
     {
@@ -323,7 +323,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 834.1
+        "ageMinutes": 984.6
       }
     },
     {
@@ -336,12 +336,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.167,
+        "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
         "ema20": 7208.825463,
         "ema50": 7227.580135,
         "lastTimestamp": "2026-09-17T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.17x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
@@ -351,7 +351,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 834.1
+        "ageMinutes": 984.6
       }
     },
     {
@@ -364,12 +364,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.036,
+        "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
         "ema20": 25418.728701,
         "ema50": 25430.426066,
         "lastTimestamp": "2026-09-17T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.04x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
@@ -379,7 +379,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 834.1
+        "ageMinutes": 984.6
       }
     },
     {
@@ -407,7 +407,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 834.1
+        "ageMinutes": 984.6
       }
     },
     {
@@ -435,7 +435,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 834.1
+        "ageMinutes": 984.6
       }
     },
     {
@@ -448,12 +448,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 3.494,
+        "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
         "ema20": 13802.093946,
         "ema50": 13753.277323,
         "lastTimestamp": "2026-09-17T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=3.49x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
@@ -463,7 +463,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 834.1
+        "ageMinutes": 984.6
       }
     },
     {
@@ -476,12 +476,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": true,
-        "volumeRatio": 0.018,
+        "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
         "ema20": 14049.10021,
         "ema50": 14005.354828,
         "lastTimestamp": "2026-09-17T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=True; volume=0.02x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "breakout=False; reclaim=True; volume=0.00x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
@@ -491,7 +491,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 834.1
+        "ageMinutes": 984.6
       }
     },
     {
@@ -519,7 +519,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 834.1
+        "ageMinutes": 984.6
       }
     },
     {
@@ -532,12 +532,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.174,
+        "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
         "ema20": 40712.294773,
         "ema50": 40463.032471,
         "lastTimestamp": "2026-09-17T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.17x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
@@ -547,7 +547,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 834.1
+        "ageMinutes": 984.6
       }
     },
     {
@@ -575,7 +575,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 834.1
+        "ageMinutes": 984.6
       }
     },
     {
@@ -588,12 +588,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.15,
+        "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
         "ema20": 103909.392499,
         "ema50": 103520.830271,
         "lastTimestamp": "2026-09-17T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.15x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
@@ -603,7 +603,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 834.1
+        "ageMinutes": 984.6
       }
     },
     {
@@ -631,7 +631,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 834.1
+        "ageMinutes": 984.6
       }
     },
     {
@@ -644,12 +644,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 1.16,
+        "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
         "ema20": 2451.838406,
         "ema50": 2460.734304,
         "lastTimestamp": "2026-09-17T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=1.16x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
@@ -659,7 +659,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 834.1
+        "ageMinutes": 984.6
       }
     },
     {
@@ -687,7 +687,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 834.1
+        "ageMinutes": 984.6
       }
     },
     {
@@ -700,12 +700,12 @@
         "ready": false,
         "breakout": true,
         "reclaim": false,
-        "volumeRatio": 0.058,
+        "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
         "ema20": 177965.23455,
         "ema50": 177065.869251,
         "lastTimestamp": "2026-09-17T06:30:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=0.06x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "breakout=True; reclaim=False; volume=0.00x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "BULLISH_HH_HL",
@@ -715,7 +715,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 834.1
+        "ageMinutes": 984.6
       }
     },
     {
@@ -728,12 +728,12 @@
         "ready": false,
         "breakout": true,
         "reclaim": false,
-        "volumeRatio": 0.009,
+        "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
         "ema20": 23648.363491,
         "ema50": 23551.967721,
         "lastTimestamp": "2026-09-17T06:30:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=0.01x/1.20x; ICT=BULLISH/NONE/NONE",
+        "reason": "breakout=True; reclaim=False; volume=0.00x/1.20x; ICT=BULLISH/NONE/NONE",
         "ict": {
           "bias": "BULLISH",
           "structure": "BULLISH_HH_HL",
@@ -743,7 +743,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 834.1
+        "ageMinutes": 984.6
       }
     },
     {
@@ -756,12 +756,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.368,
+        "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
         "ema20": 14819.636161,
         "ema50": 14791.603231,
         "lastTimestamp": "2026-09-17T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.37x/1.20x; ICT=BULLISH/NONE/NONE",
+        "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=BULLISH/NONE/NONE",
         "ict": {
           "bias": "BULLISH",
           "structure": "BULLISH_HH_HL",
@@ -771,7 +771,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 834.1
+        "ageMinutes": 984.6
       }
     },
     {
@@ -799,7 +799,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 834.1
+        "ageMinutes": 984.6
       }
     },
     {
@@ -812,12 +812,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.119,
+        "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
         "ema20": 52272.321657,
         "ema50": 51810.197493,
         "lastTimestamp": "2026-09-17T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.12x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
@@ -827,7 +827,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 834.1
+        "ageMinutes": 984.6
       }
     },
     {
@@ -840,12 +840,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.274,
+        "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
         "ema20": 17528.576106,
         "ema50": 17594.000196,
         "lastTimestamp": "2026-09-17T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.27x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
@@ -855,7 +855,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 834.1
+        "ageMinutes": 984.6
       }
     },
     {
@@ -883,7 +883,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 834.1
+        "ageMinutes": 984.6
       }
     },
     {
@@ -896,12 +896,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": true,
-        "volumeRatio": 0.563,
+        "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
         "ema20": 6656.834756,
         "ema50": 6612.953265,
         "lastTimestamp": "2026-09-17T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=True; volume=0.56x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "breakout=False; reclaim=True; volume=0.00x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
@@ -911,7 +911,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 834.1
+        "ageMinutes": 984.6
       }
     },
     {
@@ -926,20 +926,20 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.35,
-        "ema20": 63.251394,
-        "ema50": 62.13829,
-        "lastTimestamp": "2026-09-17T20:15:11+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=BEARISH/NONE/NONE",
+        "ema20": 63.220354,
+        "ema50": 62.169416,
+        "lastTimestamp": "2026-09-17T21:15:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=BEARISH/BOS_DOWN/NONE",
         "ict": {
           "bias": "BEARISH",
           "structure": "BEARISH_LH_LL",
-          "event": "NONE",
+          "event": "BOS_DOWN",
           "liquidity": "NONE",
-          "fvg": "BEARISH 63.0500~63.1900",
-          "score": -3
+          "fvg": "BEARISH 63.0250~63.0500",
+          "score": -5
         },
-        "fresh": true,
-        "ageMinutes": 9.0
+        "fresh": false,
+        "ageMinutes": 99.6
       }
     },
     {
@@ -954,20 +954,20 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.35,
-        "ema20": 51.404849,
-        "ema50": 50.489002,
-        "lastTimestamp": "2026-09-17T20:23:30+00:00",
+        "ema20": 51.525531,
+        "ema50": 50.854288,
+        "lastTimestamp": "2026-09-17T22:53:38+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BEARISH 51.6250~51.6550",
-          "score": -1
+          "fvg": "BULLISH 51.6000~51.6321",
+          "score": 1
         },
         "fresh": true,
-        "ageMinutes": 0.6
+        "ageMinutes": 1.0
       }
     },
     {
@@ -982,20 +982,20 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.35,
-        "ema20": 33.099479,
-        "ema50": 33.162608,
-        "lastTimestamp": "2026-09-17T20:00:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 33.106037,
+        "ema50": 33.152207,
+        "lastTimestamp": "2026-09-17T22:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=BEARISH/BOS_DOWN/NONE",
         "ict": {
-          "bias": "NEUTRAL",
+          "bias": "BEARISH",
           "structure": "RANGE",
-          "event": "NONE",
+          "event": "BOS_DOWN",
           "liquidity": "NONE",
-          "fvg": "BULLISH 33.0450~33.0500",
-          "score": 1
+          "fvg": "BEARISH 33.0500~33.1500",
+          "score": -3
         },
-        "fresh": true,
-        "ageMinutes": 24.1
+        "fresh": false,
+        "ageMinutes": 54.6
       }
     }
   ],
