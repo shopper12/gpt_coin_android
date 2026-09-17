@@ -1,11 +1,43 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-09-17T10:21:38.969198+09:00",
+  "generatedAtKst": "2026-09-17T11:33:04.251832+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "coverageStart": "2026-08-10",
   "coverageEnd": "2026-09-17",
   "recordCount": 600,
   "recommendations": [
+    {
+      "id": "20260917-1130KST-HHI-LONG",
+      "date": "2026-09-17",
+      "generatedAtKst": "2026-09-17T11:30:00+09:00",
+      "briefingSlot": "1130",
+      "assetClass": "KR_STOCK",
+      "market": "KOSPI",
+      "ticker": "329180",
+      "name": "HD현대중공업",
+      "direction": "LONG",
+      "strategy": "오전 고점 추격 대신 VWAP 눌림 지지 후 재상승 시 롱",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "status": "CONDITIONAL",
+      "score": 96,
+      "confidence": 87,
+      "currentPrice": null,
+      "referencePrice": null,
+      "currency": "KRW",
+      "entryLow": null,
+      "entryHigh": null,
+      "stopLoss": null,
+      "target1": null,
+      "target2": null,
+      "holdingPeriod": "당일~5거래일",
+      "committeeVote": "6/7",
+      "catalyst": "조선·방산 동반 리더십",
+      "reason": "11:10 KOSPI +0.05% 환경에서 +7.15%, 운송장비 +2.18%로 시장 대비 독립 RS가 가장 강함",
+      "risk": "오전 급등 피로, 외국인·기관 시장 순매도",
+      "invalidation": "VWAP 이탈 후 회복 실패 또는 조선 breadth 붕괴",
+      "quoteStatus": "WEB_VERIFIED_PERCENT_NO_ABSOLUTE_QUOTE",
+      "priceTimestampKst": "2026-09-17T11:10:00+09:00"
+    },
     {
       "id": "20260917-0750KST-USDKRW-LONG",
       "date": "2026-09-17",
@@ -37,6 +69,38 @@
       "invalidation": "DXY와 미10년물 동반 하락 전환",
       "quoteStatus": "WEB_VERIFIED_DIRECTION_NO_KRW_SPOT",
       "priceTimestampKst": "2026-09-17T07:45:00+09:00"
+    },
+    {
+      "id": "20260917-1130KST-KODEX200INV-LONG",
+      "date": "2026-09-17",
+      "generatedAtKst": "2026-09-17T11:30:00+09:00",
+      "briefingSlot": "1130",
+      "assetClass": "ETF",
+      "market": "KOSPI",
+      "ticker": "114800",
+      "name": "KODEX 인버스",
+      "direction": "LONG",
+      "strategy": "KOSPI가 시가·VWAP 아래이고 외국인·기관 동반매도가 지속될 때만 인버스",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "status": "CONDITIONAL",
+      "score": 93,
+      "confidence": 84,
+      "currentPrice": null,
+      "referencePrice": null,
+      "currency": "KRW",
+      "entryLow": null,
+      "entryHigh": null,
+      "stopLoss": null,
+      "target1": null,
+      "target2": null,
+      "holdingPeriod": "당일",
+      "committeeVote": "6/7",
+      "catalyst": "갭 +0.91%에서 +0.05%까지 반납, 외국인 -7596억원·기관 -1434억원",
+      "reason": "오전 실현 breadth가 장전 risk-on 기대를 부정하고 지수 갭을 대부분 반납",
+      "risk": "개인·기타법인 매수와 조선·방산 리더십으로 지수 재반등",
+      "invalidation": "KOSPI 오전고점 방향 재돌파 또는 외국인 매도 급감",
+      "quoteStatus": "WEB_VERIFIED_INDEX_FLOW",
+      "priceTimestampKst": "2026-09-17T11:10:00+09:00"
     },
     {
       "id": "20260917-0750KST-SKHYNIX-LONG",
@@ -103,6 +167,38 @@
       "priceTimestampKst": "2026-09-17T07:40:00+09:00"
     },
     {
+      "id": "20260917-1130KST-USDKRW-LONG",
+      "date": "2026-09-17",
+      "generatedAtKst": "2026-09-17T11:30:00+09:00",
+      "briefingSlot": "1130",
+      "assetClass": "FX",
+      "market": "FX",
+      "ticker": "USDKRW",
+      "name": "USD/KRW",
+      "direction": "LONG",
+      "strategy": "1384.5원 고점 재돌파 또는 1370후반 지지 확인 시 상승 방향",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "status": "CONDITIONAL",
+      "score": 91,
+      "confidence": 84,
+      "currentPrice": null,
+      "referencePrice": 1384.5,
+      "currency": "KRW",
+      "entryLow": null,
+      "entryHigh": null,
+      "stopLoss": null,
+      "target1": null,
+      "target2": null,
+      "holdingPeriod": "당일~5거래일",
+      "committeeVote": "5/7",
+      "catalyst": "매파 FOMC, DXY 100.33 7주 고점, 외국인 한국주식 매도",
+      "reason": "달러 강세가 실제 원화 약세와 외국인 매도로 전달됐지만 장중 고점 추격은 금지",
+      "risk": "BOJ 긴축 기대, 당국 개입, 수출업체 네고",
+      "invalidation": "1370원대 중반 이탈과 DXY 반락",
+      "quoteStatus": "WEB_VERIFIED_INTRADAY_HIGH",
+      "priceTimestampKst": "2026-09-17T11:20:00+09:00"
+    },
+    {
       "id": "20260917-0750KST-BRENT-SHORT",
       "date": "2026-09-17",
       "generatedAtKst": "2026-09-17T07:51:46+09:00",
@@ -133,6 +229,38 @@
       "invalidation": "$108.5 회복 또는 실물 공급차질 확대",
       "quoteStatus": "WEB_VERIFIED_SETTLEMENT",
       "priceTimestampKst": "2026-09-17T07:40:00+09:00"
+    },
+    {
+      "id": "20260917-1130KST-KOSDAQ-LONG",
+      "date": "2026-09-17",
+      "generatedAtKst": "2026-09-17T11:30:00+09:00",
+      "briefingSlot": "1130",
+      "assetClass": "INDEX_ETF",
+      "market": "KOSDAQ",
+      "ticker": "229200",
+      "name": "KODEX 코스닥150",
+      "direction": "LONG",
+      "strategy": "KOSDAQ +0.4~0.6% 상대강세가 VWAP 위에서 유지될 때만 롱",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "status": "CONDITIONAL",
+      "score": 88,
+      "confidence": 78,
+      "currentPrice": null,
+      "referencePrice": null,
+      "currency": "KRW",
+      "entryLow": null,
+      "entryHigh": null,
+      "stopLoss": null,
+      "target1": null,
+      "target2": null,
+      "holdingPeriod": "당일",
+      "committeeVote": "5/7",
+      "catalyst": "KOSDAQ +0.47~0.57%로 KOSPI 대비 상대강세, 일부 로봇·바이오·반도체 장비 상승",
+      "reason": "대형 반도체 약세에도 코스닥이 플러스를 유지해 지수 간 상대강세 확인",
+      "risk": "상승폭 축소, 원익IPS·심텍 등 반도체 장비 일부 약세",
+      "invalidation": "KOSDAQ VWAP 이탈 및 상승종목 확산 붕괴",
+      "quoteStatus": "WEB_VERIFIED_INDEX",
+      "priceTimestampKst": "2026-09-17T11:19:00+09:00"
     },
     {
       "id": "DBC-LONG-20260915T1645000000-EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
@@ -4610,7 +4738,7 @@
       "status": "CONDITIONAL",
       "score": 90,
       "confidence": 81,
-      "currentPrice": 98.699997,
+      "currentPrice": 99.010002,
       "referencePrice": 106.56,
       "currency": "USD",
       "entryLow": 103.5,
@@ -4627,7 +4755,7 @@
       "quoteStatus": "LIVE_WEB_CROSSCHECKED",
       "priceTimestampKst": "2026-09-06T20:52:36+09:00",
       "previousClose": 96.888367,
-      "todayChangePct": 1.87,
+      "todayChangePct": 2.19,
       "recentCloses": [
         77.031204,
         85.374481,
@@ -4658,7 +4786,7 @@
         99.245773,
         102.495056,
         96.888367,
-        98.699997
+        99.010002
       ],
       "currentPriceDate": "2026-09-17"
     },
@@ -5130,7 +5258,7 @@
       "status": "CONDITIONAL",
       "score": 93,
       "confidence": 85,
-      "currentPrice": 1.2962,
+      "currentPrice": 1.2966,
       "referencePrice": 1.3997,
       "currency": "USD",
       "entryLow": 1.39,
@@ -5147,7 +5275,7 @@
       "quoteStatus": "WEEKEND_24H_VERIFIED",
       "priceTimestampKst": "2026-09-05T07:49:00+09:00",
       "previousClose": 1.284692,
-      "todayChangePct": 0.896,
+      "todayChangePct": 0.927,
       "recentCloses": [
         1.001354,
         1.104403,
@@ -5178,7 +5306,7 @@
         1.340613,
         1.421013,
         1.284692,
-        1.2962
+        1.2966
       ],
       "currentPriceDate": "2026-09-17"
     },
@@ -5293,7 +5421,7 @@
       "status": "CONDITIONAL",
       "score": 91,
       "confidence": 80,
-      "currentPrice": 1.2962,
+      "currentPrice": 1.2966,
       "referencePrice": 1.39,
       "currency": "USD",
       "entryLow": 1.385,
@@ -5310,7 +5438,7 @@
       "quoteStatus": "LIVE_WEB_CROSSCHECKED",
       "priceTimestampKst": "2026-09-05T23:30:48+09:00",
       "previousClose": 1.284692,
-      "todayChangePct": 0.896,
+      "todayChangePct": 0.927,
       "recentCloses": [
         1.001354,
         1.104403,
@@ -5341,7 +5469,7 @@
         1.340613,
         1.421013,
         1.284692,
-        1.2962
+        1.2966
       ],
       "currentPriceDate": "2026-09-17"
     },
@@ -5360,7 +5488,7 @@
       "status": "CONDITIONAL",
       "score": 90,
       "confidence": 81,
-      "currentPrice": 98.699997,
+      "currentPrice": 99.010002,
       "referencePrice": 101.77,
       "currency": "USD",
       "entryLow": 101.0,
@@ -5377,7 +5505,7 @@
       "quoteStatus": "WEEKEND_24H_VERIFIED",
       "priceTimestampKst": "2026-09-05T07:49:00+09:00",
       "previousClose": 96.888367,
-      "todayChangePct": 1.87,
+      "todayChangePct": 2.19,
       "recentCloses": [
         77.031204,
         85.374481,
@@ -5408,7 +5536,7 @@
         99.245773,
         102.495056,
         96.888367,
-        98.699997
+        99.010002
       ],
       "currentPriceDate": "2026-09-17"
     },
@@ -5427,7 +5555,7 @@
       "status": "CONDITIONAL",
       "score": 89,
       "confidence": 79,
-      "currentPrice": 1.2962,
+      "currentPrice": 1.2966,
       "referencePrice": 1.4,
       "currency": "USD",
       "entryLow": 1.385,
@@ -5444,7 +5572,7 @@
       "quoteStatus": "WEEKEND_24H_CROSSCHECKED",
       "priceTimestampKst": "2026-09-05T20:48:44+09:00",
       "previousClose": 1.284692,
-      "todayChangePct": 0.896,
+      "todayChangePct": 0.927,
       "recentCloses": [
         1.001354,
         1.104403,
@@ -5475,7 +5603,7 @@
         1.340613,
         1.421013,
         1.284692,
-        1.2962
+        1.2966
       ],
       "currentPriceDate": "2026-09-17"
     },
@@ -5526,7 +5654,7 @@
       "status": "CONDITIONAL",
       "score": 88,
       "confidence": 79,
-      "currentPrice": 76296.703125,
+      "currentPrice": 76106.210938,
       "referencePrice": 79717.45,
       "currency": "USD",
       "entryLow": 79300.0,
@@ -5543,7 +5671,7 @@
       "quoteStatus": "WEEKEND_24H_VERIFIED",
       "priceTimestampKst": "2026-09-05T07:49:00+09:00",
       "previousClose": 75612.507812,
-      "todayChangePct": 0.905,
+      "todayChangePct": 0.653,
       "recentCloses": [
         64680.710938,
         69266.1875,
@@ -5574,7 +5702,7 @@
         76838.15625,
         78163.382812,
         75612.507812,
-        76296.703125
+        76106.210938
       ],
       "currentPriceDate": "2026-09-17"
     },
@@ -5593,7 +5721,7 @@
       "status": "CONDITIONAL",
       "score": 88,
       "confidence": 79,
-      "currentPrice": 76296.703125,
+      "currentPrice": 76106.210938,
       "referencePrice": 79598.24,
       "currency": "USD",
       "entryLow": 79300.0,
@@ -5610,7 +5738,7 @@
       "quoteStatus": "WEEKEND_24H_VERIFIED",
       "priceTimestampKst": "2026-09-05T11:29:00+09:00",
       "previousClose": 75612.507812,
-      "todayChangePct": 0.905,
+      "todayChangePct": 0.653,
       "recentCloses": [
         64680.710938,
         69266.1875,
@@ -5641,7 +5769,7 @@
         76838.15625,
         78163.382812,
         75612.507812,
-        76296.703125
+        76106.210938
       ],
       "currentPriceDate": "2026-09-17"
     },
@@ -10670,7 +10798,7 @@
       "status": "CONDITIONAL",
       "score": 89,
       "confidence": 78,
-      "currentPrice": 76296.703125,
+      "currentPrice": 76106.210938,
       "referencePrice": 80393,
       "currency": "USD",
       "entryLow": 79200,
@@ -10687,7 +10815,7 @@
       "quoteStatus": "GLOBAL_24H_PUBLIC_PRICE_CROSS_CHECKED",
       "priceTimestampKst": "2026-08-28T07:45:00+09:00",
       "previousClose": 75612.507812,
-      "todayChangePct": 0.905,
+      "todayChangePct": 0.653,
       "recentCloses": [
         64680.710938,
         69266.1875,
@@ -10718,7 +10846,7 @@
         76838.15625,
         78163.382812,
         75612.507812,
-        76296.703125
+        76106.210938
       ],
       "currentPriceDate": "2026-09-17"
     },
@@ -11750,7 +11878,7 @@
       "status": "CONDITIONAL",
       "score": 90,
       "confidence": 78,
-      "currentPrice": 76296.703125,
+      "currentPrice": 76106.210938,
       "referencePrice": 79783.4,
       "currency": "USD",
       "entryLow": 78500,
@@ -11767,7 +11895,7 @@
       "quoteStatus": "CRYPTO_REALTIME_WEB_CROSS_VERIFIED_0748KST",
       "priceTimestampKst": "2026-08-26T07:48:00+09:00",
       "previousClose": 75612.507812,
-      "todayChangePct": 0.905,
+      "todayChangePct": 0.653,
       "recentCloses": [
         64680.710938,
         69266.1875,
@@ -11798,7 +11926,7 @@
         76838.15625,
         78163.382812,
         75612.507812,
-        76296.703125
+        76106.210938
       ],
       "currentPriceDate": "2026-09-17"
     },
@@ -11849,7 +11977,7 @@
       "status": "CONDITIONAL",
       "score": 86,
       "confidence": 75,
-      "currentPrice": 76296.703125,
+      "currentPrice": 76106.210938,
       "referencePrice": 78738.68,
       "currency": "USD",
       "entryLow": 78000,
@@ -11866,7 +11994,7 @@
       "quoteStatus": "CRYPTO_REALTIME_CROSS_VERIFIED_1114KST",
       "priceTimestampKst": "2026-08-26T11:14:46+09:00",
       "previousClose": 75612.507812,
-      "todayChangePct": 0.905,
+      "todayChangePct": 0.653,
       "recentCloses": [
         64680.710938,
         69266.1875,
@@ -11897,7 +12025,7 @@
         76838.15625,
         78163.382812,
         75612.507812,
-        76296.703125
+        76106.210938
       ],
       "currentPriceDate": "2026-09-17"
     },
@@ -12607,7 +12735,7 @@
       "status": "CONDITIONAL",
       "score": 86,
       "confidence": 75,
-      "currentPrice": 76296.703125,
+      "currentPrice": 76106.210938,
       "referencePrice": 77693.99,
       "currency": "USD",
       "entryLow": 76500,
@@ -12624,7 +12752,7 @@
       "quoteStatus": "CRYPTO_PUBLIC_SNAPSHOT_0725_LAST_RELIABLE",
       "priceTimestampKst": "2026-08-24T07:25:00+09:00",
       "previousClose": 75612.507812,
-      "todayChangePct": 0.905,
+      "todayChangePct": 0.653,
       "recentCloses": [
         64680.710938,
         69266.1875,
@@ -12655,7 +12783,7 @@
         76838.15625,
         78163.382812,
         75612.507812,
-        76296.703125
+        76106.210938
       ],
       "currentPriceDate": "2026-09-17"
     },
@@ -12674,7 +12802,7 @@
       "status": "CONDITIONAL",
       "score": 85,
       "confidence": 76,
-      "currentPrice": 76296.703125,
+      "currentPrice": 76106.210938,
       "referencePrice": 76215.89,
       "currency": "USD",
       "entryLow": 75000,
@@ -12691,7 +12819,7 @@
       "quoteStatus": "CRYPTO_REALTIME_PUBLIC_SNAPSHOT",
       "priceTimestampKst": "2026-08-24T07:50:00+09:00",
       "previousClose": 75612.507812,
-      "todayChangePct": 0.905,
+      "todayChangePct": 0.653,
       "recentCloses": [
         64680.710938,
         69266.1875,
@@ -12722,7 +12850,7 @@
         76838.15625,
         78163.382812,
         75612.507812,
-        76296.703125
+        76106.210938
       ],
       "currentPriceDate": "2026-09-17"
     },
@@ -12939,7 +13067,7 @@
       "status": "CONDITIONAL",
       "score": 87,
       "confidence": 80,
-      "currentPrice": 76296.703125,
+      "currentPrice": 76106.210938,
       "referencePrice": 76958,
       "currency": "USD",
       "entryLow": 75500,
@@ -12956,7 +13084,7 @@
       "quoteStatus": "WEEKEND_LATEST_PUBLISHED_SNAPSHOT",
       "priceTimestampKst": "2026-08-23T07:50:00+09:00",
       "previousClose": 75612.507812,
-      "todayChangePct": 0.905,
+      "todayChangePct": 0.653,
       "recentCloses": [
         64680.710938,
         69266.1875,
@@ -12987,7 +13115,7 @@
         76838.15625,
         78163.382812,
         75612.507812,
-        76296.703125
+        76106.210938
       ],
       "currentPriceDate": "2026-09-17"
     },
@@ -13105,7 +13233,7 @@
       "status": "CONDITIONAL",
       "score": 86,
       "confidence": 79,
-      "currentPrice": 76296.703125,
+      "currentPrice": 76106.210938,
       "referencePrice": 77104.6,
       "currency": "USD",
       "entryLow": 75500,
@@ -13122,7 +13250,7 @@
       "quoteStatus": "WEEKEND_REALTIME_PUBLIC_SNAPSHOT",
       "priceTimestampKst": "2026-08-23T11:24:00+09:00",
       "previousClose": 75612.507812,
-      "todayChangePct": 0.905,
+      "todayChangePct": 0.653,
       "recentCloses": [
         64680.710938,
         69266.1875,
@@ -13153,7 +13281,7 @@
         76838.15625,
         78163.382812,
         75612.507812,
-        76296.703125
+        76106.210938
       ],
       "currentPriceDate": "2026-09-17"
     },
@@ -13405,7 +13533,7 @@
       "status": "CONDITIONAL",
       "score": 90,
       "confidence": 84,
-      "currentPrice": 76296.703125,
+      "currentPrice": 76106.210938,
       "referencePrice": 77276.66,
       "currency": "USD",
       "entryLow": 75500,
@@ -13422,7 +13550,7 @@
       "quoteStatus": "CRYPTO_SPOT_WEB_VERIFIED",
       "priceTimestampKst": "2026-08-22T07:50:00+09:00",
       "previousClose": 75612.507812,
-      "todayChangePct": 0.905,
+      "todayChangePct": 0.653,
       "recentCloses": [
         64680.710938,
         69266.1875,
@@ -13453,7 +13581,7 @@
         76838.15625,
         78163.382812,
         75612.507812,
-        76296.703125
+        76106.210938
       ],
       "currentPriceDate": "2026-09-17"
     },
@@ -13472,7 +13600,7 @@
       "status": "CONDITIONAL",
       "score": 88,
       "confidence": 82,
-      "currentPrice": 76296.703125,
+      "currentPrice": 76106.210938,
       "referencePrice": 77375,
       "currency": "USD",
       "entryLow": 75500,
@@ -13489,7 +13617,7 @@
       "quoteStatus": "WEEKEND_PUBLISHED_SNAPSHOT_VERIFIED",
       "priceTimestampKst": "2026-08-22T11:30:00+09:00",
       "previousClose": 75612.507812,
-      "todayChangePct": 0.905,
+      "todayChangePct": 0.653,
       "recentCloses": [
         64680.710938,
         69266.1875,
@@ -13520,7 +13648,7 @@
         76838.15625,
         78163.382812,
         75612.507812,
-        76296.703125
+        76106.210938
       ],
       "currentPriceDate": "2026-09-17"
     },
@@ -13769,7 +13897,7 @@
       "status": "CONDITIONAL",
       "score": 94,
       "confidence": 86,
-      "currentPrice": 76296.703125,
+      "currentPrice": 76106.210938,
       "referencePrice": 74973,
       "currency": "USD",
       "entryLow": 73200,
@@ -13786,7 +13914,7 @@
       "quoteStatus": "CRYPTO_SPOT_VERIFIED",
       "priceTimestampKst": "2026-08-21T11:30:00+09:00",
       "previousClose": 75612.507812,
-      "todayChangePct": 0.905,
+      "todayChangePct": 0.653,
       "recentCloses": [
         64680.710938,
         69266.1875,
@@ -13817,7 +13945,7 @@
         76838.15625,
         78163.382812,
         75612.507812,
-        76296.703125
+        76106.210938
       ],
       "currentPriceDate": "2026-09-17"
     },
@@ -13836,7 +13964,7 @@
       "status": "IMMEDIATE",
       "score": 93,
       "confidence": 84,
-      "currentPrice": 76296.703125,
+      "currentPrice": 76106.210938,
       "referencePrice": 72678,
       "currency": "USD",
       "entryLow": 71200,
@@ -13853,7 +13981,7 @@
       "quoteStatus": "CRYPTO_SPOT_VERIFIED",
       "priceTimestampKst": "2026-08-21T07:50:00+09:00",
       "previousClose": 75612.507812,
-      "todayChangePct": 0.905,
+      "todayChangePct": 0.653,
       "recentCloses": [
         64680.710938,
         69266.1875,
@@ -13884,7 +14012,7 @@
         76838.15625,
         78163.382812,
         75612.507812,
-        76296.703125
+        76106.210938
       ],
       "currentPriceDate": "2026-09-17"
     },
@@ -14604,7 +14732,7 @@
       "status": "IMMEDIATE",
       "score": 90,
       "confidence": 78,
-      "currentPrice": 76296.703125,
+      "currentPrice": 76106.210938,
       "referencePrice": 69293.0,
       "currency": "USD",
       "entryLow": 68500.0,
@@ -14621,7 +14749,7 @@
       "quoteStatus": "CRYPTO_SPOT_SNAPSHOT",
       "priceTimestampKst": "2026-08-20T06:06:00+09:00",
       "previousClose": 75612.507812,
-      "todayChangePct": 0.905,
+      "todayChangePct": 0.653,
       "recentCloses": [
         64680.710938,
         69266.1875,
@@ -14652,7 +14780,7 @@
         76838.15625,
         78163.382812,
         75612.507812,
-        76296.703125
+        76106.210938
       ],
       "currentPriceDate": "2026-09-17"
     },
@@ -14671,7 +14799,7 @@
       "status": "IMMEDIATE",
       "score": 90,
       "confidence": 78,
-      "currentPrice": 76296.703125,
+      "currentPrice": 76106.210938,
       "referencePrice": 69196.0,
       "currency": "USD",
       "entryLow": 68500.0,
@@ -14688,7 +14816,7 @@
       "quoteStatus": "CRYPTO_SPOT_SNAPSHOT",
       "priceTimestampKst": "2026-08-20T07:54:00+09:00",
       "previousClose": 75612.507812,
-      "todayChangePct": 0.905,
+      "todayChangePct": 0.653,
       "recentCloses": [
         64680.710938,
         69266.1875,
@@ -14719,7 +14847,7 @@
         76838.15625,
         78163.382812,
         75612.507812,
-        76296.703125
+        76106.210938
       ],
       "currentPriceDate": "2026-09-17"
     },
@@ -14738,7 +14866,7 @@
       "status": "IMMEDIATE",
       "score": 90,
       "confidence": 80,
-      "currentPrice": 76296.703125,
+      "currentPrice": 76106.210938,
       "referencePrice": 69464,
       "currency": "USD",
       "entryLow": 68800,
@@ -14755,7 +14883,7 @@
       "quoteStatus": "CRYPTO_SPOT_SNAPSHOT",
       "priceTimestampKst": "2026-08-20T11:31:00+09:00",
       "previousClose": 75612.507812,
-      "todayChangePct": 0.905,
+      "todayChangePct": 0.653,
       "recentCloses": [
         64680.710938,
         69266.1875,
@@ -14786,7 +14914,7 @@
         76838.15625,
         78163.382812,
         75612.507812,
-        76296.703125
+        76106.210938
       ],
       "currentPriceDate": "2026-09-17"
     },
@@ -22209,7 +22337,7 @@
       "status": "CONDITIONAL",
       "score": 79,
       "confidence": 68,
-      "currentPrice": 76296.703125,
+      "currentPrice": 76106.210938,
       "referencePrice": 62596,
       "currency": "USD",
       "entryLow": 62300,
@@ -22226,7 +22354,7 @@
       "quoteStatus": "CRYPTO_REALTIME_AGGREGATED_VERIFIED",
       "priceTimestampKst": "2026-08-14T23:49:00+09:00",
       "previousClose": 75612.507812,
-      "todayChangePct": 0.905,
+      "todayChangePct": 0.653,
       "recentCloses": [
         64680.710938,
         69266.1875,
@@ -22257,7 +22385,7 @@
         76838.15625,
         78163.382812,
         75612.507812,
-        76296.703125
+        76106.210938
       ],
       "currentPriceDate": "2026-09-17"
     },
@@ -23227,7 +23355,7 @@
       "status": "CONDITIONAL",
       "score": 76,
       "confidence": 65,
-      "currentPrice": 76296.703125,
+      "currentPrice": 76106.210938,
       "referencePrice": 62784,
       "currency": "USD",
       "entryLow": 62650,
@@ -23244,7 +23372,7 @@
       "quoteStatus": "CRYPTO_REALTIME_AGGREGATED_VERIFIED",
       "priceTimestampKst": "2026-08-14T21:08:48+09:00",
       "previousClose": 75612.507812,
-      "todayChangePct": 0.905,
+      "todayChangePct": 0.653,
       "recentCloses": [
         64680.710938,
         69266.1875,
@@ -23275,7 +23403,7 @@
         76838.15625,
         78163.382812,
         75612.507812,
-        76296.703125
+        76106.210938
       ],
       "currentPriceDate": "2026-09-17"
     },
@@ -27477,204 +27605,6 @@
       "invalidation": "24,100원 이탈 또는 국제 금 4,250달러 하회와 미국 10년물 4.75% 돌파가 동시 발생",
       "quoteStatus": "KRX_INTRADAY_DELAYED_VERIFIED",
       "priceTimestampKst": "2026-08-10T09:12:00+09:00"
-    },
-    {
-      "id": "20260810-1500KST-360750-DEFENSIVE",
-      "date": "2026-08-10",
-      "generatedAtKst": "2026-08-10T15:15:14+09:00",
-      "briefingSlot": "1500",
-      "assetClass": "GLOBAL_EQUITY_ETF",
-      "market": "KRX",
-      "ticker": "360750",
-      "name": "TIGER 미국S&P500",
-      "direction": "DEFENSIVE",
-      "strategy": "27,180~27,240원 눌림에서 장중 iNAV 괴리율 1% 이하와 27,180원 지지를 확인해 분할매수",
-      "strategyType": "CHATGPT_SCHEDULED_BRIEFING",
-      "status": "CONDITIONAL",
-      "score": 86,
-      "confidence": 78,
-      "currentPrice": 27275,
-      "referencePrice": 27275,
-      "currency": "KRW",
-      "entryLow": 27180,
-      "entryHigh": 27240,
-      "stopLoss": 26920,
-      "target1": 27600,
-      "target2": 28000,
-      "holdingPeriod": "3-10 trading days",
-      "committeeVote": "5/7",
-      "catalyst": "S&P500 선물 강보합, 미국 대형주 사상 최고권과 코스피 외국인·비차익 매도에 대한 해외 분산 수요",
-      "reason": "코스피 대형주 외국인 매도와 반도체 약세를 피하면서 미국 광범위 대형주에 분산한다. 다만 현재가가 당일 고가 27,280원에 인접해 종가 추격 대신 눌림만 허용한다.",
-      "risk": "미국 CPI 전 고점 차익실현, 원화 급강세, ETF iNAV 괴리와 미국 선물 음전",
-      "invalidation": "26,920원 이탈 또는 S&P500 선물 음전과 USD/KRW 1,405원 하회가 동시 발생",
-      "quoteStatus": "KRX_INTRADAY_LIVE_VERIFIED",
-      "priceTimestampKst": "2026-08-10T15:09:00+09:00"
-    },
-    {
-      "id": "20260810-0000KST-BTC-USD-LONG",
-      "date": "2026-08-10",
-      "generatedAtKst": "2026-08-10T00:00:18+09:00",
-      "briefingSlot": "0000",
-      "assetClass": "CRYPTO",
-      "market": "GLOBAL",
-      "ticker": "BTC-USD",
-      "name": "Bitcoin",
-      "direction": "LONG",
-      "strategy": "64,900~65,100달러 재시험에서 65,000달러 지지 후 30분 종가 회복을 확인하며 분할매수",
-      "strategyType": "CHATGPT_SCHEDULED_BRIEFING",
-      "status": "CONDITIONAL",
-      "score": 85,
-      "confidence": 74,
-      "currentPrice": 76296.703125,
-      "referencePrice": 65117.86,
-      "currency": "USD",
-      "entryLow": 64900,
-      "entryHigh": 65100,
-      "stopLoss": 64450,
-      "target1": 65800,
-      "target2": 66800,
-      "holdingPeriod": "6-72 hours",
-      "committeeVote": "6/7",
-      "catalyst": "21시 이후 65,000달러를 회복했고 Coinbase 매수자 비율 71%·시장지배력 60.45%",
-      "reason": "BTC가 65,000달러 저항을 회복해 박스 상단 돌파 가능성이 높아졌다. 거래량은 주말 감소 상태이므로 재시험 없이 추격하지 않는다.",
-      "risk": "65,300달러 추가 저항, 주말 거래량 감소, 월요일 전통시장 개장 전 변동성",
-      "invalidation": "64,450달러 이탈 또는 65,000달러 아래 체류가 2시간 지속",
-      "quoteStatus": "CRYPTO_LIVE_VERIFIED",
-      "priceTimestampKst": "2026-08-09T23:59:00+09:00",
-      "previousClose": 75612.507812,
-      "todayChangePct": 0.905,
-      "recentCloses": [
-        64680.710938,
-        69266.1875,
-        73032.757812,
-        78335.1875,
-        77083.414062,
-        77755.265625,
-        78964.484375,
-        78564.976562,
-        79027.421875,
-        80257.539062,
-        77830.289062,
-        78245.8125,
-        77667.570312,
-        78548.632812,
-        77403.625,
-        77300.476562,
-        81271.742188,
-        79671.96875,
-        79823.867188,
-        80350.046875,
-        79115.851562,
-        78438.578125,
-        78259.523438,
-        76568.125,
-        77173.796875,
-        77270.46875,
-        76838.15625,
-        78163.382812,
-        75612.507812,
-        76296.703125
-      ],
-      "currentPriceDate": "2026-09-17"
-    },
-    {
-      "id": "20260810-2100KST-360750-DEFENSIVE",
-      "date": "2026-08-10",
-      "generatedAtKst": "2026-08-10T21:09:56+09:00",
-      "briefingSlot": "2100",
-      "assetClass": "GLOBAL_EQUITY_ETF",
-      "market": "KRX",
-      "ticker": "360750",
-      "name": "TIGER 미국S&P500",
-      "direction": "DEFENSIVE",
-      "strategy": "미국 정규장 개장 후 S&P500·동일가중 시장폭이 함께 양수일 때 다음 KRX 세션 27,150~27,220원 눌림 분할매수",
-      "strategyType": "CHATGPT_SCHEDULED_BRIEFING",
-      "status": "CONDITIONAL",
-      "score": 85,
-      "confidence": 77,
-      "currentPrice": 27275,
-      "referencePrice": 27275,
-      "currency": "KRW",
-      "entryLow": 27150,
-      "entryHigh": 27220,
-      "stopLoss": 26920,
-      "target1": 27600,
-      "target2": 28000,
-      "holdingPeriod": "3-10 trading days",
-      "committeeVote": "5/7",
-      "catalyst": "S&P500 사상 최고 종가, 미국 선물 강보합과 원·달러 1,417.60원",
-      "reason": "코스피 외국인·비차익 매도와 국내 성장주 변동성을 미국 대형주로 분산한다. 미국 10년물 4.669%와 CPI 전 대기 장세 때문에 현재가 추격은 금지한다.",
-      "risk": "미국 CPI 상방, 10년물 4.75% 돌파, 원화 급강세와 ETF 괴리 확대",
-      "invalidation": "미국 개장 후 SPY와 RSP가 모두 음수이거나 다음 KRX 세션 26,920원 이탈, USD/KRW 1,405원 하회",
-      "quoteStatus": "KRX_MARKET_CLOSED_VERIFIED",
-      "priceTimestampKst": "2026-08-10T16:10:00+09:00"
-    },
-    {
-      "id": "20260810-0000KST-SOL-USD-LONG",
-      "date": "2026-08-10",
-      "generatedAtKst": "2026-08-10T00:00:18+09:00",
-      "briefingSlot": "0000",
-      "assetClass": "CRYPTO",
-      "market": "GLOBAL",
-      "ticker": "SOL-USD",
-      "name": "Solana",
-      "direction": "LONG",
-      "strategy": "76.20~76.60달러 재시험에서 BTC 대비 상대강도 양수와 76.20달러 지지를 확인하며 분할매수",
-      "strategyType": "CHATGPT_SCHEDULED_BRIEFING",
-      "status": "CONDITIONAL",
-      "score": 84,
-      "confidence": 73,
-      "currentPrice": 98.699997,
-      "referencePrice": 76.67,
-      "currency": "USD",
-      "entryLow": 76.2,
-      "entryHigh": 76.6,
-      "stopLoss": 75.1,
-      "target1": 78.2,
-      "target2": 80.5,
-      "holdingPeriod": "6-72 hours",
-      "committeeVote": "5/7",
-      "catalyst": "CoinDesk 76.67달러·Coinbase 76.75달러로 시세가 수렴하고 76.20달러 돌파 상태 유지",
-      "reason": "SOL은 21시 이후 상승을 유지했으나 BNB보다 모멘텀이 약해졌다. 돌파 재시험과 BTC 대비 상대강도를 함께 확인할 때만 진입한다.",
-      "risk": "BNB로의 순환매 이동, 76달러 돌파 실패, BTC 64,500달러 이탈",
-      "invalidation": "75.10달러 이탈 또는 BTC 대비 1시간 상대수익률 음수가 2시간 지속",
-      "quoteStatus": "CRYPTO_LIVE_VERIFIED",
-      "priceTimestampKst": "2026-08-09T23:59:00+09:00",
-      "previousClose": 96.888367,
-      "todayChangePct": 1.87,
-      "recentCloses": [
-        77.031204,
-        85.374481,
-        87.63694,
-        93.65361,
-        93.912529,
-        95.44223,
-        98.561668,
-        96.603539,
-        102.167435,
-        109.208244,
-        104.126953,
-        105.652023,
-        101.876694,
-        102.996902,
-        99.986877,
-        100.38562,
-        103.978355,
-        101.949486,
-        103.18763,
-        106.447632,
-        103.866234,
-        103.325127,
-        101.608063,
-        98.689911,
-        102.396248,
-        101.785591,
-        99.245773,
-        102.495056,
-        96.888367,
-        98.699997
-      ],
-      "currentPriceDate": "2026-09-17"
     }
   ]
 }
