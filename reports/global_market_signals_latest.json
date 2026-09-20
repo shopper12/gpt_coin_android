@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-09-21T07:21:29.170251+09:00",
+  "generatedAtKst": "2026-09-21T07:51:51.159115+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
@@ -17,7 +17,7 @@
     "scannerSignalCount": 0,
     "chatgptSignalCount": 4,
     "krEtfSignalCount": 0,
-    "dailyCacheHit": false,
+    "dailyCacheHit": true,
     "maxSignalAgeMinutes": 45
   },
   "marketRegime": {
@@ -29,54 +29,86 @@
   },
   "signals": [
     {
-      "id": "20260920-2330KST-ZECUSD-SHORT",
-      "date": "2026-09-20",
-      "generatedAtKst": "2026-09-20T23:30:00+09:00",
-      "briefingSlot": "2330",
-      "assetClass": "CRYPTO",
-      "market": "GLOBAL",
-      "ticker": "ZEC-USD",
-      "name": "Zcash",
-      "direction": "SHORT",
-      "strategy": "1450 붕괴 후 수시간 회복 실패 확인에 따른 parabolic reversal short",
+      "id": "20260921-0750KST-SKHYNIX-LONG",
+      "date": "2026-09-21",
+      "generatedAtKst": "2026-09-21T07:50:00+09:00",
+      "briefingSlot": "0750",
+      "assetClass": "STOCK",
+      "market": "KR",
+      "ticker": "000660",
+      "name": "SK hynix",
+      "direction": "LONG",
+      "strategy": "Friday leadership continuation only after 1.857M reclaim/hold",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "status": "IMMEDIATE",
-      "score": 92,
-      "confidence": 82,
-      "currentPrice": 1440.53,
-      "referencePrice": 1440.53,
-      "currency": "USD",
-      "entryLow": 1435,
-      "entryHigh": 1448,
-      "stopLoss": 1498,
-      "target1": 1360,
-      "target2": 1280,
-      "holdingPeriod": "1~3거래일",
+      "status": "CONDITIONAL",
+      "score": 91,
+      "confidence": 78,
+      "currentPrice": 1857000,
+      "referencePrice": 1857000,
+      "currency": "KRW",
+      "entryLow": 1840000,
+      "entryHigh": 1870000,
+      "stopLoss": 1795000,
+      "target1": 1930000,
+      "target2": 2000000,
+      "holdingPeriod": "1~5거래일",
       "committeeVote": "6/7",
-      "catalyst": "1450 지지 붕괴 지속·30일 극단적 상승 뒤 모멘텀 둔화",
-      "reason": "20:50에는 재돌파 실패 확인이 부족했으나 23:30에도 1450 아래에 머물러 조건 충족으로 판정",
-      "risk": "privacy narrative·ETF/NU7 촉매에 따른 급반등과 숏스퀴즈",
-      "invalidation": "1498 회복 또는 1450 위 재안착",
-      "quoteStatus": "WEB_CROSSCHECKED_COINDALYZE_INVESTING",
-      "priceTimestampKst": "2026-09-20T23:30:00+09:00"
+      "catalyst": "Friday +6.42% close at high, US SOX +2.8%, AI-memory momentum",
+      "reason": "Strongest liquid Korean leader, but weekend CXMT mass-production news and heavy weekly foreign selling require open confirmation",
+      "risk": "CXMT competition, 10Y near 5%, foreign selling, gap failure",
+      "invalidation": "1.795M break or opening gap fully rejected",
+      "quoteStatus": "KRX_FRIDAY_CLOSE_CROSSCHECKED",
+      "priceTimestampKst": "2026-09-18T15:30:00+09:00"
     },
     {
-      "id": "20260920-2330KST-BTCUSD-LONG",
-      "date": "2026-09-20",
-      "generatedAtKst": "2026-09-20T23:30:00+09:00",
-      "briefingSlot": "2330",
+      "id": "20260921-0750KST-MTSI-LONG",
+      "date": "2026-09-21",
+      "generatedAtKst": "2026-09-21T07:50:00+09:00",
+      "briefingSlot": "0750",
+      "assetClass": "STOCK",
+      "market": "US",
+      "ticker": "MTSI",
+      "name": "MACOM Technology Solutions",
+      "direction": "LONG",
+      "strategy": "AI optical/defense breakout continuation after Friday high reclaim",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "status": "CONDITIONAL",
+      "score": 89,
+      "confidence": 77,
+      "currentPrice": 275.86,
+      "referencePrice": 275.86,
+      "currency": "USD",
+      "entryLow": 272,
+      "entryHigh": 278,
+      "stopLoss": 263,
+      "target1": 288,
+      "target2": 300,
+      "holdingPeriod": "2~10거래일",
+      "committeeVote": "6/7",
+      "catalyst": "BMO upgrade, new high-speed optical chips, revenue +36%, Friday +4.83% on >2x prior volume",
+      "reason": "Blind US leadership scan surfaced a liquid emerging semiconductor leader with company-specific acceleration",
+      "risk": "US market closed at this slot, 10Y near 5%, semiconductor beta",
+      "invalidation": "263 break",
+      "quoteStatus": "SEP18_CLOSE_CROSSCHECKED",
+      "priceTimestampKst": "2026-09-19T05:00:00+09:00"
+    },
+    {
+      "id": "20260921-0750KST-BTCUSD-LONG",
+      "date": "2026-09-21",
+      "generatedAtKst": "2026-09-21T07:50:00+09:00",
+      "briefingSlot": "0750",
       "assetClass": "CRYPTO",
       "market": "GLOBAL",
       "ticker": "BTC-USD",
       "name": "Bitcoin",
       "direction": "LONG",
-      "strategy": "80K 주간 지지 유지 확인 후 breakout continuation",
+      "strategy": "80K support continuation only below 81.3K entry cap",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
-      "score": 88,
-      "confidence": 77,
-      "currentPrice": 81199.94,
-      "referencePrice": 81199.94,
+      "score": 86,
+      "confidence": 74,
+      "currentPrice": 81161.36,
+      "referencePrice": 81161.36,
       "currency": "USD",
       "entryLow": 80400,
       "entryHigh": 81100,
@@ -85,76 +117,44 @@
       "target2": 86000,
       "holdingPeriod": "1~5거래일",
       "committeeVote": "5/7",
-      "catalyst": "80K 돌파와 9월18일 미국 현물 ETF 433M달러 순유입",
-      "reason": "주말 조정 후 다시 81K대로 회복했으나 83K 저항 전이며 월요일 거시 갭 위험 존재",
-      "risk": "중동 지정학·10년물 5% 부근·83K 반복 저항",
-      "invalidation": "79.4K 이탈",
-      "quoteStatus": "WEB_VERIFIED_BINANCE",
-      "priceTimestampKst": "2026-09-20T23:30:00+09:00"
+      "catalyst": "80K breakout retained despite weak crypto breadth",
+      "reason": "BTC remains resilient while major alt breadth is mixed, but 82K rejection and falling derivatives volume reduce urgency",
+      "risk": "geopolitics, 10Y near 5%, 82-83K resistance",
+      "invalidation": "79.4K break",
+      "quoteStatus": "WEB_VERIFIED_0459KST",
+      "priceTimestampKst": "2026-09-21T04:59:00+09:00"
     },
     {
-      "id": "20260920-2330KST-AVAXUSD-LONG",
-      "date": "2026-09-20",
-      "generatedAtKst": "2026-09-20T23:30:00+09:00",
-      "briefingSlot": "2330",
+      "id": "20260921-0750KST-ZECUSD-SHORT",
+      "date": "2026-09-21",
+      "generatedAtKst": "2026-09-21T07:50:00+09:00",
+      "briefingSlot": "0750",
       "assetClass": "CRYPTO",
       "market": "GLOBAL",
-      "ticker": "AVAX-USD",
-      "name": "Avalanche",
-      "direction": "LONG",
-      "strategy": "9.50 부근 지지 확인 후 Helicon/RWA continuation",
+      "ticker": "ZEC-USD",
+      "name": "Zcash",
+      "direction": "SHORT",
+      "strategy": "failed 1450 breakdown; wait for renewed sub-1434 break",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
-      "score": 87,
-      "confidence": 76,
-      "currentPrice": 9.76,
-      "referencePrice": 9.76,
+      "score": 82,
+      "confidence": 68,
+      "currentPrice": 1467.67,
+      "referencePrice": 1467.67,
       "currency": "USD",
-      "entryLow": 9.45,
-      "entryHigh": 9.65,
-      "stopLoss": 8.95,
-      "target1": 10.3,
-      "target2": 10.75,
-      "holdingPeriod": "1~4거래일",
+      "entryLow": 1415,
+      "entryHigh": 1434,
+      "stopLoss": 1498,
+      "target1": 1360,
+      "target2": 1280,
+      "holdingPeriod": "1~3거래일",
       "committeeVote": "5/7",
-      "catalyst": "9월22일 Helicon mainnet upgrade와 RWA/tokenization narrative",
-      "reason": "24h 상대강도는 상위지만 10.79 고점 이후 1시간 -7% 급반락 이력이 있어 추격 금지",
-      "risk": "과열 해소·업그레이드 sell-the-news·시장 breadth 악화",
-      "invalidation": "8.95 이탈",
-      "quoteStatus": "WEB_VERIFIED_BINANCE_PUBLIC_QUOTE",
-      "priceTimestampKst": "2026-09-20T23:30:00+09:00"
-    },
-    {
-      "id": "20260920-2330KST-ENAUSD-LONG",
-      "date": "2026-09-20",
-      "generatedAtKst": "2026-09-20T23:30:00+09:00",
-      "briefingSlot": "2330",
-      "assetClass": "CRYPTO",
-      "market": "GLOBAL",
-      "ticker": "ENA-USD",
-      "name": "Ethena",
-      "direction": "LONG",
-      "strategy": "0.185~0.193 눌림 지지 후 fee-switch/buyback continuation",
-      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "status": "CONDITIONAL",
-      "score": 85,
-      "confidence": 72,
-      "currentPrice": 0.1927,
-      "referencePrice": 0.1927,
-      "currency": "USD",
-      "entryLow": 0.185,
-      "entryHigh": 0.193,
-      "stopLoss": 0.174,
-      "target1": 0.21,
-      "target2": 0.23,
-      "holdingPeriod": "1~5거래일",
-      "committeeVote": "5/7",
-      "catalyst": "Ethena fee switch와 순이익 95% buyback/redistribution 계획",
-      "reason": "당일 상위 모멘텀과 독립 토큰수요 촉매가 있으나 급등 후 이익실현 위험으로 조건부",
-      "risk": "토큰 희석·funding-cycle 민감도·급등 후 profit-taking",
-      "invalidation": "0.174 이탈",
-      "quoteStatus": "WEB_VERIFIED_CURRENT_ARTICLE",
-      "priceTimestampKst": "2026-09-20T23:30:00+09:00"
+      "catalyst": "parabolic extension but prior 1450 breakdown reclaimed",
+      "reason": "23:30 immediate short thesis weakened after reclaim to 1467; no chase until fresh low breakdown",
+      "risk": "privacy narrative and violent short squeeze",
+      "invalidation": "1498 recovery",
+      "quoteStatus": "WEB_CURRENT_SNAPSHOT_TIMEZONE_UNSPECIFIED",
+      "priceTimestampKst": "2026-09-21T07:50:00+09:00"
     }
   ],
   "topEvaluated": [
@@ -183,7 +183,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 3834.2
+        "ageMinutes": 3862.0
       }
     },
     {
@@ -194,24 +194,17 @@
       "dailySignalEligible": false,
       "trigger": {
         "ready": false,
-        "breakout": false,
-        "reclaim": false,
-        "volumeRatio": 0.357,
-        "volumeThreshold": 1.2,
-        "ema20": 137143.145139,
-        "ema50": 135738.039797,
-        "lastTimestamp": "2026-09-18T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.36x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "15분봉 부족",
         "ict": {
-          "bias": "NEUTRAL",
-          "structure": "RANGE",
+          "bias": "UNKNOWN",
+          "structure": "INSUFFICIENT_DATA",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BEARISH 137740.0000~138140.0000",
-          "score": -1
+          "fvg": "NONE",
+          "score": 0
         },
         "fresh": false,
-        "ageMinutes": 3834.2
+        "ageMinutes": null
       }
     },
     {
@@ -239,7 +232,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 3834.2
+        "ageMinutes": 3862.0
       }
     },
     {
@@ -267,7 +260,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 3834.2
+        "ageMinutes": 3862.0
       }
     },
     {
@@ -295,7 +288,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 3834.2
+        "ageMinutes": 3862.0
       }
     },
     {
@@ -323,7 +316,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 3834.2
+        "ageMinutes": 3862.0
       }
     },
     {
@@ -351,7 +344,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 3834.2
+        "ageMinutes": 3862.0
       }
     },
     {
@@ -379,7 +372,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 3834.2
+        "ageMinutes": 3862.0
       }
     },
     {
@@ -407,7 +400,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 3834.2
+        "ageMinutes": 3862.0
       }
     },
     {
@@ -435,7 +428,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 3834.2
+        "ageMinutes": 3862.0
       }
     },
     {
@@ -463,7 +456,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 3834.2
+        "ageMinutes": 3862.0
       }
     },
     {
@@ -491,7 +484,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 3834.2
+        "ageMinutes": 3862.0
       }
     },
     {
@@ -519,7 +512,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 3834.2
+        "ageMinutes": 3862.0
       }
     },
     {
@@ -547,7 +540,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 3834.2
+        "ageMinutes": 3862.0
       }
     },
     {
@@ -575,7 +568,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 3834.2
+        "ageMinutes": 3862.0
       }
     },
     {
@@ -603,7 +596,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 3834.2
+        "ageMinutes": 3862.0
       }
     },
     {
@@ -631,7 +624,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 3834.2
+        "ageMinutes": 3862.0
       }
     },
     {
@@ -659,7 +652,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 3834.2
+        "ageMinutes": 3862.0
       }
     },
     {
@@ -687,7 +680,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 3834.2
+        "ageMinutes": 3862.0
       }
     },
     {
@@ -715,7 +708,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 3834.2
+        "ageMinutes": 3862.0
       }
     },
     {
@@ -743,7 +736,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 3834.2
+        "ageMinutes": 3862.0
       }
     },
     {
@@ -771,7 +764,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 3834.2
+        "ageMinutes": 3862.0
       }
     },
     {
@@ -799,7 +792,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 3834.2
+        "ageMinutes": 3862.0
       }
     },
     {
@@ -827,7 +820,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 3834.2
+        "ageMinutes": 3862.0
       }
     },
     {
@@ -855,7 +848,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 3834.2
+        "ageMinutes": 3862.0
       }
     },
     {
@@ -883,7 +876,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 3834.2
+        "ageMinutes": 3862.0
       }
     },
     {
@@ -911,7 +904,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 3834.2
+        "ageMinutes": 3862.0
       }
     },
     {
@@ -939,7 +932,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2799.2
+        "ageMinutes": 2827.0
       }
     },
     {
@@ -967,7 +960,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2814.2
+        "ageMinutes": 2842.0
       }
     },
     {
@@ -995,7 +988,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 2799.2
+        "ageMinutes": 2827.0
       }
     }
   ],
