@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-09-21T20:01:13.649235+09:00",
+  "generatedAtKst": "2026-09-21T20:53:01.387416+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
@@ -17,7 +17,7 @@
     "scannerSignalCount": 0,
     "chatgptSignalCount": 4,
     "krEtfSignalCount": 0,
-    "dailyCacheHit": false,
+    "dailyCacheHit": true,
     "maxSignalAgeMinutes": 45
   },
   "marketRegime": {
@@ -29,132 +29,132 @@
   },
   "signals": [
     {
-      "id": "20260921-1130KST-SAMSUNG-LONG",
+      "id": "20260921-2050KST-ACN-LONG",
       "date": "2026-09-21",
-      "generatedAtKst": "2026-09-21T11:30:00+09:00",
-      "briefingSlot": "1130",
+      "generatedAtKst": "2026-09-21T20:50:00+09:00",
+      "briefingSlot": "2050",
       "assetClass": "STOCK",
-      "market": "KR",
-      "ticker": "005930",
-      "name": "Samsung Electronics",
+      "market": "US",
+      "ticker": "ACN",
+      "name": "Accenture",
       "direction": "LONG",
-      "strategy": "Morning realized semiconductor leadership with foreign/institutional buying; buy only on VWAP/open support",
-      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "status": "IMMEDIATE",
-      "score": 93,
-      "confidence": 82,
-      "currentPrice": 269750,
-      "referencePrice": 269750,
-      "currency": "KRW",
-      "entryLow": 267000,
-      "entryHigh": 270500,
-      "stopLoss": 262000,
-      "target1": 278000,
-      "target2": 285000,
-      "holdingPeriod": "1~5거래일",
-      "committeeVote": "6/7",
-      "catalyst": "SOX +2.78%; Samsung +3% morning; foreign and institutional KOSPI buying",
-      "reason": "Morning realized leadership is stronger than preopen SK hynix thesis; Samsung held the gap while breadth remained narrow",
-      "risk": "KOSPI breadth weak, US 10Y near 5%, holiday liquidity, gap failure",
-      "invalidation": "262K break or sustained loss of morning VWAP/open",
-      "quoteStatus": "WEB_VERIFIED_0919KST_LATEST_RELIABLE",
-      "priceTimestampKst": "2026-09-21T09:19:00+09:00"
-    },
-    {
-      "id": "20260921-1130KST-ISUPETASYS-LONG",
-      "date": "2026-09-21",
-      "generatedAtKst": "2026-09-21T11:30:00+09:00",
-      "briefingSlot": "1130",
-      "assetClass": "STOCK",
-      "market": "KR",
-      "ticker": "007660",
-      "name": "Isu Petasys",
-      "direction": "LONG",
-      "strategy": "AI/network PCB emerging leader; require 108K-111K hold",
+      "strategy": "AI partnership gap continuation; buy only if premarket gap holds into regular session",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
-      "score": 89,
-      "confidence": 74,
-      "currentPrice": 110000,
-      "referencePrice": 110000,
-      "currency": "KRW",
-      "entryLow": 108000,
-      "entryHigh": 111000,
-      "stopLoss": 104000,
-      "target1": 116000,
-      "target2": 121000,
+      "score": 92,
+      "confidence": 82,
+      "currentPrice": 191.61,
+      "referencePrice": 191.61,
+      "currency": "USD",
+      "entryLow": 188.5,
+      "entryHigh": 192.0,
+      "stopLoss": 184.5,
+      "target1": 199.0,
+      "target2": 205.0,
       "holdingPeriod": "1~5거래일",
-      "committeeVote": "5/7",
-      "catalyst": "Morning +6.08% with AI/network hardware rotation",
-      "reason": "Emerging liquid hardware leader outside the two mega-cap memory names",
-      "risk": "narrow breadth, high-beta reversal, source lacks full live flow detail",
-      "invalidation": "104K break",
-      "quoteStatus": "WEB_VERIFIED_1010KST",
-      "priceTimestampKst": "2026-09-21T10:10:00+09:00"
+      "committeeVote": "6/7",
+      "catalyst": "Anthropic AI safety partnership; at least $1B investment by each company over five years",
+      "reason": "Fresh company-specific catalyst, ~6% premarket gap, broad AI/tech risk-on and falling oil/yields",
+      "risk": "Friday downgrade over consulting demand; gap-fill risk; Oct 1 earnings",
+      "invalidation": "Premarket gap fails and price loses 184.5",
+      "quoteStatus": "WEB_VERIFIED_PREMARKET",
+      "priceTimestampKst": "2026-09-21T20:50:00+09:00"
     },
     {
-      "id": "20260921-1130KST-BTCUSD-LONG",
+      "id": "20260921-2050KST-INTC-LONG",
       "date": "2026-09-21",
-      "generatedAtKst": "2026-09-21T11:30:00+09:00",
-      "briefingSlot": "1130",
+      "generatedAtKst": "2026-09-21T20:50:00+09:00",
+      "briefingSlot": "2050",
+      "assetClass": "STOCK",
+      "market": "US",
+      "ticker": "INTC",
+      "name": "Intel",
+      "direction": "LONG",
+      "strategy": "CPU/AI-agent leadership continuation; require 112-115 gap hold",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "status": "CONDITIONAL",
+      "score": 90,
+      "confidence": 79,
+      "currentPrice": 114.5,
+      "referencePrice": 114.5,
+      "currency": "USD",
+      "entryLow": 112.0,
+      "entryHigh": 115.0,
+      "stopLoss": 108.4,
+      "target1": 120.0,
+      "target2": 126.0,
+      "holdingPeriod": "1~5거래일",
+      "committeeVote": "6/7",
+      "catalyst": "Meta Muse AI-agent adoption supports CPU inference demand",
+      "reason": "Premarket +5.4% with 2.2M shares and AI CPU leadership while Nasdaq futures rise",
+      "risk": "YTD extension and high valuation/momentum crowding",
+      "invalidation": "108.4 break or opening gap collapse",
+      "quoteStatus": "WEB_VERIFIED_PREMARKET",
+      "priceTimestampKst": "2026-09-21T20:50:00+09:00"
+    },
+    {
+      "id": "20260921-2050KST-BTCUSD-LONG",
+      "date": "2026-09-21",
+      "generatedAtKst": "2026-09-21T20:50:00+09:00",
+      "briefingSlot": "2050",
       "assetClass": "CRYPTO",
       "market": "GLOBAL",
       "ticker": "BTC-USD",
       "name": "Bitcoin",
       "direction": "LONG",
-      "strategy": "80K support continuation; buy only below 81.3K cap",
+      "strategy": "50-week MA reclaim breakout; buy pullback not vertical extension",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
-      "score": 86,
-      "confidence": 73,
-      "currentPrice": 81260,
-      "referencePrice": 81260,
+      "score": 89,
+      "confidence": 80,
+      "currentPrice": 84603,
+      "referencePrice": 84603,
       "currency": "USD",
-      "entryLow": 80400,
-      "entryHigh": 81100,
-      "stopLoss": 79400,
-      "target1": 83000,
-      "target2": 86000,
-      "holdingPeriod": "1~5거래일",
-      "committeeVote": "5/7",
-      "catalyst": "80K breakout retained; 141/232 tracked coins positive at 08:30 KST",
-      "reason": "BTC remains resilient but price is slightly above preferred entry and US yields remain restrictive",
-      "risk": "10Y near 5%, 82-83K resistance, crypto regulatory uncertainty",
-      "invalidation": "79.4K break",
-      "quoteStatus": "CROSS_EXCHANGE_VERIFIED_0830KST",
-      "priceTimestampKst": "2026-09-21T08:30:00+09:00"
+      "entryLow": 83200,
+      "entryHigh": 84500,
+      "stopLoss": 81900,
+      "target1": 87600,
+      "target2": 90000,
+      "holdingPeriod": "1~7거래일",
+      "committeeVote": "6/7",
+      "catalyst": "ETF inflows, short liquidations, first 50-week MA reclaim in 45 weeks",
+      "reason": "Eight-month high and structural breakout confirmed while oil and yields ease",
+      "risk": "Short-squeeze exhaustion and 87.6K resistance",
+      "invalidation": "81.9K break",
+      "quoteStatus": "WEB_VERIFIED_MULTI_SOURCE",
+      "priceTimestampKst": "2026-09-21T20:50:00+09:00"
     },
     {
-      "id": "20260921-1130KST-ZECUSD-SHORT",
+      "id": "20260921-2050KST-WBD-LONG",
       "date": "2026-09-21",
-      "generatedAtKst": "2026-09-21T11:30:00+09:00",
-      "briefingSlot": "1130",
-      "assetClass": "CRYPTO",
-      "market": "GLOBAL",
-      "ticker": "ZEC-USD",
-      "name": "Zcash",
-      "direction": "SHORT",
-      "strategy": "parabolic reversal only after renewed sub-1434 breakdown",
+      "generatedAtKst": "2026-09-21T20:50:00+09:00",
+      "briefingSlot": "2050",
+      "assetClass": "STOCK",
+      "market": "US",
+      "ticker": "WBD",
+      "name": "Warner Bros. Discovery",
+      "direction": "LONG",
+      "strategy": "Merger-settlement event continuation; only if 7% premarket gap retains at open",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "status": "WATCH",
-      "score": 80,
-      "confidence": 63,
-      "currentPrice": 1467.67,
-      "referencePrice": 1467.67,
+      "status": "CONDITIONAL",
+      "score": 87,
+      "confidence": 74,
+      "currentPrice": null,
+      "referencePrice": null,
       "currency": "USD",
-      "entryLow": 1415,
-      "entryHigh": 1434,
-      "stopLoss": 1498,
-      "target1": 1360,
-      "target2": 1280,
-      "holdingPeriod": "1~3거래일",
-      "committeeVote": "4/7",
-      "catalyst": "7D +32% after vertical run, but 1450 breakdown was reclaimed",
-      "reason": "Short setup exists only if 1434 breaks again; committee threshold not met for immediate direction",
-      "risk": "privacy narrative and violent squeeze",
-      "invalidation": "1498 recovery",
-      "quoteStatus": "WEB_VERIFIED_CURRENT_SNAPSHOT",
-      "priceTimestampKst": "2026-09-21T10:54:00+09:00"
+      "entryLow": null,
+      "entryHigh": null,
+      "stopLoss": null,
+      "target1": 31.0,
+      "target2": null,
+      "holdingPeriod": "event-driven",
+      "committeeVote": "5/7",
+      "catalyst": "Advanced settlement talks over Paramount acquisition antitrust lawsuit; $31 cash merger consideration",
+      "reason": "Fresh idiosyncratic M&A catalyst and ~7.2% premarket gain diversify AI-heavy candidates",
+      "risk": "Settlement may fail or terms/timing may change; exact live quote not reliably verified",
+      "invalidation": "Opening gap materially fails or settlement talks break down",
+      "quoteStatus": "PERCENT_MOVE_VERIFIED_PRICE_UNAVAILABLE",
+      "priceTimestampKst": "2026-09-21T20:50:00+09:00"
     }
   ],
   "topEvaluated": [
@@ -183,7 +183,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 273.6
+        "ageMinutes": 323.1
       }
     },
     {
@@ -211,7 +211,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 273.6
+        "ageMinutes": 323.1
       }
     },
     {
@@ -239,7 +239,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 273.6
+        "ageMinutes": 323.1
       }
     },
     {
@@ -267,7 +267,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 273.6
+        "ageMinutes": 323.1
       }
     },
     {
@@ -295,7 +295,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 273.6
+        "ageMinutes": 323.1
       }
     },
     {
@@ -323,7 +323,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 273.6
+        "ageMinutes": 323.1
       }
     },
     {
@@ -336,7 +336,7 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 1.499,
+        "volumeRatio": 1.501,
         "volumeThreshold": 1.2,
         "ema20": 54311.488672,
         "ema50": 53704.705207,
@@ -351,7 +351,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 273.6
+        "ageMinutes": 323.1
       }
     },
     {
@@ -379,7 +379,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 273.6
+        "ageMinutes": 323.1
       }
     },
     {
@@ -407,7 +407,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 273.6
+        "ageMinutes": 323.1
       }
     },
     {
@@ -435,7 +435,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 273.6
+        "ageMinutes": 323.1
       }
     },
     {
@@ -463,7 +463,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 273.6
+        "ageMinutes": 323.1
       }
     },
     {
@@ -491,7 +491,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 273.6
+        "ageMinutes": 323.1
       }
     },
     {
@@ -504,7 +504,7 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.158,
+        "volumeRatio": 0.159,
         "volumeThreshold": 1.2,
         "ema20": 7189.381648,
         "ema50": 7220.75796,
@@ -519,7 +519,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 273.6
+        "ageMinutes": 323.1
       }
     },
     {
@@ -547,7 +547,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 273.6
+        "ageMinutes": 323.1
       }
     },
     {
@@ -575,7 +575,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 273.6
+        "ageMinutes": 323.1
       }
     },
     {
@@ -603,7 +603,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 273.6
+        "ageMinutes": 323.1
       }
     },
     {
@@ -631,7 +631,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 273.6
+        "ageMinutes": 323.1
       }
     },
     {
@@ -659,7 +659,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 273.6
+        "ageMinutes": 323.1
       }
     },
     {
@@ -687,7 +687,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 273.6
+        "ageMinutes": 323.1
       }
     },
     {
@@ -715,7 +715,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 273.6
+        "ageMinutes": 323.1
       }
     },
     {
@@ -743,7 +743,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 273.6
+        "ageMinutes": 323.1
       }
     },
     {
@@ -771,7 +771,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 273.6
+        "ageMinutes": 323.1
       }
     },
     {
@@ -799,7 +799,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 273.6
+        "ageMinutes": 323.1
       }
     },
     {
@@ -827,7 +827,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 273.6
+        "ageMinutes": 323.1
       }
     },
     {
@@ -840,12 +840,12 @@
         "ready": false,
         "breakout": true,
         "reclaim": false,
-        "volumeRatio": 0.479,
+        "volumeRatio": 0.489,
         "volumeThreshold": 1.2,
         "ema20": 17580.64757,
         "ema50": 17539.77415,
         "lastTimestamp": "2026-09-21T06:30:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=0.48x/1.20x; ICT=BULLISH/BOS_UP/NONE",
+        "reason": "breakout=True; reclaim=False; volume=0.49x/1.20x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
           "bias": "BULLISH",
           "structure": "BULLISH_HH_HL",
@@ -855,7 +855,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 273.6
+        "ageMinutes": 323.1
       }
     },
     {
@@ -883,7 +883,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 273.6
+        "ageMinutes": 323.1
       }
     },
     {
@@ -898,20 +898,20 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.35,
-        "ema20": 32.948558,
-        "ema50": 32.999315,
-        "lastTimestamp": "2026-09-21T08:00:00+00:00",
+        "ema20": 32.907743,
+        "ema50": 32.980584,
+        "lastTimestamp": "2026-09-21T11:00:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=BEARISH/BOS_DOWN/NONE",
         "ict": {
           "bias": "BEARISH",
           "structure": "RANGE",
           "event": "BOS_DOWN",
           "liquidity": "NONE",
-          "fvg": "BEARISH 32.8300~32.9300",
+          "fvg": "BEARISH 32.5200~33.0000",
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 183.6
+        "ageMinutes": 53.1
       }
     },
     {
@@ -926,20 +926,20 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.35,
-        "ema20": 32.675879,
-        "ema50": 32.918055,
+        "ema20": 32.799688,
+        "ema50": 32.969035,
         "lastTimestamp": "2026-09-21T11:00:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/CHOCH_DOWN/NONE",
+        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=BULLISH/BOS_UP/SELL_SIDE_SWEEP",
         "ict": {
-          "bias": "NEUTRAL",
+          "bias": "BULLISH",
           "structure": "BULLISH_HH_HL",
-          "event": "CHOCH_DOWN",
-          "liquidity": "NONE",
+          "event": "BOS_UP",
+          "liquidity": "SELL_SIDE_SWEEP",
           "fvg": "BULLISH 32.5100~32.8677",
-          "score": 1
+          "score": 7
         },
-        "fresh": true,
-        "ageMinutes": 3.6
+        "fresh": false,
+        "ageMinutes": 53.1
       }
     },
     {
@@ -950,14 +950,14 @@
       "dailySignalEligible": true,
       "trigger": {
         "ready": false,
-        "breakout": true,
+        "breakout": false,
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.35,
-        "ema20": 61.524912,
-        "ema50": 61.690785,
-        "lastTimestamp": "2026-09-18T23:45:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=0.00x/1.35x; ICT=BULLISH/BOS_UP/NONE",
+        "ema20": 61.569206,
+        "ema50": 61.702942,
+        "lastTimestamp": "2026-09-21T11:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
           "bias": "BULLISH",
           "structure": "BULLISH_HH_HL",
@@ -967,7 +967,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 3558.6
+        "ageMinutes": 53.1
       }
     },
     {
@@ -979,23 +979,23 @@
       "trigger": {
         "ready": false,
         "breakout": false,
-        "reclaim": false,
+        "reclaim": true,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.35,
-        "ema20": 57.195578,
-        "ema50": 56.995746,
-        "lastTimestamp": "2026-09-21T11:03:02+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 57.251744,
+        "ema50": 57.044263,
+        "lastTimestamp": "2026-09-21T11:52:06+00:00",
+        "reason": "breakout=False; reclaim=True; volume=0.00x/1.35x; ICT=BULLISH/NONE/NONE",
         "ict": {
-          "bias": "NEUTRAL",
+          "bias": "BULLISH",
           "structure": "BULLISH_HH_HL",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BEARISH 57.0100~57.5000",
-          "score": 1
+          "fvg": "BULLISH 57.2999~57.5000",
+          "score": 3
         },
         "fresh": true,
-        "ageMinutes": 0.5
+        "ageMinutes": 1.0
       }
     }
   ],
