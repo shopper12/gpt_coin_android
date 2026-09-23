@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-09-24T07:20:16.029358+09:00",
+  "generatedAtKst": "2026-09-24T07:52:44.273083+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
@@ -17,7 +17,7 @@
     "scannerSignalCount": 0,
     "chatgptSignalCount": 4,
     "krEtfSignalCount": 0,
-    "dailyCacheHit": false,
+    "dailyCacheHit": true,
     "maxSignalAgeMinutes": 45
   },
   "marketRegime": {
@@ -29,132 +29,132 @@
   },
   "signals": [
     {
-      "id": "20260923-2330KST-IONQ-LONG",
-      "date": "2026-09-23",
-      "generatedAtKst": "2026-09-23T23:30:00+09:00",
-      "briefingSlot": "2330",
+      "id": "20260924-0750KST-TBT-LONG",
+      "date": "2026-09-24",
+      "generatedAtKst": "2026-09-24T07:50:00+09:00",
+      "briefingSlot": "0750",
+      "assetClass": "ETF",
+      "market": "US",
+      "ticker": "TBT",
+      "name": "ProShares UltraShort 20+ Year Treasury",
+      "direction": "LONG",
+      "strategy": "Long-yield breakout via inverse Treasury ETF",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "status": "IMMEDIATE",
+      "score": 94,
+      "confidence": 88,
+      "currentPrice": 39.84,
+      "referencePrice": 39.84,
+      "currency": "USD",
+      "entryLow": 39.65,
+      "entryHigh": 39.9,
+      "stopLoss": 38.85,
+      "target1": 41.0,
+      "target2": 42.2,
+      "holdingPeriod": "1~5거래일",
+      "committeeVote": "6/7",
+      "catalyst": "US 10Y yield jumped to 5.11% after strong activity/cost data; TLT fell about 1.6% and TBT rose about 2.75% with after-hours continuation",
+      "reason": "Cleanest cross-asset momentum aligned with the dominant macro shock",
+      "risk": "Fast yield reversal on geopolitical/economic headlines; leveraged ETF decay",
+      "invalidation": "TBT below 38.85 or 10Y yield reversal below 5.00%",
+      "quoteStatus": "AFTER_HOURS_VERIFIED",
+      "priceTimestampKst": "2026-09-24T06:19:00+09:00"
+    },
+    {
+      "id": "20260924-0750KST-APA-LONG",
+      "date": "2026-09-24",
+      "generatedAtKst": "2026-09-24T07:50:00+09:00",
+      "briefingSlot": "0750",
+      "assetClass": "STOCK",
+      "market": "US",
+      "ticker": "APA",
+      "name": "APA Corp",
+      "direction": "LONG",
+      "strategy": "Energy relative-strength continuation after crude rebound",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "status": "CONDITIONAL",
+      "score": 87,
+      "confidence": 78,
+      "currentPrice": 43.72,
+      "referencePrice": 43.72,
+      "currency": "USD",
+      "entryLow": 43.2,
+      "entryHigh": 43.8,
+      "stopLoss": 41.8,
+      "target1": 46.0,
+      "target2": 48.0,
+      "holdingPeriod": "1~5거래일",
+      "committeeVote": "5/7",
+      "catalyst": "WTI spot rebounded about 3% while broad equities sold off; APA finished among S&P leaders",
+      "reason": "Positive energy beta with low correlation to rate-sensitive growth",
+      "risk": "Oil remains headline-driven and can reverse sharply",
+      "invalidation": "Loss of 41.80 or WTI back below 89",
+      "quoteStatus": "REGULAR_CLOSE_VERIFIED",
+      "priceTimestampKst": "2026-09-24T05:00:00+09:00"
+    },
+    {
+      "id": "20260924-0750KST-BTCUSD-SHORT",
+      "date": "2026-09-24",
+      "generatedAtKst": "2026-09-24T07:50:00+09:00",
+      "briefingSlot": "0750",
+      "assetClass": "CRYPTO",
+      "market": "GLOBAL",
+      "ticker": "BTC-USD",
+      "name": "Bitcoin",
+      "direction": "SHORT",
+      "strategy": "Failed breakout under high-yield risk-off regime",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "status": "CONDITIONAL",
+      "score": 84,
+      "confidence": 76,
+      "currentPrice": 84252,
+      "referencePrice": 84252,
+      "currency": "USD",
+      "entryLow": 83800,
+      "entryHigh": 84500,
+      "stopLoss": 86200,
+      "target1": 81000,
+      "target2": 78500,
+      "holdingPeriod": "intraday~5거래일",
+      "committeeVote": "5/7",
+      "catalyst": "BTC fell about 2.2% as Nasdaq and Russell sold off and 10Y yield broke to 5.11%",
+      "reason": "24-hour risk asset showing downside confirmation versus prior breakout",
+      "risk": "Crypto can squeeze violently; do not short if 86.2K is reclaimed",
+      "invalidation": "Sustained reclaim above 86200",
+      "quoteStatus": "LIVE_WEB_VERIFIED_APPROX",
+      "priceTimestampKst": "2026-09-24T07:40:00+09:00"
+    },
+    {
+      "id": "20260924-0750KST-IONQ-LONG",
+      "date": "2026-09-24",
+      "generatedAtKst": "2026-09-24T07:50:00+09:00",
+      "briefingSlot": "0750",
       "assetClass": "STOCK",
       "market": "US",
       "ticker": "IONQ",
       "name": "IonQ",
       "direction": "LONG",
-      "strategy": "Fresh QEC and NVIDIA/SDT catalysts; regular-session gap acceptance required",
-      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "status": "CONDITIONAL",
-      "score": 93,
-      "confidence": 82,
-      "currentPrice": 45.29,
-      "referencePrice": 45.29,
-      "currency": "USD",
-      "entryLow": 44.0,
-      "entryHigh": 45.5,
-      "stopLoss": 41.6,
-      "target1": 49.5,
-      "target2": 53.0,
-      "holdingPeriod": "1~5거래일",
-      "committeeVote": "6/7",
-      "catalyst": "Real-time QEC decoder plus Superion 256 commercial deployments; verified around 09:19 ET at +11%",
-      "reason": "Strongest verified company-specific excess return versus flat SPY/QTUM",
-      "risk": "Intraday quote after first hour is not independently cross-verified; no chase",
-      "invalidation": "Loss of 41.6 or failed VWAP reclaim",
-      "quoteStatus": "REGULAR_SESSION_VERIFIED_0919ET_NOT_1030ET",
-      "priceTimestampKst": "2026-09-23T22:19:00+09:00"
-    },
-    {
-      "id": "20260923-2330KST-VOYG-SHORT",
-      "date": "2026-09-23",
-      "generatedAtKst": "2026-09-23T23:30:00+09:00",
-      "briefingSlot": "2330",
-      "assetClass": "STOCK",
-      "market": "US",
-      "ticker": "VOYG",
-      "name": "Voyager Technologies",
-      "direction": "SHORT",
-      "strategy": "Convertible-note dilution overhang; short only on VWAP rejection",
-      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "status": "CONDITIONAL",
-      "score": 88,
-      "confidence": 80,
-      "currentPrice": 34.89,
-      "referencePrice": 34.89,
-      "currency": "USD",
-      "entryLow": 34.5,
-      "entryHigh": 35.5,
-      "stopLoss": 37.1,
-      "target1": 32.5,
-      "target2": 30.5,
-      "holdingPeriod": "intraday~5거래일",
-      "committeeVote": "5/7",
-      "catalyst": "$350M convertible senior notes due 2032 with additional $52.5M option",
-      "reason": "Fresh negative financing catalyst with immediate -7% after-hours reaction",
-      "risk": "Regular-session 10:30 ET quote not independently cross-verified; capped-call structure can limit dilution",
-      "invalidation": "Sustained reclaim above 37.1/VWAP",
-      "quoteStatus": "AFTER_HOURS_VERIFIED_NOT_1030ET",
-      "priceTimestampKst": "2026-09-23T18:04:00+09:00"
-    },
-    {
-      "id": "20260923-2330KST-WOR-LONG",
-      "date": "2026-09-23",
-      "generatedAtKst": "2026-09-23T23:30:00+09:00",
-      "briefingSlot": "2330",
-      "assetClass": "STOCK",
-      "market": "US",
-      "ticker": "WOR",
-      "name": "Worthington Enterprises",
-      "direction": "LONG",
-      "strategy": "Earnings beat and cash-flow acceleration; only if opening gap holds",
+      "strategy": "Catalyst remains valid but gap failure requires reset",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "OBSERVE",
-      "score": 84,
-      "confidence": 74,
-      "currentPrice": 68.96,
-      "referencePrice": 68.96,
+      "score": 77,
+      "confidence": 68,
+      "currentPrice": 42.54,
+      "referencePrice": 42.54,
       "currency": "USD",
-      "entryLow": 66.0,
-      "entryHigh": 69.0,
-      "stopLoss": 63.0,
-      "target1": 73.0,
-      "target2": 77.0,
-      "holdingPeriod": "1~10거래일",
-      "committeeVote": "5/7",
-      "catalyst": "Q1 EPS $0.82 vs $0.75; revenue $343.9M vs $331.3M; FCF nearly doubled to $54M",
-      "reason": "Best verified earnings-quality breakout candidate",
-      "risk": "Premarket +17% extension and first-hour quote unavailable; observation until gap acceptance verified",
-      "invalidation": "Loss of 63 or failed VWAP reclaim",
-      "quoteStatus": "PREMARKET_VERIFIED_NOT_1030ET",
-      "priceTimestampKst": "2026-09-23T21:34:00+09:00"
-    },
-    {
-      "id": "20260923-2330KST-BTCUSD-LONG",
-      "date": "2026-09-23",
-      "generatedAtKst": "2026-09-23T23:30:00+09:00",
-      "briefingSlot": "2330",
-      "assetClass": "CRYPTO",
-      "market": "GLOBAL",
-      "ticker": "BTC-USD",
-      "name": "Bitcoin",
-      "direction": "LONG",
-      "strategy": "Eight-month breakout; pullback only",
-      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "status": "CONDITIONAL",
-      "score": 80,
-      "confidence": 72,
-      "currentPrice": 86000,
-      "referencePrice": 86000,
-      "currency": "USD",
-      "entryLow": 84200,
-      "entryHigh": 85600,
-      "stopLoss": 82900,
-      "target1": 89500,
-      "target2": 92000,
-      "holdingPeriod": "1~7거래일",
-      "committeeVote": "5/7",
-      "catalyst": "Eight-month high with improved liquidity and regulatory tailwinds",
-      "reason": "24-hour diversifier; positive medium-term momentum",
-      "risk": "Recent move partly short squeeze; elevated US yields and strong dollar",
-      "invalidation": "Loss of 82900",
-      "quoteStatus": "WEB_VERIFIED_APPROX",
-      "priceTimestampKst": "2026-09-23T23:20:00+09:00"
+      "entryLow": 41.8,
+      "entryHigh": 42.6,
+      "stopLoss": 40.7,
+      "target1": 45.9,
+      "target2": 49.5,
+      "holdingPeriod": "1~5거래일",
+      "committeeVote": "4/7",
+      "catalyst": "QEC/Nvidia-related catalyst produced a +12.6% premarket gap but only about +4.4% close",
+      "reason": "High-volume catalyst survived, but intraday gap giveback fails immediate leadership test",
+      "risk": "Growth duration sensitivity with 10Y above 5%; committee below 5/7",
+      "invalidation": "Loss of 40.70",
+      "quoteStatus": "REGULAR_CLOSE_CROSSCHECKED_APPROX",
+      "priceTimestampKst": "2026-09-24T05:00:00+09:00"
     }
   ],
   "topEvaluated": [
@@ -183,7 +183,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 952.3
+        "ageMinutes": 982.8
       }
     },
     {
@@ -211,7 +211,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 952.3
+        "ageMinutes": 982.8
       }
     },
     {
@@ -239,7 +239,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 967.3
+        "ageMinutes": 997.8
       }
     },
     {
@@ -267,7 +267,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 967.3
+        "ageMinutes": 997.8
       }
     },
     {
@@ -295,7 +295,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 952.3
+        "ageMinutes": 982.8
       }
     },
     {
@@ -323,7 +323,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 967.3
+        "ageMinutes": 997.8
       }
     },
     {
@@ -351,7 +351,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 952.3
+        "ageMinutes": 982.8
       }
     },
     {
@@ -379,7 +379,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 967.3
+        "ageMinutes": 997.8
       }
     },
     {
@@ -407,7 +407,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 967.3
+        "ageMinutes": 997.8
       }
     },
     {
@@ -435,7 +435,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 967.3
+        "ageMinutes": 997.8
       }
     },
     {
@@ -463,7 +463,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 952.3
+        "ageMinutes": 982.8
       }
     },
     {
@@ -491,7 +491,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 952.3
+        "ageMinutes": 982.8
       }
     },
     {
@@ -519,7 +519,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 967.3
+        "ageMinutes": 997.8
       }
     },
     {
@@ -547,7 +547,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 967.3
+        "ageMinutes": 997.8
       }
     },
     {
@@ -575,7 +575,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 967.3
+        "ageMinutes": 997.8
       }
     },
     {
@@ -603,7 +603,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 952.3
+        "ageMinutes": 982.8
       }
     },
     {
@@ -631,7 +631,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 952.3
+        "ageMinutes": 982.8
       }
     },
     {
@@ -659,7 +659,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 967.3
+        "ageMinutes": 997.8
       }
     },
     {
@@ -687,7 +687,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 967.3
+        "ageMinutes": 997.8
       }
     },
     {
@@ -715,7 +715,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 952.3
+        "ageMinutes": 982.8
       }
     },
     {
@@ -743,7 +743,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 952.3
+        "ageMinutes": 982.8
       }
     },
     {
@@ -771,7 +771,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 952.3
+        "ageMinutes": 982.8
       }
     },
     {
@@ -799,7 +799,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 967.3
+        "ageMinutes": 997.8
       }
     },
     {
@@ -827,7 +827,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 952.3
+        "ageMinutes": 982.8
       }
     },
     {
@@ -855,7 +855,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 952.3
+        "ageMinutes": 982.8
       }
     },
     {
@@ -883,7 +883,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 952.3
+        "ageMinutes": 982.8
       }
     },
     {
@@ -910,8 +910,8 @@
           "fvg": "BULLISH 195.3400~195.3500",
           "score": 3
         },
-        "fresh": true,
-        "ageMinutes": 22.3
+        "fresh": false,
+        "ageMinutes": 52.8
       }
     },
     {
@@ -926,9 +926,9 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.35,
-        "ema20": 178.264075,
-        "ema50": 177.14326,
-        "lastTimestamp": "2026-09-23T22:15:00+00:00",
+        "ema20": 178.368934,
+        "ema50": 177.274178,
+        "lastTimestamp": "2026-09-23T22:48:43+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
@@ -939,7 +939,7 @@
           "score": 1
         },
         "fresh": true,
-        "ageMinutes": 7.3
+        "ageMinutes": 4.1
       }
     },
     {
@@ -954,20 +954,20 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.35,
-        "ema20": 148.780576,
-        "ema50": 147.842357,
-        "lastTimestamp": "2026-09-23T22:17:57+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 148.714583,
+        "ema50": 147.886336,
+        "lastTimestamp": "2026-09-23T22:52:26+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/CHOCH_DOWN/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "BULLISH_HH_HL",
-          "event": "NONE",
+          "event": "CHOCH_DOWN",
           "liquidity": "NONE",
-          "fvg": "BEARISH 149.1800~149.3200",
-          "score": 1
+          "fvg": "BEARISH 148.2000~149.0900",
+          "score": -1
         },
         "fresh": true,
-        "ageMinutes": 4.4
+        "ageMinutes": 0.4
       }
     },
     {
@@ -982,20 +982,20 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.35,
-        "ema20": 1073.100758,
-        "ema50": 1076.176071,
-        "lastTimestamp": "2026-09-23T22:15:00+00:00",
+        "ema20": 1073.313373,
+        "ema50": 1076.026009,
+        "lastTimestamp": "2026-09-23T22:45:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BULLISH 1073.0000~1074.8000",
+          "fvg": "BULLISH 1072.7899~1072.9600",
           "score": 1
         },
         "fresh": true,
-        "ageMinutes": 7.4
+        "ageMinutes": 7.8
       }
     }
   ],
