@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-09-24T20:55:13.129352+09:00",
+  "generatedAtKst": "2026-09-24T23:32:28.912412+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
-    "shortlistCount": 428,
+    "shortlistCount": 430,
     "krEtfShortlistCount": 34,
-    "dailyMetricsCount": 413,
-    "dailyCandidateCount": 37,
+    "dailyMetricsCount": 414,
+    "dailyCandidateCount": 38,
     "krEtfDailyCandidateCount": 26,
-    "strictDailyCandidateCount": 11,
+    "strictDailyCandidateCount": 12,
     "krEtfSignalEligibleCount": 0,
-    "intradayEvaluatedCount": 37,
+    "intradayEvaluatedCount": 38,
     "krEtfIntradayEvaluatedCount": 26,
     "signalCount": 4,
     "scannerSignalCount": 0,
@@ -24,15 +24,79 @@
     "panic": false,
     "riskOff": false,
     "equityBelow200Count": 0,
-    "realizedVolatility20Annualized": 0.1609,
+    "realizedVolatility20Annualized": 0.1629,
     "reason": "광의 추세와 변동성 정상"
   },
   "signals": [
     {
-      "id": "20260924-2050KST-TBT-LONG",
+      "id": "20260924-2330KST-MGM-SHORT",
       "date": "2026-09-24",
-      "generatedAtKst": "2026-09-24T20:52:26+09:00",
-      "briefingSlot": "2050",
+      "generatedAtKst": "2026-09-24T23:31:08+09:00",
+      "briefingSlot": "2330",
+      "assetClass": "STOCK",
+      "market": "US",
+      "ticker": "MGM",
+      "name": "MGM Resorts International",
+      "direction": "SHORT",
+      "strategy": "Failed-takeover gap continuation",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "status": "IMMEDIATE",
+      "score": 94,
+      "confidence": 88,
+      "currentPrice": 34.04,
+      "referencePrice": 34.04,
+      "currency": "USD",
+      "entryLow": 33.9,
+      "entryHigh": 34.2,
+      "stopLoss": 35.25,
+      "target1": 32.5,
+      "target2": 31.5,
+      "holdingPeriod": "intraday~3거래일",
+      "committeeVote": "6/7",
+      "catalyst": "People Inc withdrew $48.30/share take-private proposal; stock about -10% in morning trading while peer CZR was roughly flat",
+      "reason": "Deal-specific repricing persisted after the open and materially underperformed the broad market",
+      "risk": "Strategic transaction speculation revives or sharp gap-fill squeeze",
+      "invalidation": "Sustained reclaim above 35.25",
+      "quoteStatus": "REGULAR_SESSION_MORNING_VERIFIED",
+      "priceTimestampKst": "2026-09-24T23:25:00+09:00"
+    },
+    {
+      "id": "20260924-2330KST-BTCUSD-SHORT",
+      "date": "2026-09-24",
+      "generatedAtKst": "2026-09-24T23:31:08+09:00",
+      "briefingSlot": "2330",
+      "assetClass": "CRYPTO",
+      "market": "GLOBAL",
+      "ticker": "BTC-USD",
+      "name": "Bitcoin",
+      "direction": "SHORT",
+      "strategy": "Failed breakout under hawkish repricing",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "status": "IMMEDIATE",
+      "score": 89,
+      "confidence": 83,
+      "currentPrice": 83578.68,
+      "referencePrice": 83578.68,
+      "currency": "USD",
+      "entryLow": 83300,
+      "entryHigh": 83850,
+      "stopLoss": 85200,
+      "target1": 81000,
+      "target2": 79000,
+      "holdingPeriod": "intraday~5거래일",
+      "committeeVote": "5/7",
+      "catalyst": "BTC traded below $83k intraday as markets priced a steeper Fed-hike path; 10Y yield around 5.14%",
+      "reason": "24h asset confirms cross-asset risk-off and prior breakout failure",
+      "risk": "Diplomatic risk-on reversal or crypto short squeeze",
+      "invalidation": "Sustained reclaim above 85200",
+      "quoteStatus": "LIVE_WEB_VERIFIED",
+      "priceTimestampKst": "2026-09-24T23:31:00+09:00"
+    },
+    {
+      "id": "20260924-2330KST-TBT-LONG",
+      "date": "2026-09-24",
+      "generatedAtKst": "2026-09-24T23:31:08+09:00",
+      "briefingSlot": "2330",
       "assetClass": "ETF",
       "market": "US",
       "ticker": "TBT",
@@ -41,8 +105,8 @@
       "strategy": "Long-yield breakout via inverse Treasury ETF",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
-      "score": 94,
-      "confidence": 87,
+      "score": 87,
+      "confidence": 79,
       "currentPrice": 39.67,
       "referencePrice": 39.67,
       "currency": "USD",
@@ -52,109 +116,45 @@
       "target1": 41.3,
       "target2": 42.2,
       "holdingPeriod": "1~5거래일",
-      "committeeVote": "6/7",
-      "catalyst": "US long yields remain elevated; TLT premarket 80.05 vs 80.46 close while Nasdaq futures -1.01%",
-      "reason": "Direct expression of dominant rate shock with fresh bond-market confirmation",
-      "risk": "Yield reversal on diplomacy/data; leveraged ETF decay",
-      "invalidation": "10Y yield below 5.00% or TBT below 39.10",
-      "quoteStatus": "PRIOR_CLOSE_WITH_TLT_PREMARKET_PROXY",
-      "priceTimestampKst": "2026-09-24T20:50:00+09:00"
+      "committeeVote": "5/7",
+      "catalyst": "US 10Y reached about 5.139% and 30Y about 5.438% as Fed-hike odds rose",
+      "reason": "Macro direction remains favorable but a trustworthy current-session TBT quote was not independently verified",
+      "risk": "Yield reversal; leveraged ETF decay; stale quote risk",
+      "invalidation": "10Y below 5.00% or TBT below 39.10",
+      "quoteStatus": "PRIOR_CLOSE_CURRENT_YIELD_PROXY_ONLY",
+      "priceTimestampKst": "2026-09-24T23:31:00+09:00"
     },
     {
-      "id": "20260924-2050KST-MGM-SHORT",
+      "id": "20260924-2330KST-XOM-LONG",
       "date": "2026-09-24",
-      "generatedAtKst": "2026-09-24T20:52:26+09:00",
-      "briefingSlot": "2050",
+      "generatedAtKst": "2026-09-24T23:31:08+09:00",
+      "briefingSlot": "2330",
       "assetClass": "STOCK",
       "market": "US",
-      "ticker": "MGM",
-      "name": "MGM Resorts International",
-      "direction": "SHORT",
-      "strategy": "Event-driven failed-takeover gap down",
-      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "status": "CONDITIONAL",
-      "score": 91,
-      "confidence": 84,
-      "currentPrice": 34.56,
-      "referencePrice": 34.56,
-      "currency": "USD",
-      "entryLow": 34.3,
-      "entryHigh": 35.0,
-      "stopLoss": 36.2,
-      "target1": 32.0,
-      "target2": 30.5,
-      "holdingPeriod": "intraday~3거래일",
-      "committeeVote": "6/7",
-      "catalyst": "People Inc withdrew proposed MGM purchase; Reuters reported MGM -8.3% premarket",
-      "reason": "Fresh negative catalyst plus gap continuation in risk-off tape",
-      "risk": "Takeover speculation revival or gap-fill squeeze",
-      "invalidation": "Sustained reclaim above 36.20",
-      "quoteStatus": "AFTER_HOURS_VERIFIED_PLUS_PREMARKET_PERCENT_CONFIRMATION",
-      "priceTimestampKst": "2026-09-24T20:27:00+09:00"
-    },
-    {
-      "id": "20260924-2050KST-KNF-LONG",
-      "date": "2026-09-24",
-      "generatedAtKst": "2026-09-24T20:52:26+09:00",
-      "briefingSlot": "2050",
-      "assetClass": "STOCK",
-      "market": "US",
-      "ticker": "KNF",
-      "name": "Knife River Corp",
+      "ticker": "XOM",
+      "name": "Exxon Mobil",
       "direction": "LONG",
-      "strategy": "Activist catalyst reversal",
+      "strategy": "Energy relative-strength hedge",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
-      "score": 86,
-      "confidence": 78,
-      "currentPrice": 51.43,
-      "referencePrice": 51.43,
+      "score": 81,
+      "confidence": 73,
+      "currentPrice": 161.23,
+      "referencePrice": 161.23,
       "currency": "USD",
-      "entryLow": 52.6,
-      "entryHigh": 53.5,
-      "stopLoss": 50.6,
-      "target1": 56.0,
-      "target2": 58.0,
-      "holdingPeriod": "1~10거래일",
+      "entryLow": 160.5,
+      "entryHigh": 161.5,
+      "stopLoss": 157.8,
+      "target1": 166.0,
+      "target2": 170.0,
+      "holdingPeriod": "1~5거래일",
       "committeeVote": "5/7",
-      "catalyst": "Reuters: Starboard significant stake; push for margin improvement or sale; shares +3.6% premarket",
-      "reason": "Fresh activist catalyst against weak index futures after prior-session capitulation",
-      "risk": "Activist report fades; prior downtrend remains strong",
-      "invalidation": "Below prior-session low 50.67",
-      "quoteStatus": "PRIOR_CLOSE_PLUS_PREMARKET_PERCENT_CONFIRMATION",
-      "priceTimestampKst": "2026-09-24T20:27:00+09:00"
-    },
-    {
-      "id": "20260924-2050KST-BTCUSD-SHORT",
-      "date": "2026-09-24",
-      "generatedAtKst": "2026-09-24T20:52:26+09:00",
-      "briefingSlot": "2050",
-      "assetClass": "CRYPTO",
-      "market": "GLOBAL",
-      "ticker": "BTC-USD",
-      "name": "Bitcoin",
-      "direction": "SHORT",
-      "strategy": "Failed breakout under rising-yield risk-off regime",
-      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "status": "CONDITIONAL",
-      "score": 83,
-      "confidence": 75,
-      "currentPrice": 84402.7,
-      "referencePrice": 84402.7,
-      "currency": "USD",
-      "entryLow": 83800,
-      "entryHigh": 84500,
-      "stopLoss": 86200,
-      "target1": 81000,
-      "target2": 78500,
-      "holdingPeriod": "intraday~5거래일",
-      "committeeVote": "5/7",
-      "catalyst": "BTC down about 2% from Wednesday open as rate-hike expectations rose",
-      "reason": "Crypto weakness confirms cross-asset pressure but breakdown confirmation still required",
-      "risk": "Risk-on reversal after diplomatic headlines; squeeze",
-      "invalidation": "Sustained reclaim above 86200",
-      "quoteStatus": "LATEST_DAILY_REFERENCE_NOT_TICK_LIVE",
-      "priceTimestampKst": "2026-09-24T20:33:00+09:00"
+      "catalyst": "Crude remained elevated while energy shares showed positive relative strength in a risk-off tape",
+      "reason": "Diversifies short/rate exposure with inflation-sensitive leadership",
+      "risk": "US-Iran diplomatic progress can reverse crude quickly",
+      "invalidation": "Below 157.80 or crude breaks sharply lower",
+      "quoteStatus": "DELAYED_WEB_QUOTE",
+      "priceTimestampKst": "2026-09-24T23:31:00+09:00"
     }
   ],
   "topEvaluated": [
@@ -183,7 +183,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 1767.6
+        "ageMinutes": 1924.9
       }
     },
     {
@@ -211,7 +211,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 1767.6
+        "ageMinutes": 1924.9
       }
     },
     {
@@ -239,7 +239,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 1767.6
+        "ageMinutes": 1924.9
       }
     },
     {
@@ -267,7 +267,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 1767.6
+        "ageMinutes": 1924.9
       }
     },
     {
@@ -295,7 +295,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 1767.6
+        "ageMinutes": 1924.9
       }
     },
     {
@@ -323,7 +323,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 1767.6
+        "ageMinutes": 1924.9
       }
     },
     {
@@ -351,7 +351,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 1767.6
+        "ageMinutes": 1924.9
       }
     },
     {
@@ -379,7 +379,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 1767.6
+        "ageMinutes": 1924.9
       }
     },
     {
@@ -407,7 +407,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 1767.6
+        "ageMinutes": 1924.9
       }
     },
     {
@@ -435,7 +435,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 1767.6
+        "ageMinutes": 1924.9
       }
     },
     {
@@ -463,7 +463,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 1767.6
+        "ageMinutes": 1924.9
       }
     },
     {
@@ -491,7 +491,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 1767.6
+        "ageMinutes": 1924.9
       }
     },
     {
@@ -519,7 +519,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 1767.6
+        "ageMinutes": 1924.9
       }
     },
     {
@@ -547,7 +547,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 1767.6
+        "ageMinutes": 1924.9
       }
     },
     {
@@ -575,7 +575,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 1767.6
+        "ageMinutes": 1924.9
       }
     },
     {
@@ -603,7 +603,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 1767.6
+        "ageMinutes": 1924.9
       }
     },
     {
@@ -631,7 +631,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 1767.6
+        "ageMinutes": 1924.9
       }
     },
     {
@@ -659,7 +659,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 1767.6
+        "ageMinutes": 1924.9
       }
     },
     {
@@ -687,7 +687,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 1767.6
+        "ageMinutes": 1924.9
       }
     },
     {
@@ -715,7 +715,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 1767.6
+        "ageMinutes": 1924.9
       }
     },
     {
@@ -743,7 +743,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 1767.6
+        "ageMinutes": 1924.9
       }
     },
     {
@@ -771,7 +771,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 1767.6
+        "ageMinutes": 1924.9
       }
     },
     {
@@ -799,7 +799,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 1767.6
+        "ageMinutes": 1924.9
       }
     },
     {
@@ -827,7 +827,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 1767.6
+        "ageMinutes": 1924.9
       }
     },
     {
@@ -855,7 +855,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 1767.6
+        "ageMinutes": 1924.9
       }
     },
     {
@@ -883,63 +883,35 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 1767.6
-      }
-    },
-    {
-      "ticker": "XLK",
-      "name": "Technology Select Sector ETF",
-      "dailyScore": 89.09,
-      "relativeStrengthPercentile": 0.8817204301075269,
-      "dailySignalEligible": true,
-      "trigger": {
-        "ready": false,
-        "breakout": false,
-        "reclaim": false,
-        "volumeRatio": 0.0,
-        "volumeThreshold": 1.35,
-        "ema20": 193.584251,
-        "ema50": 194.358057,
-        "lastTimestamp": "2026-09-24T11:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/NONE",
-        "ict": {
-          "bias": "NEUTRAL",
-          "structure": "RANGE",
-          "event": "NONE",
-          "liquidity": "NONE",
-          "fvg": "BEARISH 192.8746~193.0200",
-          "score": -1
-        },
-        "fresh": true,
-        "ageMinutes": 12.6
+        "ageMinutes": 1924.9
       }
     },
     {
       "ticker": "FTNT",
       "name": "Fortinet, Inc. - Common Stock",
-      "dailyScore": 87.29,
-      "relativeStrengthPercentile": 0.8458149779735683,
+      "dailyScore": 87.73,
+      "relativeStrengthPercentile": 0.8546255506607929,
       "dailySignalEligible": true,
       "trigger": {
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.0,
+        "volumeRatio": 0.486,
         "volumeThreshold": 1.35,
-        "ema20": 177.604727,
-        "ema50": 177.457985,
-        "lastTimestamp": "2026-09-24T11:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/CHOCH_DOWN/NONE",
+        "ema20": 178.807529,
+        "ema50": 178.074186,
+        "lastTimestamp": "2026-09-24T14:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.49x/1.35x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
-          "bias": "NEUTRAL",
-          "structure": "BULLISH_HH_HL",
-          "event": "CHOCH_DOWN",
+          "bias": "BULLISH",
+          "structure": "RANGE",
+          "event": "BOS_UP",
           "liquidity": "NONE",
           "fvg": "BULLISH 177.4600~177.5500",
-          "score": 1
+          "score": 3
         },
         "fresh": true,
-        "ageMinutes": 12.6
+        "ageMinutes": 4.9
       }
     },
     {
@@ -950,52 +922,80 @@
       "dailySignalEligible": true,
       "trigger": {
         "ready": false,
-        "breakout": false,
+        "breakout": true,
         "reclaim": false,
-        "volumeRatio": 0.0,
+        "volumeRatio": 0.639,
         "volumeThreshold": 1.35,
-        "ema20": 150.154137,
-        "ema50": 149.230561,
-        "lastTimestamp": "2026-09-24T11:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=BULLISH/NONE/NONE",
+        "ema20": 150.964687,
+        "ema50": 149.920062,
+        "lastTimestamp": "2026-09-24T14:30:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=0.64x/1.35x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
           "bias": "BULLISH",
           "structure": "BULLISH_HH_HL",
-          "event": "NONE",
+          "event": "BOS_UP",
           "liquidity": "NONE",
-          "fvg": "BULLISH 150.2900~150.5649",
-          "score": 3
+          "fvg": "BULLISH 151.6400~152.2200",
+          "score": 5
         },
         "fresh": true,
-        "ageMinutes": 12.6
+        "ageMinutes": 4.9
       }
     },
     {
-      "ticker": "MU",
-      "name": "Micron Technology, Inc. - Common Stock",
-      "dailyScore": 85.9,
-      "relativeStrengthPercentile": 0.9779735682819384,
+      "ticker": "ASX",
+      "name": "ASE Technology Holding Co., Ltd. American Depositary Shares (each representing Two Common Shares)",
+      "dailyScore": 83.26,
+      "relativeStrengthPercentile": 0.9251101321585903,
       "dailySignalEligible": true,
       "trigger": {
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.0,
+        "volumeRatio": 0.939,
         "volumeThreshold": 1.35,
-        "ema20": 1053.415509,
-        "ema50": 1062.49783,
-        "lastTimestamp": "2026-09-24T11:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 43.171772,
+        "ema50": 43.460595,
+        "lastTimestamp": "2026-09-24T14:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.94x/1.35x; ICT=BEARISH/NONE/NONE",
         "ict": {
-          "bias": "NEUTRAL",
-          "structure": "RANGE",
+          "bias": "BEARISH",
+          "structure": "BEARISH_LH_LL",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BULLISH 1048.9500~1051.5700",
-          "score": 1
+          "fvg": "BEARISH 43.2500~43.2800",
+          "score": -3
         },
         "fresh": true,
-        "ageMinutes": 12.6
+        "ageMinutes": 4.9
+      }
+    },
+    {
+      "ticker": "FNGU",
+      "name": "MicroSectors FANG+ 3X Leveraged ETNs",
+      "dailyScore": 83.24,
+      "relativeStrengthPercentile": 0.9247311827956989,
+      "dailySignalEligible": true,
+      "trigger": {
+        "ready": false,
+        "breakout": false,
+        "reclaim": false,
+        "volumeRatio": 0.126,
+        "volumeThreshold": 1.35,
+        "ema20": 34.424087,
+        "ema50": 34.744669,
+        "lastTimestamp": "2026-09-24T14:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.13x/1.35x; ICT=BULLISH/BOS_UP/NONE",
+        "ict": {
+          "bias": "BULLISH",
+          "structure": "RANGE",
+          "event": "BOS_UP",
+          "liquidity": "NONE",
+          "fvg": "BULLISH 34.7100~34.7500",
+          "score": 3
+        },
+        "fresh": true,
+        "ageMinutes": 4.9
       }
     }
   ],
