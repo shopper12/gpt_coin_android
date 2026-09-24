@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-09-25T05:25:12.898745+09:00",
+  "generatedAtKst": "2026-09-25T07:51:08.646354+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
-    "shortlistCount": 430,
+    "shortlistCount": 429,
     "krEtfShortlistCount": 34,
-    "dailyMetricsCount": 415,
+    "dailyMetricsCount": 414,
     "dailyCandidateCount": 38,
     "krEtfDailyCandidateCount": 26,
     "strictDailyCandidateCount": 12,
@@ -29,132 +29,132 @@
   },
   "signals": [
     {
-      "id": "20260924-2330KST-MGM-SHORT",
-      "date": "2026-09-24",
-      "generatedAtKst": "2026-09-24T23:31:08+09:00",
-      "briefingSlot": "2330",
+      "id": "20260925-0750KST-SCHL-SHORT",
+      "date": "2026-09-25",
+      "generatedAtKst": "2026-09-25T07:50:02+09:00",
+      "briefingSlot": "0750",
       "assetClass": "STOCK",
       "market": "US",
-      "ticker": "MGM",
-      "name": "MGM Resorts International",
+      "ticker": "SCHL",
+      "name": "Scholastic Corporation",
       "direction": "SHORT",
-      "strategy": "Failed-takeover gap continuation",
+      "strategy": "Post-earnings after-hours breakdown",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "status": "IMMEDIATE",
-      "score": 94,
-      "confidence": 88,
-      "currentPrice": 34.04,
-      "referencePrice": 34.04,
+      "status": "CONDITIONAL",
+      "score": 92,
+      "confidence": 85,
+      "currentPrice": 30.41,
+      "referencePrice": 30.41,
       "currency": "USD",
-      "entryLow": 33.9,
-      "entryHigh": 34.2,
-      "stopLoss": 35.25,
-      "target1": 32.5,
-      "target2": 31.5,
+      "entryLow": 30.2,
+      "entryHigh": 31.0,
+      "stopLoss": 32.4,
+      "target1": 28.2,
+      "target2": 26.8,
       "holdingPeriod": "intraday~3거래일",
       "committeeVote": "6/7",
-      "catalyst": "People Inc withdrew $48.30/share take-private proposal; stock about -10% in morning trading while peer CZR was roughly flat",
-      "reason": "Deal-specific repricing persisted after the open and materially underperformed the broad market",
-      "risk": "Strategic transaction speculation revives or sharp gap-fill squeeze",
-      "invalidation": "Sustained reclaim above 35.25",
-      "quoteStatus": "REGULAR_SESSION_MORNING_VERIFIED",
-      "priceTimestampKst": "2026-09-24T23:25:00+09:00"
+      "catalyst": "Q1 FY2027 adjusted loss widened to -$3.63/share on $216.8m revenue; shares fell about 12.7% after hours despite maintained full-year guidance",
+      "reason": "Fresh after-hours earnings repricing is more direct than stale macro beta; continuation requires next regular session to hold below 31",
+      "risk": "Low liquidity, guidance relief, gap-fill squeeze",
+      "invalidation": "Sustained reclaim above 32.40",
+      "quoteStatus": "AFTER_HOURS_VERIFIED",
+      "priceTimestampKst": "2026-09-25T07:50:00+09:00"
     },
     {
-      "id": "20260924-2330KST-BTCUSD-SHORT",
-      "date": "2026-09-24",
-      "generatedAtKst": "2026-09-24T23:31:08+09:00",
-      "briefingSlot": "2330",
-      "assetClass": "CRYPTO",
-      "market": "GLOBAL",
-      "ticker": "BTC-USD",
-      "name": "Bitcoin",
-      "direction": "SHORT",
-      "strategy": "Failed breakout under hawkish repricing",
-      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "status": "IMMEDIATE",
-      "score": 89,
-      "confidence": 83,
-      "currentPrice": 83578.68,
-      "referencePrice": 83578.68,
-      "currency": "USD",
-      "entryLow": 83300,
-      "entryHigh": 83850,
-      "stopLoss": 85200,
-      "target1": 81000,
-      "target2": 79000,
-      "holdingPeriod": "intraday~5거래일",
-      "committeeVote": "5/7",
-      "catalyst": "BTC traded below $83k intraday as markets priced a steeper Fed-hike path; 10Y yield around 5.14%",
-      "reason": "24h asset confirms cross-asset risk-off and prior breakout failure",
-      "risk": "Diplomatic risk-on reversal or crypto short squeeze",
-      "invalidation": "Sustained reclaim above 85200",
-      "quoteStatus": "LIVE_WEB_VERIFIED",
-      "priceTimestampKst": "2026-09-24T23:31:00+09:00"
-    },
-    {
-      "id": "20260924-2330KST-TBT-LONG",
-      "date": "2026-09-24",
-      "generatedAtKst": "2026-09-24T23:31:08+09:00",
-      "briefingSlot": "2330",
+      "id": "20260925-0750KST-TBT-LONG",
+      "date": "2026-09-25",
+      "generatedAtKst": "2026-09-25T07:50:02+09:00",
+      "briefingSlot": "0750",
       "assetClass": "ETF",
       "market": "US",
       "ticker": "TBT",
       "name": "ProShares UltraShort 20+ Year Treasury",
       "direction": "LONG",
-      "strategy": "Long-yield breakout via inverse Treasury ETF",
+      "strategy": "Long-yield breakout continuation via inverse Treasury ETF",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "status": "CONDITIONAL",
+      "score": 90,
+      "confidence": 84,
+      "currentPrice": 40.81,
+      "referencePrice": 40.75,
+      "currency": "USD",
+      "entryLow": 40.35,
+      "entryHigh": 40.8,
+      "stopLoss": 39.55,
+      "target1": 42.0,
+      "target2": 43.2,
+      "holdingPeriod": "1~5거래일",
+      "committeeVote": "6/7",
+      "catalyst": "Global bond rout continued; US long yields remained above 5% while oil stayed elevated",
+      "reason": "TBT closed about +2.7% for a second strong session and TLT closed near 79.43, confirming the rate shock",
+      "risk": "US-Iran de-escalation can drop oil and yields quickly; leveraged ETF decay",
+      "invalidation": "TBT below 39.55 or US 10Y decisively back below 5.0%",
+      "quoteStatus": "AFTER_HOURS_VERIFIED",
+      "priceTimestampKst": "2026-09-25T07:50:00+09:00"
+    },
+    {
+      "id": "20260925-0750KST-CRL-LONG",
+      "date": "2026-09-25",
+      "generatedAtKst": "2026-09-25T07:50:02+09:00",
+      "briefingSlot": "0750",
+      "assetClass": "STOCK",
+      "market": "US",
+      "ticker": "CRL",
+      "name": "Charles River Laboratories",
+      "direction": "LONG",
+      "strategy": "Investor-day guidance and margin-target breakout",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
       "score": 87,
-      "confidence": 79,
-      "currentPrice": 39.67,
-      "referencePrice": 39.67,
+      "confidence": 80,
+      "currentPrice": 297.09,
+      "referencePrice": 297.09,
       "currency": "USD",
-      "entryLow": 39.8,
-      "entryHigh": 40.2,
-      "stopLoss": 39.1,
-      "target1": 41.3,
-      "target2": 42.2,
-      "holdingPeriod": "1~5거래일",
+      "entryLow": 292.0,
+      "entryHigh": 298.0,
+      "stopLoss": 283.5,
+      "target1": 312.0,
+      "target2": 325.0,
+      "holdingPeriod": "1~10거래일",
       "committeeVote": "5/7",
-      "catalyst": "US 10Y reached about 5.139% and 30Y about 5.438% as Fed-hike odds rose",
-      "reason": "Macro direction remains favorable but a trustworthy current-session TBT quote was not independently verified",
-      "risk": "Yield reversal; leveraged ETF decay; stale quote risk",
-      "invalidation": "10Y below 5.00% or TBT below 39.10",
-      "quoteStatus": "PRIOR_CLOSE_CURRENT_YIELD_PROXY_ONLY",
-      "priceTimestampKst": "2026-09-24T23:31:00+09:00"
+      "catalyst": "Investor Day reaffirmed 2026 revenue/EPS at upper ends of prior ranges and set 2030 organic growth 5-7%, ~24% non-GAAP margin and low-double-digit EPS CAGR targets",
+      "reason": "One of the strongest S&P 500 gainers in a flat index tape with company-specific fundamental catalyst",
+      "risk": "Investor-day enthusiasm fades; biotech demand or execution disappoints",
+      "invalidation": "Break below 283.50 or failure to hold breakout zone",
+      "quoteStatus": "REGULAR_CLOSE_VERIFIED",
+      "priceTimestampKst": "2026-09-25T07:50:00+09:00"
     },
     {
-      "id": "20260924-2330KST-XOM-LONG",
-      "date": "2026-09-24",
-      "generatedAtKst": "2026-09-24T23:31:08+09:00",
-      "briefingSlot": "2330",
-      "assetClass": "STOCK",
-      "market": "US",
-      "ticker": "XOM",
-      "name": "Exxon Mobil",
-      "direction": "LONG",
-      "strategy": "Energy relative-strength hedge",
+      "id": "20260925-0750KST-BTCUSD-SHORT",
+      "date": "2026-09-25",
+      "generatedAtKst": "2026-09-25T07:50:02+09:00",
+      "briefingSlot": "0750",
+      "assetClass": "CRYPTO",
+      "market": "GLOBAL",
+      "ticker": "BTC-USD",
+      "name": "Bitcoin",
+      "direction": "SHORT",
+      "strategy": "Failed-breakout continuation under high real-rate pressure",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
-      "score": 81,
-      "confidence": 73,
-      "currentPrice": 161.23,
-      "referencePrice": 161.23,
+      "score": 82,
+      "confidence": 75,
+      "currentPrice": 83578.68,
+      "referencePrice": 83578.68,
       "currency": "USD",
-      "entryLow": 160.5,
-      "entryHigh": 161.5,
-      "stopLoss": 157.8,
-      "target1": 166.0,
-      "target2": 170.0,
-      "holdingPeriod": "1~5거래일",
+      "entryLow": 83000,
+      "entryHigh": 84000,
+      "stopLoss": 85500,
+      "target1": 81000,
+      "target2": 79000,
+      "holdingPeriod": "intraday~5거래일",
       "committeeVote": "5/7",
-      "catalyst": "Crude remained elevated while energy shares showed positive relative strength in a risk-off tape",
-      "reason": "Diversifies short/rate exposure with inflation-sensitive leadership",
-      "risk": "US-Iran diplomatic progress can reverse crude quickly",
-      "invalidation": "Below 157.80 or crude breaks sharply lower",
-      "quoteStatus": "DELAYED_WEB_QUOTE",
-      "priceTimestampKst": "2026-09-24T23:31:00+09:00"
+      "catalyst": "BTC remained below the failed 86-87k breakout zone while Treasury yields and crude stayed elevated",
+      "reason": "24h risk asset still lags while macro discount-rate pressure persists",
+      "risk": "Diplomatic de-escalation or crypto-specific short squeeze",
+      "invalidation": "Sustained reclaim above 85500",
+      "quoteStatus": "LAST_WEB_VERIFIED_STALE",
+      "priceTimestampKst": "2026-09-25T07:50:00+09:00"
     }
   ],
   "topEvaluated": [
@@ -168,12 +168,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.289,
+        "volumeRatio": 0.161,
         "volumeThreshold": 1.2,
         "ema20": 16418.758696,
         "ema50": 16509.097453,
         "lastTimestamp": "2026-09-23T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.29x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "breakout=False; reclaim=False; volume=0.16x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "BEARISH_LH_LL",
@@ -183,7 +183,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 2277.7
+        "ageMinutes": 2423.1
       }
     },
     {
@@ -196,12 +196,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.938,
+        "volumeRatio": 1.852,
         "volumeThreshold": 1.2,
         "ema20": 147456.899781,
         "ema50": 146241.78,
         "lastTimestamp": "2026-09-23T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.94x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "breakout=False; reclaim=False; volume=1.85x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
@@ -211,7 +211,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 2277.7
+        "ageMinutes": 2423.1
       }
     },
     {
@@ -239,7 +239,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2277.7
+        "ageMinutes": 2423.1
       }
     },
     {
@@ -267,7 +267,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2277.7
+        "ageMinutes": 2423.1
       }
     },
     {
@@ -295,7 +295,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2277.7
+        "ageMinutes": 2423.1
       }
     },
     {
@@ -323,7 +323,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2277.7
+        "ageMinutes": 2423.1
       }
     },
     {
@@ -336,12 +336,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.12,
+        "volumeRatio": 0.06,
         "volumeThreshold": 1.2,
         "ema20": 112934.688153,
         "ema50": 112759.154818,
         "lastTimestamp": "2026-09-23T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.12x/1.20x; ICT=BULLISH/BOS_UP/NONE",
+        "reason": "breakout=False; reclaim=False; volume=0.06x/1.20x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
           "bias": "BULLISH",
           "structure": "RANGE",
@@ -351,7 +351,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2277.7
+        "ageMinutes": 2423.1
       }
     },
     {
@@ -379,7 +379,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2277.7
+        "ageMinutes": 2423.1
       }
     },
     {
@@ -407,7 +407,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2277.7
+        "ageMinutes": 2423.1
       }
     },
     {
@@ -435,7 +435,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2277.7
+        "ageMinutes": 2423.1
       }
     },
     {
@@ -463,7 +463,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2277.7
+        "ageMinutes": 2423.1
       }
     },
     {
@@ -491,7 +491,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2277.7
+        "ageMinutes": 2423.1
       }
     },
     {
@@ -519,7 +519,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2277.7
+        "ageMinutes": 2423.1
       }
     },
     {
@@ -547,7 +547,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 2277.7
+        "ageMinutes": 2423.1
       }
     },
     {
@@ -575,7 +575,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2277.7
+        "ageMinutes": 2423.1
       }
     },
     {
@@ -603,7 +603,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2277.7
+        "ageMinutes": 2423.1
       }
     },
     {
@@ -616,12 +616,12 @@
         "ready": false,
         "breakout": true,
         "reclaim": false,
-        "volumeRatio": 0.501,
+        "volumeRatio": 0.072,
         "volumeThreshold": 1.2,
         "ema20": 14324.736381,
         "ema50": 14297.29254,
         "lastTimestamp": "2026-09-23T06:30:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=0.50x/1.20x; ICT=BULLISH/BOS_UP/NONE",
+        "reason": "breakout=True; reclaim=False; volume=0.07x/1.20x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
           "bias": "BULLISH",
           "structure": "RANGE",
@@ -631,7 +631,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2277.7
+        "ageMinutes": 2423.1
       }
     },
     {
@@ -644,12 +644,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.686,
+        "volumeRatio": 0.861,
         "volumeThreshold": 1.2,
         "ema20": 9970.226772,
         "ema50": 10009.808244,
         "lastTimestamp": "2026-09-23T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.69x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "breakout=False; reclaim=False; volume=0.86x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
@@ -659,7 +659,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 2277.7
+        "ageMinutes": 2423.1
       }
     },
     {
@@ -687,7 +687,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 2277.7
+        "ageMinutes": 2423.1
       }
     },
     {
@@ -715,7 +715,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2277.7
+        "ageMinutes": 2423.1
       }
     },
     {
@@ -728,12 +728,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 5.528,
+        "volumeRatio": 6.057,
         "volumeThreshold": 1.2,
         "ema20": 26715.210072,
         "ema50": 26911.657302,
         "lastTimestamp": "2026-09-23T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=5.53x/1.20x; ICT=BULLISH/BOS_UP/NONE",
+        "reason": "breakout=False; reclaim=False; volume=6.06x/1.20x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
           "bias": "BULLISH",
           "structure": "RANGE",
@@ -743,7 +743,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2277.7
+        "ageMinutes": 2423.1
       }
     },
     {
@@ -771,7 +771,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 2277.7
+        "ageMinutes": 2423.1
       }
     },
     {
@@ -799,7 +799,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2277.7
+        "ageMinutes": 2423.1
       }
     },
     {
@@ -827,7 +827,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 2277.7
+        "ageMinutes": 2423.1
       }
     },
     {
@@ -855,7 +855,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2277.7
+        "ageMinutes": 2423.1
       }
     },
     {
@@ -883,7 +883,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 2277.7
+        "ageMinutes": 2423.1
       }
     },
     {
@@ -898,20 +898,20 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.35,
-        "ema20": 179.589002,
-        "ema50": 179.09517,
-        "lastTimestamp": "2026-09-24T20:15:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=BEARISH/BOS_DOWN/NONE",
+        "ema20": 179.051766,
+        "ema50": 178.979463,
+        "lastTimestamp": "2026-09-24T22:51:28+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
-          "bias": "BEARISH",
+          "bias": "NEUTRAL",
           "structure": "RANGE",
-          "event": "BOS_DOWN",
+          "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BEARISH 178.7000~179.5303",
-          "score": -3
+          "fvg": "BEARISH 178.5303~178.6700",
+          "score": -1
         },
         "fresh": true,
-        "ageMinutes": 12.7
+        "ageMinutes": 1.6
       }
     },
     {
@@ -926,20 +926,20 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.35,
-        "ema20": 152.748735,
-        "ema50": 151.769944,
-        "lastTimestamp": "2026-09-24T20:15:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 152.335131,
+        "ema50": 151.899028,
+        "lastTimestamp": "2026-09-24T22:45:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=BEARISH/NONE/NONE",
         "ict": {
-          "bias": "NEUTRAL",
-          "structure": "RANGE",
+          "bias": "BEARISH",
+          "structure": "BEARISH_LH_LL",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BULLISH 152.0700~152.9600",
-          "score": 1
+          "fvg": "BEARISH 152.3000~152.3600",
+          "score": -3
         },
         "fresh": true,
-        "ageMinutes": 12.7
+        "ageMinutes": 8.1
       }
     },
     {
@@ -954,20 +954,20 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.35,
-        "ema20": 196.983078,
-        "ema50": 194.497562,
-        "lastTimestamp": "2026-09-24T20:15:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=BULLISH/BOS_UP/NONE",
+        "ema20": 198.885248,
+        "ema50": 196.202217,
+        "lastTimestamp": "2026-09-24T22:45:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
-          "bias": "BULLISH",
-          "structure": "BULLISH_HH_HL",
-          "event": "BOS_UP",
+          "bias": "NEUTRAL",
+          "structure": "RANGE",
+          "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BULLISH 196.2900~197.9500",
-          "score": 5
+          "fvg": "BEARISH 200.4000~200.6000",
+          "score": -1
         },
         "fresh": true,
-        "ageMinutes": 12.7
+        "ageMinutes": 8.1
       }
     },
     {
@@ -982,20 +982,20 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.35,
-        "ema20": 35.339365,
-        "ema50": 35.120471,
-        "lastTimestamp": "2026-09-24T20:15:00+00:00",
+        "ema20": 35.411418,
+        "ema50": 35.209096,
+        "lastTimestamp": "2026-09-24T22:15:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
-          "structure": "BULLISH_HH_HL",
+          "structure": "RANGE",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BEARISH 35.5000~35.5500",
-          "score": 1
+          "fvg": "BEARISH 35.4850~35.5381",
+          "score": -1
         },
         "fresh": true,
-        "ageMinutes": 12.7
+        "ageMinutes": 38.1
       }
     }
   ],
