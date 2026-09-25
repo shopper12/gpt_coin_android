@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-09-25T16:36:15.475892+09:00",
+  "generatedAtKst": "2026-09-25T20:49:24.046788+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
-    "shortlistCount": 430,
+    "shortlistCount": 429,
     "krEtfShortlistCount": 34,
     "dailyMetricsCount": 413,
     "dailyCandidateCount": 38,
@@ -29,116 +29,52 @@
   },
   "signals": [
     {
-      "id": "20260925-1130KST-BRENT-LONG",
+      "id": "20260925-2050KST-AKAM-LONG",
       "date": "2026-09-25",
-      "generatedAtKst": "2026-09-25T11:31:24+09:00",
-      "briefingSlot": "1130",
-      "assetClass": "COMMODITY",
-      "market": "GLOBAL",
-      "ticker": "BRENT",
-      "name": "Brent Crude Oil",
-      "direction": "LONG",
-      "strategy": "Oil breakout continuation",
-      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "status": "IMMEDIATE",
-      "score": 93,
-      "confidence": 87,
-      "currentPrice": 100.796,
-      "referencePrice": 100.796,
-      "currency": "USD",
-      "entryLow": 100.2,
-      "entryHigh": 101.1,
-      "stopLoss": 98.8,
-      "target1": 103.5,
-      "target2": 106.0,
-      "holdingPeriod": "intraday~3거래일",
-      "committeeVote": "6/7",
-      "catalyst": "Brent remained above $100 in Asian trading amid persistent Middle East supply risk",
-      "reason": "Best live cross-asset momentum with direct inflation/supply catalyst while Korea is closed",
-      "risk": "US-Iran de-escalation or Hormuz reopening headlines can reverse oil rapidly",
-      "invalidation": "Sustained break below 98.80",
-      "quoteStatus": "LIVE_WEB_VERIFIED",
-      "priceTimestampKst": "2026-09-25T11:31:00+09:00"
-    },
-    {
-      "id": "20260925-1130KST-BTCUSD-LONG",
-      "date": "2026-09-25",
-      "generatedAtKst": "2026-09-25T11:31:24+09:00",
-      "briefingSlot": "1130",
-      "assetClass": "CRYPTO",
-      "market": "GLOBAL",
-      "ticker": "BTC-USD",
-      "name": "Bitcoin",
-      "direction": "LONG",
-      "strategy": "Intraday reversal after failed breakdown",
-      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "status": "CONDITIONAL",
-      "score": 87,
-      "confidence": 79,
-      "currentPrice": 84567.92,
-      "referencePrice": 84567.92,
-      "currency": "USD",
-      "entryLow": 84650,
-      "entryHigh": 85000,
-      "stopLoss": 83750,
-      "target1": 86200,
-      "target2": 87300,
-      "holdingPeriod": "intraday~3거래일",
-      "committeeVote": "5/7",
-      "catalyst": "BTC recovered from Sep-24 low near 82.9k to 84.5k despite yields staying elevated",
-      "reason": "The prior short thesis weakened as the 24h market reclaimed the prior close and approached the session high",
-      "risk": "US 10Y above 5.1% and oil inflation can re-pressure risk assets",
-      "invalidation": "Break back below 83.75k",
-      "quoteStatus": "LIVE_WEB_VERIFIED",
-      "priceTimestampKst": "2026-09-25T11:31:00+09:00"
-    },
-    {
-      "id": "20260925-1130KST-TBT-LONG",
-      "date": "2026-09-25",
-      "generatedAtKst": "2026-09-25T11:31:24+09:00",
-      "briefingSlot": "1130",
-      "assetClass": "ETF",
+      "generatedAtKst": "2026-09-25T20:48:00+09:00",
+      "briefingSlot": "2050",
+      "assetClass": "STOCK",
       "market": "US",
-      "ticker": "TBT",
-      "name": "ProShares UltraShort 20+ Year Treasury",
+      "ticker": "AKAM",
+      "name": "Akamai Technologies",
       "direction": "LONG",
-      "strategy": "Long-yield breakout continuation via inverse Treasury ETF",
+      "strategy": "Major-contract gap continuation",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
-      "score": 86,
-      "confidence": 80,
-      "currentPrice": 40.81,
-      "referencePrice": 40.75,
+      "score": 96,
+      "confidence": 91,
+      "currentPrice": 134.33,
+      "referencePrice": 110.41,
       "currency": "USD",
-      "entryLow": 40.35,
-      "entryHigh": 40.8,
-      "stopLoss": 39.55,
-      "target1": 42.0,
-      "target2": 43.2,
-      "holdingPeriod": "1~5거래일",
-      "committeeVote": "5/7",
-      "catalyst": "US 10Y around 5.16% and 30Y around 5.46% keep the bond-rout thesis intact",
-      "reason": "Two-session breakout remains valid, but the ETF itself is not in the US regular session now",
-      "risk": "Yield reversal on geopolitical de-escalation; leveraged ETF decay",
-      "invalidation": "TBT below 39.55 or US 10Y decisively below 5.0%",
-      "quoteStatus": "LAST_AFTER_HOURS_VERIFIED",
-      "priceTimestampKst": "2026-09-25T11:31:00+09:00"
+      "entryLow": 131.5,
+      "entryHigh": 134.5,
+      "stopLoss": 126.8,
+      "target1": 142.0,
+      "target2": 150.0,
+      "holdingPeriod": "intraday~5거래일",
+      "committeeVote": "6/7",
+      "catalyst": "Anthropic committed about $11.6B over seven years to Akamai cloud services; premarket about +21.7% on 2.1x relative volume",
+      "reason": "Strongest verified fresh catalyst and cross-sectional excess return in US premarket",
+      "risk": "Large gap, approximately $5.5B related capex, warrant dilution and gap-fill risk",
+      "invalidation": "Regular-session loss of 126.80 or rapid failure below opening VWAP",
+      "quoteStatus": "PREMARKET_WEB_VERIFIED",
+      "priceTimestampKst": "2026-09-25T20:48:00+09:00"
     },
     {
-      "id": "20260925-1130KST-SCHL-SHORT",
+      "id": "20260925-2050KST-SCHL-SHORT",
       "date": "2026-09-25",
-      "generatedAtKst": "2026-09-25T11:31:24+09:00",
-      "briefingSlot": "1130",
+      "generatedAtKst": "2026-09-25T20:48:00+09:00",
+      "briefingSlot": "2050",
       "assetClass": "STOCK",
       "market": "US",
       "ticker": "SCHL",
       "name": "Scholastic Corporation",
       "direction": "SHORT",
-      "strategy": "Post-earnings breakdown confirmation",
+      "strategy": "Post-earnings gap-down continuation",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
-      "score": 84,
-      "confidence": 78,
+      "score": 89,
+      "confidence": 82,
       "currentPrice": 30.41,
       "referencePrice": 30.41,
       "currency": "USD",
@@ -149,12 +85,76 @@
       "target2": 26.8,
       "holdingPeriod": "intraday~3거래일",
       "committeeVote": "5/7",
-      "catalyst": "Weak quarterly result drove about a 12.7% after-hours repricing",
-      "reason": "Fresh company-specific negative catalyst remains cleaner than broad index shorts, but regular-session gap survival is untested",
-      "risk": "Low liquidity, guidance relief and gap-fill squeeze",
+      "catalyst": "Weak quarterly results caused roughly 12.7% after-hours repricing",
+      "reason": "Fresh negative company-specific catalyst with clean downside gap, pending regular-session gap survival",
+      "risk": "Low liquidity and gap-fill squeeze",
       "invalidation": "Sustained reclaim above 32.40",
       "quoteStatus": "LAST_AFTER_HOURS_VERIFIED",
-      "priceTimestampKst": "2026-09-25T11:31:00+09:00"
+      "priceTimestampKst": "2026-09-25T20:48:00+09:00"
+    },
+    {
+      "id": "20260925-2050KST-TLT-LONG",
+      "date": "2026-09-25",
+      "generatedAtKst": "2026-09-25T20:48:00+09:00",
+      "briefingSlot": "2050",
+      "assetClass": "ETF",
+      "market": "US",
+      "ticker": "TLT",
+      "name": "iShares 20+ Year Treasury Bond ETF",
+      "direction": "LONG",
+      "strategy": "Oversold duration reversal on yield pullback",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "status": "CONDITIONAL",
+      "score": 84,
+      "confidence": 76,
+      "currentPrice": 80.34,
+      "referencePrice": 79.42,
+      "currency": "USD",
+      "entryLow": 80.15,
+      "entryHigh": 80.45,
+      "stopLoss": 79.35,
+      "target1": 81.5,
+      "target2": 82.2,
+      "holdingPeriod": "intraday~3거래일",
+      "committeeVote": "5/7",
+      "catalyst": "US 10Y eased toward 5.17% after a 5.225% peak while oil retreated and TLT premarket rebounded",
+      "reason": "Counter-trend reversal now has live premarket confirmation but still fights the multi-day bond selloff",
+      "risk": "Renewed oil spike or hawkish repricing can send yields back to highs",
+      "invalidation": "Below 79.35 or 10Y reclaims 5.23%",
+      "quoteStatus": "PREMARKET_WEB_VERIFIED",
+      "priceTimestampKst": "2026-09-25T20:48:00+09:00"
+    },
+    {
+      "id": "20260925-2050KST-BTCUSD-WATCH",
+      "date": "2026-09-25",
+      "generatedAtKst": "2026-09-25T20:48:00+09:00",
+      "briefingSlot": "2050",
+      "assetClass": "CRYPTO",
+      "market": "GLOBAL",
+      "ticker": "BTC-USD",
+      "name": "Bitcoin",
+      "direction": "LONG",
+      "strategy": "Range-break confirmation",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "status": "CONDITIONAL",
+      "score": 78,
+      "confidence": 70,
+      "currentPrice": 84231.19,
+      "referencePrice": 84382.4,
+      "currency": "USD",
+      "entryLow": 84890,
+      "entryHigh": 85200,
+      "stopLoss": 83800,
+      "target1": 86500,
+      "target2": 87300,
+      "holdingPeriod": "intraday~3거래일",
+      "committeeVote": "4/7",
+      "catalyst": "BTC remains near 84.2k while US equity futures improve, but has not cleared today's 84.9k high",
+      "reason": "24h liquidity provides diversification, but current range lacks enough confirmation for immediate direction",
+      "risk": "High Treasury yields and Q3 crypto options expiry can amplify whipsaw",
+      "invalidation": "Below 83.8k",
+      "quoteStatus": "LIVE_WEB_VERIFIED",
+      "priceTimestampKst": "2026-09-25T20:48:00+09:00"
     }
   ],
   "topEvaluated": [
@@ -183,7 +183,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 2948.1
+        "ageMinutes": 3201.5
       }
     },
     {
@@ -211,7 +211,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 2948.1
+        "ageMinutes": 3201.5
       }
     },
     {
@@ -239,7 +239,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2948.1
+        "ageMinutes": 3201.5
       }
     },
     {
@@ -267,7 +267,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2948.1
+        "ageMinutes": 3201.5
       }
     },
     {
@@ -295,7 +295,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2948.1
+        "ageMinutes": 3201.5
       }
     },
     {
@@ -323,7 +323,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2948.1
+        "ageMinutes": 3201.5
       }
     },
     {
@@ -351,7 +351,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2948.1
+        "ageMinutes": 3201.5
       }
     },
     {
@@ -379,7 +379,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2948.1
+        "ageMinutes": 3201.5
       }
     },
     {
@@ -407,7 +407,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2948.1
+        "ageMinutes": 3201.5
       }
     },
     {
@@ -435,7 +435,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2948.1
+        "ageMinutes": 3201.5
       }
     },
     {
@@ -463,7 +463,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2948.1
+        "ageMinutes": 3201.5
       }
     },
     {
@@ -491,7 +491,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2948.1
+        "ageMinutes": 3201.5
       }
     },
     {
@@ -519,7 +519,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2948.1
+        "ageMinutes": 3201.5
       }
     },
     {
@@ -547,7 +547,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 2948.1
+        "ageMinutes": 3201.5
       }
     },
     {
@@ -575,7 +575,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2948.1
+        "ageMinutes": 3201.5
       }
     },
     {
@@ -603,7 +603,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2948.1
+        "ageMinutes": 3201.5
       }
     },
     {
@@ -631,7 +631,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2948.1
+        "ageMinutes": 3201.5
       }
     },
     {
@@ -659,7 +659,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 2948.1
+        "ageMinutes": 3201.5
       }
     },
     {
@@ -687,7 +687,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 2948.1
+        "ageMinutes": 3201.5
       }
     },
     {
@@ -715,7 +715,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2948.1
+        "ageMinutes": 3201.5
       }
     },
     {
@@ -743,7 +743,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2948.1
+        "ageMinutes": 3201.5
       }
     },
     {
@@ -771,7 +771,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 2948.1
+        "ageMinutes": 3201.5
       }
     },
     {
@@ -799,7 +799,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2948.1
+        "ageMinutes": 3201.5
       }
     },
     {
@@ -827,7 +827,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 2948.1
+        "ageMinutes": 3201.5
       }
     },
     {
@@ -855,7 +855,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2948.1
+        "ageMinutes": 3201.5
       }
     },
     {
@@ -883,7 +883,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 2948.1
+        "ageMinutes": 3201.5
       }
     },
     {
@@ -898,20 +898,20 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.35,
-        "ema20": 178.878097,
-        "ema50": 178.914129,
-        "lastTimestamp": "2026-09-24T23:45:00+00:00",
+        "ema20": 178.724852,
+        "ema50": 178.737223,
+        "lastTimestamp": "2026-09-25T11:45:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BEARISH 178.7000~179.5303",
-          "score": -1
+          "fvg": "BULLISH 179.5389~179.7119",
+          "score": 1
         },
-        "fresh": false,
-        "ageMinutes": 473.1
+        "fresh": true,
+        "ageMinutes": 6.5
       }
     },
     {
@@ -926,20 +926,20 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.35,
-        "ema20": 152.008869,
-        "ema50": 151.821632,
-        "lastTimestamp": "2026-09-24T23:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=BEARISH/BOS_DOWN/NONE",
+        "ema20": 149.708838,
+        "ema50": 150.590398,
+        "lastTimestamp": "2026-09-25T11:45:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
-          "bias": "BEARISH",
-          "structure": "BEARISH_LH_LL",
-          "event": "BOS_DOWN",
+          "bias": "NEUTRAL",
+          "structure": "RANGE",
+          "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BEARISH 151.2000~151.2600",
-          "score": -5
+          "fvg": "BEARISH 148.8300~149.4900",
+          "score": -1
         },
-        "fresh": false,
-        "ageMinutes": 473.1
+        "fresh": true,
+        "ageMinutes": 6.5
       }
     },
     {
@@ -951,23 +951,23 @@
       "trigger": {
         "ready": false,
         "breakout": false,
-        "reclaim": true,
+        "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.35,
-        "ema20": 198.804864,
-        "ema50": 196.461434,
-        "lastTimestamp": "2026-09-24T23:45:00+00:00",
-        "reason": "breakout=False; reclaim=True; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 199.495822,
+        "ema50": 197.203476,
+        "lastTimestamp": "2026-09-25T11:45:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BEARISH 199.9800~200.4100",
-          "score": -1
+          "fvg": "BULLISH 200.5000~200.9500",
+          "score": 1
         },
-        "fresh": false,
-        "ageMinutes": 473.1
+        "fresh": true,
+        "ageMinutes": 6.5
       }
     },
     {
@@ -982,20 +982,20 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.35,
-        "ema20": 35.431187,
-        "ema50": 35.248327,
-        "lastTimestamp": "2026-09-24T23:45:00+00:00",
+        "ema20": 35.899606,
+        "ema50": 35.569709,
+        "lastTimestamp": "2026-09-25T11:49:57+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
-          "structure": "RANGE",
+          "structure": "BULLISH_HH_HL",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BEARISH 35.4200~35.4992",
-          "score": -1
+          "fvg": "BEARISH 36.1200~36.1423",
+          "score": 1
         },
-        "fresh": false,
-        "ageMinutes": 473.1
+        "fresh": true,
+        "ageMinutes": 1.5
       }
     }
   ],
