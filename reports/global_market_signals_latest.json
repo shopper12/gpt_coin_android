@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-09-27T10:52:09.075144+09:00",
+  "generatedAtKst": "2026-09-27T11:29:22.641996+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
@@ -17,7 +17,7 @@
     "scannerSignalCount": 0,
     "chatgptSignalCount": 4,
     "krEtfSignalCount": 0,
-    "dailyCacheHit": false,
+    "dailyCacheHit": true,
     "maxSignalAgeMinutes": 45
   },
   "marketRegime": {
@@ -29,42 +29,106 @@
   },
   "signals": [
     {
-      "id": "20260927-0750KST-JTO-LONG",
+      "id": "20260927-1130KST-ENA-LONG",
       "date": "2026-09-27",
-      "generatedAtKst": "2026-09-27T07:50:00+09:00",
-      "briefingSlot": "0750",
+      "generatedAtKst": "2026-09-27T11:30:00+09:00",
+      "briefingSlot": "1130",
+      "assetClass": "CRYPTO",
+      "market": "GLOBAL",
+      "ticker": "ENA-USD",
+      "name": "Ethena",
+      "direction": "LONG",
+      "strategy": "Liquid alt leadership pullback",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "status": "IMMEDIATE",
+      "score": 92,
+      "confidence": 84,
+      "currentPrice": 0.2773,
+      "referencePrice": 0.2773,
+      "currency": "USD",
+      "entryLow": 0.27,
+      "entryHigh": 0.279,
+      "stopLoss": 0.258,
+      "target1": 0.3,
+      "target2": 0.32,
+      "holdingPeriod": "intraday~3days",
+      "committeeVote": "6/7",
+      "catalyst": "24h gain about 23.8% with $1.27B volume and sustained alt breadth",
+      "reason": "Best verified combination of liquidity, momentum and manageable entry location among open weekend markets",
+      "risk": "Supply-overhang narrative and broad alt reversal",
+      "invalidation": "Sustained loss of 0.258",
+      "quoteStatus": "LIVE_WEB_REFERENCE",
+      "priceTimestampKst": "2026-09-27T11:27:00+09:00"
+    },
+    {
+      "id": "20260927-1130KST-JTO-LONG",
+      "date": "2026-09-27",
+      "generatedAtKst": "2026-09-27T11:30:00+09:00",
+      "briefingSlot": "1130",
       "assetClass": "CRYPTO",
       "market": "GLOBAL",
       "ticker": "JTO-USD",
       "name": "Jito",
       "direction": "LONG",
-      "strategy": "Weekend alt continuation with controlled extension",
+      "strategy": "Continuation with controlled extension",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "status": "IMMEDIATE",
-      "score": 88,
-      "confidence": 81,
-      "currentPrice": 0.581,
-      "referencePrice": 0.581,
+      "status": "CONDITIONAL",
+      "score": 85,
+      "confidence": 77,
+      "currentPrice": 0.58,
+      "referencePrice": 0.58,
       "currency": "USD",
-      "entryLow": 0.565,
-      "entryHigh": 0.585,
-      "stopLoss": 0.545,
-      "target1": 0.63,
-      "target2": 0.67,
+      "entryLow": 0.56,
+      "entryHigh": 0.58,
+      "stopLoss": 0.54,
+      "target1": 0.62,
+      "target2": 0.66,
       "holdingPeriod": "intraday~3days",
       "committeeVote": "5/7",
-      "catalyst": "Multi-day alt breadth continuation with JTO holding near recent highs while BTC consolidates",
-      "reason": "Best current balance of verified price, manageable extension and upside/downside among liquid weekend candidates",
-      "risk": "Broad alt-beta reversal and two-day extension",
-      "invalidation": "Sustained loss of 0.545",
-      "quoteStatus": "LIVE_WEB_REFERENCE",
-      "priceTimestampKst": "2026-09-27T07:50:00+09:00"
+      "catalyst": "Multi-day continuation while BTC consolidates",
+      "reason": "Still offers better extension-adjusted R/R than parabolic leaders",
+      "risk": "Alt-beta reversal and fading continuation",
+      "invalidation": "Sustained loss of 0.54",
+      "quoteStatus": "RECENT_WEB_REFERENCE",
+      "priceTimestampKst": "2026-09-27T11:27:00+09:00"
     },
     {
-      "id": "20260927-0750KST-QNT-LONG",
+      "id": "20260927-1130KST-BTC-DEFENSIVE-LONG",
       "date": "2026-09-27",
-      "generatedAtKst": "2026-09-27T07:50:00+09:00",
-      "briefingSlot": "0750",
+      "generatedAtKst": "2026-09-27T11:30:00+09:00",
+      "briefingSlot": "1130",
+      "assetClass": "CRYPTO",
+      "market": "GLOBAL",
+      "ticker": "BTC-USD",
+      "name": "Bitcoin",
+      "direction": "LONG",
+      "strategy": "Defensive crypto core",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "status": "IMMEDIATE",
+      "score": 82,
+      "confidence": 80,
+      "currentPrice": 84477.26,
+      "referencePrice": 84477.26,
+      "currency": "USD",
+      "entryLow": 83800,
+      "entryHigh": 84500,
+      "stopLoss": 82400,
+      "target1": 86500,
+      "target2": 88200,
+      "holdingPeriod": "intraday~5days",
+      "committeeVote": "5/7",
+      "catalyst": "BTC stable near 84K while global crypto market cap is near $2.99T",
+      "reason": "Lower-beta exposure while alt leaders are increasingly extended",
+      "risk": "Loss of the 83K area and broad crypto deleveraging",
+      "invalidation": "Sustained loss of 82400",
+      "quoteStatus": "LIVE_WEB_REFERENCE",
+      "priceTimestampKst": "2026-09-27T11:27:00+09:00"
+    },
+    {
+      "id": "20260927-1130KST-QNT-LONG",
+      "date": "2026-09-27",
+      "generatedAtKst": "2026-09-27T11:30:00+09:00",
+      "briefingSlot": "1130",
       "assetClass": "CRYPTO",
       "market": "GLOBAL",
       "ticker": "QNT-USD",
@@ -73,88 +137,24 @@
       "strategy": "Institutional-tokenization breakout pullback",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
-      "score": 86,
-      "confidence": 80,
-      "currentPrice": 129.37,
-      "referencePrice": 129.37,
+      "score": 80,
+      "confidence": 75,
+      "currentPrice": 181.08,
+      "referencePrice": 181.08,
       "currency": "USD",
-      "entryLow": 118.0,
-      "entryHigh": 124.0,
-      "stopLoss": 112.0,
-      "target1": 138.0,
-      "target2": 148.0,
+      "entryLow": 158,
+      "entryHigh": 170,
+      "stopLoss": 149,
+      "target1": 195,
+      "target2": 210,
       "holdingPeriod": "intraday~3days",
       "committeeVote": "5/7",
-      "catalyst": "The Clearing House technology-partner selection plus roughly 33% 24h momentum",
-      "reason": "Strongest documented idiosyncratic catalyst, but current extension makes pullback entry mandatory",
-      "risk": "Post-event exhaustion after extreme weekly and daily gains",
-      "invalidation": "Sustained loss of 112",
+      "catalyst": "Documented banking-tokenization catalyst plus extreme relative strength",
+      "reason": "Strongest catalyst and raw momentum, but current parabolic extension makes chase unacceptable",
+      "risk": "Blow-off reversal after roughly 84% 24h move",
+      "invalidation": "Sustained loss of 149 after entry",
       "quoteStatus": "LIVE_WEB_REFERENCE",
-      "priceTimestampKst": "2026-09-27T07:50:00+09:00"
-    },
-    {
-      "id": "20260927-0750KST-BTC-DEFENSIVE-LONG",
-      "date": "2026-09-27",
-      "generatedAtKst": "2026-09-27T07:50:00+09:00",
-      "briefingSlot": "0750",
-      "assetClass": "CRYPTO",
-      "market": "GLOBAL",
-      "ticker": "BTC-USD",
-      "name": "Bitcoin",
-      "direction": "LONG",
-      "strategy": "Defensive crypto core while alt breadth is extended",
-      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "status": "IMMEDIATE",
-      "score": 81,
-      "confidence": 78,
-      "currentPrice": 84316.16,
-      "referencePrice": 84316.16,
-      "currency": "USD",
-      "entryLow": 83200.0,
-      "entryHigh": 84400.0,
-      "stopLoss": 81900.0,
-      "target1": 86800.0,
-      "target2": 88500.0,
-      "holdingPeriod": "intraday~5days",
-      "committeeVote": "5/7",
-      "catalyst": "BTC holding near 84K while the broader crypto market expands and recent ETF inflows support the core asset",
-      "reason": "Lower-beta way to retain crypto exposure when mid-cap leaders are extremely extended",
-      "risk": "Breakdown below the recent 82.5K support zone",
-      "invalidation": "Sustained loss of 81900",
-      "quoteStatus": "LIVE_WEB_REFERENCE",
-      "priceTimestampKst": "2026-09-27T07:50:00+09:00"
-    },
-    {
-      "id": "20260927-0750KST-PHA-SHORT",
-      "date": "2026-09-27",
-      "generatedAtKst": "2026-09-27T07:50:00+09:00",
-      "briefingSlot": "0750",
-      "assetClass": "CRYPTO",
-      "market": "GLOBAL",
-      "ticker": "PHA-USD",
-      "name": "Phala Network",
-      "direction": "SHORT",
-      "strategy": "Failed-parabolic-breakout reversal",
-      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "status": "CONDITIONAL",
-      "score": 78,
-      "confidence": 72,
-      "currentPrice": 0.085,
-      "referencePrice": 0.085,
-      "currency": "USD",
-      "entryLow": 0.079,
-      "entryHigh": 0.082,
-      "stopLoss": 0.09,
-      "target1": 0.068,
-      "target2": 0.06,
-      "holdingPeriod": "intraday~2days",
-      "committeeVote": "5/7",
-      "catalyst": "Approximately 67% 24h surge with volume near market-cap scale creates a high-volatility exhaustion setup if 0.08 fails",
-      "reason": "Best verified reversal candidate, but short activates only after a confirmed loss of 0.08 support",
-      "risk": "Parabolic continuation and short squeeze",
-      "invalidation": "Recovery above 0.09 after trigger",
-      "quoteStatus": "LIVE_WEB_REFERENCE",
-      "priceTimestampKst": "2026-09-27T07:50:00+09:00"
+      "priceTimestampKst": "2026-09-27T11:27:00+09:00"
     }
   ],
   "topEvaluated": [
@@ -183,7 +183,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 5484.2
+        "ageMinutes": 5519.4
       }
     },
     {
@@ -211,7 +211,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 5484.2
+        "ageMinutes": 5519.4
       }
     },
     {
@@ -239,7 +239,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 5484.2
+        "ageMinutes": 5519.4
       }
     },
     {
@@ -267,7 +267,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 5484.2
+        "ageMinutes": 5519.4
       }
     },
     {
@@ -295,7 +295,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 5484.2
+        "ageMinutes": 5519.4
       }
     },
     {
@@ -323,7 +323,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 5484.2
+        "ageMinutes": 5519.4
       }
     },
     {
@@ -351,7 +351,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 5484.2
+        "ageMinutes": 5519.4
       }
     },
     {
@@ -379,7 +379,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 5484.2
+        "ageMinutes": 5519.4
       }
     },
     {
@@ -407,7 +407,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 5484.2
+        "ageMinutes": 5519.4
       }
     },
     {
@@ -435,7 +435,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 5484.2
+        "ageMinutes": 5519.4
       }
     },
     {
@@ -463,7 +463,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 5484.2
+        "ageMinutes": 5519.4
       }
     },
     {
@@ -491,7 +491,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 5484.2
+        "ageMinutes": 5519.4
       }
     },
     {
@@ -519,7 +519,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 5484.2
+        "ageMinutes": 5519.4
       }
     },
     {
@@ -547,7 +547,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 5484.2
+        "ageMinutes": 5519.4
       }
     },
     {
@@ -575,7 +575,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 5484.2
+        "ageMinutes": 5519.4
       }
     },
     {
@@ -603,7 +603,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 5484.2
+        "ageMinutes": 5519.4
       }
     },
     {
@@ -631,7 +631,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 5484.2
+        "ageMinutes": 5519.4
       }
     },
     {
@@ -659,7 +659,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 5484.2
+        "ageMinutes": 5519.4
       }
     },
     {
@@ -687,7 +687,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 5484.2
+        "ageMinutes": 5519.4
       }
     },
     {
@@ -715,7 +715,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 5484.2
+        "ageMinutes": 5519.4
       }
     },
     {
@@ -743,7 +743,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 5484.2
+        "ageMinutes": 5519.4
       }
     },
     {
@@ -771,7 +771,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 5484.2
+        "ageMinutes": 5519.4
       }
     },
     {
@@ -799,7 +799,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 5484.2
+        "ageMinutes": 5519.4
       }
     },
     {
@@ -827,7 +827,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 5484.2
+        "ageMinutes": 5519.4
       }
     },
     {
@@ -855,7 +855,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 5484.2
+        "ageMinutes": 5519.4
       }
     },
     {
@@ -883,7 +883,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 5484.2
+        "ageMinutes": 5519.4
       }
     },
     {
@@ -911,7 +911,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 1569.2
+        "ageMinutes": 1604.4
       }
     },
     {
@@ -939,7 +939,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 1569.2
+        "ageMinutes": 1604.4
       }
     },
     {
@@ -967,7 +967,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 1569.2
+        "ageMinutes": 1604.4
       }
     },
     {
@@ -995,7 +995,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 1569.2
+        "ageMinutes": 1604.4
       }
     }
   ],
