@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-10-03T01:47:41.272556+09:00",
+  "generatedAtKst": "2026-10-03T06:15:54.156610+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
-    "shortlistCount": 419,
+    "shortlistCount": 418,
     "krEtfShortlistCount": 34,
-    "dailyMetricsCount": 397,
-    "dailyCandidateCount": 38,
+    "dailyMetricsCount": 396,
+    "dailyCandidateCount": 37,
     "krEtfDailyCandidateCount": 26,
-    "strictDailyCandidateCount": 12,
+    "strictDailyCandidateCount": 11,
     "krEtfSignalEligibleCount": 0,
-    "intradayEvaluatedCount": 38,
+    "intradayEvaluatedCount": 37,
     "krEtfIntradayEvaluatedCount": 26,
     "signalCount": 4,
     "scannerSignalCount": 0,
@@ -24,7 +24,7 @@
     "panic": false,
     "riskOff": false,
     "equityBelow200Count": 0,
-    "realizedVolatility20Annualized": 0.149,
+    "realizedVolatility20Annualized": 0.1493,
     "reason": "광의 추세와 변동성 정상"
   },
   "signals": [
@@ -168,22 +168,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.736,
+        "volumeRatio": 0.22,
         "volumeThreshold": 1.2,
-        "ema20": 15777.494466,
-        "ema50": 15817.016145,
-        "lastTimestamp": "2026-10-02T06:15:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.74x/1.20x; ICT=BEARISH/NONE/BUY_SIDE_SWEEP",
+        "ema20": 15775.35213,
+        "ema50": 15814.492831,
+        "lastTimestamp": "2026-10-02T06:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.22x/1.20x; ICT=BEARISH/BOS_DOWN/NONE",
         "ict": {
           "bias": "BEARISH",
           "structure": "RANGE",
-          "event": "NONE",
-          "liquidity": "BUY_SIDE_SWEEP",
-          "fvg": "BEARISH 15770.0000~15775.0000",
+          "event": "BOS_DOWN",
+          "liquidity": "NONE",
+          "fvg": "BEARISH 15755.0000~15780.0000",
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 634.8
+        "ageMinutes": 887.9
       }
     },
     {
@@ -196,22 +196,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 1.893,
+        "volumeRatio": 0.096,
         "volumeThreshold": 1.2,
-        "ema20": 145455.824402,
-        "ema50": 144542.403601,
-        "lastTimestamp": "2026-10-02T06:15:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=1.89x/1.20x; ICT=NEUTRAL/NONE/BUY_SIDE_SWEEP",
+        "ema20": 145496.222068,
+        "ema50": 144594.708949,
+        "lastTimestamp": "2026-10-02T06:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.10x/1.20x; ICT=BULLISH/NONE/NONE",
         "ict": {
-          "bias": "NEUTRAL",
+          "bias": "BULLISH",
           "structure": "BULLISH_HH_HL",
           "event": "NONE",
-          "liquidity": "BUY_SIDE_SWEEP",
+          "liquidity": "NONE",
           "fvg": "BULLISH 145730.0000~145865.0000",
-          "score": 1
+          "score": 3
         },
         "fresh": false,
-        "ageMinutes": 634.8
+        "ageMinutes": 887.9
       }
     },
     {
@@ -239,7 +239,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 619.8
+        "ageMinutes": 887.9
       }
     },
     {
@@ -252,12 +252,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.205,
+        "volumeRatio": 0.346,
         "volumeThreshold": 1.2,
-        "ema20": 157459.358009,
-        "ema50": 156383.229658,
-        "lastTimestamp": "2026-10-02T06:15:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.21x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 157450.847623,
+        "ema50": 156420.440709,
+        "lastTimestamp": "2026-10-02T06:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.35x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "BEARISH_LH_LL",
@@ -267,7 +267,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 634.8
+        "ageMinutes": 887.9
       }
     },
     {
@@ -295,7 +295,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 619.8
+        "ageMinutes": 887.9
       }
     },
     {
@@ -306,24 +306,24 @@
       "dailySignalEligible": false,
       "trigger": {
         "ready": false,
-        "breakout": false,
+        "breakout": true,
         "reclaim": false,
-        "volumeRatio": 0.985,
+        "volumeRatio": 0.1,
         "volumeThreshold": 1.2,
-        "ema20": 26601.108022,
-        "ema50": 26504.477812,
-        "lastTimestamp": "2026-10-02T06:15:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.99x/1.20x; ICT=BULLISH/BOS_UP/NONE",
+        "ema20": 26613.383449,
+        "ema50": 26513.33012,
+        "lastTimestamp": "2026-10-02T06:30:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=0.10x/1.20x; ICT=BULLISH/NONE/NONE",
         "ict": {
           "bias": "BULLISH",
           "structure": "BULLISH_HH_HL",
-          "event": "BOS_UP",
+          "event": "NONE",
           "liquidity": "NONE",
           "fvg": "BULLISH 26645.0000~26670.0000",
-          "score": 5
+          "score": 3
         },
         "fresh": false,
-        "ageMinutes": 634.8
+        "ageMinutes": 887.9
       }
     },
     {
@@ -336,12 +336,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.048,
+        "volumeRatio": 0.292,
         "volumeThreshold": 1.2,
         "ema20": 112042.576823,
         "ema50": 111540.401242,
         "lastTimestamp": "2026-10-02T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.05x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "breakout=False; reclaim=False; volume=0.29x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
@@ -351,7 +351,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 619.8
+        "ageMinutes": 887.9
       }
     },
     {
@@ -364,22 +364,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 1.828,
+        "volumeRatio": 1.308,
         "volumeThreshold": 1.2,
-        "ema20": 40472.226974,
-        "ema50": 40286.277011,
-        "lastTimestamp": "2026-10-02T06:15:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=1.83x/1.20x; ICT=BEARISH/NONE/BUY_SIDE_SWEEP",
+        "ema20": 40482.967258,
+        "ema50": 40297.933533,
+        "lastTimestamp": "2026-10-02T06:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=1.31x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
-          "bias": "BEARISH",
-          "structure": "BEARISH_LH_LL",
+          "bias": "NEUTRAL",
+          "structure": "RANGE",
           "event": "NONE",
-          "liquidity": "BUY_SIDE_SWEEP",
+          "liquidity": "NONE",
           "fvg": "BULLISH 40520.0000~40555.0000",
-          "score": -3
+          "score": 1
         },
         "fresh": false,
-        "ageMinutes": 634.8
+        "ageMinutes": 887.9
       }
     },
     {
@@ -392,12 +392,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 2.184,
+        "volumeRatio": 2.125,
         "volumeThreshold": 1.2,
         "ema20": 111773.339253,
         "ema50": 111267.146764,
         "lastTimestamp": "2026-10-02T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=2.18x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "breakout=False; reclaim=False; volume=2.13x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
@@ -407,7 +407,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 619.8
+        "ageMinutes": 887.9
       }
     },
     {
@@ -420,22 +420,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.154,
+        "volumeRatio": 0.16,
         "volumeThreshold": 1.2,
-        "ema20": 45482.870015,
-        "ema50": 45341.503966,
-        "lastTimestamp": "2026-10-02T06:15:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.15x/1.20x; ICT=BEARISH/BOS_DOWN/NONE",
+        "ema20": 45461.644305,
+        "ema50": 45338.390739,
+        "lastTimestamp": "2026-10-02T06:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.16x/1.20x; ICT=BEARISH/BOS_DOWN/NONE",
         "ict": {
           "bias": "BEARISH",
           "structure": "BEARISH_LH_LL",
           "event": "BOS_DOWN",
           "liquidity": "NONE",
-          "fvg": "BEARISH 45370.0000~45390.0000",
+          "fvg": "BEARISH 45260.0000~45295.0000",
           "score": -5
         },
         "fresh": false,
-        "ageMinutes": 634.8
+        "ageMinutes": 887.9
       }
     },
     {
@@ -448,22 +448,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.148,
+        "volumeRatio": 0.11,
         "volumeThreshold": 1.2,
-        "ema20": 57164.800126,
-        "ema50": 56993.508952,
-        "lastTimestamp": "2026-10-02T06:15:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.15x/1.20x; ICT=BEARISH/BOS_DOWN/NONE",
+        "ema20": 57139.581075,
+        "ema50": 56989.966445,
+        "lastTimestamp": "2026-10-02T06:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.11x/1.20x; ICT=BEARISH/BOS_DOWN/NONE",
         "ict": {
           "bias": "BEARISH",
           "structure": "BEARISH_LH_LL",
           "event": "BOS_DOWN",
           "liquidity": "NONE",
-          "fvg": "BEARISH 56970.0000~56995.0000",
+          "fvg": "BEARISH 56900.0000~56940.0000",
           "score": -5
         },
         "fresh": false,
-        "ageMinutes": 634.8
+        "ageMinutes": 887.9
       }
     },
     {
@@ -491,7 +491,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 619.8
+        "ageMinutes": 887.9
       }
     },
     {
@@ -504,12 +504,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.103,
+        "volumeRatio": 0.013,
         "volumeThreshold": 1.2,
-        "ema20": 27501.701341,
-        "ema50": 27508.175858,
-        "lastTimestamp": "2026-10-02T06:15:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.10x/1.20x; ICT=BEARISH/BOS_DOWN/NONE",
+        "ema20": 27490.586931,
+        "ema50": 27503.395236,
+        "lastTimestamp": "2026-10-02T06:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.01x/1.20x; ICT=BEARISH/BOS_DOWN/NONE",
         "ict": {
           "bias": "BEARISH",
           "structure": "RANGE",
@@ -519,7 +519,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 634.8
+        "ageMinutes": 887.9
       }
     },
     {
@@ -531,13 +531,13 @@
       "trigger": {
         "ready": false,
         "breakout": false,
-        "reclaim": false,
-        "volumeRatio": 0.124,
+        "reclaim": true,
+        "volumeRatio": 0.916,
         "volumeThreshold": 1.2,
-        "ema20": 15473.207258,
-        "ema50": 15354.181652,
-        "lastTimestamp": "2026-10-02T06:15:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.12x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 15473.854178,
+        "ema50": 15358.999495,
+        "lastTimestamp": "2026-10-02T06:30:00+00:00",
+        "reason": "breakout=False; reclaim=True; volume=0.92x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
@@ -547,7 +547,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 634.8
+        "ageMinutes": 887.9
       }
     },
     {
@@ -560,12 +560,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.161,
+        "volumeRatio": 6.333,
         "volumeThreshold": 1.2,
         "ema20": 15203.688758,
         "ema50": 15091.066398,
         "lastTimestamp": "2026-10-02T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.16x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "breakout=False; reclaim=False; volume=6.33x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
@@ -575,7 +575,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 619.8
+        "ageMinutes": 887.9
       }
     },
     {
@@ -588,22 +588,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.483,
+        "volumeRatio": 0.011,
         "volumeThreshold": 1.2,
-        "ema20": 183922.69581,
-        "ema50": 183972.833684,
-        "lastTimestamp": "2026-10-02T06:15:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.48x/1.20x; ICT=BEARISH/BOS_DOWN/NONE",
+        "ema20": 183840.058136,
+        "ema50": 183937.163933,
+        "lastTimestamp": "2026-10-02T06:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.01x/1.20x; ICT=BEARISH/BOS_DOWN/NONE",
         "ict": {
           "bias": "BEARISH",
           "structure": "RANGE",
           "event": "BOS_DOWN",
           "liquidity": "NONE",
-          "fvg": "BEARISH 183250.0000~183320.0000",
+          "fvg": "BEARISH 183055.0000~183095.0000",
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 634.8
+        "ageMinutes": 887.9
       }
     },
     {
@@ -616,12 +616,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 1.494,
+        "volumeRatio": 1.391,
         "volumeThreshold": 1.2,
         "ema20": 14972.361034,
         "ema50": 14820.76907,
         "lastTimestamp": "2026-10-02T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=1.49x/1.20x; ICT=BULLISH/BOS_UP/NONE",
+        "reason": "breakout=False; reclaim=False; volume=1.39x/1.20x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
           "bias": "BULLISH",
           "structure": "RANGE",
@@ -631,7 +631,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 619.8
+        "ageMinutes": 887.9
       }
     },
     {
@@ -644,12 +644,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.253,
+        "volumeRatio": 0.153,
         "volumeThreshold": 1.2,
         "ema20": 10227.936608,
         "ema50": 10149.978593,
         "lastTimestamp": "2026-10-02T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.25x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "breakout=False; reclaim=False; volume=0.15x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "BULLISH_HH_HL",
@@ -659,7 +659,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 619.8
+        "ageMinutes": 887.9
       }
     },
     {
@@ -670,14 +670,14 @@
       "dailySignalEligible": false,
       "trigger": {
         "ready": false,
-        "breakout": true,
+        "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.181,
+        "volumeRatio": 0.195,
         "volumeThreshold": 1.2,
-        "ema20": 51676.413839,
-        "ema50": 51078.321303,
-        "lastTimestamp": "2026-10-02T06:15:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=0.18x/1.20x; ICT=BULLISH/BOS_UP/NONE",
+        "ema20": 51731.041066,
+        "ema50": 51123.862753,
+        "lastTimestamp": "2026-10-02T06:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.20x/1.20x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
           "bias": "BULLISH",
           "structure": "RANGE",
@@ -687,7 +687,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 634.8
+        "ageMinutes": 887.9
       }
     },
     {
@@ -715,7 +715,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 619.8
+        "ageMinutes": 887.9
       }
     },
     {
@@ -743,7 +743,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 619.8
+        "ageMinutes": 887.9
       }
     },
     {
@@ -756,22 +756,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.224,
+        "volumeRatio": 0.021,
         "volumeThreshold": 1.2,
-        "ema20": 25870.444723,
-        "ema50": 25901.399005,
-        "lastTimestamp": "2026-10-02T06:15:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.22x/1.20x; ICT=BEARISH/BOS_DOWN/NONE",
+        "ema20": 25861.830943,
+        "ema50": 25896.679763,
+        "lastTimestamp": "2026-10-02T06:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.02x/1.20x; ICT=BEARISH/NONE/NONE",
         "ict": {
           "bias": "BEARISH",
-          "structure": "RANGE",
-          "event": "BOS_DOWN",
+          "structure": "BEARISH_LH_LL",
+          "event": "NONE",
           "liquidity": "NONE",
           "fvg": "BEARISH 25810.0000~25817.0000",
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 634.8
+        "ageMinutes": 887.9
       }
     },
     {
@@ -784,22 +784,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.024,
+        "volumeRatio": 0.018,
         "volumeThreshold": 1.2,
-        "ema20": 23516.704806,
-        "ema50": 23544.665446,
-        "lastTimestamp": "2026-10-02T06:15:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.02x/1.20x; ICT=BEARISH/BOS_DOWN/NONE",
+        "ema20": 23508.447209,
+        "ema50": 23540.210265,
+        "lastTimestamp": "2026-10-02T06:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.02x/1.20x; ICT=BEARISH/NONE/NONE",
         "ict": {
           "bias": "BEARISH",
-          "structure": "RANGE",
-          "event": "BOS_DOWN",
+          "structure": "BEARISH_LH_LL",
+          "event": "NONE",
           "liquidity": "NONE",
           "fvg": "BEARISH 23445.0000~23450.0000",
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 634.8
+        "ageMinutes": 887.9
       }
     },
     {
@@ -812,22 +812,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.194,
+        "volumeRatio": 0.407,
         "volumeThreshold": 1.2,
-        "ema20": 14084.030798,
-        "ema50": 14100.85841,
-        "lastTimestamp": "2026-10-02T06:15:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.19x/1.20x; ICT=BEARISH/BOS_DOWN/NONE",
+        "ema20": 14081.26596,
+        "ema50": 14099.065021,
+        "lastTimestamp": "2026-10-02T06:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.41x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
-          "bias": "BEARISH",
+          "bias": "NEUTRAL",
           "structure": "RANGE",
-          "event": "BOS_DOWN",
+          "event": "NONE",
           "liquidity": "NONE",
           "fvg": "BEARISH 14075.0000~14080.0000",
-          "score": -3
+          "score": -1
         },
         "fresh": false,
-        "ageMinutes": 634.8
+        "ageMinutes": 887.9
       }
     },
     {
@@ -840,22 +840,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.716,
+        "volumeRatio": 4.869,
         "volumeThreshold": 1.2,
-        "ema20": 26058.241754,
-        "ema50": 26078.398406,
-        "lastTimestamp": "2026-10-02T06:15:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.72x/1.20x; ICT=BULLISH/BOS_UP/NONE",
+        "ema20": 26065.552051,
+        "ema50": 26080.427161,
+        "lastTimestamp": "2026-10-02T06:30:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=4.87x/1.20x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
           "bias": "BULLISH",
           "structure": "RANGE",
           "event": "BOS_UP",
           "liquidity": "NONE",
-          "fvg": "BULLISH 26070.0000~26100.0000",
+          "fvg": "BULLISH 26120.0000~26135.0000",
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 634.8
+        "ageMinutes": 887.9
       }
     },
     {
@@ -868,12 +868,12 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.929,
+        "volumeRatio": 0.493,
         "volumeThreshold": 1.2,
         "ema20": 2217.34419,
         "ema50": 2238.150814,
         "lastTimestamp": "2026-10-02T06:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.93x/1.20x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "breakout=False; reclaim=False; volume=0.49x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
@@ -883,7 +883,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 619.8
+        "ageMinutes": 887.9
       }
     },
     {
@@ -894,24 +894,24 @@
       "dailySignalEligible": true,
       "trigger": {
         "ready": false,
-        "breakout": false,
+        "breakout": true,
         "reclaim": false,
-        "volumeRatio": 0.123,
+        "volumeRatio": 0.0,
         "volumeThreshold": 1.35,
-        "ema20": 115.621868,
-        "ema50": 114.646477,
-        "lastTimestamp": "2026-10-02T16:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.12x/1.35x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 115.944125,
+        "ema50": 115.224962,
+        "lastTimestamp": "2026-10-02T20:06:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=0.00x/1.35x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
-          "bias": "NEUTRAL",
+          "bias": "BULLISH",
           "structure": "RANGE",
-          "event": "NONE",
+          "event": "BOS_UP",
           "liquidity": "NONE",
-          "fvg": "BEARISH 116.0000~116.1600",
-          "score": -1
+          "fvg": "BULLISH 116.3550~116.3600",
+          "score": 3
         },
-        "fresh": true,
-        "ageMinutes": 4.8
+        "fresh": false,
+        "ageMinutes": 71.9
       }
     },
     {
@@ -922,24 +922,24 @@
       "dailySignalEligible": true,
       "trigger": {
         "ready": false,
-        "breakout": true,
+        "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.117,
+        "volumeRatio": 0.0,
         "volumeThreshold": 1.35,
-        "ema20": 145.366507,
-        "ema50": 145.743115,
-        "lastTimestamp": "2026-10-02T16:45:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=0.12x/1.35x; ICT=BULLISH/BOS_UP/NONE",
+        "ema20": 146.772146,
+        "ema50": 146.414023,
+        "lastTimestamp": "2026-10-02T21:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=BEARISH/NONE/NONE",
         "ict": {
-          "bias": "BULLISH",
-          "structure": "BULLISH_HH_HL",
-          "event": "BOS_UP",
+          "bias": "BEARISH",
+          "structure": "BEARISH_LH_LL",
+          "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BULLISH 146.7700~146.8606",
-          "score": 5
+          "fvg": "BEARISH 146.9100~147.1493",
+          "score": -3
         },
         "fresh": true,
-        "ageMinutes": 4.8
+        "ageMinutes": 17.9
       }
     },
     {
@@ -952,22 +952,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.15,
+        "volumeRatio": 0.0,
         "volumeThreshold": 1.35,
-        "ema20": 1087.40044,
-        "ema50": 1089.262158,
-        "lastTimestamp": "2026-10-02T16:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.15x/1.35x; ICT=BEARISH/NONE/NONE",
+        "ema20": 1076.598119,
+        "ema50": 1081.981722,
+        "lastTimestamp": "2026-10-02T21:15:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
-          "bias": "BEARISH",
-          "structure": "BEARISH_LH_LL",
+          "bias": "NEUTRAL",
+          "structure": "BULLISH_HH_HL",
           "event": "NONE",
           "liquidity": "NONE",
           "fvg": "BEARISH 1080.3199~1081.0302",
-          "score": -3
+          "score": 1
         },
         "fresh": true,
-        "ageMinutes": 4.8
+        "ageMinutes": 2.9
       }
     },
     {
@@ -980,22 +980,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.251,
+        "volumeRatio": 0.0,
         "volumeThreshold": 1.35,
-        "ema20": 206.902077,
-        "ema50": 207.013207,
-        "lastTimestamp": "2026-10-02T16:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.25x/1.35x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 206.36484,
+        "ema50": 206.660679,
+        "lastTimestamp": "2026-10-02T20:45:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=BEARISH/BOS_DOWN/NONE",
         "ict": {
-          "bias": "NEUTRAL",
+          "bias": "BEARISH",
           "structure": "RANGE",
-          "event": "NONE",
+          "event": "BOS_DOWN",
           "liquidity": "NONE",
-          "fvg": "BEARISH 206.8800~207.8000",
-          "score": -1
+          "fvg": "BEARISH 205.1276~205.1908",
+          "score": -3
         },
         "fresh": true,
-        "ageMinutes": 4.8
+        "ageMinutes": 32.9
       }
     }
   ],
