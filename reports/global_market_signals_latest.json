@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-10-24T07:32:58.921969+09:00",
+  "generatedAtKst": "2026-10-24T07:51:12.354500+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
@@ -17,7 +17,7 @@
     "scannerSignalCount": 0,
     "chatgptSignalCount": 4,
     "krEtfSignalCount": 0,
-    "dailyCacheHit": false,
+    "dailyCacheHit": true,
     "maxSignalAgeMinutes": 45
   },
   "marketRegime": {
@@ -29,132 +29,132 @@
   },
   "signals": [
     {
-      "id": "20261023-2050KST-RNG-LONG",
-      "date": "2026-10-23",
-      "generatedAtKst": "2026-10-23T20:51:43+09:00",
-      "briefingSlot": "2050",
+      "date": "2026-10-24",
+      "generatedAtKst": "2026-10-24T07:50:06+09:00",
+      "briefingSlot": "0750",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "status": "CONDITIONAL",
+      "confidence": null,
+      "currency": "USD",
+      "priceTimestampKst": "2026-10-24T05:00:00+09:00",
+      "id": "20261024-0750KST-SLB-LONG",
       "assetClass": "STOCK",
       "market": "US",
-      "ticker": "RNG",
-      "name": "RingCentral, Inc.",
+      "ticker": "SLB",
+      "name": "SLB N.V.",
+      "direction": "LONG",
+      "strategy": "Emerging Leader",
+      "score": 83,
+      "currentPrice": 53.06,
+      "referencePrice": 53.06,
+      "entryLow": 51.2,
+      "entryHigh": 52,
+      "stopLoss": 49.2,
+      "target1": 56.5,
+      "target2": 59,
+      "holdingPeriod": "3-15 trading days",
+      "committeeVote": "5/7",
+      "catalyst": "Oct 23 Q3 revenue $9.45B +6% YoY, adj EPS $0.64, data-center solutions +23% QoQ, Middle East +13% QoQ, Brent $116.72",
+      "reason": "Oct23 close $53.06 +7.08% verified across Gainbot and StockAnalysis; energy sector +2.4%, earnings beat and sector RS",
+      "risk": "Weekend oil geopolitics, gap risk, Middle East disruptions, 52-week high still ~12% away",
+      "invalidation": "Next regular session 15-minute VWAP fails, or trades below $49.20",
+      "quoteStatus": "US_REGULAR_CLOSE_OCT23_VERIFIED_TWO_SOURCES"
+    },
+    {
+      "date": "2026-10-24",
+      "generatedAtKst": "2026-10-24T07:50:06+09:00",
+      "briefingSlot": "0750",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "status": "CONDITIONAL",
+      "confidence": null,
+      "currency": "USD",
+      "priceTimestampKst": "2026-10-24T05:00:00+09:00",
+      "id": "20261024-0750KST-RHI-LONG",
+      "assetClass": "STOCK",
+      "market": "US",
+      "ticker": "RHI",
+      "name": "Robert Half Inc.",
       "direction": "LONG",
       "strategy": "Breakout/Leadership",
-      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "status": "CONDITIONAL",
-      "score": 84,
-      "confidence": null,
-      "currentPrice": 91.33,
-      "referencePrice": 79.42,
-      "currency": "USD",
-      "entryLow": 89,
-      "entryHigh": 91,
-      "stopLoss": 86.5,
-      "target1": 99,
-      "target2": 104,
-      "holdingPeriod": "1-10 trading days",
-      "committeeVote": "5/7",
-      "catalyst": "2026-10-22 Q3 revenue $676M +5.9%, non-GAAP EPS $1.33 vs $1.28 consensus, FY2026 revenue and free cash flow outlook raised; Oct23 premarket +15% at $91.33",
-      "reason": "Earnings surprise, upward guidance revision, premarket gap above prior 52-week range; regular-session gap/VWAP unverified",
-      "risk": "15% gap fade; premium valuation and forward analyst price-target disagreement",
-      "invalidation": "Below $86.50 or sustained rejection below opening VWAP",
-      "quoteStatus": "PREMARKET_OCT23_0434_ET_BENZINGA",
-      "priceTimestampKst": "2026-10-23T20:51:43+09:00"
-    },
-    {
-      "id": "20261023-2050KST-CCI-LONG",
-      "date": "2026-10-23",
-      "generatedAtKst": "2026-10-23T20:51:43+09:00",
-      "briefingSlot": "2050",
-      "assetClass": "STOCK",
-      "market": "US",
-      "ticker": "CCI",
-      "name": "Crown Castle Inc.",
-      "direction": "LONG",
-      "strategy": "Reversal",
-      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "status": "CONDITIONAL",
       "score": 78,
-      "confidence": null,
-      "currentPrice": 85.69,
-      "referencePrice": 78.83,
-      "currency": "USD",
-      "entryLow": 83.5,
-      "entryHigh": 85.5,
-      "stopLoss": 81.5,
-      "target1": 92,
-      "target2": 96,
-      "holdingPeriod": "1-10 trading days",
+      "currentPrice": 45.87,
+      "referencePrice": 45.87,
+      "entryLow": 43.5,
+      "entryHigh": 44.8,
+      "stopLoss": 41.3,
+      "target1": 49.8,
+      "target2": 52.5,
+      "holdingPeriod": "3-10 trading days",
       "committeeVote": "4/7",
-      "catalyst": "Oct23 Reuters: +8.6% premarket on reports of SpaceX nationwide mobile network talks; Oct22 afterhours $85.69 Yahoo quote",
-      "reason": "Positive cross-sector repricing in cell-tower REITs vs telecom incumbents; catalyst unconfirmed signed agreement",
-      "risk": "Rumor reversal; no executed lease contract, interest-rate sensitivity",
-      "invalidation": "Below $81.50 or SpaceX tower-talk report retracted",
-      "quoteStatus": "AFTERHOURS_OCT22_1824_ET_YAHOO_AND_PREMARKET_OCT23_REUTERS",
-      "priceTimestampKst": "2026-10-23T20:51:43+09:00"
+      "catalyst": "Oct22 SEC 8-K Q3 revenue $1.359B, EPS $0.49 vs $0.43 YoY, adjusted talent solutions growth +2% first positive since 2022; high short interest ~20% of float",
+      "reason": "Oct23 liquid gainer >20%, high relative volume and new high; price feed disagreement StockAnalysis $45.87 vs Gainbot $46.59 prevents immediate trade",
+      "risk": "Extreme post-earnings gap, short squeeze reversal, cross-vendor price and volume mismatch, weak revenue growth",
+      "invalidation": "Below $41.30 or failed 15-minute VWAP reclaim",
+      "quoteStatus": "US_REGULAR_CLOSE_OCT23_DISPUTED_45_87_STOCKANALYSIS_VS_46_59_GAINBOT"
     },
     {
-      "id": "20261023-2050KST-DECK-SHORT",
-      "date": "2026-10-23",
-      "generatedAtKst": "2026-10-23T20:51:43+09:00",
-      "briefingSlot": "2050",
+      "date": "2026-10-24",
+      "generatedAtKst": "2026-10-24T07:50:06+09:00",
+      "briefingSlot": "0750",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "status": "CONDITIONAL",
+      "confidence": null,
+      "currency": "USD",
+      "priceTimestampKst": "2026-10-24T05:00:00+09:00",
+      "id": "20261024-0750KST-LKQ-SHORT",
       "assetClass": "STOCK",
       "market": "US",
-      "ticker": "DECK",
-      "name": "Deckers Outdoor Corporation",
+      "ticker": "LKQ",
+      "name": "LKQ Corporation",
       "direction": "SHORT",
       "strategy": "Short/Inverse",
-      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "status": "CONDITIONAL",
-      "score": 75,
-      "confidence": null,
-      "currentPrice": 77.5,
-      "referencePrice": 85.28,
-      "currency": "USD",
-      "entryLow": 77.5,
-      "entryHigh": 79.5,
-      "stopLoss": 82,
-      "target1": 70,
-      "target2": 67,
-      "holdingPeriod": "1-5 trading days",
+      "score": 74,
+      "currentPrice": 17.42,
+      "referencePrice": 17.42,
+      "entryLow": 17.6,
+      "entryHigh": 18.2,
+      "stopLoss": 19.2,
+      "target1": 15.5,
+      "target2": 14.4,
+      "holdingPeriod": "1-8 trading days",
       "committeeVote": "4/7",
-      "catalyst": "Oct22 FY27 Q2 $1.481B revenue +3.5%, FY27 sales guide $5.700-5.725B below street; Oct23 premarket -9.1% to $77.50",
-      "reason": "Revenue-guide disappointment, DTC comps -6.4%, sharp negative post-earnings price reaction",
-      "risk": "EPS guidance raised with tariff refunds, $4.4B buyback authorization; short squeeze risk",
-      "invalidation": "Above $82 or reclaim regular-session VWAP with positive breadth",
-      "quoteStatus": "PREMARKET_OCT23_0434_ET_BENZINGA",
-      "priceTimestampKst": "2026-10-23T20:51:43+09:00"
+      "catalyst": "Oct23 official preliminary Q3 revenue $3.32B vs $3.50B, Europe organic parts sales -9.8%, 2026 guidance withdrawn, new CEO",
+      "reason": "Breakdown to new 52-week low on 4x volume; cross-vendor close discrepancy StockAnalysis $17.42 vs Gainbot $17.75",
+      "risk": "22% one-day collapse, short-covering rebound, borrow availability/fees not checked, source price mismatch",
+      "invalidation": "Above $19.20 or reclaimed VWAP; no trade without borrow locate",
+      "quoteStatus": "US_REGULAR_CLOSE_OCT23_DISPUTED_17_42_STOCKANALYSIS_VS_17_75_GAINBOT"
     },
     {
-      "id": "20261023-2050KST-SGOV-DEFENSIVE",
-      "date": "2026-10-23",
-      "generatedAtKst": "2026-10-23T20:51:43+09:00",
-      "briefingSlot": "2050",
+      "date": "2026-10-24",
+      "generatedAtKst": "2026-10-24T07:50:06+09:00",
+      "briefingSlot": "0750",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "status": "CONDITIONAL",
+      "confidence": null,
+      "currency": "USD",
+      "priceTimestampKst": "2026-10-24T05:00:00+09:00",
+      "id": "20261024-0750KST-SGOV-DEFENSIVE",
       "assetClass": "ETF",
       "market": "US",
       "ticker": "SGOV",
       "name": "iShares 0-3 Month Treasury Bond ETF",
       "direction": "DEFENSIVE",
       "strategy": "Defensive",
-      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "status": "CONDITIONAL",
-      "score": 69,
-      "confidence": null,
-      "currentPrice": null,
-      "referencePrice": 100.63,
-      "currency": "USD",
-      "entryLow": 100.62,
-      "entryHigh": 100.65,
+      "score": 70,
+      "currentPrice": 100.658,
+      "referencePrice": 100.658,
+      "entryLow": 100.65,
+      "entryHigh": 100.67,
       "stopLoss": null,
       "target1": null,
       "target2": null,
       "holdingPeriod": "cash management",
-      "committeeVote": "5/7",
-      "catalyst": "Oct22 regular close ~$100.63, short-duration US Treasury exposure; monthly distributions",
-      "reason": "Cash parking amid equity volatility and oil-driven inflation uncertainty",
-      "risk": "USD/KRW exchange-rate risk; monthly ex-dividend price resets, interest rate changes",
-      "invalidation": "Reassess FX hedging and liquidity needs; no conventional fixed price stop",
-      "quoteStatus": "PREVIOUS_US_REGULAR_CLOSE_OCT22",
-      "priceTimestampKst": "2026-10-23T20:51:43+09:00"
+      "committeeVote": "6/7",
+      "catalyst": "Oct23 close ~$100.658 Investing.com; 0-3 month US Treasury bills, Oct distribution $0.300547 per share",
+      "reason": "Low-duration USD cash parking amid weak breadth and oil-driven inflation risk",
+      "risk": "USD/KRW risk, monthly ex-dividend resets, US ETF closed over weekend",
+      "invalidation": "Reassess cash/FX needs; no fixed stop for short-duration cash ETF",
+      "quoteStatus": "US_REGULAR_CLOSE_OCT23_INVESTING_100_658"
     }
   ],
   "topEvaluated": [
@@ -183,7 +183,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 994.9
+        "ageMinutes": 1011.3
       }
     },
     {
@@ -198,8 +198,8 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
-        "ema20": 106195.289819,
-        "ema50": 106925.335626,
+        "ema20": 106195.25463,
+        "ema50": 106925.201065,
         "lastTimestamp": "2026-10-23T06:00:00+00:00",
         "reason": "breakout=True; reclaim=False; volume=0.00x/1.20x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
@@ -211,7 +211,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 994.9
+        "ageMinutes": 1011.3
       }
     },
     {
@@ -226,8 +226,8 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
-        "ema20": 2657.453028,
-        "ema50": 2620.838713,
+        "ema20": 2657.448309,
+        "ema50": 2620.815896,
         "lastTimestamp": "2026-10-23T06:00:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=BEARISH/NONE/NONE",
         "ict": {
@@ -239,7 +239,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 994.9
+        "ageMinutes": 1011.3
       }
     },
     {
@@ -267,7 +267,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 994.9
+        "ageMinutes": 1011.3
       }
     },
     {
@@ -282,8 +282,8 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
-        "ema20": 22236.333587,
-        "ema50": 22360.57647,
+        "ema20": 22236.333781,
+        "ema50": 22360.585125,
         "lastTimestamp": "2026-10-23T06:00:00+00:00",
         "reason": "breakout=True; reclaim=False; volume=0.00x/1.20x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
@@ -295,7 +295,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 994.9
+        "ageMinutes": 1011.3
       }
     },
     {
@@ -310,8 +310,8 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
-        "ema20": 106413.953371,
-        "ema50": 107769.417282,
+        "ema20": 106413.952742,
+        "ema50": 107769.408225,
         "lastTimestamp": "2026-10-23T06:00:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=BULLISH/NONE/NONE",
         "ict": {
@@ -323,7 +323,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 994.9
+        "ageMinutes": 1011.3
       }
     },
     {
@@ -338,8 +338,8 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
-        "ema20": 86419.848213,
-        "ema50": 86875.386402,
+        "ema20": 86419.848245,
+        "ema50": 86875.390614,
         "lastTimestamp": "2026-10-23T06:00:00+00:00",
         "reason": "breakout=True; reclaim=False; volume=0.00x/1.20x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
@@ -351,7 +351,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 994.9
+        "ageMinutes": 1011.3
       }
     },
     {
@@ -379,7 +379,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 994.9
+        "ageMinutes": 1011.3
       }
     },
     {
@@ -394,8 +394,8 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
-        "ema20": 86062.613509,
-        "ema50": 86520.360734,
+        "ema20": 86062.634905,
+        "ema50": 86520.417269,
         "lastTimestamp": "2026-10-23T06:00:00+00:00",
         "reason": "breakout=True; reclaim=False; volume=0.00x/1.20x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
@@ -407,7 +407,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 994.9
+        "ageMinutes": 1011.3
       }
     },
     {
@@ -435,7 +435,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 994.9
+        "ageMinutes": 1011.3
       }
     },
     {
@@ -450,8 +450,8 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
-        "ema20": 6123.382885,
-        "ema50": 6066.604577,
+        "ema20": 6123.384183,
+        "ema50": 6066.623085,
         "lastTimestamp": "2026-10-23T06:00:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
@@ -463,7 +463,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 994.9
+        "ageMinutes": 1011.3
       }
     },
     {
@@ -478,8 +478,8 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
-        "ema20": 47642.033778,
-        "ema50": 48160.067781,
+        "ema20": 47642.033776,
+        "ema50": 48160.066009,
         "lastTimestamp": "2026-10-23T06:00:00+00:00",
         "reason": "breakout=True; reclaim=False; volume=0.00x/1.20x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
@@ -491,7 +491,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 994.9
+        "ageMinutes": 1011.3
       }
     },
     {
@@ -519,7 +519,7 @@
           "score": -5
         },
         "fresh": false,
-        "ageMinutes": 994.9
+        "ageMinutes": 1011.3
       }
     },
     {
@@ -547,7 +547,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 994.9
+        "ageMinutes": 1011.3
       }
     },
     {
@@ -575,7 +575,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 994.9
+        "ageMinutes": 1011.3
       }
     },
     {
@@ -603,7 +603,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 994.9
+        "ageMinutes": 1011.3
       }
     },
     {
@@ -618,8 +618,8 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
-        "ema20": 170265.995074,
-        "ema50": 171256.507985,
+        "ema20": 170265.818272,
+        "ema50": 171256.414075,
         "lastTimestamp": "2026-10-23T06:00:00+00:00",
         "reason": "breakout=True; reclaim=False; volume=0.00x/1.20x; ICT=NEUTRAL/CHOCH_UP/NONE",
         "ict": {
@@ -631,7 +631,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 994.9
+        "ageMinutes": 1011.3
       }
     },
     {
@@ -659,7 +659,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 994.9
+        "ageMinutes": 1011.3
       }
     },
     {
@@ -687,7 +687,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 994.9
+        "ageMinutes": 1011.3
       }
     },
     {
@@ -715,7 +715,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 994.9
+        "ageMinutes": 1011.3
       }
     },
     {
@@ -730,8 +730,8 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
-        "ema20": 12438.838412,
-        "ema50": 12629.801603,
+        "ema20": 12438.837839,
+        "ema50": 12629.794364,
         "lastTimestamp": "2026-10-23T06:00:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=BULLISH/NONE/NONE",
         "ict": {
@@ -743,7 +743,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 994.9
+        "ageMinutes": 1011.3
       }
     },
     {
@@ -771,7 +771,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 994.9
+        "ageMinutes": 1011.3
       }
     },
     {
@@ -799,7 +799,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 994.9
+        "ageMinutes": 1011.3
       }
     },
     {
@@ -814,8 +814,8 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
-        "ema20": 5260.191905,
-        "ema50": 5429.053346,
+        "ema20": 5260.194476,
+        "ema50": 5429.068264,
         "lastTimestamp": "2026-10-23T06:00:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=BULLISH/NONE/NONE",
         "ict": {
@@ -827,7 +827,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 994.9
+        "ageMinutes": 1011.3
       }
     },
     {
@@ -842,8 +842,8 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
-        "ema20": 19786.879463,
-        "ema50": 20091.939031,
+        "ema20": 19786.879473,
+        "ema50": 20091.943131,
         "lastTimestamp": "2026-10-23T06:00:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=BULLISH/NONE/NONE",
         "ict": {
@@ -855,7 +855,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 994.9
+        "ageMinutes": 1011.3
       }
     },
     {
@@ -870,8 +870,8 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
-        "ema20": 37698.860758,
-        "ema50": 38388.909798,
+        "ema20": 37698.852893,
+        "ema50": 38388.871771,
         "lastTimestamp": "2026-10-23T06:00:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=BULLISH/NONE/NONE",
         "ict": {
@@ -883,7 +883,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 994.9
+        "ageMinutes": 1011.3
       }
     },
     {
@@ -898,8 +898,8 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
-        "ema20": 65836.354736,
-        "ema50": 66595.071618,
+        "ema20": 65836.36527,
+        "ema50": 66595.135316,
         "lastTimestamp": "2026-10-23T06:00:00+00:00",
         "reason": "breakout=True; reclaim=False; volume=0.00x/1.20x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
@@ -911,7 +911,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 994.9
+        "ageMinutes": 1011.3
       }
     },
     {
@@ -926,8 +926,8 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.35,
-        "ema20": 34.001811,
-        "ema50": 33.857276,
+        "ema20": 34.001758,
+        "ema50": 33.857156,
         "lastTimestamp": "2026-10-23T21:15:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=BEARISH/BOS_DOWN/NONE",
         "ict": {
@@ -939,7 +939,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 79.9
+        "ageMinutes": 96.3
       }
     },
     {
@@ -954,20 +954,20 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.35,
-        "ema20": 84.533737,
-        "ema50": 85.822529,
-        "lastTimestamp": "2026-10-23T20:45:00+00:00",
+        "ema20": 84.372329,
+        "ema50": 85.708156,
+        "lastTimestamp": "2026-10-23T22:15:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BEARISH 82.7000~83.0000",
+          "fvg": "BEARISH 82.8356~83.3900",
           "score": -1
         },
-        "fresh": false,
-        "ageMinutes": 109.9
+        "fresh": true,
+        "ageMinutes": 36.3
       }
     },
     {
@@ -982,8 +982,8 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.35,
-        "ema20": 128.284581,
-        "ema50": 125.944235,
+        "ema20": 128.284786,
+        "ema50": 125.947451,
         "lastTimestamp": "2026-10-23T22:00:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/SELL_SIDE_SWEEP",
         "ict": {
@@ -994,8 +994,8 @@
           "fvg": "BEARISH 128.7000~128.7400",
           "score": 1
         },
-        "fresh": true,
-        "ageMinutes": 34.9
+        "fresh": false,
+        "ageMinutes": 51.3
       }
     }
   ],
