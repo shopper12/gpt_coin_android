@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-10-25T18:54:05.767495+09:00",
+  "generatedAtKst": "2026-10-25T20:51:02.193162+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
-    "shortlistCount": 424,
+    "shortlistCount": 425,
     "krEtfShortlistCount": 34,
-    "dailyMetricsCount": 401,
+    "dailyMetricsCount": 400,
     "dailyCandidateCount": 52,
     "krEtfDailyCandidateCount": 27,
     "strictDailyCandidateCount": 25,
@@ -30,131 +30,131 @@
   "signals": [
     {
       "date": "2026-10-25",
-      "generatedAtKst": "2026-10-25T07:56:49+09:00",
-      "briefingSlot": "0750",
+      "generatedAtKst": "2026-10-25T20:50:27+09:00",
+      "briefingSlot": "2050",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
       "confidence": null,
       "currency": "USD",
       "priceTimestampKst": null,
-      "id": "20261025-0750KST-CAP-LONG",
+      "id": "20261025-2050KST-XMR-LONG",
       "assetClass": "CRYPTO",
       "market": "CRYPTO",
-      "ticker": "CAP",
-      "name": "Cap",
+      "ticker": "XMR",
+      "name": "Monero",
       "direction": "LONG",
-      "strategy": "Emerging Leader",
-      "score": 74,
-      "currentPrice": 0.07975,
-      "referencePrice": 0.07975,
-      "entryLow": 0.0765,
-      "entryHigh": 0.078,
-      "stopLoss": 0.072,
-      "target1": 0.088,
-      "target2": 0.094,
-      "holdingPeriod": "12h-5d",
+      "strategy": "Relative strength / liquid leadership",
+      "score": 76,
+      "currentPrice": 603.39,
+      "referencePrice": 603.39,
+      "entryLow": 597,
+      "entryHigh": 605,
+      "stopLoss": 584,
+      "target1": 637,
+      "target2": 660,
+      "holdingPeriod": "1-7 days",
       "committeeVote": "4/7",
-      "catalyst": "CoinGecko Oct25 +12.2% 24h, +6.4% 7d, +56% 30d, ~$14.8M 24h volume; TVL ~$202.6M, market cap ~$124.6M; no verified new protocol announcement",
-      "reason": "More balanced multi-week momentum and lower derivative crowding than JCT/BMT/ORDER; wait for pullback support and 15m VWAP reclaim",
-      "risk": "Circulating supply only ~16% of total, potential unlock dilution, broad crypto selloff, price could gap through stop",
-      "invalidation": "15m close below 0.0720, failure to reclaim VWAP or volume support; no chase above 0.0825",
-      "quoteStatus": "COINGECKO_20261025_WEB_SNAPSHOT_EXACT_QUOTE_TIME_UNVERIFIED"
+      "catalyst": "CoinGecko 24h +3.1%, 7d +2.9% vs global 7d -2.6%; CoinMarketCap ~$602.36",
+      "reason": "Liquid top-cap relative strength with ~0.17% cross-source price difference; no immediate signal without 15m VWAP confirmation",
+      "risk": "Exchange listing restrictions for privacy coins; no verified intraday VWAP or full cross-asset 60D RS",
+      "invalidation": "15m support/VWAP fails or price below $584",
+      "quoteStatus": "COINGECKO_CMC_20261025_WEB_SNAPSHOT_NO_EXACT_TICK_TIME"
     },
     {
       "date": "2026-10-25",
-      "generatedAtKst": "2026-10-25T07:56:49+09:00",
-      "briefingSlot": "0750",
+      "generatedAtKst": "2026-10-25T20:50:27+09:00",
+      "briefingSlot": "2050",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
       "confidence": null,
       "currency": "USD",
       "priceTimestampKst": null,
-      "id": "20261025-0750KST-REZ-LONG",
+      "id": "20261025-2050KST-LIT-LONG",
       "assetClass": "CRYPTO",
       "market": "CRYPTO",
-      "ticker": "REZ",
-      "name": "Renzo",
+      "ticker": "LIT",
+      "name": "Lighter",
       "direction": "LONG",
-      "strategy": "Emerging Leader / Reversal",
-      "score": 70,
-      "currentPrice": 0.004202,
-      "referencePrice": 0.004202,
-      "entryLow": 0.004,
-      "entryHigh": 0.00412,
-      "stopLoss": 0.00382,
-      "target1": 0.00465,
-      "target2": 0.005,
-      "holdingPeriod": "12h-4d",
+      "strategy": "Emerging leader / retracement",
+      "score": 72,
+      "currentPrice": 3.18,
+      "referencePrice": 3.18,
+      "entryLow": 3.11,
+      "entryHigh": 3.18,
+      "stopLoss": 2.99,
+      "target1": 3.5,
+      "target2": 3.75,
+      "holdingPeriod": "1-5 days",
       "committeeVote": "4/7",
-      "catalyst": "CoinGecko Oct25 +8.3% 24h, +17.3% 7d, ~$20.6M volume, near-neutral -0.0007% perps funding; Oct30 token unlock 0.85% of supply",
-      "reason": "Positive 7-day RS vs global crypto -1.7%, moderate derivatives crowding vs extreme leaders; pullback only",
-      "risk": "Restaking yield pressure, Oct30 scheduled token unlock, liquidity, token remains ~98.5% below ATH",
-      "invalidation": "15m close below 0.00382 or unlock-related abnormal supply; no chase above 0.00440",
-      "quoteStatus": "COINGECKO_20261025_WEB_SNAPSHOT_EXACT_QUOTE_TIME_UNVERIFIED"
+      "catalyst": "CoinGecko 24h ~+3.5%, 7d +2.8%, 30d +36%; 24h range $3.03-$3.29",
+      "reason": "Positive 30-day trend and relative resilience versus broad crypto decline; exact market-wide rank and derivatives positioning not verified",
+      "risk": "Exchange and derivatives liquidity not fully verified; price can gap in 24h markets",
+      "invalidation": "15m closes below $2.99 or volume/VWAP confirmation fails",
+      "quoteStatus": "COINGECKO_20261025_WEB_SNAPSHOT_NO_EXACT_TICK_TIME"
     },
     {
       "date": "2026-10-25",
-      "generatedAtKst": "2026-10-25T07:56:49+09:00",
-      "briefingSlot": "0750",
+      "generatedAtKst": "2026-10-25T20:50:27+09:00",
+      "briefingSlot": "2050",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
       "confidence": null,
       "currency": "USD",
       "priceTimestampKst": null,
-      "id": "20261025-0750KST-WLD-SHORT",
+      "id": "20261025-2050KST-XPL-SHORT",
       "assetClass": "CRYPTO",
       "market": "CRYPTO",
-      "ticker": "WLD",
-      "name": "Worldcoin",
+      "ticker": "XPL",
+      "name": "Plasma",
       "direction": "SHORT",
-      "strategy": "Short / Inverse",
-      "score": 68,
-      "currentPrice": 0.4638,
-      "referencePrice": 0.4638,
-      "entryLow": 0.474,
-      "entryHigh": 0.482,
-      "stopLoss": 0.496,
-      "target1": 0.438,
-      "target2": 0.418,
-      "holdingPeriod": "6h-3d",
-      "committeeVote": "4/7",
-      "catalyst": "CoinGecko Oct25 ~-9.9% 24h, ~$402M volume, 24h $0.4581-$0.4839; Binance futures ~$0.4621 and other venue ~$0.4630",
-      "reason": "Liquid downside continuation candidate only after failed bounce, not immediate short into 24h low",
-      "risk": "Short squeeze, funding varies by venue, leverage liquidation, potential unverified exchange transfer narrative",
-      "invalidation": "15m close above 0.496 or successful reclaim of 0.4839 with strong volume",
-      "quoteStatus": "COINGECKO_20261025_WEB_SNAPSHOT_EXACT_QUOTE_TIME_UNVERIFIED"
+      "strategy": "Supply-risk / rebound-failure short",
+      "score": 66,
+      "currentPrice": 0.07154,
+      "referencePrice": 0.07154,
+      "entryLow": 0.073,
+      "entryHigh": 0.0745,
+      "stopLoss": 0.0765,
+      "target1": 0.0675,
+      "target2": 0.064,
+      "holdingPeriod": "1-4 days",
+      "committeeVote": "3/7",
+      "catalyst": "Oct 25 token unlock discussed in secondary sources, NOT verified in primary tokenomics; CoinGecko $0.07154 vs CMC $0.07177",
+      "reason": "24h negative momentum ~-4%, high trading volume, potential supply overhang; short only after failed bounce",
+      "risk": "Unlock not independently confirmed; OI ~$241m vs ~$341m market cap, squeeze/funding/liquidation risk",
+      "invalidation": "Rebound holds above $0.0765 or official unlock information disproves supply premise",
+      "quoteStatus": "COINGECKO_CMC_20261025_WEB_SNAPSHOT_NO_EXACT_TICK_TIME"
     },
     {
       "date": "2026-10-25",
-      "generatedAtKst": "2026-10-25T07:56:49+09:00",
-      "briefingSlot": "0750",
+      "generatedAtKst": "2026-10-25T20:50:27+09:00",
+      "briefingSlot": "2050",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "status": "CONDITIONAL",
       "confidence": null,
       "currency": "USD",
       "priceTimestampKst": null,
-      "id": "20261025-0750KST-USDC-DEFENSIVE",
+      "id": "20261025-2050KST-USDC-DEFENSIVE",
       "assetClass": "CRYPTO",
       "market": "CRYPTO",
       "ticker": "USDC",
       "name": "USD Coin",
       "direction": "DEFENSIVE",
-      "strategy": "Defensive / USD parking",
-      "score": 66,
-      "currentPrice": 0.9997,
-      "referencePrice": 0.9997,
-      "entryLow": 0.9994,
-      "entryHigh": 1,
+      "strategy": "USD stablecoin / defensive reserve",
+      "score": 64,
+      "currentPrice": 0.9996,
+      "referencePrice": 0.9996,
+      "entryLow": 0.9995,
+      "entryHigh": 0.9998,
       "stopLoss": null,
       "target1": null,
       "target2": null,
       "holdingPeriod": "cash parking",
       "committeeVote": "6/7",
-      "catalyst": "Circle official reserve snapshot Oct22 $72.0B in circulation vs $72.2B reserves; CoinGecko ~$0.9997 Oct25",
-      "reason": "USD-denominated defensive parking instead of directional exposure while weekend crypto breadth is weak",
-      "risk": "Issuer, exchange, network, depeg and KRW/USD FX risks; no bank deposit protection",
-      "invalidation": "Suspend new purchases on depeg below 0.995, redemption disruptions or material reserve disclosure changes",
-      "quoteStatus": "COINGECKO_20261025_WEB_SNAPSHOT_EXACT_QUOTE_TIME_UNVERIFIED"
+      "catalyst": "CoinGecko USDC ~$0.9996, 24h $0.9995-$0.9998; issuer Circle reserve disclosures",
+      "reason": "24h market accessible defensive dollar exposure, not a profit target",
+      "risk": "Issuer, redemption, exchange, network, depeg and KRW FX risks; not an insured bank deposit",
+      "invalidation": "Depeg warning under $0.995 or redemption/reserve problems",
+      "quoteStatus": "COINGECKO_20261025_WEB_SNAPSHOT_NO_EXACT_TICK_TIME"
     }
   ],
   "topEvaluated": [
@@ -183,7 +183,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 3116.3
+        "ageMinutes": 3233.4
       }
     },
     {
@@ -211,7 +211,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 3116.3
+        "ageMinutes": 3233.4
       }
     },
     {
@@ -239,7 +239,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 3116.3
+        "ageMinutes": 3233.4
       }
     },
     {
@@ -267,7 +267,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 3116.3
+        "ageMinutes": 3233.4
       }
     },
     {
@@ -295,7 +295,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 3116.3
+        "ageMinutes": 3233.4
       }
     },
     {
@@ -323,7 +323,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 3116.3
+        "ageMinutes": 3233.4
       }
     },
     {
@@ -351,7 +351,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 3116.3
+        "ageMinutes": 3233.4
       }
     },
     {
@@ -379,7 +379,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 3116.3
+        "ageMinutes": 3233.4
       }
     },
     {
@@ -407,7 +407,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 3116.3
+        "ageMinutes": 3233.4
       }
     },
     {
@@ -435,7 +435,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 3116.3
+        "ageMinutes": 3233.4
       }
     },
     {
@@ -463,7 +463,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 3116.3
+        "ageMinutes": 3233.4
       }
     },
     {
@@ -491,7 +491,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 3116.3
+        "ageMinutes": 3233.4
       }
     },
     {
@@ -519,7 +519,7 @@
           "score": -5
         },
         "fresh": false,
-        "ageMinutes": 3116.3
+        "ageMinutes": 3233.4
       }
     },
     {
@@ -547,7 +547,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 3116.3
+        "ageMinutes": 3233.4
       }
     },
     {
@@ -575,7 +575,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 3116.3
+        "ageMinutes": 3233.4
       }
     },
     {
@@ -603,7 +603,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 3116.3
+        "ageMinutes": 3233.4
       }
     },
     {
@@ -631,7 +631,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 3116.3
+        "ageMinutes": 3233.4
       }
     },
     {
@@ -659,7 +659,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 3116.3
+        "ageMinutes": 3233.4
       }
     },
     {
@@ -687,7 +687,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 3116.3
+        "ageMinutes": 3233.4
       }
     },
     {
@@ -715,7 +715,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 3116.3
+        "ageMinutes": 3233.4
       }
     },
     {
@@ -743,7 +743,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 3116.3
+        "ageMinutes": 3233.4
       }
     },
     {
@@ -771,7 +771,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 3116.3
+        "ageMinutes": 3233.4
       }
     },
     {
@@ -799,7 +799,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 3116.3
+        "ageMinutes": 3233.4
       }
     },
     {
@@ -827,7 +827,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 3116.3
+        "ageMinutes": 3233.4
       }
     },
     {
@@ -855,7 +855,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 3116.3
+        "ageMinutes": 3233.4
       }
     },
     {
@@ -883,7 +883,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 3116.3
+        "ageMinutes": 3233.4
       }
     },
     {
@@ -911,7 +911,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 3116.3
+        "ageMinutes": 3233.4
       }
     },
     {
@@ -939,7 +939,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2066.5
+        "ageMinutes": 2183.7
       }
     },
     {
@@ -967,7 +967,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2051.3
+        "ageMinutes": 2168.4
       }
     },
     {
@@ -995,7 +995,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 2051.3
+        "ageMinutes": 2168.4
       }
     }
   ],
