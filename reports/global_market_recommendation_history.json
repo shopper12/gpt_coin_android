@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-10-29T05:23:36.530544+09:00",
+  "generatedAtKst": "2026-10-29T07:52:00.200947+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
-  "coverageStart": "2026-08-23",
+  "coverageStart": "2026-08-24",
   "coverageEnd": "2026-10-29",
   "recordCount": 600,
   "recommendations": [
@@ -55,7 +55,7 @@
         95.400002
       ],
       "currency": "USD",
-      "status": "ACTIVE_SIGNAL",
+      "status": "EXPIRED_SIGNAL",
       "score": 90.1,
       "confidence": 9.0,
       "relativeStrengthPercentile": 0.9422,
@@ -104,7 +104,206 @@
       },
       "reason": "3/6/12개월 절대 모멘텀 양수, 200일선 상단, 자산군 상대강도 94백분위, breakout=True; reclaim=False; volume=2.47x/1.35x; ICT=BULLISH/BOS_UP/NONE",
       "guardrail": "자동 추천은 주문이 아니다. 실시간 호가·슬리피지·공시·거래 가능 여부를 확인한다.",
+      "currentPriceDate": "2026-10-29",
+      "expiredAtKst": "2026-10-29T07:52:00.200156+09:00"
+    },
+    {
+      "date": "2026-10-29",
+      "generatedAtKst": "2026-10-29T07:49:25.710+09:00",
+      "briefingSlot": "0750",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "confidence": null,
+      "id": "20261029-0750KST-GKOS-LONG",
+      "ticker": "GKOS",
+      "name": "Glaukos Corporation",
+      "assetClass": "US_STOCK",
+      "market": "NYSE",
+      "direction": "LONG",
+      "score": 82,
+      "currentPrice": 181.429993,
+      "referencePrice": 181.43,
+      "entryLow": 198,
+      "entryHigh": 205,
+      "stopLoss": 190,
+      "target1": 232,
+      "target2": 247,
+      "committeeVote": "4/7",
+      "currency": "USD",
+      "priceTimestampKst": "2026-10-29T07:17:00+09:00",
+      "quoteStatus": "US_OCT28_AFTERHOURS_1817_EDT_DELAYED_NONEXECUTABLE",
+      "holdingPeriod": "1-5 US trading days",
+      "strategy": "Q3 earnings growth leader; wait for US regular-session 15m hold and VWAP recovery inside $198-$205; no chase above $218.",
+      "catalyst": "Oct28 Q3 sales $211.0m +58% YoY, non-GAAP EPS $0.47 vs -$0.10 consensus, FY26 sales outlook $775-785m from $680-700m, FY27 prelim $1bn, no debt.",
+      "reason": "Oct28 US close $181.43, Oct28 18:17 EDT afterhours $213.25 +17.54%; 5D regular close +2.6%, 20D regular +10.5%; regular volume 1.88m.",
+      "risk": "Large afterhours gap, no verified intraday VWAP/60D RS, opening liquidity, high valuation; no immediate entry.",
+      "invalidation": "Cancel if opening range fails to hold $198 or $190 stop touched; chase prohibited above $218.",
+      "status": "CONDITIONAL",
+      "previousClose": 181.169998,
+      "todayChangePct": 0.144,
+      "recentCloses": [
+        161.419998,
+        163.809998,
+        161.529999,
+        159.860001,
+        153.490005,
+        154.880005,
+        154.429993,
+        158.559998,
+        158.550003,
+        164.190002,
+        163.169998,
+        163.75,
+        164.009995,
+        161.589996,
+        172.179993,
+        161.289993,
+        165.690002,
+        168.020004,
+        165.5,
+        167.889999,
+        165.600006,
+        164.839996,
+        166.960007,
+        173.429993,
+        176.850006,
+        176.690002,
+        178.880005,
+        178.270004,
+        181.169998,
+        181.429993
+      ],
       "currentPriceDate": "2026-10-29"
+    },
+    {
+      "date": "2026-10-29",
+      "generatedAtKst": "2026-10-29T07:49:25.710+09:00",
+      "briefingSlot": "0750",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "confidence": null,
+      "id": "20261029-0750KST-PRCH-LONG",
+      "ticker": "PRCH",
+      "name": "Porch Group Inc",
+      "assetClass": "US_STOCK",
+      "market": "NASDAQ",
+      "direction": "LONG",
+      "score": 76,
+      "currentPrice": 19.94,
+      "referencePrice": 16.3,
+      "entryLow": 18.4,
+      "entryHigh": 19.2,
+      "stopLoss": 17.3,
+      "target1": 22.8,
+      "target2": 24.5,
+      "committeeVote": "4/7",
+      "currency": "USD",
+      "priceTimestampKst": "2026-10-29T06:58:00+09:00",
+      "quoteStatus": "US_OCT28_AFTERHOURS_1758_EDT_DELAYED_NONEXECUTABLE",
+      "holdingPeriod": "1-5 US trading days",
+      "strategy": "Earnings-driven turnaround; buy only $18.40-$19.20 retest after 15m support and VWAP reclaim; no chase above $20.50.",
+      "catalyst": "Oct28 Q3 revenue $143.9m +13%, net income $12.2m vs loss $10.9m, adjusted EBITDA $44.5m +116%, raised FY26 owned-segment revenue and EBITDA guidance.",
+      "reason": "Oct28 US regular close $16.30 (-7.7%); Oct28 17:58 EDT afterhours $19.94 (+22.33%); daily volume 3.10m vs Oct27 1.15m; 5D regular -12.3%.",
+      "risk": "Small-mid cap liquidity, opening gap reversal, adjusted EBITDA excludes Reciprocal, 60D RS and afterhours spread unverified.",
+      "invalidation": "No entry if gap reverses under $18.40; stop $17.30 after actual fill; no chase above $20.50.",
+      "status": "CONDITIONAL"
+    },
+    {
+      "date": "2026-10-29",
+      "generatedAtKst": "2026-10-29T07:49:25.710+09:00",
+      "briefingSlot": "0750",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "confidence": null,
+      "id": "20261029-0750KST-FTNT-SHORT",
+      "ticker": "FTNT",
+      "name": "Fortinet Inc",
+      "assetClass": "US_STOCK",
+      "market": "NASDAQ",
+      "direction": "SHORT",
+      "score": 69,
+      "currentPrice": 174.080002,
+      "referencePrice": 174.08,
+      "entryLow": 135,
+      "entryHigh": 141,
+      "stopLoss": 148,
+      "target1": 117,
+      "target2": 108,
+      "committeeVote": "3/7",
+      "currency": "USD",
+      "priceTimestampKst": "2026-10-29T07:34:00+09:00",
+      "quoteStatus": "US_OCT28_AFTERHOURS_1834_EDT_DELAYED_NONEXECUTABLE",
+      "holdingPeriod": "1-5 US trading days",
+      "strategy": "Short only on $135-$141 rebound failure with 15m lower-high and borrow availability verified; no naked chase below $125.",
+      "catalyst": "Oct28 Q3 revenue $2.078bn +20%; FY26 total revenue guide raised but service-revenue guidance midpoint cut $40m vs July, weakening recurring revenue mix.",
+      "reason": "Oct28 US regular close $174.08 (-5.9%); 18:34 EDT afterhours $129.44 (-25.64%), regular volume 10.91m vs prior 3.59m.",
+      "risk": "Strong cash flow and overall guidance raise may cause short squeeze; borrow/locate, fees and intraday VWAP unverified.",
+      "invalidation": "No short if borrow unavailable or bounce does not fail; $148 stop; no chase under $125.",
+      "status": "CONDITIONAL",
+      "previousClose": 185.0,
+      "todayChangePct": -5.903,
+      "recentCloses": [
+        172.580002,
+        169.839996,
+        175.229996,
+        174.259995,
+        178.740005,
+        178.669998,
+        173.460007,
+        176.330002,
+        175.960007,
+        178.759995,
+        178.720001,
+        180.949997,
+        184.130005,
+        191.270004,
+        189.279999,
+        189.100006,
+        194.75,
+        192.940002,
+        190.759995,
+        184.050003,
+        181.910004,
+        169.130005,
+        171.5,
+        170.929993,
+        174.050003,
+        172.979996,
+        179.990005,
+        183.330002,
+        185.0,
+        174.080002
+      ],
+      "currentPriceDate": "2026-10-29"
+    },
+    {
+      "date": "2026-10-29",
+      "generatedAtKst": "2026-10-29T07:49:25.710+09:00",
+      "briefingSlot": "0750",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "confidence": null,
+      "id": "20261029-0750KST-SGOV-DEFENSIVE",
+      "ticker": "SGOV",
+      "name": "iShares 0-3 Month Treasury Bond ETF",
+      "assetClass": "US_ETF",
+      "market": "NYSE_ARCA",
+      "direction": "DEFENSIVE",
+      "score": 64,
+      "currentPrice": 100.697,
+      "referencePrice": 100.697,
+      "entryLow": 100.69,
+      "entryHigh": 100.71,
+      "stopLoss": null,
+      "target1": null,
+      "target2": null,
+      "committeeVote": "5/7",
+      "currency": "USD",
+      "priceTimestampKst": "2026-10-29T05:00:00+09:00",
+      "quoteStatus": "US_OCT28_REGULAR_CLOSE_REFERENCE_NOT_CURRENT_AFTERHOURS",
+      "holdingPeriod": "USD cash reserve / 1-30 US trading days",
+      "strategy": "Short-term US Treasury ETF as USD liquidity reserve only if bid-ask spread and NAV are acceptable; no fixed target/stop.",
+      "catalyst": "Fed held 3.75%-4.00%; Oct28 Treasury 2Y 4.67%, 10Y 5.05%; money market carry, not a breakout.",
+      "reason": "Oct28 regular close $100.697, 27 close $100.680; price is NOT current executable quote.",
+      "risk": "USD/KRW currency risk; ETF ex-dividend price resets; NAV spread; not FDIC insured.",
+      "invalidation": "Do not trade on a wide spread or material premium to NAV.",
+      "status": "CONDITIONAL"
     },
     {
       "date": "2026-10-28",
@@ -1768,9 +1967,9 @@
       "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM: 절대추세+상대모멘텀+15분 트리거+변동성 목표",
       "strategyType": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
       "referencePrice": 61.240002,
-      "currentPrice": 66.639999,
+      "currentPrice": 66.660004,
       "previousClose": 64.889999,
-      "todayChangePct": 2.697,
+      "todayChangePct": 2.728,
       "recentCloses": [
         52.25,
         53.049999,
@@ -1801,7 +2000,7 @@
         66.110001,
         65.400002,
         64.889999,
-        66.639999
+        66.660004
       ],
       "currency": "USD",
       "status": "EXPIRED_SIGNAL",
@@ -1869,9 +2068,9 @@
       "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM: 절대추세+상대모멘텀+15분 트리거+변동성 목표",
       "strategyType": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
       "referencePrice": 155.287506,
-      "currentPrice": 166.529999,
+      "currentPrice": 166.570007,
       "previousClose": 163.880005,
-      "todayChangePct": 1.617,
+      "todayChangePct": 1.641,
       "recentCloses": [
         155.309998,
         153.820007,
@@ -1902,7 +2101,7 @@
         169.529999,
         166.229996,
         163.880005,
-        166.529999
+        166.570007
       ],
       "currency": "USD",
       "status": "EXPIRED_SIGNAL",
@@ -2071,9 +2270,9 @@
       "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM: 절대추세+상대모멘텀+15분 트리거+변동성 목표",
       "strategyType": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
       "referencePrice": 101.170998,
-      "currentPrice": 91.370003,
+      "currentPrice": 91.389999,
       "previousClose": 90.290001,
-      "todayChangePct": 1.196,
+      "todayChangePct": 1.218,
       "recentCloses": [
         89.915176,
         90.974884,
@@ -2104,7 +2303,7 @@
         86.150002,
         88.029999,
         90.290001,
-        91.370003
+        91.389999
       ],
       "currency": "USD",
       "status": "EXPIRED_SIGNAL",
@@ -3744,7 +3943,7 @@
       "status": "OBSERVE",
       "score": 82,
       "confidence": 75,
-      "currentPrice": 166.529999,
+      "currentPrice": 166.570007,
       "referencePrice": null,
       "currency": "USD",
       "entryLow": null,
@@ -3761,7 +3960,7 @@
       "quoteStatus": "UNDERLYING_VERIFIED_ETF_PRICE_NOT_VERIFIED",
       "priceTimestampKst": "2026-09-29T20:51:56+09:00",
       "previousClose": 163.880005,
-      "todayChangePct": 1.617,
+      "todayChangePct": 1.641,
       "recentCloses": [
         155.309998,
         153.820007,
@@ -3792,7 +3991,7 @@
         169.529999,
         166.229996,
         163.880005,
-        166.529999
+        166.570007
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -3875,7 +4074,7 @@
       "status": "IMMEDIATE",
       "score": 93,
       "confidence": 87,
-      "currentPrice": 166.529999,
+      "currentPrice": 166.570007,
       "referencePrice": 154.92,
       "currency": "USD",
       "entryLow": 153.5,
@@ -3892,7 +4091,7 @@
       "quoteStatus": "DERIVED_FROM_VERIFIED_PREMARKET_CHANGE",
       "priceTimestampKst": "2026-09-28T20:50:00+09:00",
       "previousClose": 163.880005,
-      "todayChangePct": 1.617,
+      "todayChangePct": 1.641,
       "recentCloses": [
         155.309998,
         153.820007,
@@ -3923,7 +4122,7 @@
         169.529999,
         166.229996,
         163.880005,
-        166.529999
+        166.570007
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -4853,7 +5052,7 @@
       "status": "IMMEDIATE",
       "score": 84,
       "confidence": 84,
-      "currentPrice": 81186.023438,
+      "currentPrice": 81183.867188,
       "referencePrice": 84950.01,
       "currency": "USD",
       "entryLow": 84500,
@@ -4870,7 +5069,7 @@
       "quoteStatus": "LIVE_WEB_REFERENCE",
       "priceTimestampKst": "2026-09-27T23:30:00+09:00",
       "previousClose": 80805.078125,
-      "todayChangePct": 0.471,
+      "todayChangePct": 0.469,
       "recentCloses": [
         83622.429688,
         83553.851562,
@@ -4901,7 +5100,7 @@
         80024.007812,
         80006.65625,
         80805.078125,
-        81186.023438
+        81183.867188
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -4952,7 +5151,7 @@
       "status": "IMMEDIATE",
       "score": 82,
       "confidence": 80,
-      "currentPrice": 81186.023438,
+      "currentPrice": 81183.867188,
       "referencePrice": 84477.26,
       "currency": "USD",
       "entryLow": 83800,
@@ -4969,7 +5168,7 @@
       "quoteStatus": "LIVE_WEB_REFERENCE",
       "priceTimestampKst": "2026-09-27T11:27:00+09:00",
       "previousClose": 80805.078125,
-      "todayChangePct": 0.471,
+      "todayChangePct": 0.469,
       "recentCloses": [
         83622.429688,
         83553.851562,
@@ -5000,7 +5199,7 @@
         80024.007812,
         80006.65625,
         80805.078125,
-        81186.023438
+        81183.867188
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -5019,7 +5218,7 @@
       "status": "IMMEDIATE",
       "score": 82,
       "confidence": 81,
-      "currentPrice": 81186.023438,
+      "currentPrice": 81183.867188,
       "referencePrice": 83958.12,
       "currency": "USD",
       "entryLow": 83500,
@@ -5036,7 +5235,7 @@
       "quoteStatus": "LIVE_WEB_REFERENCE",
       "priceTimestampKst": "2026-09-27T20:50:00+09:00",
       "previousClose": 80805.078125,
-      "todayChangePct": 0.471,
+      "todayChangePct": 0.469,
       "recentCloses": [
         83622.429688,
         83553.851562,
@@ -5067,7 +5266,7 @@
         80024.007812,
         80006.65625,
         80805.078125,
-        81186.023438
+        81183.867188
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -5086,7 +5285,7 @@
       "status": "IMMEDIATE",
       "score": 81,
       "confidence": 78,
-      "currentPrice": 81186.023438,
+      "currentPrice": 81183.867188,
       "referencePrice": 84316.16,
       "currency": "USD",
       "entryLow": 83200.0,
@@ -5103,7 +5302,7 @@
       "quoteStatus": "LIVE_WEB_REFERENCE",
       "priceTimestampKst": "2026-09-27T07:50:00+09:00",
       "previousClose": 80805.078125,
-      "todayChangePct": 0.471,
+      "todayChangePct": 0.469,
       "recentCloses": [
         83622.429688,
         83553.851562,
@@ -5134,7 +5333,7 @@
         80024.007812,
         80006.65625,
         80805.078125,
-        81186.023438
+        81183.867188
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -6020,7 +6219,7 @@
       "status": "CONDITIONAL",
       "score": 87,
       "confidence": 79,
-      "currentPrice": 81186.023438,
+      "currentPrice": 81183.867188,
       "referencePrice": 84567.92,
       "currency": "USD",
       "entryLow": 84650,
@@ -6037,7 +6236,7 @@
       "quoteStatus": "LIVE_WEB_VERIFIED",
       "priceTimestampKst": "2026-09-25T11:31:00+09:00",
       "previousClose": 80805.078125,
-      "todayChangePct": 0.471,
+      "todayChangePct": 0.469,
       "recentCloses": [
         83622.429688,
         83553.851562,
@@ -6068,7 +6267,7 @@
         80024.007812,
         80006.65625,
         80805.078125,
-        81186.023438
+        81183.867188
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -6087,7 +6286,7 @@
       "status": "IMMEDIATE",
       "score": 87,
       "confidence": 80,
-      "currentPrice": 1.3282,
+      "currentPrice": 1.3256,
       "referencePrice": 1.53,
       "currency": "USD",
       "entryLow": 1.53,
@@ -6104,7 +6303,7 @@
       "quoteStatus": "LIVE_WEB_VERIFIED",
       "priceTimestampKst": "2026-09-25T23:30:00+09:00",
       "previousClose": 1.329586,
-      "todayChangePct": -0.104,
+      "todayChangePct": -0.3,
       "recentCloses": [
         1.490032,
         1.488394,
@@ -6135,7 +6334,7 @@
         1.294408,
         1.306901,
         1.329586,
-        1.3282
+        1.3256
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -6285,7 +6484,7 @@
       "status": "CONDITIONAL",
       "score": 82,
       "confidence": 75,
-      "currentPrice": 81186.023438,
+      "currentPrice": 81183.867188,
       "referencePrice": 83578.68,
       "currency": "USD",
       "entryLow": 83000,
@@ -6302,7 +6501,7 @@
       "quoteStatus": "LAST_WEB_VERIFIED_STALE",
       "priceTimestampKst": "2026-09-25T07:50:00+09:00",
       "previousClose": 80805.078125,
-      "todayChangePct": 0.471,
+      "todayChangePct": 0.469,
       "recentCloses": [
         83622.429688,
         83553.851562,
@@ -6333,7 +6532,7 @@
         80024.007812,
         80006.65625,
         80805.078125,
-        81186.023438
+        81183.867188
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -6384,7 +6583,7 @@
       "status": "CONDITIONAL",
       "score": 78,
       "confidence": 70,
-      "currentPrice": 81186.023438,
+      "currentPrice": 81183.867188,
       "referencePrice": 84382.4,
       "currency": "USD",
       "entryLow": 84890,
@@ -6401,7 +6600,7 @@
       "quoteStatus": "LIVE_WEB_VERIFIED",
       "priceTimestampKst": "2026-09-25T20:48:00+09:00",
       "previousClose": 80805.078125,
-      "todayChangePct": 0.471,
+      "todayChangePct": 0.469,
       "recentCloses": [
         83622.429688,
         83553.851562,
@@ -6432,7 +6631,7 @@
         80024.007812,
         80006.65625,
         80805.078125,
-        81186.023438
+        81183.867188
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -6611,7 +6810,7 @@
       "status": "IMMEDIATE",
       "score": 89,
       "confidence": 83,
-      "currentPrice": 81186.023438,
+      "currentPrice": 81183.867188,
       "referencePrice": 83578.68,
       "currency": "USD",
       "entryLow": 83300,
@@ -6628,7 +6827,7 @@
       "quoteStatus": "LIVE_WEB_VERIFIED",
       "priceTimestampKst": "2026-09-24T23:31:00+09:00",
       "previousClose": 80805.078125,
-      "todayChangePct": 0.471,
+      "todayChangePct": 0.469,
       "recentCloses": [
         83622.429688,
         83553.851562,
@@ -6659,7 +6858,7 @@
         80024.007812,
         80006.65625,
         80805.078125,
-        81186.023438
+        81183.867188
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -6876,7 +7075,7 @@
       "status": "CONDITIONAL",
       "score": 84,
       "confidence": 76,
-      "currentPrice": 81186.023438,
+      "currentPrice": 81183.867188,
       "referencePrice": 84252,
       "currency": "USD",
       "entryLow": 83800,
@@ -6893,7 +7092,7 @@
       "quoteStatus": "LIVE_WEB_VERIFIED_APPROX",
       "priceTimestampKst": "2026-09-24T07:40:00+09:00",
       "previousClose": 80805.078125,
-      "todayChangePct": 0.471,
+      "todayChangePct": 0.469,
       "recentCloses": [
         83622.429688,
         83553.851562,
@@ -6924,7 +7123,7 @@
         80024.007812,
         80006.65625,
         80805.078125,
-        81186.023438
+        81183.867188
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -6943,7 +7142,7 @@
       "status": "CONDITIONAL",
       "score": 83,
       "confidence": 74,
-      "currentPrice": 81186.023438,
+      "currentPrice": 81183.867188,
       "referencePrice": 84252,
       "currency": "USD",
       "entryLow": 83800,
@@ -6960,7 +7159,7 @@
       "quoteStatus": "STALE_LAST_VERIFIED_DO_NOT_CHASE",
       "priceTimestampKst": "2026-09-24T07:40:00+09:00",
       "previousClose": 80805.078125,
-      "todayChangePct": 0.471,
+      "todayChangePct": 0.469,
       "recentCloses": [
         83622.429688,
         83553.851562,
@@ -6991,7 +7190,7 @@
         80024.007812,
         80006.65625,
         80805.078125,
-        81186.023438
+        81183.867188
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -7010,7 +7209,7 @@
       "status": "CONDITIONAL",
       "score": 83,
       "confidence": 75,
-      "currentPrice": 81186.023438,
+      "currentPrice": 81183.867188,
       "referencePrice": 84402.7,
       "currency": "USD",
       "entryLow": 83800,
@@ -7027,7 +7226,7 @@
       "quoteStatus": "LATEST_DAILY_REFERENCE_NOT_TICK_LIVE",
       "priceTimestampKst": "2026-09-24T20:33:00+09:00",
       "previousClose": 80805.078125,
-      "todayChangePct": 0.471,
+      "todayChangePct": 0.469,
       "recentCloses": [
         83622.429688,
         83553.851562,
@@ -7058,7 +7257,7 @@
         80024.007812,
         80006.65625,
         80805.078125,
-        81186.023438
+        81183.867188
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -7211,7 +7410,7 @@
       "status": "OBSERVE",
       "score": 75,
       "confidence": 64,
-      "currentPrice": 373.570007,
+      "currentPrice": 373.51001,
       "referencePrice": 392.63,
       "currency": "USD",
       "entryLow": 389.0,
@@ -7228,7 +7427,7 @@
       "quoteStatus": "REGULAR_SESSION_REFERENCE_VERIFIED",
       "priceTimestampKst": "2026-09-24T01:50:00+09:00",
       "previousClose": 372.279999,
-      "todayChangePct": 0.347,
+      "todayChangePct": 0.33,
       "recentCloses": [
         398.359985,
         401.170013,
@@ -7259,7 +7458,7 @@
         366.609985,
         367.820007,
         372.279999,
-        373.570007
+        373.51001
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -7735,7 +7934,7 @@
       "status": "CONDITIONAL",
       "score": 83,
       "confidence": 75,
-      "currentPrice": 81186.023438,
+      "currentPrice": 81183.867188,
       "referencePrice": 86450,
       "currency": "USD",
       "entryLow": 85300,
@@ -7752,7 +7951,7 @@
       "quoteStatus": "WEB_VERIFIED_APPROX",
       "priceTimestampKst": "2026-09-23T07:45:00+09:00",
       "previousClose": 80805.078125,
-      "todayChangePct": 0.471,
+      "todayChangePct": 0.469,
       "recentCloses": [
         83622.429688,
         83553.851562,
@@ -7783,7 +7982,7 @@
         80024.007812,
         80006.65625,
         80805.078125,
-        81186.023438
+        81183.867188
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -7802,7 +8001,7 @@
       "status": "CONDITIONAL",
       "score": 82,
       "confidence": 74,
-      "currentPrice": 81186.023438,
+      "currentPrice": 81183.867188,
       "referencePrice": 86000,
       "currency": "USD",
       "entryLow": 84500,
@@ -7819,7 +8018,7 @@
       "quoteStatus": "WEB_VERIFIED_APPROX",
       "priceTimestampKst": "2026-09-23T11:25:00+09:00",
       "previousClose": 80805.078125,
-      "todayChangePct": 0.471,
+      "todayChangePct": 0.469,
       "recentCloses": [
         83622.429688,
         83553.851562,
@@ -7850,7 +8049,7 @@
         80024.007812,
         80006.65625,
         80805.078125,
-        81186.023438
+        81183.867188
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -7869,7 +8068,7 @@
       "status": "CONDITIONAL",
       "score": 82,
       "confidence": 74,
-      "currentPrice": 81186.023438,
+      "currentPrice": 81183.867188,
       "referencePrice": 85832,
       "currency": "USD",
       "entryLow": 84200,
@@ -7886,7 +8085,7 @@
       "quoteStatus": "WEB_VERIFIED_APPROX",
       "priceTimestampKst": "2026-09-23T20:45:00+09:00",
       "previousClose": 80805.078125,
-      "todayChangePct": 0.471,
+      "todayChangePct": 0.469,
       "recentCloses": [
         83622.429688,
         83553.851562,
@@ -7917,7 +8116,7 @@
         80024.007812,
         80006.65625,
         80805.078125,
-        81186.023438
+        81183.867188
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -7968,7 +8167,7 @@
       "status": "CONDITIONAL",
       "score": 80,
       "confidence": 72,
-      "currentPrice": 81186.023438,
+      "currentPrice": 81183.867188,
       "referencePrice": 86000,
       "currency": "USD",
       "entryLow": 84200,
@@ -7985,7 +8184,7 @@
       "quoteStatus": "WEB_VERIFIED_APPROX",
       "priceTimestampKst": "2026-09-23T23:20:00+09:00",
       "previousClose": 80805.078125,
-      "todayChangePct": 0.471,
+      "todayChangePct": 0.469,
       "recentCloses": [
         83622.429688,
         83553.851562,
@@ -8016,7 +8215,7 @@
         80024.007812,
         80006.65625,
         80805.078125,
-        81186.023438
+        81183.867188
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -8594,7 +8793,7 @@
       "status": "CONDITIONAL",
       "score": 87,
       "confidence": 78,
-      "currentPrice": 81186.023438,
+      "currentPrice": 81183.867188,
       "referencePrice": 86008.56,
       "currency": "USD",
       "entryLow": 84800,
@@ -8611,7 +8810,7 @@
       "quoteStatus": "WEB_VERIFIED_MULTI_SOURCE",
       "priceTimestampKst": "2026-09-22T07:45:00+09:00",
       "previousClose": 80805.078125,
-      "todayChangePct": 0.471,
+      "todayChangePct": 0.469,
       "recentCloses": [
         83622.429688,
         83553.851562,
@@ -8642,7 +8841,7 @@
         80024.007812,
         80006.65625,
         80805.078125,
-        81186.023438
+        81183.867188
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -8762,7 +8961,7 @@
       "status": "CONDITIONAL",
       "score": 86,
       "confidence": 77,
-      "currentPrice": 81186.023438,
+      "currentPrice": 81183.867188,
       "referencePrice": 87000,
       "currency": "USD",
       "entryLow": 85000,
@@ -8779,7 +8978,7 @@
       "quoteStatus": "REUTERS_ROUNDED_WEB_VERIFIED",
       "priceTimestampKst": "2026-09-22T11:00:00+09:00",
       "previousClose": 80805.078125,
-      "todayChangePct": 0.471,
+      "todayChangePct": 0.469,
       "recentCloses": [
         83622.429688,
         83553.851562,
@@ -8810,7 +9009,7 @@
         80024.007812,
         80006.65625,
         80805.078125,
-        81186.023438
+        81183.867188
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -8930,7 +9129,7 @@
       "status": "CONDITIONAL",
       "score": 82,
       "confidence": 74,
-      "currentPrice": 81186.023438,
+      "currentPrice": 81183.867188,
       "referencePrice": 86030,
       "currency": "USD",
       "entryLow": 84800,
@@ -8947,7 +9146,7 @@
       "quoteStatus": "WEB_VERIFIED_PREMARKET_SNAPSHOT",
       "priceTimestampKst": "2026-09-22T20:40:00+09:00",
       "previousClose": 80805.078125,
-      "todayChangePct": 0.471,
+      "todayChangePct": 0.469,
       "recentCloses": [
         83622.429688,
         83553.851562,
@@ -8978,7 +9177,7 @@
         80024.007812,
         80006.65625,
         80805.078125,
-        81186.023438
+        81183.867188
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -8997,7 +9196,7 @@
       "status": "CONDITIONAL",
       "score": 82,
       "confidence": 74,
-      "currentPrice": 81186.023438,
+      "currentPrice": 81183.867188,
       "referencePrice": 85500,
       "currency": "USD",
       "entryLow": 84200,
@@ -9014,7 +9213,7 @@
       "quoteStatus": "WEB_VERIFIED_CURRENT_APPROX",
       "priceTimestampKst": "2026-09-22T23:25:00+09:00",
       "previousClose": 80805.078125,
-      "todayChangePct": 0.471,
+      "todayChangePct": 0.469,
       "recentCloses": [
         83622.429688,
         83553.851562,
@@ -9045,7 +9244,7 @@
         80024.007812,
         80006.65625,
         80805.078125,
-        81186.023438
+        81183.867188
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -9527,7 +9726,7 @@
       "status": "CONDITIONAL",
       "score": 89,
       "confidence": 80,
-      "currentPrice": 81186.023438,
+      "currentPrice": 81183.867188,
       "referencePrice": 84603,
       "currency": "USD",
       "entryLow": 83200,
@@ -9544,7 +9743,7 @@
       "quoteStatus": "WEB_VERIFIED_MULTI_SOURCE",
       "priceTimestampKst": "2026-09-21T20:50:00+09:00",
       "previousClose": 80805.078125,
-      "todayChangePct": 0.471,
+      "todayChangePct": 0.469,
       "recentCloses": [
         83622.429688,
         83553.851562,
@@ -9575,7 +9774,7 @@
         80024.007812,
         80006.65625,
         80805.078125,
-        81186.023438
+        81183.867188
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -9695,7 +9894,7 @@
       "status": "CONDITIONAL",
       "score": 88,
       "confidence": 80,
-      "currentPrice": 81186.023438,
+      "currentPrice": 81183.867188,
       "referencePrice": 84533.87,
       "currency": "USD",
       "entryLow": 83200,
@@ -9712,7 +9911,7 @@
       "quoteStatus": "WEB_VERIFIED_MULTI_SOURCE",
       "priceTimestampKst": "2026-09-21T23:30:00+09:00",
       "previousClose": 80805.078125,
-      "todayChangePct": 0.471,
+      "todayChangePct": 0.469,
       "recentCloses": [
         83622.429688,
         83553.851562,
@@ -9743,7 +9942,7 @@
         80024.007812,
         80006.65625,
         80805.078125,
-        81186.023438
+        81183.867188
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -9829,7 +10028,7 @@
       "status": "CONDITIONAL",
       "score": 86,
       "confidence": 74,
-      "currentPrice": 81186.023438,
+      "currentPrice": 81183.867188,
       "referencePrice": 81161.36,
       "currency": "USD",
       "entryLow": 80400,
@@ -9846,7 +10045,7 @@
       "quoteStatus": "WEB_VERIFIED_0459KST",
       "priceTimestampKst": "2026-09-21T04:59:00+09:00",
       "previousClose": 80805.078125,
-      "todayChangePct": 0.471,
+      "todayChangePct": 0.469,
       "recentCloses": [
         83622.429688,
         83553.851562,
@@ -9877,7 +10076,7 @@
         80024.007812,
         80006.65625,
         80805.078125,
-        81186.023438
+        81183.867188
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -9896,7 +10095,7 @@
       "status": "CONDITIONAL",
       "score": 86,
       "confidence": 73,
-      "currentPrice": 81186.023438,
+      "currentPrice": 81183.867188,
       "referencePrice": 81260,
       "currency": "USD",
       "entryLow": 80400,
@@ -9913,7 +10112,7 @@
       "quoteStatus": "CROSS_EXCHANGE_VERIFIED_0830KST",
       "priceTimestampKst": "2026-09-21T08:30:00+09:00",
       "previousClose": 80805.078125,
-      "todayChangePct": 0.471,
+      "todayChangePct": 0.469,
       "recentCloses": [
         83622.429688,
         83553.851562,
@@ -9944,7 +10143,7 @@
         80024.007812,
         80006.65625,
         80805.078125,
-        81186.023438
+        81183.867188
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -10027,7 +10226,7 @@
       "status": "IMMEDIATE",
       "score": 92,
       "confidence": 82,
-      "currentPrice": 81186.023438,
+      "currentPrice": 81183.867188,
       "referencePrice": 81177.3,
       "currency": "USD",
       "entryLow": 80500,
@@ -10044,7 +10243,7 @@
       "quoteStatus": "WEB_CROSSCHECKED",
       "priceTimestampKst": "2026-09-20T07:50:00+09:00",
       "previousClose": 80805.078125,
-      "todayChangePct": 0.471,
+      "todayChangePct": 0.469,
       "recentCloses": [
         83622.429688,
         83553.851562,
@@ -10075,7 +10274,7 @@
         80024.007812,
         80006.65625,
         80805.078125,
-        81186.023438
+        81183.867188
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -10286,7 +10485,7 @@
       "status": "IMMEDIATE",
       "score": 89,
       "confidence": 78,
-      "currentPrice": 81186.023438,
+      "currentPrice": 81183.867188,
       "referencePrice": 81105.58,
       "currency": "USD",
       "entryLow": 80500,
@@ -10303,7 +10502,7 @@
       "quoteStatus": "WEB_CROSSCHECKED",
       "priceTimestampKst": "2026-09-20T11:30:00+09:00",
       "previousClose": 80805.078125,
-      "todayChangePct": 0.471,
+      "todayChangePct": 0.469,
       "recentCloses": [
         83622.429688,
         83553.851562,
@@ -10334,7 +10533,7 @@
         80024.007812,
         80006.65625,
         80805.078125,
-        81186.023438
+        81183.867188
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -10417,7 +10616,7 @@
       "status": "CONDITIONAL",
       "score": 88,
       "confidence": 77,
-      "currentPrice": 81186.023438,
+      "currentPrice": 81183.867188,
       "referencePrice": 81199.94,
       "currency": "USD",
       "entryLow": 80400,
@@ -10434,7 +10633,7 @@
       "quoteStatus": "WEB_VERIFIED_BINANCE",
       "priceTimestampKst": "2026-09-20T23:30:00+09:00",
       "previousClose": 80805.078125,
-      "todayChangePct": 0.471,
+      "todayChangePct": 0.469,
       "recentCloses": [
         83622.429688,
         83553.851562,
@@ -10465,7 +10664,7 @@
         80024.007812,
         80006.65625,
         80805.078125,
-        81186.023438
+        81183.867188
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -10548,7 +10747,7 @@
       "status": "CONDITIONAL",
       "score": 86,
       "confidence": 75,
-      "currentPrice": 81186.023438,
+      "currentPrice": 81183.867188,
       "referencePrice": 80354.26,
       "currency": "USD",
       "entryLow": 79800,
@@ -10565,7 +10764,7 @@
       "quoteStatus": "WEB_VERIFIED_COINBASE",
       "priceTimestampKst": "2026-09-20T20:49:00+09:00",
       "previousClose": 80805.078125,
-      "todayChangePct": 0.471,
+      "todayChangePct": 0.469,
       "recentCloses": [
         83622.429688,
         83553.851562,
@@ -10596,7 +10795,7 @@
         80024.007812,
         80006.65625,
         80805.078125,
-        81186.023438
+        81183.867188
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -10679,7 +10878,7 @@
       "status": "IMMEDIATE",
       "score": 96,
       "confidence": 89,
-      "currentPrice": 81186.023438,
+      "currentPrice": 81183.867188,
       "referencePrice": 81000,
       "currency": "USD",
       "entryLow": 80000,
@@ -10696,7 +10895,7 @@
       "quoteStatus": "WEB_CROSSCHECKED_ROUNDED",
       "priceTimestampKst": "2026-09-19T07:30:00+09:00",
       "previousClose": 80805.078125,
-      "todayChangePct": 0.471,
+      "todayChangePct": 0.469,
       "recentCloses": [
         83622.429688,
         83553.851562,
@@ -10727,7 +10926,7 @@
         80024.007812,
         80006.65625,
         80805.078125,
-        81186.023438
+        81183.867188
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -10746,7 +10945,7 @@
       "status": "IMMEDIATE",
       "score": 95,
       "confidence": 87,
-      "currentPrice": 81186.023438,
+      "currentPrice": 81183.867188,
       "referencePrice": 80900,
       "currency": "USD",
       "entryLow": 80000,
@@ -10763,7 +10962,7 @@
       "quoteStatus": "WEB_CROSSCHECKED_DERIVED_FROM_USDT_INR",
       "priceTimestampKst": "2026-09-19T11:30:00+09:00",
       "previousClose": 80805.078125,
-      "todayChangePct": 0.471,
+      "todayChangePct": 0.469,
       "recentCloses": [
         83622.429688,
         83553.851562,
@@ -10794,7 +10993,7 @@
         80024.007812,
         80006.65625,
         80805.078125,
-        81186.023438
+        81183.867188
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -10813,7 +11012,7 @@
       "status": "CONDITIONAL",
       "score": 94,
       "confidence": 86,
-      "currentPrice": 102.379997,
+      "currentPrice": 102.410004,
       "referencePrice": 112.41,
       "currency": "USD",
       "entryLow": 110,
@@ -10830,7 +11029,7 @@
       "quoteStatus": "WEB_VERIFIED",
       "priceTimestampKst": "2026-09-19T07:30:00+09:00",
       "previousClose": 101.254997,
-      "todayChangePct": 1.111,
+      "todayChangePct": 1.141,
       "recentCloses": [
         119.055466,
         117.994812,
@@ -10861,7 +11060,7 @@
         101.223206,
         100.754852,
         101.254997,
-        102.379997
+        102.410004
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -10880,7 +11079,7 @@
       "status": "IMMEDIATE",
       "score": 94,
       "confidence": 85,
-      "currentPrice": 81186.023438,
+      "currentPrice": 81183.867188,
       "referencePrice": 81025,
       "currency": "USD",
       "entryLow": 80000,
@@ -10897,7 +11096,7 @@
       "quoteStatus": "WEB_CROSSCHECKED",
       "priceTimestampKst": "2026-09-19T20:50:00+09:00",
       "previousClose": 80805.078125,
-      "todayChangePct": 0.471,
+      "todayChangePct": 0.469,
       "recentCloses": [
         83622.429688,
         83553.851562,
@@ -10928,7 +11127,7 @@
         80024.007812,
         80006.65625,
         80805.078125,
-        81186.023438
+        81183.867188
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -10947,7 +11146,7 @@
       "status": "CONDITIONAL",
       "score": 93,
       "confidence": 84,
-      "currentPrice": 102.379997,
+      "currentPrice": 102.410004,
       "referencePrice": 112.66,
       "currency": "USD",
       "entryLow": 110,
@@ -10964,7 +11163,7 @@
       "quoteStatus": "WEB_DERIVED_FROM_USDT_INR",
       "priceTimestampKst": "2026-09-19T11:30:00+09:00",
       "previousClose": 101.254997,
-      "todayChangePct": 1.111,
+      "todayChangePct": 1.141,
       "recentCloses": [
         119.055466,
         117.994812,
@@ -10995,7 +11194,7 @@
         101.223206,
         100.754852,
         101.254997,
-        102.379997
+        102.410004
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -11014,7 +11213,7 @@
       "status": "IMMEDIATE",
       "score": 93,
       "confidence": 83,
-      "currentPrice": 81186.023438,
+      "currentPrice": 81183.867188,
       "referencePrice": 81080,
       "currency": "USD",
       "entryLow": 80000,
@@ -11031,7 +11230,7 @@
       "quoteStatus": "WEB_CROSSCHECKED",
       "priceTimestampKst": "2026-09-19T23:30:00+09:00",
       "previousClose": 80805.078125,
-      "todayChangePct": 0.471,
+      "todayChangePct": 0.469,
       "recentCloses": [
         83622.429688,
         83553.851562,
@@ -11062,7 +11261,7 @@
         80024.007812,
         80006.65625,
         80805.078125,
-        81186.023438
+        81183.867188
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -11081,7 +11280,7 @@
       "status": "CONDITIONAL",
       "score": 92,
       "confidence": 82,
-      "currentPrice": 102.379997,
+      "currentPrice": 102.410004,
       "referencePrice": 113.5,
       "currency": "USD",
       "entryLow": 111,
@@ -11098,7 +11297,7 @@
       "quoteStatus": "WEB_CROSSCHECKED",
       "priceTimestampKst": "2026-09-19T20:50:00+09:00",
       "previousClose": 101.254997,
-      "todayChangePct": 1.111,
+      "todayChangePct": 1.141,
       "recentCloses": [
         119.055466,
         117.994812,
@@ -11129,7 +11328,7 @@
         101.223206,
         100.754852,
         101.254997,
-        102.379997
+        102.410004
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -11180,7 +11379,7 @@
       "status": "CONDITIONAL",
       "score": 90,
       "confidence": 81,
-      "currentPrice": 2360.899902,
+      "currentPrice": 2357.149902,
       "referencePrice": 2616,
       "currency": "USD",
       "entryLow": 2580,
@@ -11197,7 +11396,7 @@
       "quoteStatus": "WEB_VERIFIED",
       "priceTimestampKst": "2026-09-19T07:30:00+09:00",
       "previousClose": 2347.72998,
-      "todayChangePct": 0.561,
+      "todayChangePct": 0.401,
       "recentCloses": [
         2676.722168,
         2683.679443,
@@ -11228,7 +11427,7 @@
         2326.920166,
         2320.28125,
         2347.72998,
-        2360.899902
+        2357.149902
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -11311,7 +11510,7 @@
       "status": "CONDITIONAL",
       "score": 88,
       "confidence": 78,
-      "currentPrice": 1.3282,
+      "currentPrice": 1.3256,
       "referencePrice": 1.41,
       "currency": "USD",
       "entryLow": 1.38,
@@ -11328,7 +11527,7 @@
       "quoteStatus": "WEB_CROSSCHECKED",
       "priceTimestampKst": "2026-09-19T07:30:00+09:00",
       "previousClose": 1.329586,
-      "todayChangePct": -0.104,
+      "todayChangePct": -0.3,
       "recentCloses": [
         1.490032,
         1.488394,
@@ -11359,7 +11558,7 @@
         1.294408,
         1.306901,
         1.329586,
-        1.3282
+        1.3256
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -11378,7 +11577,7 @@
       "status": "CONDITIONAL",
       "score": 88,
       "confidence": 78,
-      "currentPrice": 2360.899902,
+      "currentPrice": 2357.149902,
       "referencePrice": 2609,
       "currency": "USD",
       "entryLow": 2580,
@@ -11395,7 +11594,7 @@
       "quoteStatus": "WEB_DERIVED_FROM_USDT_INR",
       "priceTimestampKst": "2026-09-19T11:30:00+09:00",
       "previousClose": 2347.72998,
-      "todayChangePct": 0.561,
+      "todayChangePct": 0.401,
       "recentCloses": [
         2676.722168,
         2683.679443,
@@ -11426,7 +11625,7 @@
         2326.920166,
         2320.28125,
         2347.72998,
-        2360.899902
+        2357.149902
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -11573,7 +11772,7 @@
       "status": "IMMEDIATE",
       "score": 97,
       "confidence": 91,
-      "currentPrice": 81186.023438,
+      "currentPrice": 81183.867188,
       "referencePrice": 80191,
       "currency": "USD",
       "entryLow": 79400,
@@ -11590,7 +11789,7 @@
       "quoteStatus": "WEB_CROSSCHECKED",
       "priceTimestampKst": "2026-09-18T23:20:00+09:00",
       "previousClose": 80805.078125,
-      "todayChangePct": 0.471,
+      "todayChangePct": 0.469,
       "recentCloses": [
         83622.429688,
         83553.851562,
@@ -11621,7 +11820,7 @@
         80024.007812,
         80006.65625,
         80805.078125,
-        81186.023438
+        81183.867188
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -11934,7 +12133,7 @@
       "status": "IMMEDIATE",
       "score": 92,
       "confidence": 83,
-      "currentPrice": 81186.023438,
+      "currentPrice": 81183.867188,
       "referencePrice": 77736.8,
       "currency": "USD",
       "entryLow": 77200,
@@ -11951,7 +12150,7 @@
       "quoteStatus": "WEB_CROSSCHECKED",
       "priceTimestampKst": "2026-09-18T20:00:00+09:00",
       "previousClose": 80805.078125,
-      "todayChangePct": 0.471,
+      "todayChangePct": 0.469,
       "recentCloses": [
         83622.429688,
         83553.851562,
@@ -11982,7 +12181,7 @@
         80024.007812,
         80006.65625,
         80805.078125,
-        81186.023438
+        81183.867188
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -17481,7 +17680,7 @@
       "status": "CONDITIONAL",
       "score": 90,
       "confidence": 81,
-      "currentPrice": 102.379997,
+      "currentPrice": 102.410004,
       "referencePrice": 106.56,
       "currency": "USD",
       "entryLow": 103.5,
@@ -17498,7 +17697,7 @@
       "quoteStatus": "LIVE_WEB_CROSSCHECKED",
       "priceTimestampKst": "2026-09-06T20:52:36+09:00",
       "previousClose": 101.254997,
-      "todayChangePct": 1.111,
+      "todayChangePct": 1.141,
       "recentCloses": [
         119.055466,
         117.994812,
@@ -17529,7 +17728,7 @@
         101.223206,
         100.754852,
         101.254997,
-        102.379997
+        102.410004
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -18001,7 +18200,7 @@
       "status": "CONDITIONAL",
       "score": 93,
       "confidence": 85,
-      "currentPrice": 1.3282,
+      "currentPrice": 1.3256,
       "referencePrice": 1.3997,
       "currency": "USD",
       "entryLow": 1.39,
@@ -18018,7 +18217,7 @@
       "quoteStatus": "WEEKEND_24H_VERIFIED",
       "priceTimestampKst": "2026-09-05T07:49:00+09:00",
       "previousClose": 1.329586,
-      "todayChangePct": -0.104,
+      "todayChangePct": -0.3,
       "recentCloses": [
         1.490032,
         1.488394,
@@ -18049,7 +18248,7 @@
         1.294408,
         1.306901,
         1.329586,
-        1.3282
+        1.3256
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -18164,7 +18363,7 @@
       "status": "CONDITIONAL",
       "score": 91,
       "confidence": 80,
-      "currentPrice": 1.3282,
+      "currentPrice": 1.3256,
       "referencePrice": 1.39,
       "currency": "USD",
       "entryLow": 1.385,
@@ -18181,7 +18380,7 @@
       "quoteStatus": "LIVE_WEB_CROSSCHECKED",
       "priceTimestampKst": "2026-09-05T23:30:48+09:00",
       "previousClose": 1.329586,
-      "todayChangePct": -0.104,
+      "todayChangePct": -0.3,
       "recentCloses": [
         1.490032,
         1.488394,
@@ -18212,7 +18411,7 @@
         1.294408,
         1.306901,
         1.329586,
-        1.3282
+        1.3256
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -18231,7 +18430,7 @@
       "status": "CONDITIONAL",
       "score": 90,
       "confidence": 81,
-      "currentPrice": 102.379997,
+      "currentPrice": 102.410004,
       "referencePrice": 101.77,
       "currency": "USD",
       "entryLow": 101.0,
@@ -18248,7 +18447,7 @@
       "quoteStatus": "WEEKEND_24H_VERIFIED",
       "priceTimestampKst": "2026-09-05T07:49:00+09:00",
       "previousClose": 101.254997,
-      "todayChangePct": 1.111,
+      "todayChangePct": 1.141,
       "recentCloses": [
         119.055466,
         117.994812,
@@ -18279,7 +18478,7 @@
         101.223206,
         100.754852,
         101.254997,
-        102.379997
+        102.410004
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -18298,7 +18497,7 @@
       "status": "CONDITIONAL",
       "score": 89,
       "confidence": 79,
-      "currentPrice": 1.3282,
+      "currentPrice": 1.3256,
       "referencePrice": 1.4,
       "currency": "USD",
       "entryLow": 1.385,
@@ -18315,7 +18514,7 @@
       "quoteStatus": "WEEKEND_24H_CROSSCHECKED",
       "priceTimestampKst": "2026-09-05T20:48:44+09:00",
       "previousClose": 1.329586,
-      "todayChangePct": -0.104,
+      "todayChangePct": -0.3,
       "recentCloses": [
         1.490032,
         1.488394,
@@ -18346,7 +18545,7 @@
         1.294408,
         1.306901,
         1.329586,
-        1.3282
+        1.3256
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -18397,7 +18596,7 @@
       "status": "CONDITIONAL",
       "score": 88,
       "confidence": 79,
-      "currentPrice": 81186.023438,
+      "currentPrice": 81183.867188,
       "referencePrice": 79717.45,
       "currency": "USD",
       "entryLow": 79300.0,
@@ -18414,7 +18613,7 @@
       "quoteStatus": "WEEKEND_24H_VERIFIED",
       "priceTimestampKst": "2026-09-05T07:49:00+09:00",
       "previousClose": 80805.078125,
-      "todayChangePct": 0.471,
+      "todayChangePct": 0.469,
       "recentCloses": [
         83622.429688,
         83553.851562,
@@ -18445,7 +18644,7 @@
         80024.007812,
         80006.65625,
         80805.078125,
-        81186.023438
+        81183.867188
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -18464,7 +18663,7 @@
       "status": "CONDITIONAL",
       "score": 88,
       "confidence": 79,
-      "currentPrice": 81186.023438,
+      "currentPrice": 81183.867188,
       "referencePrice": 79598.24,
       "currency": "USD",
       "entryLow": 79300.0,
@@ -18481,7 +18680,7 @@
       "quoteStatus": "WEEKEND_24H_VERIFIED",
       "priceTimestampKst": "2026-09-05T11:29:00+09:00",
       "previousClose": 80805.078125,
-      "todayChangePct": 0.471,
+      "todayChangePct": 0.469,
       "recentCloses": [
         83622.429688,
         83553.851562,
@@ -18512,7 +18711,7 @@
         80024.007812,
         80006.65625,
         80805.078125,
-        81186.023438
+        81183.867188
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -19185,7 +19384,7 @@
       "status": "CONDITIONAL",
       "score": 89,
       "confidence": 80,
-      "currentPrice": 281.359985,
+      "currentPrice": 281.290009,
       "referencePrice": 296.7,
       "currency": "USD",
       "entryLow": 295.5,
@@ -19202,7 +19401,7 @@
       "quoteStatus": "REGULAR_SESSION_DERIVED",
       "priceTimestampKst": "2026-09-04T23:27:00+09:00",
       "previousClose": 280.179993,
-      "todayChangePct": 0.421,
+      "todayChangePct": 0.396,
       "recentCloses": [
         285.429993,
         284.100006,
@@ -19233,7 +19432,7 @@
         275.75,
         276.98999,
         280.179993,
-        281.359985
+        281.290009
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -23856,7 +24055,7 @@
       "status": "CONDITIONAL",
       "score": 89,
       "confidence": 78,
-      "currentPrice": 81186.023438,
+      "currentPrice": 81183.867188,
       "referencePrice": 80393,
       "currency": "USD",
       "entryLow": 79200,
@@ -23873,7 +24072,7 @@
       "quoteStatus": "GLOBAL_24H_PUBLIC_PRICE_CROSS_CHECKED",
       "priceTimestampKst": "2026-08-28T07:45:00+09:00",
       "previousClose": 80805.078125,
-      "todayChangePct": 0.471,
+      "todayChangePct": 0.469,
       "recentCloses": [
         83622.429688,
         83553.851562,
@@ -23904,7 +24103,7 @@
         80024.007812,
         80006.65625,
         80805.078125,
-        81186.023438
+        81183.867188
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -25146,7 +25345,7 @@
       "status": "CONDITIONAL",
       "score": 90,
       "confidence": 78,
-      "currentPrice": 81186.023438,
+      "currentPrice": 81183.867188,
       "referencePrice": 79783.4,
       "currency": "USD",
       "entryLow": 78500,
@@ -25163,7 +25362,7 @@
       "quoteStatus": "CRYPTO_REALTIME_WEB_CROSS_VERIFIED_0748KST",
       "priceTimestampKst": "2026-08-26T07:48:00+09:00",
       "previousClose": 80805.078125,
-      "todayChangePct": 0.471,
+      "todayChangePct": 0.469,
       "recentCloses": [
         83622.429688,
         83553.851562,
@@ -25194,7 +25393,7 @@
         80024.007812,
         80006.65625,
         80805.078125,
-        81186.023438
+        81183.867188
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -25245,7 +25444,7 @@
       "status": "CONDITIONAL",
       "score": 86,
       "confidence": 75,
-      "currentPrice": 81186.023438,
+      "currentPrice": 81183.867188,
       "referencePrice": 78738.68,
       "currency": "USD",
       "entryLow": 78000,
@@ -25262,7 +25461,7 @@
       "quoteStatus": "CRYPTO_REALTIME_CROSS_VERIFIED_1114KST",
       "priceTimestampKst": "2026-08-26T11:14:46+09:00",
       "previousClose": 80805.078125,
-      "todayChangePct": 0.471,
+      "todayChangePct": 0.469,
       "recentCloses": [
         83622.429688,
         83553.851562,
@@ -25293,7 +25492,7 @@
         80024.007812,
         80006.65625,
         80805.078125,
-        81186.023438
+        81183.867188
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -26038,7 +26237,7 @@
       "status": "CONDITIONAL",
       "score": 86,
       "confidence": 75,
-      "currentPrice": 81186.023438,
+      "currentPrice": 81183.867188,
       "referencePrice": 77693.99,
       "currency": "USD",
       "entryLow": 76500,
@@ -26055,7 +26254,7 @@
       "quoteStatus": "CRYPTO_PUBLIC_SNAPSHOT_0725_LAST_RELIABLE",
       "priceTimestampKst": "2026-08-24T07:25:00+09:00",
       "previousClose": 80805.078125,
-      "todayChangePct": 0.471,
+      "todayChangePct": 0.469,
       "recentCloses": [
         83622.429688,
         83553.851562,
@@ -26086,7 +26285,7 @@
         80024.007812,
         80006.65625,
         80805.078125,
-        81186.023438
+        81183.867188
       ],
       "currentPriceDate": "2026-10-29"
     },
@@ -26105,7 +26304,7 @@
       "status": "CONDITIONAL",
       "score": 85,
       "confidence": 76,
-      "currentPrice": 81186.023438,
+      "currentPrice": 81183.867188,
       "referencePrice": 76215.89,
       "currency": "USD",
       "entryLow": 75000,
@@ -26122,7 +26321,7 @@
       "quoteStatus": "CRYPTO_REALTIME_PUBLIC_SNAPSHOT",
       "priceTimestampKst": "2026-08-24T07:50:00+09:00",
       "previousClose": 80805.078125,
-      "todayChangePct": 0.471,
+      "todayChangePct": 0.469,
       "recentCloses": [
         83622.429688,
         83553.851562,
@@ -26153,207 +26352,9 @@
         80024.007812,
         80006.65625,
         80805.078125,
-        81186.023438
+        81183.867188
       ],
       "currentPriceDate": "2026-10-29"
-    },
-    {
-      "id": "20260824-0750KST-251340-INVERSE",
-      "date": "2026-08-24",
-      "generatedAtKst": "2026-08-24T07:52:00+09:00",
-      "briefingSlot": "0750",
-      "assetClass": "KR_ETF",
-      "market": "KRX",
-      "ticker": "251340",
-      "name": "KODEX 코스닥150선물인버스",
-      "direction": "INVERSE",
-      "strategy": "2,440~2,480원에서 코스닥150 반등 실패 및 외국인·기관 동반 매도 재확인 시에만 진입",
-      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "status": "CONDITIONAL",
-      "score": 84,
-      "confidence": 74,
-      "currentPrice": 2460,
-      "referencePrice": 2460,
-      "currency": "KRW",
-      "entryLow": 2440,
-      "entryHigh": 2480,
-      "stopLoss": 2360,
-      "target1": 2600,
-      "target2": 2740,
-      "holdingPeriod": "1~5거래일",
-      "committeeVote": "5/7",
-      "catalyst": "8/21 KOSDAQ -4.63%, 외국인 -2,836억원·기관 -3,465억원, 매도 사이드카",
-      "reason": "KOSPI +0.88%와 달리 KOSDAQ 801.94(-4.63%)로 내부 약세가 극단적이었고 인버스가 +5.35%; 미국 금요일 breadth 반등 때문에 개장 후 실패 확인이 필수",
-      "risk": "월요일 코스닥 숏커버, 미국 risk-on 전염, 800선 기술적 반등",
-      "invalidation": "2,360원 하회 또는 코스닥150이 금요일 시가권을 회복하고 상승종목 확산",
-      "quoteStatus": "KR_REGULAR_CLOSE_VERIFIED",
-      "priceTimestampKst": "2026-08-21T15:30:00+09:00"
-    },
-    {
-      "id": "20260824-1130KST-251340-INVERSE",
-      "date": "2026-08-24",
-      "generatedAtKst": "2026-08-24T11:31:36+09:00",
-      "briefingSlot": "1130",
-      "assetClass": "KR_ETF",
-      "market": "KRX",
-      "ticker": "251340",
-      "name": "KODEX 코스닥150선물인버스",
-      "direction": "INVERSE",
-      "strategy": "현재 오전 코스닥 반등 때문에 신규 진입 금지; 코스닥 804 이탈과 외국인 재매도 동시 확인 시에만 재활성화",
-      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "status": "WATCH",
-      "score": 68,
-      "confidence": 62,
-      "currentPrice": 2460,
-      "referencePrice": 2460,
-      "currency": "KRW",
-      "entryLow": null,
-      "entryHigh": null,
-      "stopLoss": null,
-      "target1": null,
-      "target2": null,
-      "holdingPeriod": "1~3거래일",
-      "committeeVote": "3/7",
-      "catalyst": "8/21 급락 후 8/24 오전 코스닥 +1%대 반등·외국인 순매수로 기존 인버스 전제 훼손",
-      "reason": "09:15 코스닥 810.82(+1.11%), 외국인 +254억원, 상승 867/하락 705로 breadth 반전. 07:50 인버스 조건은 현재 폐기하고 재이탈 시에만 감시",
-      "risk": "코스닥 반등 지속 시 인버스 손실 확대",
-      "invalidation": "코스닥 814.63 돌파·외국인 순매수 확대 시 WATCH도 해제",
-      "quoteStatus": "KR_PREVIOUS_CLOSE_REFERENCE_NO_FRESH_ETF_QUOTE",
-      "priceTimestampKst": "2026-08-21T15:30:00+09:00"
-    },
-    {
-      "id": "20260823-0750KST-GDX-LONG",
-      "date": "2026-08-23",
-      "generatedAtKst": "2026-08-23T07:50:00+09:00",
-      "briefingSlot": "0750",
-      "assetClass": "US_GOLD_MINERS_ETF",
-      "market": "NYSEARCA",
-      "ticker": "GDX",
-      "name": "VanEck Gold Miners ETF",
-      "direction": "LONG",
-      "strategy": "월요일 100.5~102.5달러 눌림 분할; 103.5달러 이상 갭상승 추격 금지",
-      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "status": "CONDITIONAL",
-      "score": 92,
-      "confidence": 86,
-      "currentPrice": 94.43,
-      "referencePrice": 102.83,
-      "currency": "USD",
-      "entryLow": 100.5,
-      "entryHigh": 102.5,
-      "stopLoss": 97.2,
-      "target1": 108.0,
-      "target2": 113.0,
-      "holdingPeriod": "3~15거래일",
-      "committeeVote": "6/7",
-      "catalyst": "금 현물 3개월 고점, 200일선 돌파, 달러 약세, GDX 거래량 동반 상승",
-      "reason": "8/21 GDX 종가 102.83달러(+2.98%, 3,262만주)로 8/19 +9.42%, 8/20 +2.59% 뒤에도 리더십이 유지됐고 금 현물도 +2.4%로 3개월 고점을 확인했다",
-      "risk": "금 급등 후 차익실현, 달러 반등, 장기금리 재상승",
-      "invalidation": "97.20달러 하회 또는 금이 200일선 아래로 재이탈하며 GDX 상대강도 붕괴",
-      "quoteStatus": "US_REGULAR_CLOSE_VERIFIED",
-      "priceTimestampKst": "2026-08-22T05:00:00+09:00",
-      "previousClose": 95.480003,
-      "todayChangePct": -1.1,
-      "recentCloses": [
-        90.489998,
-        90.120003,
-        90.959999,
-        88.269997,
-        89.970001,
-        91.889999,
-        88.949997,
-        97.330002,
-        99.849998,
-        102.830002,
-        103.540001,
-        105.519997,
-        102.419998,
-        103.690002,
-        99.650002,
-        98.510002,
-        94.669998,
-        97.629997,
-        101.489998,
-        99.260002,
-        98.410004,
-        99.470001,
-        96.029999,
-        97.099998,
-        94.139999,
-        94.129997,
-        92.800003,
-        95.919998,
-        95.480003,
-        94.43
-      ],
-      "currentPriceDate": "2026-09-23"
-    },
-    {
-      "id": "20260823-1130KST-GDX-LONG",
-      "date": "2026-08-23",
-      "generatedAtKst": "2026-08-23T11:30:00+09:00",
-      "briefingSlot": "1130",
-      "assetClass": "US_GOLD_MINERS_ETF",
-      "market": "NYSEARCA",
-      "ticker": "GDX",
-      "name": "VanEck Gold Miners ETF",
-      "direction": "LONG",
-      "strategy": "월요일 100.5~102.5달러 눌림 분할; 103.5달러 이상 갭상승 추격 금지",
-      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "status": "CONDITIONAL",
-      "score": 92,
-      "confidence": 86,
-      "currentPrice": 94.43,
-      "referencePrice": 102.83,
-      "currency": "USD",
-      "entryLow": 100.5,
-      "entryHigh": 102.5,
-      "stopLoss": 97.2,
-      "target1": 108.0,
-      "target2": 113.0,
-      "holdingPeriod": "3~15거래일",
-      "committeeVote": "6/7",
-      "catalyst": "금 현물 3개월 고점, 200일선 돌파, 달러 약세, GDX 거래량 동반 상승",
-      "reason": "8/21 GDX 종가 102.83달러(+2.98%, 3,262만주)로 8/19 +9.42%, 8/20 +2.59% 뒤에도 리더십이 유지됐고 금 현물도 +2.4%로 3개월 고점을 확인했다",
-      "risk": "금 급등 후 차익실현, 달러 반등, 장기금리 재상승",
-      "invalidation": "97.20달러 하회 또는 금이 200일선 아래로 재이탈하며 GDX 상대강도 붕괴",
-      "quoteStatus": "US_REGULAR_CLOSE_VERIFIED",
-      "priceTimestampKst": "2026-08-22T05:00:00+09:00",
-      "previousClose": 95.480003,
-      "todayChangePct": -1.1,
-      "recentCloses": [
-        90.489998,
-        90.120003,
-        90.959999,
-        88.269997,
-        89.970001,
-        91.889999,
-        88.949997,
-        97.330002,
-        99.849998,
-        102.830002,
-        103.540001,
-        105.519997,
-        102.419998,
-        103.690002,
-        99.650002,
-        98.510002,
-        94.669998,
-        97.629997,
-        101.489998,
-        99.260002,
-        98.410004,
-        99.470001,
-        96.029999,
-        97.099998,
-        94.139999,
-        94.129997,
-        92.800003,
-        95.919998,
-        95.480003,
-        94.43
-      ],
-      "currentPriceDate": "2026-09-23"
     }
   ]
 }
