@@ -1,20 +1,20 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-10-29T22:36:04.682697+09:00",
+  "generatedAtKst": "2026-10-30T04:16:34.866993+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
-    "shortlistCount": 417,
+    "shortlistCount": 418,
     "krEtfShortlistCount": 34,
-    "dailyMetricsCount": 386,
-    "dailyCandidateCount": 58,
+    "dailyMetricsCount": 387,
+    "dailyCandidateCount": 55,
     "krEtfDailyCandidateCount": 27,
-    "strictDailyCandidateCount": 31,
+    "strictDailyCandidateCount": 28,
     "krEtfSignalEligibleCount": 0,
-    "intradayEvaluatedCount": 58,
+    "intradayEvaluatedCount": 55,
     "krEtfIntradayEvaluatedCount": 27,
-    "signalCount": 6,
-    "scannerSignalCount": 2,
+    "signalCount": 4,
+    "scannerSignalCount": 0,
     "chatgptSignalCount": 4,
     "krEtfSignalCount": 0,
     "dailyCacheHit": false,
@@ -24,7 +24,7 @@
     "panic": false,
     "riskOff": false,
     "equityBelow200Count": 0,
-    "realizedVolatility20Annualized": 0.1979,
+    "realizedVolatility20Annualized": 0.1987,
     "reason": "광의 추세와 변동성 정상"
   },
   "signals": [
@@ -155,204 +155,6 @@
       "risk": "USD/KRW exchange risk, ex-dividend price adjustment, small rate/NAV risk; not a guaranteed cash deposit.",
       "invalidation": "Do not enter with wide spread or material NAV premium.",
       "status": "CONDITIONAL"
-    },
-    {
-      "id": "IBB-LONG-20261029T1330000000-EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
-      "date": "2026-10-29",
-      "generatedAtKst": "2026-10-29T22:36:04.682697+09:00",
-      "signalTimestamp": "2026-10-29T13:30:00+00:00",
-      "assetClass": "ETF",
-      "market": "US",
-      "ticker": "IBB",
-      "name": "iShares Biotechnology ETF",
-      "direction": "LONG",
-      "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM: 절대추세+상대모멘텀+15분 트리거+변동성 목표",
-      "strategyType": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
-      "referencePrice": 218.949997,
-      "currentPrice": 218.949997,
-      "previousClose": 216.350006,
-      "todayChangePct": 1.202,
-      "recentCloses": [
-        204.559998,
-        207.160004,
-        210.809998,
-        206.600006,
-        209.25,
-        209.770004,
-        210.710007,
-        211.039993,
-        210.529999,
-        205.960007,
-        205.289993,
-        207.960007,
-        203.100006,
-        203.339996,
-        200.479996,
-        206.490005,
-        204.259995,
-        200.020004,
-        203.25,
-        207.410004,
-        201.990005,
-        204.059998,
-        210.5,
-        211.550003,
-        209.539993,
-        207.740005,
-        208.690002,
-        212.199997,
-        216.350006,
-        218.949997
-      ],
-      "currency": "USD",
-      "status": "ACTIVE_SIGNAL",
-      "score": 96.2,
-      "confidence": 9.4,
-      "relativeStrengthPercentile": 0.9036,
-      "entryLow": 216.804678,
-      "entryHigh": 219.903472,
-      "stopLoss": 208.461769,
-      "target1": 239.926453,
-      "target2": 252.512326,
-      "riskPct": 4.79,
-      "volatilityTargetExposurePct": 45.0,
-      "regime": {
-        "panic": false,
-        "riskOff": false,
-        "equityBelow200Count": 0,
-        "realizedVolatility20Annualized": 0.1979,
-        "reason": "광의 추세와 변동성 정상"
-      },
-      "ict": {
-        "bias": "BULLISH",
-        "structure": "BULLISH_HH_HL",
-        "event": "NONE",
-        "liquidity": "SELL_SIDE_SWEEP",
-        "fvg": "BEARISH 218.9400~219.0200",
-        "score": 3
-      },
-      "trigger": {
-        "ready": true,
-        "breakout": true,
-        "reclaim": false,
-        "volumeRatio": 3.028,
-        "volumeThreshold": 1.35,
-        "ema20": 218.246608,
-        "ema50": 216.245223,
-        "lastTimestamp": "2026-10-29T13:30:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=3.03x/1.35x; ICT=BULLISH/NONE/SELL_SIDE_SWEEP",
-        "ict": {
-          "bias": "BULLISH",
-          "structure": "BULLISH_HH_HL",
-          "event": "NONE",
-          "liquidity": "SELL_SIDE_SWEEP",
-          "fvg": "BEARISH 218.9400~219.0200",
-          "score": 3
-        },
-        "fresh": true,
-        "ageMinutes": 8.1
-      },
-      "reason": "3/6/12개월 절대 모멘텀 양수, 200일선 상단, 자산군 상대강도 90백분위, breakout=True; reclaim=False; volume=3.03x/1.35x; ICT=BULLISH/NONE/SELL_SIDE_SWEEP",
-      "guardrail": "자동 추천은 주문이 아니다. 실시간 호가·슬리피지·공시·거래 가능 여부를 확인한다."
-    },
-    {
-      "id": "XOP-LONG-20261029T1330000000-EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
-      "date": "2026-10-29",
-      "generatedAtKst": "2026-10-29T22:36:04.682697+09:00",
-      "signalTimestamp": "2026-10-29T13:30:00+00:00",
-      "assetClass": "ETF",
-      "market": "US",
-      "ticker": "XOP",
-      "name": "State Street SPDR S&P Oil & Gas Exploration & Production ETF",
-      "direction": "LONG",
-      "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM: 절대추세+상대모멘텀+15분 트리거+변동성 목표",
-      "strategyType": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
-      "referencePrice": 200.800003,
-      "currentPrice": 200.800003,
-      "previousClose": 200.369995,
-      "todayChangePct": 0.215,
-      "recentCloses": [
-        189.852997,
-        184.75,
-        181.610001,
-        182.649994,
-        184.050003,
-        181.5,
-        180.139999,
-        178.630005,
-        179.330002,
-        184.300003,
-        184.929993,
-        187.440002,
-        188.460007,
-        188.240005,
-        193.490005,
-        191.520004,
-        194.289993,
-        199.820007,
-        197.839996,
-        194.889999,
-        200.380005,
-        199.470001,
-        200.050003,
-        199.020004,
-        196.869995,
-        201.690002,
-        204.860001,
-        200.009995,
-        200.369995,
-        200.800003
-      ],
-      "currency": "USD",
-      "status": "ACTIVE_SIGNAL",
-      "score": 79.0,
-      "confidence": 7.9,
-      "relativeStrengthPercentile": 0.8795,
-      "entryLow": 198.792003,
-      "entryHigh": 201.735843,
-      "stopLoss": 190.505764,
-      "target1": 221.388481,
-      "target2": 233.741568,
-      "riskPct": 5.13,
-      "volatilityTargetExposurePct": 50.7,
-      "regime": {
-        "panic": false,
-        "riskOff": false,
-        "equityBelow200Count": 0,
-        "realizedVolatility20Annualized": 0.1979,
-        "reason": "광의 추세와 변동성 정상"
-      },
-      "ict": {
-        "bias": "NEUTRAL",
-        "structure": "BEARISH_LH_LL",
-        "event": "NONE",
-        "liquidity": "SELL_SIDE_SWEEP",
-        "fvg": "BEARISH 200.7900~201.3400",
-        "score": -1
-      },
-      "trigger": {
-        "ready": true,
-        "breakout": false,
-        "reclaim": true,
-        "volumeRatio": 3.385,
-        "volumeThreshold": 1.35,
-        "ema20": 200.982052,
-        "ema50": 200.959353,
-        "lastTimestamp": "2026-10-29T13:30:00+00:00",
-        "reason": "breakout=False; reclaim=True; volume=3.39x/1.35x; ICT=NEUTRAL/NONE/SELL_SIDE_SWEEP",
-        "ict": {
-          "bias": "NEUTRAL",
-          "structure": "BEARISH_LH_LL",
-          "event": "NONE",
-          "liquidity": "SELL_SIDE_SWEEP",
-          "fvg": "BEARISH 200.7900~201.3400",
-          "score": -1
-        },
-        "fresh": true,
-        "ageMinutes": 8.2
-      },
-      "reason": "3/6/12개월 절대 모멘텀 양수, 200일선 상단, 자산군 상대강도 88백분위, breakout=False; reclaim=True; volume=3.39x/1.35x; ICT=NEUTRAL/NONE/SELL_SIDE_SWEEP",
-      "guardrail": "자동 추천은 주문이 아니다. 실시간 호가·슬리피지·공시·거래 가능 여부를 확인한다."
     }
   ],
   "topEvaluated": [
@@ -381,7 +183,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 458.1
+        "ageMinutes": 798.8
       }
     },
     {
@@ -409,7 +211,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 458.1
+        "ageMinutes": 798.8
       }
     },
     {
@@ -437,7 +239,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 458.1
+        "ageMinutes": 798.8
       }
     },
     {
@@ -465,7 +267,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 458.1
+        "ageMinutes": 798.8
       }
     },
     {
@@ -493,7 +295,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 458.1
+        "ageMinutes": 798.8
       }
     },
     {
@@ -521,7 +323,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 458.1
+        "ageMinutes": 798.9
       }
     },
     {
@@ -549,7 +351,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 458.1
+        "ageMinutes": 798.9
       }
     },
     {
@@ -577,7 +379,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 458.1
+        "ageMinutes": 798.9
       }
     },
     {
@@ -605,7 +407,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 458.1
+        "ageMinutes": 798.9
       }
     },
     {
@@ -633,7 +435,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 458.1
+        "ageMinutes": 798.9
       }
     },
     {
@@ -661,7 +463,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 458.1
+        "ageMinutes": 798.9
       }
     },
     {
@@ -689,7 +491,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 458.1
+        "ageMinutes": 798.9
       }
     },
     {
@@ -717,7 +519,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 458.1
+        "ageMinutes": 798.9
       }
     },
     {
@@ -745,7 +547,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 458.1
+        "ageMinutes": 798.9
       }
     },
     {
@@ -773,7 +575,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 458.1
+        "ageMinutes": 798.9
       }
     },
     {
@@ -801,7 +603,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 458.1
+        "ageMinutes": 798.9
       }
     },
     {
@@ -829,7 +631,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 458.1
+        "ageMinutes": 798.9
       }
     },
     {
@@ -857,7 +659,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 458.1
+        "ageMinutes": 798.9
       }
     },
     {
@@ -885,7 +687,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 458.1
+        "ageMinutes": 798.9
       }
     },
     {
@@ -913,7 +715,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 458.1
+        "ageMinutes": 798.9
       }
     },
     {
@@ -941,7 +743,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 458.1
+        "ageMinutes": 798.9
       }
     },
     {
@@ -969,7 +771,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 458.1
+        "ageMinutes": 798.9
       }
     },
     {
@@ -997,7 +799,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 458.1
+        "ageMinutes": 798.9
       }
     },
     {
@@ -1025,7 +827,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 458.1
+        "ageMinutes": 798.9
       }
     },
     {
@@ -1053,7 +855,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 458.1
+        "ageMinutes": 798.9
       }
     },
     {
@@ -1081,7 +883,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 458.1
+        "ageMinutes": 798.9
       }
     },
     {
@@ -1109,7 +911,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 458.1
+        "ageMinutes": 798.9
       }
     },
     {
@@ -1120,80 +922,80 @@
       "dailySignalEligible": true,
       "trigger": {
         "ready": false,
-        "breakout": true,
+        "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.869,
+        "volumeRatio": 0.408,
         "volumeThreshold": 1.35,
-        "ema20": 95.368622,
-        "ema50": 94.731217,
-        "lastTimestamp": "2026-10-29T13:30:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=0.87x/1.35x; ICT=BULLISH/BOS_UP/NONE",
+        "ema20": 98.625068,
+        "ema50": 97.299207,
+        "lastTimestamp": "2026-10-29T19:15:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.41x/1.35x; ICT=NEUTRAL/NONE/SELL_SIDE_SWEEP",
         "ict": {
-          "bias": "BULLISH",
-          "structure": "BULLISH_HH_HL",
-          "event": "BOS_UP",
-          "liquidity": "NONE",
-          "fvg": "BULLISH 95.0500~95.8850",
-          "score": 5
+          "bias": "NEUTRAL",
+          "structure": "RANGE",
+          "event": "NONE",
+          "liquidity": "SELL_SIDE_SWEEP",
+          "fvg": "BEARISH 99.1400~99.3500",
+          "score": 1
         },
         "fresh": true,
-        "ageMinutes": 8.1
+        "ageMinutes": 3.9
       }
     },
     {
       "ticker": "IBB",
       "name": "iShares Biotechnology ETF",
-      "dailyScore": 90.18,
-      "relativeStrengthPercentile": 0.9036144578313253,
+      "dailyScore": 89.58,
+      "relativeStrengthPercentile": 0.891566265060241,
       "dailySignalEligible": true,
       "trigger": {
-        "ready": true,
-        "breakout": true,
+        "ready": false,
+        "breakout": false,
         "reclaim": false,
-        "volumeRatio": 3.028,
+        "volumeRatio": 0.069,
         "volumeThreshold": 1.35,
-        "ema20": 218.246608,
-        "ema50": 216.245223,
-        "lastTimestamp": "2026-10-29T13:30:00+00:00",
-        "reason": "breakout=True; reclaim=False; volume=3.03x/1.35x; ICT=BULLISH/NONE/SELL_SIDE_SWEEP",
+        "ema20": 216.973655,
+        "ema50": 216.77451,
+        "lastTimestamp": "2026-10-29T19:15:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.07x/1.35x; ICT=BEARISH/NONE/NONE",
         "ict": {
-          "bias": "BULLISH",
-          "structure": "BULLISH_HH_HL",
+          "bias": "BEARISH",
+          "structure": "BEARISH_LH_LL",
           "event": "NONE",
-          "liquidity": "SELL_SIDE_SWEEP",
-          "fvg": "BEARISH 218.9400~219.0200",
-          "score": 3
+          "liquidity": "NONE",
+          "fvg": "BEARISH 216.1700~216.1850",
+          "score": -3
         },
         "fresh": true,
-        "ageMinutes": 8.1
+        "ageMinutes": 3.9
       }
     },
     {
-      "ticker": "XBI",
-      "name": "State Street SPDR S&P Biotech ETF",
-      "dailyScore": 87.17,
-      "relativeStrengthPercentile": 0.8433734939759037,
+      "ticker": "DBC",
+      "name": "Invesco DB Commodity Index",
+      "dailyScore": 87.0,
+      "relativeStrengthPercentile": 1.0,
       "dailySignalEligible": true,
       "trigger": {
         "ready": false,
         "breakout": true,
-        "reclaim": true,
-        "volumeRatio": 0.0,
+        "reclaim": false,
+        "volumeRatio": 0.03,
         "volumeThreshold": 1.35,
-        "ema20": 158.126449,
-        "ema50": 157.144096,
-        "lastTimestamp": "2026-10-29T13:30:00+00:00",
-        "reason": "breakout=True; reclaim=True; volume=0.00x/1.35x; ICT=BULLISH/BOS_UP/SELL_SIDE_SWEEP",
+        "ema20": 33.561386,
+        "ema50": 33.608817,
+        "lastTimestamp": "2026-10-29T19:15:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=0.03x/1.35x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
           "bias": "BULLISH",
-          "structure": "BULLISH_HH_HL",
+          "structure": "RANGE",
           "event": "BOS_UP",
-          "liquidity": "SELL_SIDE_SWEEP",
-          "fvg": "BULLISH 158.1000~158.2200",
-          "score": 7
+          "liquidity": "NONE",
+          "fvg": "BULLISH 33.6000~33.6050",
+          "score": 3
         },
         "fresh": true,
-        "ageMinutes": 8.1
+        "ageMinutes": 3.9
       }
     }
   ],
