@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-11-01T06:24:09.834303+09:00",
+  "generatedAtKst": "2026-11-01T07:51:02.692284+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
-    "shortlistCount": 421,
+    "shortlistCount": 422,
     "krEtfShortlistCount": 34,
-    "dailyMetricsCount": 389,
-    "dailyCandidateCount": 55,
+    "dailyMetricsCount": 391,
+    "dailyCandidateCount": 56,
     "krEtfDailyCandidateCount": 27,
-    "strictDailyCandidateCount": 28,
+    "strictDailyCandidateCount": 29,
     "krEtfSignalEligibleCount": 0,
-    "intradayEvaluatedCount": 55,
+    "intradayEvaluatedCount": 56,
     "krEtfIntradayEvaluatedCount": 27,
     "signalCount": 4,
     "scannerSignalCount": 0,
@@ -29,114 +29,116 @@
   },
   "signals": [
     {
-      "date": "2026-10-31",
-      "generatedAtKst": "2026-10-31T20:53:03+09:00",
-      "briefingSlot": "2050",
+      "date": "2026-11-01",
+      "generatedAtKst": "2026-11-01T07:50:33+09:00",
+      "briefingSlot": "0750",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "confidence": null,
-      "id": "20261031-2050KST-CDNA-LONG",
-      "ticker": "CDNA",
-      "name": "CareDx, Inc.",
-      "market": "NASDAQ",
-      "assetClass": "US_STOCK",
-      "direction": "LONG",
-      "score": 83,
-      "currentPrice": 87.41,
-      "referencePrice": 87.41,
-      "entryLow": 83,
-      "entryHigh": 85,
-      "stopLoss": 79.8,
-      "target1": 94,
-      "target2": 100,
-      "committeeVote": "5/7",
-      "priceTimestampKst": "2026-10-31T05:00:00+09:00",
-      "quoteStatus": "US_OCT30_REGULAR_CLOSE_NONEXECUTABLE_WEEKEND",
-      "holdingPeriod": "2-10 US trading days",
-      "strategy": "Nov 2 US regular session only: after pullback $83-$85 require 15-minute support and VWAP reclaim with volume >= prior 15-minute average; no chase above $89; stop $79.80 after actual fill; maximum 0.30% total assets.",
-      "catalyst": "CareDx official Oct29 Q3: revenue $139m +39% YoY, test services +65%, 2026 revenue guidance raised to $520m-$530m from $490m-$500m, adjusted EBITDA guidance raised to $90m-$100m.",
-      "reason": "Oct30 close $87.41 +22.22%, 52-week high $90.87, 3.555m volume vs 1.692m prior (2.10x); 5D +26.29%, 20D +30.17%; +$15.89 despite Nasdaq -2.86%.",
-      "risk": "22% one-day gap and 10.43-dollar intraday range; prior-period test revenue and acquisition contributions require adjustment; 60D relative strength and intraday VWAP unverified; Monday gap risk.",
-      "invalidation": "No order if Monday opens above $89 without reset, loses $79.80, or fails VWAP/volume confirmation.",
       "currency": "USD",
-      "status": "CONDITIONAL"
-    },
-    {
-      "date": "2026-10-31",
-      "generatedAtKst": "2026-10-31T20:53:03+09:00",
-      "briefingSlot": "2050",
-      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "confidence": null,
-      "id": "20261031-2050KST-OP-LONG",
-      "ticker": "OP",
-      "name": "Optimism",
+      "status": "CONDITIONAL",
+      "id": "20261101-0750KST-STX-LONG",
+      "ticker": "STX",
+      "name": "Stacks",
       "market": "GLOBAL_CRYPTO_SPOT",
       "assetClass": "CRYPTO",
       "direction": "LONG",
-      "score": 75,
-      "currentPrice": 0.1135,
-      "referencePrice": 0.1135,
-      "entryLow": 0.111,
-      "entryHigh": 0.114,
-      "stopLoss": 0.106,
-      "target1": 0.127,
-      "target2": 0.136,
-      "committeeVote": "3/7",
+      "score": 78,
+      "currentPrice": 0.3176,
+      "referencePrice": 0.3206,
+      "entryLow": 0.302,
+      "entryHigh": 0.31,
+      "stopLoss": 0.288,
+      "target1": 0.35,
+      "target2": 0.37,
+      "committeeVote": "4/7",
       "priceTimestampKst": null,
-      "quoteStatus": "OCT31_CRYPTO_AGGREGATOR_INDICATIVE_COINCODEX_0_1135_COINGECKO_0_118_NO_EXCHANGE_ORDERBOOK",
-      "holdingPeriod": "6-48 hours",
-      "strategy": "Only after exchange-specific OP/USDT bid-ask and 1h OHLCV confirmation: 1h close >=$0.114 and retest $0.111-$0.114, with volume expanding; stop $0.106; no chase >$0.120; maximum 0.10% total assets. No immediate entry (3/7).",
-      "catalyst": "Oct31 06:00 UTC CoinCodex top-200 24h leader +12.96%; CoinCodex later indicative $0.1135 and CoinGecko around $0.118 with differing rolling windows. Relative strength vs BTC in 24h, but no confirmed fundamental catalyst.",
-      "reason": "CoinCodex 24h +8.71% and volume ~$101.62m at page crawl, 7D +0.86%, 1M -12.70%; CoinGecko +21.1% and 24h ~$118m at a different snapshot. Price mismatch prevents executable quote.",
-      "risk": "Large cross-source price divergence, -98% from ATH, high token supply inflation, 1M negative trend, bridge security headlines and exchange/counterparty risk; spot-only, no leverage.",
-      "invalidation": "Cancel if exchange-specific price/volume cannot be independently verified, price falls below $0.106 or order-book spread widens; 3/7 not immediate.",
-      "currency": "USD",
-      "status": "CONDITIONAL"
+      "quoteStatus": "NOV01_COIN_GECKO_CRAWL_INDICATIVE_UNTIMED_0_3176;OCT31_1616UTC_SNAPSHOT_0_3206;NO_LIVE_ORDERBOOK",
+      "holdingPeriod": "6-72 hours spot only",
+      "strategy": "Do not enter immediately. Set alert $0.306. Only after venue-specific STX/USDT order book verified, 1h close >$0.315 followed by retest $0.302-$0.310 with 1h volume >=20-period median; stop $0.288 after fill, target $0.350/$0.370, no chase above $0.334, max 0.15% total assets.",
+      "catalyst": "Oct31 16:16 UTC top-100 CoinGecko snapshot STX +13.20% 24h, +6.81% 7d, $54.8m volume; independent Oct31 16:00 ET snapshot $0.328 +15.71%; BTC L2 narrative, November bonding period 3 (forward catalyst not guaranteed).",
+      "reason": "Crypto 24h/7d relative leader with meaningful market-cap and turnover vs thin microcaps; cross-source $0.3176 vs timestamped $0.3206-$0.328; weekend equities shut.",
+      "risk": "CoinGecko crawl timestamp unknown; no executable order book, intraday VWAP/60D RS unverified, 24h high ~$0.3558 and large pullback risk, crypto exchange security and liquidity risks.",
+      "invalidation": "Cancel on failure to validate venue quote, <0.288, 1h volume collapse, wide spread or further exchange withdrawals disruptions."
     },
     {
-      "date": "2026-10-31",
-      "generatedAtKst": "2026-10-31T20:53:03+09:00",
-      "briefingSlot": "2050",
+      "date": "2026-11-01",
+      "generatedAtKst": "2026-11-01T07:50:33+09:00",
+      "briefingSlot": "0750",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "confidence": null,
-      "id": "20261031-2050KST-PSQ-INVERSE",
+      "currency": "USD",
+      "status": "CONDITIONAL",
+      "id": "20261101-0750KST-AAVE-LONG",
+      "ticker": "AAVE",
+      "name": "Aave",
+      "market": "GLOBAL_CRYPTO_SPOT",
+      "assetClass": "CRYPTO",
+      "direction": "LONG",
+      "score": 73,
+      "currentPrice": 134.76,
+      "referencePrice": 136.06,
+      "entryLow": 130,
+      "entryHigh": 132,
+      "stopLoss": 125.5,
+      "target1": 142.5,
+      "target2": 150,
+      "committeeVote": "4/7",
+      "priceTimestampKst": null,
+      "quoteStatus": "NOV01_COIN_GECKO_CRAWL_INDICATIVE_UNTIMED_134_76;OCT31_1616UTC_SNAPSHOT_136_06;NO_LIVE_SPOT_ORDERBOOK",
+      "holdingPeriod": "6-72 hours spot only",
+      "strategy": "No immediate trade. Venue-specific spot bid/ask and 1h OHLCV required; wait for pullback $130-$132 and 1h close back above $133 on improving volume; stop $125.50, targets $142.50/$150, no chase above $138, max 0.10% total assets.",
+      "catalyst": "Oct31 16:16 UTC snapshot AAVE +7.54% 24h, -0.14% 7d, $244.6m volume; Aave risk stewards reported reopening after Oct29 Binance exploit freeze, but temporary zero-LTV collateral restrictions remain.",
+      "reason": "Cross-venue derivatives quotes $134.26-$134.57 broadly agree with CoinGecko $134.76; high turnover and recovering momentum; 7d RS not yet positive, so Emerging/Reversal not breakout.",
+      "risk": "Aave protocol spillover from Binance exploit, temporary zero-LTV restrictions, ongoing tBTC mint/redeem precaution, exchange/counterparty risk; 60D RS and spot execution not verified.",
+      "invalidation": "No trade if new protocol freeze, adverse collateral rule, spot spread/withdrawal issue or price below $125.50."
+    },
+    {
+      "date": "2026-11-01",
+      "generatedAtKst": "2026-11-01T07:50:33+09:00",
+      "briefingSlot": "0750",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "confidence": null,
+      "currency": "USD",
+      "status": "CONDITIONAL",
+      "id": "20261101-0750KST-PSQ-INVERSE",
       "ticker": "PSQ",
       "name": "ProShares Short QQQ",
       "market": "NYSE_ARCA",
       "assetClass": "US_ETF",
       "direction": "INVERSE",
-      "score": 73,
+      "score": 72,
       "currentPrice": 26.63,
       "referencePrice": 26.63,
       "entryLow": 26.32,
-      "entryHigh": 26.52,
+      "entryHigh": 26.5,
       "stopLoss": 26.08,
-      "target1": 27.18,
-      "target2": 27.65,
+      "target1": 27.15,
+      "target2": 27.55,
       "committeeVote": "4/7",
       "priceTimestampKst": "2026-10-31T05:00:00+09:00",
-      "quoteStatus": "US_OCT30_REGULAR_CLOSE_NONEXECUTABLE_WEEKEND",
-      "holdingPeriod": "1-3 US trading days",
-      "strategy": "Nov 2 regular session only if Nasdaq100 fails first 30-minute VWAP recovery and PSQ retests $26.32-$26.52 with volume; stop $26.08, target $27.18; no chase above $26.90; maximum 0.20% total assets.",
-      "catalyst": "Oct30 Nasdaq Composite -2.86%, QQQ -3.47%; PSQ daily inverse -1x Nasdaq100 ETF.",
-      "reason": "Oct30 PSQ close $26.63 +3.54%, 33.78m shares vs prior 20.62m, high $26.89; provides index-downside exposure distinct from single-stock short.",
-      "risk": "Daily inverse reset and compounding, opening rebound risk, not a universal hedge, 60D/options positioning unverified.",
-      "invalidation": "Cancel if Nasdaq100 recovers VWAP with strong breadth; 4/7 no immediate entry.",
-      "currency": "USD",
-      "status": "CONDITIONAL"
+      "quoteStatus": "US_OCT30_REGULAR_CLOSE_WEEKEND_NONEXECUTABLE",
+      "holdingPeriod": "1-3 US trading days only",
+      "strategy": "Nov 2 US regular session only, wait for Nasdaq100 rally failure and PSQ $26.32-$26.50 reclaim with volume; stop $26.08, targets $27.15/$27.55, no chase above $26.85, max 0.20% total assets.",
+      "catalyst": "Oct30 Nasdaq -2.86%, semiconductors -7.2%, VIX official 19.42; PSQ daily -1x Nasdaq100 ETF, not inverse of Nasdaq Composite.",
+      "reason": "Hedge candidate if Nasdaq100 weakness persists; daily-reset and gap risk reduce confidence, no market open Sunday.",
+      "risk": "Strong Monday tech rebound, inverse ETF daily compounding and tracking, spreads, unverified 15m VWAP and option skew.",
+      "invalidation": "Cancel if Nasdaq100 recovers Friday breakdown and holds above intraday VWAP or PSQ breaks $26.08."
     },
     {
-      "date": "2026-10-31",
-      "generatedAtKst": "2026-10-31T20:53:03+09:00",
-      "briefingSlot": "2050",
+      "date": "2026-11-01",
+      "generatedAtKst": "2026-11-01T07:50:33+09:00",
+      "briefingSlot": "0750",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "confidence": null,
-      "id": "20261031-2050KST-SGOV-DEFENSIVE",
+      "currency": "USD",
+      "status": "CONDITIONAL",
+      "id": "20261101-0750KST-SGOV-DEFENSIVE",
       "ticker": "SGOV",
       "name": "iShares 0-3 Month Treasury Bond ETF",
       "market": "NYSE_ARCA",
       "assetClass": "US_ETF",
       "direction": "DEFENSIVE",
-      "score": 71,
+      "score": 70,
       "currentPrice": 100.73,
       "referencePrice": 100.73,
       "entryLow": null,
@@ -146,15 +148,13 @@
       "target2": null,
       "committeeVote": "6/7",
       "priceTimestampKst": "2026-10-31T05:00:00+09:00",
-      "quoteStatus": "US_OCT30_REGULAR_CLOSE_NONEXECUTABLE_WEEKEND",
-      "holdingPeriod": "USD cash reserve / 1-30 US trading days",
-      "strategy": "Only use existing USD reserve; Nov 2 after possible monthly ex-dividend NAV reset, consider NAV +/-$0.02 with normal spread. No fixed $100.73 Monday limit, stop or profit target. Not available for weekend trading.",
-      "catalyst": "US short-duration Treasury cash management, 0.09% expense ratio, 10/30 close $100.73.",
-      "reason": "Oct30 $100.73 on 37.27m shares; defensive short-duration allocation, unlike long-duration Treasuries during high yield volatility.",
-      "risk": "USD/KRW FX risk, monthly ex-dividend NAV adjustment, bid-ask and premium, not bank-guaranteed.",
-      "invalidation": "Avoid abnormal NAV premium or FX costs exceeding short holding period return.",
-      "currency": "USD",
-      "status": "CONDITIONAL"
+      "quoteStatus": "US_OCT30_REGULAR_CLOSE_WEEKEND_NONEXECUTABLE",
+      "holdingPeriod": "USD reserve / 1-30 US trading days",
+      "strategy": "Nov 2 US regular hours only; confirm fresh NAV and monthly distribution reset; buy only within NAV +/-$0.02 if spread normal, using existing USD reserve. No fixed price stop/target. Avoid new FX conversion for short holding.",
+      "catalyst": "iShares official Oct29 NAV $100.71, 30-day SEC yield 3.79% as of Oct28, expense ratio 0.09%, short Treasury exposure.",
+      "reason": "Short-duration US Treasury cash parking while equity volatility and crypto counterparty risks elevated.",
+      "risk": "USD/KRW FX risk, ETF not bank deposit, monthly ex-dividend NAV reset, premium/discount and opportunity cost.",
+      "invalidation": "Avoid unusual premium, abnormal spread, NAV discrepancy or excessive FX conversion cost."
     }
   ],
   "topEvaluated": [
@@ -183,7 +183,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 2366.3
+        "ageMinutes": 2453.0
       }
     },
     {
@@ -198,8 +198,8 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
-        "ema20": 23479.956915,
-        "ema50": 23611.373425,
+        "ema20": 23479.957772,
+        "ema50": 23611.409457,
         "lastTimestamp": "2026-10-30T06:00:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=BULLISH/NONE/NONE",
         "ict": {
@@ -211,7 +211,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2366.3
+        "ageMinutes": 2453.0
       }
     },
     {
@@ -239,7 +239,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 2366.3
+        "ageMinutes": 2453.0
       }
     },
     {
@@ -267,7 +267,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 2366.3
+        "ageMinutes": 2453.0
       }
     },
     {
@@ -282,8 +282,8 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
-        "ema20": 90303.018356,
-        "ema50": 91174.43117,
+        "ema20": 90303.095389,
+        "ema50": 91174.480796,
         "lastTimestamp": "2026-10-30T06:00:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=BULLISH/NONE/NONE",
         "ict": {
@@ -295,7 +295,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2366.3
+        "ageMinutes": 2453.0
       }
     },
     {
@@ -323,7 +323,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2366.3
+        "ageMinutes": 2453.0
       }
     },
     {
@@ -338,8 +338,8 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
-        "ema20": 114845.891537,
-        "ema50": 116035.707582,
+        "ema20": 114845.891536,
+        "ema50": 116035.70672,
         "lastTimestamp": "2026-10-30T06:00:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
@@ -351,7 +351,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2366.3
+        "ageMinutes": 2453.0
       }
     },
     {
@@ -366,8 +366,8 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
-        "ema20": 90534.796568,
-        "ema50": 91331.82604,
+        "ema20": 90534.51072,
+        "ema50": 91331.608473,
         "lastTimestamp": "2026-10-30T06:00:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=BULLISH/NONE/NONE",
         "ict": {
@@ -379,7 +379,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2366.3
+        "ageMinutes": 2453.0
       }
     },
     {
@@ -394,8 +394,8 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
-        "ema20": 38360.051382,
-        "ema50": 38685.552377,
+        "ema20": 38360.090389,
+        "ema50": 38685.624501,
         "lastTimestamp": "2026-10-30T06:00:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=BULLISH/NONE/NONE",
         "ict": {
@@ -407,7 +407,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2366.3
+        "ageMinutes": 2453.0
       }
     },
     {
@@ -435,7 +435,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2366.3
+        "ageMinutes": 2453.0
       }
     },
     {
@@ -463,7 +463,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 2366.3
+        "ageMinutes": 2453.0
       }
     },
     {
@@ -491,7 +491,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2366.3
+        "ageMinutes": 2453.0
       }
     },
     {
@@ -519,7 +519,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2366.3
+        "ageMinutes": 2453.0
       }
     },
     {
@@ -547,7 +547,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2366.3
+        "ageMinutes": 2453.0
       }
     },
     {
@@ -575,7 +575,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 2366.3
+        "ageMinutes": 2453.0
       }
     },
     {
@@ -590,8 +590,8 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
-        "ema20": 25493.162423,
-        "ema50": 25653.745747,
+        "ema20": 25493.162137,
+        "ema50": 25653.738303,
         "lastTimestamp": "2026-10-30T06:00:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
@@ -603,7 +603,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2366.3
+        "ageMinutes": 2453.0
       }
     },
     {
@@ -618,8 +618,8 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
-        "ema20": 170658.395498,
-        "ema50": 171702.070767,
+        "ema20": 170658.47019,
+        "ema50": 171702.13684,
         "lastTimestamp": "2026-10-30T06:00:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=BULLISH/NONE/NONE",
         "ict": {
@@ -631,7 +631,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2366.3
+        "ageMinutes": 2453.0
       }
     },
     {
@@ -659,7 +659,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 2366.3
+        "ageMinutes": 2453.0
       }
     },
     {
@@ -687,7 +687,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2366.3
+        "ageMinutes": 2453.0
       }
     },
     {
@@ -715,7 +715,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 2366.3
+        "ageMinutes": 2453.0
       }
     },
     {
@@ -743,7 +743,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 2366.3
+        "ageMinutes": 2453.0
       }
     },
     {
@@ -758,8 +758,8 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
-        "ema20": 12228.401793,
-        "ema50": 12402.63638,
+        "ema20": 12228.401832,
+        "ema50": 12402.640943,
         "lastTimestamp": "2026-10-30T06:00:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=BEARISH/BOS_DOWN/NONE",
         "ict": {
@@ -771,7 +771,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 2366.3
+        "ageMinutes": 2453.0
       }
     },
     {
@@ -786,8 +786,8 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
-        "ema20": 107505.18568,
-        "ema50": 109357.200983,
+        "ema20": 107505.443032,
+        "ema50": 109357.553361,
         "lastTimestamp": "2026-10-30T06:00:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
@@ -799,7 +799,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2366.3
+        "ageMinutes": 2453.0
       }
     },
     {
@@ -827,7 +827,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2366.3
+        "ageMinutes": 2453.0
       }
     },
     {
@@ -842,8 +842,8 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
-        "ema20": 34092.559506,
-        "ema50": 34753.570442,
+        "ema20": 34092.559376,
+        "ema50": 34753.563067,
         "lastTimestamp": "2026-10-30T06:00:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
@@ -855,7 +855,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2366.3
+        "ageMinutes": 2453.0
       }
     },
     {
@@ -883,7 +883,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 2366.3
+        "ageMinutes": 2453.0
       }
     },
     {
@@ -898,8 +898,8 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
-        "ema20": 72116.2911,
-        "ema50": 73465.560583,
+        "ema20": 72116.172746,
+        "ema50": 73465.523606,
         "lastTimestamp": "2026-10-30T06:00:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=BULLISH/NONE/NONE",
         "ict": {
@@ -911,14 +911,14 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2366.3
+        "ageMinutes": 2453.0
       }
     },
     {
       "ticker": "XLE",
       "name": "State Street Energy Select Sector SPDR ETF",
-      "dailyScore": 91.95,
-      "relativeStrengthPercentile": 0.9390243902439024,
+      "dailyScore": 91.99,
+      "relativeStrengthPercentile": 0.9397590361445783,
       "dailySignalEligible": true,
       "trigger": {
         "ready": false,
@@ -926,8 +926,8 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.35,
-        "ema20": 69.951113,
-        "ema50": 69.781192,
+        "ema20": 69.958273,
+        "ema50": 69.784063,
         "lastTimestamp": "2026-10-30T23:45:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=BULLISH/NONE/SELL_SIDE_SWEEP",
         "ict": {
@@ -939,7 +939,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 1301.3
+        "ageMinutes": 1388.0
       }
     },
     {
@@ -954,8 +954,8 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.35,
-        "ema20": 33.712933,
-        "ema50": 33.708462,
+        "ema20": 33.712927,
+        "ema50": 33.708356,
         "lastTimestamp": "2026-10-30T20:30:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
@@ -967,7 +967,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 1496.3
+        "ageMinutes": 1583.0
       }
     },
     {
@@ -995,7 +995,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 1421.3
+        "ageMinutes": 1508.0
       }
     }
   ],
