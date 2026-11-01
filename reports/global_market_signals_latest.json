@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-11-01T15:43:00.502892+09:00",
+  "generatedAtKst": "2026-11-01T20:53:21.837577+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
-    "shortlistCount": 420,
+    "shortlistCount": 421,
     "krEtfShortlistCount": 34,
-    "dailyMetricsCount": 391,
-    "dailyCandidateCount": 55,
+    "dailyMetricsCount": 395,
+    "dailyCandidateCount": 56,
     "krEtfDailyCandidateCount": 27,
-    "strictDailyCandidateCount": 28,
+    "strictDailyCandidateCount": 29,
     "krEtfSignalEligibleCount": 0,
-    "intradayEvaluatedCount": 55,
+    "intradayEvaluatedCount": 56,
     "krEtfIntradayEvaluatedCount": 27,
     "signalCount": 4,
     "scannerSignalCount": 0,
@@ -30,117 +30,117 @@
   "signals": [
     {
       "date": "2026-11-01",
-      "generatedAtKst": "2026-11-01T07:50:33+09:00",
-      "briefingSlot": "0750",
+      "generatedAtKst": "2026-11-01T20:52:16+09:00",
+      "briefingSlot": "2050",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "confidence": null,
       "currency": "USD",
       "status": "CONDITIONAL",
-      "id": "20261101-0750KST-STX-LONG",
-      "ticker": "STX",
-      "name": "Stacks",
+      "id": "20261101-2050KST-ZRO-LONG",
+      "ticker": "ZRO",
+      "name": "LayerZero",
       "market": "GLOBAL_CRYPTO_SPOT",
       "assetClass": "CRYPTO",
       "direction": "LONG",
-      "score": 78,
-      "currentPrice": 0.3176,
-      "referencePrice": 0.3206,
-      "entryLow": 0.302,
-      "entryHigh": 0.31,
-      "stopLoss": 0.288,
-      "target1": 0.35,
-      "target2": 0.37,
+      "score": 77,
+      "currentPrice": 1.87,
+      "referencePrice": 1.87,
+      "entryLow": 1.8,
+      "entryHigh": 1.83,
+      "stopLoss": 1.73,
+      "target1": 2,
+      "target2": 2.12,
       "committeeVote": "4/7",
-      "priceTimestampKst": null,
-      "quoteStatus": "NOV01_COIN_GECKO_CRAWL_INDICATIVE_UNTIMED_0_3176;OCT31_1616UTC_SNAPSHOT_0_3206;NO_LIVE_ORDERBOOK",
-      "holdingPeriod": "6-72 hours spot only",
-      "strategy": "Do not enter immediately. Set alert $0.306. Only after venue-specific STX/USDT order book verified, 1h close >$0.315 followed by retest $0.302-$0.310 with 1h volume >=20-period median; stop $0.288 after fill, target $0.350/$0.370, no chase above $0.334, max 0.15% total assets.",
-      "catalyst": "Oct31 16:16 UTC top-100 CoinGecko snapshot STX +13.20% 24h, +6.81% 7d, $54.8m volume; independent Oct31 16:00 ET snapshot $0.328 +15.71%; BTC L2 narrative, November bonding period 3 (forward catalyst not guaranteed).",
-      "reason": "Crypto 24h/7d relative leader with meaningful market-cap and turnover vs thin microcaps; cross-source $0.3176 vs timestamped $0.3206-$0.328; weekend equities shut.",
-      "risk": "CoinGecko crawl timestamp unknown; no executable order book, intraday VWAP/60D RS unverified, 24h high ~$0.3558 and large pullback risk, crypto exchange security and liquidity risks.",
-      "invalidation": "Cancel on failure to validate venue quote, <0.288, 1h volume collapse, wide spread or further exchange withdrawals disruptions."
+      "priceTimestampKst": "2026-11-01T20:34:00+09:00",
+      "quoteStatus": "COINWHISK_CG_AGG_2026_11_01_1134UTC_1_87_NONEXECUTABLE_NO_ORDERBOOK",
+      "holdingPeriod": "6-72h spot conditional",
+      "strategy": "No immediate order. After venue-specific spot bid/ask, spread <=0.3%, 1h pullback to $1.80-$1.83, subsequent 1h close back above $1.83 with 1h volume >= 20h median; stop $1.73, targets $2.00/$2.12. No chase above $1.91. Max 0.15% total assets; combined crypto long <=0.25%.",
+      "catalyst": "2026-11-01 11:34UTC CoinWhisk/CoinGecko ZRO +8.22% 24h, +9.22% 7d, $101.44m 24h turnover; daily/weekly bullish structure; prospective Nov19 token unlock is a risk, not positive catalyst.",
+      "reason": "Better confirmed 24h and 7d relative strength with meaningful liquidity and identified daily support near $1.82 vs crypto cross-section; overextended LIT excluded from final risk-adjusted four.",
+      "risk": "Nov19 ~23.63m ZRO modeled unlock (~5.9% float), conflicting calendar providers; Binance security incident, spot venue execution unverified, daily ATR ~11%, 60D RS/true breadth missing.",
+      "invalidation": "Cancel on 1h close below $1.80 without recovery, $1.73 stop after entry, wide spread, deposit/withdrawal halt or further security deterioration."
     },
     {
       "date": "2026-11-01",
-      "generatedAtKst": "2026-11-01T07:50:33+09:00",
-      "briefingSlot": "0750",
+      "generatedAtKst": "2026-11-01T20:52:16+09:00",
+      "briefingSlot": "2050",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "confidence": null,
       "currency": "USD",
       "status": "CONDITIONAL",
-      "id": "20261101-0750KST-AAVE-LONG",
-      "ticker": "AAVE",
-      "name": "Aave",
+      "id": "20261101-2050KST-MORPHO-LONG",
+      "ticker": "MORPHO",
+      "name": "Morpho",
       "market": "GLOBAL_CRYPTO_SPOT",
       "assetClass": "CRYPTO",
       "direction": "LONG",
-      "score": 73,
-      "currentPrice": 134.76,
-      "referencePrice": 136.06,
-      "entryLow": 130,
-      "entryHigh": 132,
-      "stopLoss": 125.5,
-      "target1": 142.5,
-      "target2": 150,
+      "score": 75,
+      "currentPrice": 2.3,
+      "referencePrice": 2.3,
+      "entryLow": 2.27,
+      "entryHigh": 2.31,
+      "stopLoss": 2.2,
+      "target1": 2.5,
+      "target2": 2.58,
       "committeeVote": "4/7",
-      "priceTimestampKst": null,
-      "quoteStatus": "NOV01_COIN_GECKO_CRAWL_INDICATIVE_UNTIMED_134_76;OCT31_1616UTC_SNAPSHOT_136_06;NO_LIVE_SPOT_ORDERBOOK",
-      "holdingPeriod": "6-72 hours spot only",
-      "strategy": "No immediate trade. Venue-specific spot bid/ask and 1h OHLCV required; wait for pullback $130-$132 and 1h close back above $133 on improving volume; stop $125.50, targets $142.50/$150, no chase above $138, max 0.10% total assets.",
-      "catalyst": "Oct31 16:16 UTC snapshot AAVE +7.54% 24h, -0.14% 7d, $244.6m volume; Aave risk stewards reported reopening after Oct29 Binance exploit freeze, but temporary zero-LTV collateral restrictions remain.",
-      "reason": "Cross-venue derivatives quotes $134.26-$134.57 broadly agree with CoinGecko $134.76; high turnover and recovering momentum; 7d RS not yet positive, so Emerging/Reversal not breakout.",
-      "risk": "Aave protocol spillover from Binance exploit, temporary zero-LTV restrictions, ongoing tBTC mint/redeem precaution, exchange/counterparty risk; 60D RS and spot execution not verified.",
-      "invalidation": "No trade if new protocol freeze, adverse collateral rule, spot spread/withdrawal issue or price below $125.50."
+      "priceTimestampKst": "2026-11-01T20:34:00+09:00",
+      "quoteStatus": "COINWHISK_CG_AGG_2026_11_01_1134UTC_2_30_NONEXECUTABLE_NO_ORDERBOOK",
+      "holdingPeriod": "6-72h spot conditional",
+      "strategy": "No immediate order. Verify venue-specific spot bid/ask and 1h OHLCV, wait for $2.27-$2.31 pullback and 1h reclaim $2.31 on volume >=20h median; stop $2.20, targets $2.50/$2.58, no chase above $2.41. Max 0.10% total assets, combined crypto <=0.25%.",
+      "catalyst": "2026-11-01 11:34UTC CoinWhisk/CoinGecko MORPHO +7.92% 24h, +10.58% 7d, $44.72m turnover; COINOTAG Nov1 daily support $2.3043/$2.2426 resistance $2.4079/$2.4974.",
+      "reason": "Positive 7d relative strength and daily multi-timeframe improvement, unlike single-day microcap jumps; lower liquidity than ZRO and hourly overbought RSI penalized.",
+      "risk": "DeFi collateral/liquidation contagion after Binance breach, 1h RSI overbought (CoinLore 73.39 in snapshot), limited venue/orderbook verification, 60D RS and full onchain risk unverified.",
+      "invalidation": "Cancel if protocol collateral freeze, sharp decline through $2.24, stop $2.20 after entry, spread widens or liquidity evaporates."
     },
     {
       "date": "2026-11-01",
-      "generatedAtKst": "2026-11-01T07:50:33+09:00",
-      "briefingSlot": "0750",
+      "generatedAtKst": "2026-11-01T20:52:16+09:00",
+      "briefingSlot": "2050",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "confidence": null,
       "currency": "USD",
       "status": "CONDITIONAL",
-      "id": "20261101-0750KST-PSQ-INVERSE",
+      "id": "20261101-2050KST-PSQ-INVERSE",
       "ticker": "PSQ",
       "name": "ProShares Short QQQ",
       "market": "NYSE_ARCA",
       "assetClass": "US_ETF",
       "direction": "INVERSE",
-      "score": 72,
+      "score": 69,
       "currentPrice": 26.63,
       "referencePrice": 26.63,
-      "entryLow": 26.32,
+      "entryLow": 26.35,
       "entryHigh": 26.5,
       "stopLoss": 26.08,
       "target1": 27.15,
       "target2": 27.55,
       "committeeVote": "4/7",
       "priceTimestampKst": "2026-10-31T05:00:00+09:00",
-      "quoteStatus": "US_OCT30_REGULAR_CLOSE_WEEKEND_NONEXECUTABLE",
-      "holdingPeriod": "1-3 US trading days only",
-      "strategy": "Nov 2 US regular session only, wait for Nasdaq100 rally failure and PSQ $26.32-$26.50 reclaim with volume; stop $26.08, targets $27.15/$27.55, no chase above $26.85, max 0.20% total assets.",
-      "catalyst": "Oct30 Nasdaq -2.86%, semiconductors -7.2%, VIX official 19.42; PSQ daily -1x Nasdaq100 ETF, not inverse of Nasdaq Composite.",
-      "reason": "Hedge candidate if Nasdaq100 weakness persists; daily-reset and gap risk reduce confidence, no market open Sunday.",
-      "risk": "Strong Monday tech rebound, inverse ETF daily compounding and tracking, spreads, unverified 15m VWAP and option skew.",
-      "invalidation": "Cancel if Nasdaq100 recovers Friday breakdown and holds above intraday VWAP or PSQ breaks $26.08."
+      "quoteStatus": "OCT30_US_CLOSE_STOCKSCAN_INVESTING_TR_26_63;INVESTING_KR_26_87_DISAGREES;WEEKEND_CLOSED_NOT_EXECUTABLE",
+      "holdingPeriod": "1-3 US regular sessions only",
+      "strategy": "Observe only Sunday. Nov2 23:30KST US regular session: first reconcile conflicting Oct30 closes with exchange/broker feed, then if Nasdaq100 rebound fails and PSQ reclaims $26.35-$26.50 on volume, consider entry; stop $26.08, targets $27.15/$27.55. No chase >$26.89, max 0.20% total assets.",
+      "catalyst": "Oct30 Nasdaq Composite -2.86%, tech ETF weekly -2.0% and monthly -9.3%, VIX official 19.42; PSQ daily -1x Nasdaq-100, not Nasdaq Composite.",
+      "reason": "Non-crypto inverse exposure if US tech downtrend resumes; not immediately executable due Sunday market closure and close-price discrepancy.",
+      "risk": "Price sources disagree ($26.63 vs $26.87), rebound gap, daily-reset inverse compounding and tracking error, no live options/flow or Nasdaq100 futures.",
+      "invalidation": "Do not enter before broker-price reconciliation, if Nasdaq100 recovers key breakdown with strong breadth, or PSQ falls through $26.08 after fill."
     },
     {
       "date": "2026-11-01",
-      "generatedAtKst": "2026-11-01T07:50:33+09:00",
-      "briefingSlot": "0750",
+      "generatedAtKst": "2026-11-01T20:52:16+09:00",
+      "briefingSlot": "2050",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "confidence": null,
       "currency": "USD",
       "status": "CONDITIONAL",
-      "id": "20261101-0750KST-SGOV-DEFENSIVE",
+      "id": "20261101-2050KST-SGOV-DEFENSIVE",
       "ticker": "SGOV",
       "name": "iShares 0-3 Month Treasury Bond ETF",
       "market": "NYSE_ARCA",
       "assetClass": "US_ETF",
       "direction": "DEFENSIVE",
-      "score": 70,
+      "score": 68,
       "currentPrice": 100.73,
-      "referencePrice": 100.73,
+      "referencePrice": 100.74,
       "entryLow": null,
       "entryHigh": null,
       "stopLoss": null,
@@ -148,13 +148,13 @@
       "target2": null,
       "committeeVote": "6/7",
       "priceTimestampKst": "2026-10-31T05:00:00+09:00",
-      "quoteStatus": "US_OCT30_REGULAR_CLOSE_WEEKEND_NONEXECUTABLE",
+      "quoteStatus": "ISHARES_OFFICIAL_OCT30_CLOSE_100_73_NAV_100_74_WEEKEND_CLOSED",
       "holdingPeriod": "USD reserve / 1-30 US trading days",
-      "strategy": "Nov 2 US regular hours only; confirm fresh NAV and monthly distribution reset; buy only within NAV +/-$0.02 if spread normal, using existing USD reserve. No fixed price stop/target. Avoid new FX conversion for short holding.",
-      "catalyst": "iShares official Oct29 NAV $100.71, 30-day SEC yield 3.79% as of Oct28, expense ratio 0.09%, short Treasury exposure.",
-      "reason": "Short-duration US Treasury cash parking while equity volatility and crypto counterparty risks elevated.",
-      "risk": "USD/KRW FX risk, ETF not bank deposit, monthly ex-dividend NAV reset, premium/discount and opportunity cost.",
-      "invalidation": "Avoid unusual premium, abnormal spread, NAV discrepancy or excessive FX conversion cost."
+      "strategy": "No Sunday trade. Nov2 US regular hours only, recheck ex-dividend adjusted NAV and normal spread; only existing USD cash, enter within fresh NAV +/-$0.02. No fixed stop/target; consider FX conversion costs and opportunity cost.",
+      "catalyst": "iShares official Oct30 close $100.73 NAV $100.74, SEC 30d yield 3.79% as of Oct29, Nov2 ex-dividend $0.328581, 0.09% expense ratio.",
+      "reason": "Low-duration USD Treasury cash parking; defensive sleeve reduces crypto/tech directional correlation.",
+      "risk": "USD/KRW FX risk, monthly ex-dividend reset, not bank deposit, NAV premium and opportunity cost.",
+      "invalidation": "Avoid if fresh NAV unavailable, spread/premium abnormally wide or FX costs overwhelm expected short-period return."
     }
   ],
   "topEvaluated": [
@@ -183,7 +183,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 2925.1
+        "ageMinutes": 3235.5
       }
     },
     {
@@ -211,7 +211,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2925.1
+        "ageMinutes": 3235.5
       }
     },
     {
@@ -239,7 +239,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 2925.1
+        "ageMinutes": 3235.5
       }
     },
     {
@@ -267,7 +267,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 2925.1
+        "ageMinutes": 3235.5
       }
     },
     {
@@ -295,7 +295,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2925.1
+        "ageMinutes": 3235.5
       }
     },
     {
@@ -323,7 +323,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2925.1
+        "ageMinutes": 3235.5
       }
     },
     {
@@ -351,7 +351,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2925.1
+        "ageMinutes": 3235.5
       }
     },
     {
@@ -379,7 +379,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2925.1
+        "ageMinutes": 3235.5
       }
     },
     {
@@ -407,7 +407,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2925.1
+        "ageMinutes": 3235.5
       }
     },
     {
@@ -435,7 +435,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2925.1
+        "ageMinutes": 3235.5
       }
     },
     {
@@ -463,7 +463,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 2925.1
+        "ageMinutes": 3235.5
       }
     },
     {
@@ -491,7 +491,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2925.1
+        "ageMinutes": 3235.5
       }
     },
     {
@@ -519,7 +519,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2925.1
+        "ageMinutes": 3235.5
       }
     },
     {
@@ -547,7 +547,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2925.1
+        "ageMinutes": 3235.5
       }
     },
     {
@@ -575,7 +575,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 2925.1
+        "ageMinutes": 3235.5
       }
     },
     {
@@ -603,7 +603,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2925.1
+        "ageMinutes": 3235.5
       }
     },
     {
@@ -631,7 +631,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2925.1
+        "ageMinutes": 3235.5
       }
     },
     {
@@ -659,7 +659,7 @@
           "score": 5
         },
         "fresh": false,
-        "ageMinutes": 2925.1
+        "ageMinutes": 3235.5
       }
     },
     {
@@ -687,7 +687,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2925.1
+        "ageMinutes": 3235.5
       }
     },
     {
@@ -715,7 +715,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 2925.1
+        "ageMinutes": 3235.5
       }
     },
     {
@@ -743,7 +743,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 2925.1
+        "ageMinutes": 3235.5
       }
     },
     {
@@ -771,7 +771,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 2925.1
+        "ageMinutes": 3235.5
       }
     },
     {
@@ -799,7 +799,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 2925.1
+        "ageMinutes": 3235.5
       }
     },
     {
@@ -827,7 +827,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2925.1
+        "ageMinutes": 3235.5
       }
     },
     {
@@ -855,7 +855,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2925.1
+        "ageMinutes": 3235.5
       }
     },
     {
@@ -883,7 +883,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 2925.1
+        "ageMinutes": 3235.5
       }
     },
     {
@@ -911,7 +911,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 2925.1
+        "ageMinutes": 3235.5
       }
     },
     {
@@ -939,7 +939,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 1860.1
+        "ageMinutes": 2170.5
       }
     },
     {
@@ -967,14 +967,14 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 2055.1
+        "ageMinutes": 2365.5
       }
     },
     {
       "ticker": "TRGP",
       "name": "Targa Resources, Inc. Common Stock",
-      "dailyScore": 86.74,
-      "relativeStrengthPercentile": 0.8348214285714286,
+      "dailyScore": 86.11,
+      "relativeStrengthPercentile": 0.8222222222222222,
       "dailySignalEligible": true,
       "trigger": {
         "ready": false,
@@ -995,7 +995,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 1980.1
+        "ageMinutes": 2290.5
       }
     }
   ],
