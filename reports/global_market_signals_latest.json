@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-11-03T04:43:07.245270+09:00",
+  "generatedAtKst": "2026-11-03T07:54:47.404533+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
     "shortlistCount": 420,
     "krEtfShortlistCount": 34,
-    "dailyMetricsCount": 390,
+    "dailyMetricsCount": 392,
     "dailyCandidateCount": 50,
     "krEtfDailyCandidateCount": 27,
     "strictDailyCandidateCount": 23,
@@ -24,122 +24,90 @@
     "panic": false,
     "riskOff": false,
     "equityBelow200Count": 0,
-    "realizedVolatility20Annualized": 0.2162,
+    "realizedVolatility20Annualized": 0.2179,
     "reason": "광의 추세와 변동성 정상"
   },
   "signals": [
     {
-      "date": "2026-11-02",
-      "generatedAtKst": "2026-11-02T20:52:34+09:00",
-      "briefingSlot": "2050",
+      "date": "2026-11-03",
+      "generatedAtKst": "2026-11-03T07:53:30+09:00",
+      "briefingSlot": "0750",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "confidence": null,
       "status": "CONDITIONAL",
-      "id": "20261102-2050KST-EL-LONG",
-      "ticker": "EL",
-      "name": "The Estee Lauder Companies",
-      "market": "NYSE",
-      "assetClass": "US_STOCK",
+      "id": "20261103-0750KST-VTI-LONG",
+      "ticker": "VTI",
+      "name": "Vanguard Total Stock Market ETF",
+      "market": "NYSE_ARCA_ETF",
+      "assetClass": "US_ETF",
       "currency": "USD",
       "direction": "LONG",
-      "score": 77,
-      "currentPrice": 112,
-      "referencePrice": 109.23,
-      "entryLow": 110.5,
-      "entryHigh": 112,
-      "stopLoss": 107.5,
-      "target1": 119.5,
-      "target2": 122,
-      "committeeVote": "4/7",
-      "priceTimestampKst": "2026-11-02T20:50:00+09:00",
-      "quoteStatus": "NOV02_US_PREMARKET_SCANNER_112_00_103_4K_SHARES_RVOL_3_2X_NOT_EXECUTABLE_TIMESTAMP_NOT_CONFIRMED",
-      "holdingPeriod": "1-5 US sessions",
-      "strategy": "At 09:45 ET or later, wait for 15-min VWAP reclaim and 15-min closing price in $110.50-$112.00 with sustained >=1.5x relative volume. Stop $107.50; targets $119.50/$122.00; do not chase >$114.50. Max 0.25% total assets. Confirm Nov2 earnings/guidance and fresh exchange quote before trading.",
-      "catalyst": "Nov2 earnings reported by Reuters: fiscal Q1 revenue $3.72B +7% vs $3.65B consensus, fiscal 2027 organic growth guidance raised to 4-5.5%, adjusted EPS $3.20-$3.45. Premarket scanner $112 +2.54% with ~103.4K shares and 3.2x RVOL; official release not retrieved.",
-      "reason": "Confirmed earnings-revision catalyst and relatively liquid premarket activity, distinct from AI/semiconductor rebound; entry only on regular-hours confirmation.",
-      "risk": "Company IR primary earnings release not independently retrieved at snapshot; premarket quote timestamp not explicitly supplied; valuation ~high PE and gap-fade risk.",
-      "invalidation": "Earnings details contradict official filing, price <107.50 after entry, weak opening relative volume, VWAP rejection or no clean fill."
+      "score": 83,
+      "currentPrice": null,
+      "referencePrice": 371.57,
+      "entryLow": null,
+      "entryHigh": null,
+      "stopLoss": null,
+      "target1": null,
+      "target2": null,
+      "committeeVote": "6/7",
+      "priceTimestampKst": "2026-10-30T16:00:00-04:00",
+      "quoteStatus": "OCT30_VERIFIED_CLOSE_371_57_NOV02_SOURCE_CONFLICT_373_44_VS_375_24_NO_EXECUTABLE_QUOTE",
+      "holdingPeriod": "3-10 years",
+      "strategy": "Core low-turnover total-US-equity allocation; fixed monthly fractional purchases only after fresh broker bid/ask and FX check. No short-term stop or arbitrary target. Do not chase an indicative price.",
+      "catalyst": "Diversified long-term US earnings growth; November 2 S&P500 -0.51% and Nasdaq -1.07% despite broad market participation.",
+      "reason": "Low attention cost, diversified equity growth and reduced timing/stock-selection errors. November 2 VTI prices conflict across providers.",
+      "risk": "Equity drawdowns of 30%+ possible, USDKRW FX, US concentration, high rates, tax/fee costs.",
+      "invalidation": "Investment horizon under 5 years, cash needs, excessive portfolio equity concentration, or materially changed risk tolerance."
     },
     {
-      "date": "2026-11-02",
-      "generatedAtKst": "2026-11-02T20:52:34+09:00",
-      "briefingSlot": "2050",
+      "date": "2026-11-03",
+      "generatedAtKst": "2026-11-03T07:53:30+09:00",
+      "briefingSlot": "0750",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "confidence": null,
-      "status": "CONDITIONAL",
-      "id": "20261102-2050KST-OKTA-LONG",
-      "ticker": "OKTA",
-      "name": "Okta Inc.",
+      "status": "WATCH",
+      "id": "20261103-0750KST-IDXX-LONG",
+      "ticker": "IDXX",
+      "name": "IDEXX Laboratories",
       "market": "NASDAQ",
       "assetClass": "US_STOCK",
       "currency": "USD",
       "direction": "LONG",
-      "score": 75,
-      "currentPrice": 215.77,
-      "referencePrice": 208.24,
-      "entryLow": 212,
-      "entryHigh": 216,
-      "stopLoss": 206,
-      "target1": 232,
-      "target2": 235,
+      "score": 76,
+      "currentPrice": 671.64,
+      "referencePrice": 671.64,
+      "entryLow": null,
+      "entryHigh": null,
+      "stopLoss": null,
+      "target1": null,
+      "target2": null,
       "committeeVote": "4/7",
-      "priceTimestampKst": "2026-11-02T20:50:00+09:00",
-      "quoteStatus": "NOV02_US_PREMARKET_SCANNER_215_77_3_62PCT_8_9K_SHARES_LOW_PREMARKET_VOLUME_NOT_EXECUTABLE",
-      "holdingPeriod": "1-3 US sessions",
-      "strategy": "At 09:45 ET+ require 15m VWAP support, >=1.5x normal 15m volume, price $212-$216; stop $206; target $232/$235; no chase >$220. Max 0.15% total assets. Verify official S&P inclusion and news around DHS access incident.",
-      "catalyst": "S&P Dow Jones Indices Oct30 official release: OKTA joins S&P 500 before Nov4 open replacing Kenvue. Nov2 premarket $215.77 +3.62% but only ~8.9K shares; Oct30 regular close $208.24.",
-      "reason": "Distinct event-driven index inclusion and possible passive fund buying; no guarantee of net inflows or price continuation.",
-      "risk": "Only 8.9K premarket shares at snapshot, +140% YTD and 52w high $235; reported DHS data access through Okta-related SSO does not establish Okta product vulnerability; avoid causal assumption.",
-      "invalidation": "No regular session VWAP support, 15m volume insufficient, price under $206 after fill or index inclusion terms change."
+      "priceTimestampKst": "2026-11-02T16:00:00-05:00",
+      "quoteStatus": "NOV02_CLOSE_671_64_NEWS_CROSSCHECK_NO_LIVE_NBBO",
+      "holdingPeriod": "6-24 months after valuation reset",
+      "strategy": "Do not chase November 2 ~21.85% gap. Observe several sessions for volume consolidation, sustainable recurring diagnostics growth and valuation. No executable entry, stop or target until price/volatility verified.",
+      "catalyst": "Official Nov2 Q3 2026: revenue $1.214B +10%; EPS $4.01; 2026 revenue guidance $4.741-4.767B; EPS guidance $14.96-15.16.",
+      "reason": "Strong earnings surprise and recurring animal diagnostic revenues; valuation risk from abrupt re-rating.",
+      "risk": "One-day ~22% jump, earnings-multiple compression, weak US veterinary visits, margin guidance reduced.",
+      "invalidation": "Recurring diagnostics revenue growth below high single digits or material guidance downgrade."
     },
     {
-      "date": "2026-11-02",
-      "generatedAtKst": "2026-11-02T20:52:34+09:00",
-      "briefingSlot": "2050",
-      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "confidence": null,
-      "status": "WATCH_ONLY",
-      "id": "20261102-2050KST-PSQ-INVERSE",
-      "ticker": "PSQ",
-      "name": "ProShares Short QQQ",
-      "market": "NYSE_ARCA_ETF",
-      "assetClass": "US_ETF",
-      "currency": "USD",
-      "direction": "INVERSE",
-      "score": 62,
-      "currentPrice": 26.63,
-      "referencePrice": 26.63,
-      "entryLow": 26.2,
-      "entryHigh": 26.5,
-      "stopLoss": 25.95,
-      "target1": 27.15,
-      "target2": 27.55,
-      "committeeVote": "2/7",
-      "priceTimestampKst": "2026-10-30T16:00:00-04:00",
-      "quoteStatus": "OCT30_REGULAR_CLOSE_26_63_YAHOO_INVESTING_CA_CROSSCHECKED_NOT_LIVE_NOV02",
-      "holdingPeriod": "1 US session tactical",
-      "strategy": "OBSERVE ONLY while Nasdaq futures +0.7%. If Nasdaq100 fails first 30-min rebound, closes below opening VWAP, and PSQ reclaims 15m VWAP with $26.20-$26.50 executable bid/ask, consider tactical inverse. Stop $25.95, target $27.15/$27.55, no chase >$26.60. Max 0.10% total assets.",
-      "catalyst": "Oct30 Nasdaq Composite -2.86%; Nov2 Nasdaq100 futures rebound ~+0.7%, making inverse an unconfirmed reversal hedge.",
-      "reason": "Conditional bearish hedge, not a current short signal; lower-ranked than long earnings/index inclusion catalysts.",
-      "risk": "Strong opening tech rebound, inverse daily reset and tracking error, previous close not live; 2/7 committee does not permit immediate.",
-      "invalidation": "Nasdaq100 holds above VWAP and advances, or PSQ fails its entry band."
-    },
-    {
-      "date": "2026-11-02",
-      "generatedAtKst": "2026-11-02T20:52:34+09:00",
-      "briefingSlot": "2050",
+      "date": "2026-11-03",
+      "generatedAtKst": "2026-11-03T07:53:30+09:00",
+      "briefingSlot": "0750",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "confidence": null,
       "status": "CONDITIONAL",
-      "id": "20261102-2050KST-SGOV-DEFENSIVE",
+      "id": "20261103-0750KST-SGOV-DEFENSIVE",
       "ticker": "SGOV",
       "name": "iShares 0-3 Month Treasury Bond ETF",
       "market": "NYSE_ARCA_ETF",
       "assetClass": "US_ETF",
       "currency": "USD",
       "direction": "DEFENSIVE",
-      "score": 69,
-      "currentPrice": 100.73,
+      "score": 75,
+      "currentPrice": null,
       "referencePrice": 100.73,
       "entryLow": null,
       "entryHigh": null,
@@ -148,13 +116,45 @@
       "target2": null,
       "committeeVote": "6/7",
       "priceTimestampKst": "2026-10-30T16:00:00-04:00",
-      "quoteStatus": "OCT30_CLOSE_100_73_STOCKSCAN_CROSSCHECKED_BLACKROCK_PRODUCT_OFFICIAL_0_09PCT_FEE_NOV02_EX_DIVIDEND_ADJUSTMENT_REQUIRED",
-      "holdingPeriod": "USD reserve 5-30 US sessions",
-      "strategy": "For existing USD cash reserve only; check Nov2 ex-dividend adjusted official NAV and fresh bid/ask, then limit order at current NAV +/- $0.02, no directional stop or target. Do not anchor to Oct30 $100.73. No USD conversion solely to chase cash yield.",
-      "catalyst": "BlackRock official fund holds 0-3 month US T-bills, fee 0.09%, Oct30 closing price $100.73; monthly distribution may mechanically reduce price at Nov2 ex-date.",
-      "reason": "Low duration and high liquidity as a cash substitute in USD, distinct from directional stock risk.",
-      "risk": "USD/KRW currency risk, ex-dividend price adjustment, market price/NAV mismatch and not bank-deposit insured.",
-      "invalidation": "NAV unavailable, market premium >$0.02, unexpected credit/liquidity event or spread abnormal."
+      "quoteStatus": "OCT30_OFFICIAL_BLACKROCK_CLOSE_100_73_NAV_100_74_NOV02_EX_DIVIDEND_FRESH_NAV_UNAVAILABLE",
+      "holdingPeriod": "USD cash reserve",
+      "strategy": "Only for existing USD cash reserve, after Nov2 distribution adjustment verify current NAV and spread; use limit order. Not a replacement for KRW emergency fund.",
+      "catalyst": "BlackRock official Oct30 NAV $100.74, 30-day SEC yield 3.79%, 0.09% expense ratio, 0-3 month US Treasuries.",
+      "reason": "Liquidity and low interest-rate duration, defensive optionality for later investing.",
+      "risk": "USD/KRW currency swings, fund price vs NAV, distribution ex-date mechanical adjustment, not deposit insured.",
+      "invalidation": "Unverified post-ex-date NAV, excessive premium/spread, cash needed in KRW."
+    },
+    {
+      "date": "2026-11-03",
+      "generatedAtKst": "2026-11-03T07:53:30+09:00",
+      "briefingSlot": "0750",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "confidence": null,
+      "status": "WATCH",
+      "id": "20261103-0750KST-SH-INVERSE",
+      "ticker": "SH",
+      "name": "ProShares Short S&P500",
+      "market": "NYSE_ARCA_ETF",
+      "assetClass": "US_ETF",
+      "currency": "USD",
+      "direction": "INVERSE",
+      "score": 60,
+      "currentPrice": null,
+      "referencePrice": 32.86,
+      "entryLow": null,
+      "entryHigh": null,
+      "stopLoss": null,
+      "target1": null,
+      "target2": null,
+      "committeeVote": "2/7",
+      "priceTimestampKst": "2026-10-30T16:00:00-04:00",
+      "quoteStatus": "OCT30_CLOSE_32_86_NOV02_FRESH_CLOSE_UNAVAILABLE",
+      "holdingPeriod": "1-3 sessions only if triggered",
+      "strategy": "Not a default holding. Only consider after S&P500 sustained decline below session VWAP with breadth deterioration and verified current SH quote. No actionable entry/stop/target until verified.",
+      "catalyst": "Nov2 S&P500 -0.51% and Nasdaq -1.07% despite early gains; possible failed rebound.",
+      "reason": "Tactical downside hedge, not long-term compounding instrument.",
+      "risk": "Daily inverse reset, compounding decay, rebound whipsaw, expense ratio 0.89%.",
+      "invalidation": "Broad market rebound with improving breadth, confirmed above VWAP."
     }
   ],
   "topEvaluated": [
@@ -170,8 +170,8 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
-        "ema20": 23808.012831,
-        "ema50": 23725.062522,
+        "ema20": 23808.012753,
+        "ema50": 23725.048728,
         "lastTimestamp": "2026-11-02T06:00:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=NEUTRAL/CHOCH_DOWN/NONE",
         "ict": {
@@ -183,7 +183,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 825.1
+        "ageMinutes": 1016.9
       }
     },
     {
@@ -211,7 +211,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 825.1
+        "ageMinutes": 1016.9
       }
     },
     {
@@ -226,8 +226,8 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
-        "ema20": 92770.393057,
-        "ema50": 92162.503957,
+        "ema20": 92770.483274,
+        "ema50": 92162.675524,
         "lastTimestamp": "2026-11-02T06:00:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=BEARISH/BOS_DOWN/NONE",
         "ict": {
@@ -239,7 +239,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 825.1
+        "ageMinutes": 1016.9
       }
     },
     {
@@ -267,7 +267,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 825.1
+        "ageMinutes": 1016.9
       }
     },
     {
@@ -295,7 +295,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 825.1
+        "ageMinutes": 1016.9
       }
     },
     {
@@ -310,8 +310,8 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
-        "ema20": 92453.238749,
-        "ema50": 91920.109061,
+        "ema20": 92453.231775,
+        "ema50": 91920.090062,
         "lastTimestamp": "2026-11-02T06:00:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=BEARISH/BOS_DOWN/NONE",
         "ict": {
@@ -323,7 +323,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 825.1
+        "ageMinutes": 1016.9
       }
     },
     {
@@ -351,7 +351,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 825.1
+        "ageMinutes": 1016.9
       }
     },
     {
@@ -379,7 +379,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 825.1
+        "ageMinutes": 1016.9
       }
     },
     {
@@ -407,7 +407,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 825.1
+        "ageMinutes": 1016.9
       }
     },
     {
@@ -435,7 +435,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 825.1
+        "ageMinutes": 1016.9
       }
     },
     {
@@ -463,7 +463,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 825.1
+        "ageMinutes": 1016.9
       }
     },
     {
@@ -491,7 +491,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 825.1
+        "ageMinutes": 1016.9
       }
     },
     {
@@ -519,7 +519,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 825.1
+        "ageMinutes": 1016.9
       }
     },
     {
@@ -534,8 +534,8 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
-        "ema20": 38041.813106,
-        "ema50": 38237.028409,
+        "ema20": 38041.419768,
+        "ema50": 38236.819795,
         "lastTimestamp": "2026-11-02T06:00:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
@@ -547,7 +547,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 825.1
+        "ageMinutes": 1016.9
       }
     },
     {
@@ -575,7 +575,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 825.1
+        "ageMinutes": 1016.9
       }
     },
     {
@@ -603,7 +603,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 825.1
+        "ageMinutes": 1016.9
       }
     },
     {
@@ -618,8 +618,8 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
-        "ema20": 25424.178547,
-        "ema50": 25494.788679,
+        "ema20": 25424.178573,
+        "ema50": 25494.791529,
         "lastTimestamp": "2026-11-02T06:00:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=BULLISH/NONE/NONE",
         "ict": {
@@ -631,7 +631,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 825.1
+        "ageMinutes": 1016.9
       }
     },
     {
@@ -646,8 +646,8 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
-        "ema20": 170205.868855,
-        "ema50": 170663.020552,
+        "ema20": 170205.703728,
+        "ema50": 170662.868982,
         "lastTimestamp": "2026-11-02T06:00:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=BULLISH/NONE/NONE",
         "ict": {
@@ -659,7 +659,7 @@
           "score": 3
         },
         "fresh": false,
-        "ageMinutes": 825.1
+        "ageMinutes": 1016.9
       }
     },
     {
@@ -687,7 +687,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 825.1
+        "ageMinutes": 1016.9
       }
     },
     {
@@ -715,7 +715,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 825.1
+        "ageMinutes": 1016.9
       }
     },
     {
@@ -730,8 +730,8 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
-        "ema20": 12386.028943,
-        "ema50": 12391.010407,
+        "ema20": 12386.028939,
+        "ema50": 12391.00866,
         "lastTimestamp": "2026-11-02T06:00:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=BEARISH/NONE/NONE",
         "ict": {
@@ -743,7 +743,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 825.1
+        "ageMinutes": 1016.9
       }
     },
     {
@@ -771,7 +771,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 825.1
+        "ageMinutes": 1016.9
       }
     },
     {
@@ -786,8 +786,8 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
-        "ema20": 109660.425658,
-        "ema50": 109493.501424,
+        "ema20": 109660.402359,
+        "ema50": 109493.366519,
         "lastTimestamp": "2026-11-02T06:00:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=BEARISH/BOS_DOWN/NONE",
         "ict": {
@@ -799,7 +799,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 825.1
+        "ageMinutes": 1016.9
       }
     },
     {
@@ -827,7 +827,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 825.1
+        "ageMinutes": 1016.9
       }
     },
     {
@@ -842,8 +842,8 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
-        "ema20": 35813.708809,
-        "ema50": 35502.127963,
+        "ema20": 35813.70882,
+        "ema50": 35502.130786,
         "lastTimestamp": "2026-11-02T06:00:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
@@ -855,7 +855,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 825.1
+        "ageMinutes": 1016.9
       }
     },
     {
@@ -870,8 +870,8 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.2,
-        "ema20": 75715.992727,
-        "ema50": 74766.318007,
+        "ema20": 75716.098744,
+        "ema50": 74766.488426,
         "lastTimestamp": "2026-11-02T06:00:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.20x; ICT=BEARISH/BOS_DOWN/NONE",
         "ict": {
@@ -883,7 +883,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 825.1
+        "ageMinutes": 1016.9
       }
     },
     {
@@ -911,7 +911,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 825.1
+        "ageMinutes": 1016.9
       }
     },
     {
@@ -922,52 +922,52 @@
       "dailySignalEligible": true,
       "trigger": {
         "ready": false,
-        "breakout": false,
+        "breakout": true,
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.35,
-        "ema20": 61.163152,
-        "ema50": 62.955531,
-        "lastTimestamp": "2026-11-02T19:45:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 60.89287,
+        "ema50": 62.104341,
+        "lastTimestamp": "2026-11-02T22:45:00+00:00",
+        "reason": "breakout=True; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/CHOCH_UP/NONE",
         "ict": {
           "bias": "NEUTRAL",
-          "structure": "RANGE",
-          "event": "NONE",
+          "structure": "BEARISH_LH_LL",
+          "event": "CHOCH_UP",
           "liquidity": "NONE",
-          "fvg": "BULLISH 60.9500~61.0800",
+          "fvg": "BULLISH 60.9500~61.2395",
           "score": 1
         },
         "fresh": true,
-        "ageMinutes": 0.1
+        "ageMinutes": 11.9
       }
     },
     {
       "ticker": "VSXY",
       "name": "Victorias Secret & Co. Common Stock",
-      "dailyScore": 85.2,
-      "relativeStrengthPercentile": 0.963963963963964,
+      "dailyScore": 85.44,
+      "relativeStrengthPercentile": 0.96875,
       "dailySignalEligible": true,
       "trigger": {
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.413,
+        "volumeRatio": 2.056,
         "volumeThreshold": 1.35,
-        "ema20": 98.217197,
-        "ema50": 97.6819,
-        "lastTimestamp": "2026-11-02T19:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.41x/1.35x; ICT=BEARISH/NONE/NONE",
+        "ema20": 98.419116,
+        "ema50": 97.895693,
+        "lastTimestamp": "2026-11-02T21:00:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=2.06x/1.35x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
-          "bias": "BEARISH",
+          "bias": "NEUTRAL",
           "structure": "BEARISH_LH_LL",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BEARISH 98.5200~98.9700",
-          "score": -3
+          "fvg": "BULLISH 98.0900~98.2600",
+          "score": -1
         },
-        "fresh": true,
-        "ageMinutes": 15.1
+        "fresh": false,
+        "ageMinutes": 116.9
       }
     },
     {
@@ -980,22 +980,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 0.34,
+        "volumeRatio": 0.0,
         "volumeThreshold": 1.35,
-        "ema20": 158.665117,
-        "ema50": 161.557936,
-        "lastTimestamp": "2026-11-02T19:30:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.34x/1.35x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 157.870245,
+        "ema50": 159.932728,
+        "lastTimestamp": "2026-11-02T22:56:45+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/CHOCH_UP/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "BEARISH_LH_LL",
-          "event": "NONE",
+          "event": "CHOCH_UP",
           "liquidity": "NONE",
-          "fvg": "BULLISH 157.5610~157.8604",
+          "fvg": "BEARISH 157.6400~157.8000",
           "score": -1
         },
         "fresh": true,
-        "ageMinutes": 15.1
+        "ageMinutes": 0.2
       }
     }
   ],
