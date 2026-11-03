@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAtKst": "2026-11-04T07:29:02.354492+09:00",
+  "generatedAtKst": "2026-11-04T07:47:43.609045+09:00",
   "strategy": "EVIDENCE_WEIGHTED_GLOBAL_TREND_MOMENTUM",
   "monitoringCadence": "GitHub Actions every 15 minutes; Android WorkManager polls every 15 minutes",
   "universe": {
@@ -17,7 +17,7 @@
     "scannerSignalCount": 0,
     "chatgptSignalCount": 4,
     "krEtfSignalCount": 0,
-    "dailyCacheHit": false,
+    "dailyCacheHit": true,
     "maxSignalAgeMinutes": 45
   },
   "marketRegime": {
@@ -29,126 +29,128 @@
   },
   "signals": [
     {
-      "date": "2026-11-03",
-      "generatedAtKst": "2026-11-03T20:50:00+09:00",
-      "briefingSlot": "2050",
+      "date": "2026-11-04",
+      "generatedAtKst": "2026-11-04T07:46:51+09:00",
+      "briefingSlot": "0750",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "confidence": null,
-      "id": "20261103-2050KST-FN-LONG",
-      "ticker": "FN",
-      "name": "Fabrinet",
+      "id": "20261104-0750KST-ANET-LONG",
+      "ticker": "ANET",
+      "name": "Arista Networks",
       "market": "NYSE",
       "assetClass": "US_STOCK",
       "direction": "LONG",
-      "score": 72,
-      "status": "WATCH",
-      "referencePrice": 314.7,
-      "currency": "USD",
-      "priceTimestampKst": "2026-11-02T16:00:00-05:00",
-      "committeeVote": "4/7",
-      "reason": "Fiscal Q1 revenue $1.47B +51% YoY; adjusted EPS $4.34; premarket approximately +11%, high gap risk",
-      "risk": "Gap reversal; gross margin compression; AI infrastructure concentration",
-      "strategy": "Only after US regular session 30-minute price-volume stabilization; do not chase premarket spike.",
-      "currentPrice": null,
-      "entryLow": null,
-      "entryHigh": null,
-      "stopLoss": null,
-      "target1": null,
-      "target2": null,
-      "quoteStatus": "NOT_EXECUTABLE_LIVE_QUOTE_VERIFIED",
-      "catalyst": "Fiscal Q1 revenue $1.47B +51% YoY; adjusted EPS $4.34; premarket approximately +11%, high gap risk",
-      "invalidation": "Fresh data contradicts thesis or liquidity/volume confirmation fails"
-    },
-    {
-      "date": "2026-11-03",
-      "generatedAtKst": "2026-11-03T20:50:00+09:00",
-      "briefingSlot": "2050",
-      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "confidence": null,
-      "id": "20261103-2050KST-BAYN-LONG",
-      "ticker": "BAYN",
-      "name": "Bayer AG",
-      "market": "XETRA",
-      "assetClass": "EU_STOCK",
-      "direction": "LONG",
-      "score": 69,
-      "status": "WATCH",
-      "referencePrice": 51.98,
-      "currency": "EUR",
-      "priceTimestampKst": "2026-11-03T09:00:00+01:00",
-      "committeeVote": "4/7",
-      "reason": "2026 EBITDA guidance raised to EUR9.8-10.3B, pharma recovery, European market positive divergence",
-      "risk": "Litigation and debt EUR28-29B; delayed price",
-      "strategy": "Wait for fresh Xetra quote and daily closing strength; no unverified executable levels.",
-      "currentPrice": null,
-      "entryLow": null,
-      "entryHigh": null,
-      "stopLoss": null,
-      "target1": null,
-      "target2": null,
-      "quoteStatus": "NOT_EXECUTABLE_LIVE_QUOTE_VERIFIED",
-      "catalyst": "2026 EBITDA guidance raised to EUR9.8-10.3B, pharma recovery, European market positive divergence",
-      "invalidation": "Fresh data contradicts thesis or liquidity/volume confirmation fails"
-    },
-    {
-      "date": "2026-11-03",
-      "generatedAtKst": "2026-11-03T20:50:00+09:00",
-      "briefingSlot": "2050",
-      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
-      "confidence": null,
-      "id": "20261103-2050KST-SH-INVERSE",
-      "ticker": "SH",
-      "name": "ProShares Short S&P500",
-      "market": "NYSE_ARCA_ETF",
-      "assetClass": "US_ETF",
-      "direction": "INVERSE",
-      "score": 60,
+      "score": 76,
       "status": "WATCH",
       "referencePrice": null,
-      "currency": "USD",
-      "committeeVote": "2/7",
-      "reason": "KOSPI -3.59%, US tech AI CAPEX concerns and election volatility",
-      "risk": "Inverse daily reset and rebound risk",
-      "strategy": "Only if US regular-session breadth worsens and S&P500 below VWAP; no immediate entry.",
       "currentPrice": null,
+      "currency": "USD",
+      "priceTimestampKst": null,
+      "committeeVote": "4/7",
+      "reason": "Q3 revenue $3.66B +58.5% YoY, adjusted EPS $1.20; after-hours rise >9% reported, no verified executable quote",
+      "risk": "Earnings gap reversal, AI CAPEX concentration",
+      "strategy": "Wait for confirmed regular-session support and verified quote; no chasing",
       "entryLow": null,
       "entryHigh": null,
       "stopLoss": null,
       "target1": null,
       "target2": null,
       "quoteStatus": "NOT_EXECUTABLE_LIVE_QUOTE_VERIFIED",
-      "catalyst": "KOSPI -3.59%, US tech AI CAPEX concerns and election volatility",
-      "invalidation": "Fresh data contradicts thesis or liquidity/volume confirmation fails"
+      "catalyst": "Q3 earnings beat and Q4 guidance",
+      "invalidation": "Price/volume/valuation validation fails"
     },
     {
-      "date": "2026-11-03",
-      "generatedAtKst": "2026-11-03T20:50:00+09:00",
-      "briefingSlot": "2050",
+      "date": "2026-11-04",
+      "generatedAtKst": "2026-11-04T07:46:51+09:00",
+      "briefingSlot": "0750",
       "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
       "confidence": null,
-      "id": "20261103-2050KST-SGOV-DEFENSIVE",
+      "id": "20261104-0750KST-AMGN-LONG",
+      "ticker": "AMGN",
+      "name": "Amgen",
+      "market": "NASDAQ",
+      "assetClass": "US_STOCK",
+      "direction": "LONG",
+      "score": 73,
+      "status": "WATCH",
+      "referencePrice": null,
+      "currentPrice": null,
+      "currency": "USD",
+      "priceTimestampKst": null,
+      "committeeVote": "4/7",
+      "reason": "Q3 revenue $10.37B +8%, adjusted EPS $6.45, FY guidance raised",
+      "risk": "Patent expirations and pipeline risk",
+      "strategy": "Wait for verified price and valuation, no immediate order",
+      "entryLow": null,
+      "entryHigh": null,
+      "stopLoss": null,
+      "target1": null,
+      "target2": null,
+      "quoteStatus": "NOT_EXECUTABLE_LIVE_QUOTE_VERIFIED",
+      "catalyst": "Earnings beat and raised guidance",
+      "invalidation": "Price/volume/valuation validation fails"
+    },
+    {
+      "date": "2026-11-04",
+      "generatedAtKst": "2026-11-04T07:46:51+09:00",
+      "briefingSlot": "0750",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "confidence": null,
+      "id": "20261104-0750KST-SH-INVERSE",
+      "ticker": "SH",
+      "name": "ProShares Short S&P500",
+      "market": "NYSEARCA",
+      "assetClass": "US_ETF",
+      "direction": "INVERSE",
+      "score": 57,
+      "status": "WATCH",
+      "referencePrice": null,
+      "currentPrice": null,
+      "currency": "USD",
+      "priceTimestampKst": null,
+      "committeeVote": "2/7",
+      "reason": "Conditional index downside hedge; Nasdaq rebound was narrow",
+      "risk": "Daily inverse compounding and market rebound",
+      "strategy": "Only after verified index breakdown; no immediate entry",
+      "entryLow": null,
+      "entryHigh": null,
+      "stopLoss": null,
+      "target1": null,
+      "target2": null,
+      "quoteStatus": "NOT_EXECUTABLE_LIVE_QUOTE_VERIFIED",
+      "catalyst": "Broad market breadth deterioration",
+      "invalidation": "Price/volume/valuation validation fails"
+    },
+    {
+      "date": "2026-11-04",
+      "generatedAtKst": "2026-11-04T07:46:51+09:00",
+      "briefingSlot": "0750",
+      "strategyType": "CHATGPT_ZERO_BASE_BRIEFING",
+      "confidence": null,
+      "id": "20261104-0750KST-SGOV-DEFENSIVE",
       "ticker": "SGOV",
       "name": "iShares 0-3 Month Treasury Bond ETF",
-      "market": "NYSE_ARCA_ETF",
+      "market": "NYSEARCA",
       "assetClass": "US_ETF",
       "direction": "DEFENSIVE",
       "score": 74,
-      "status": "CONDITIONAL",
+      "status": "WAIT",
       "referencePrice": null,
-      "currency": "USD",
-      "committeeVote": "6/7",
-      "reason": "Low-duration Treasury cash management; no need to trade on short-term noise",
-      "risk": "FX, distribution ex-date NAV changes, non-guaranteed returns",
-      "strategy": "For existing USD cash only; verify broker quote against fresh iNAV before purchase.",
       "currentPrice": null,
+      "currency": "USD",
+      "priceTimestampKst": null,
+      "committeeVote": "6/7",
+      "reason": "Low duration USD cash management, official fund NAV must be refreshed",
+      "risk": "USD/KRW exposure, distribution ex-date NAV effects",
+      "strategy": "Use verified live NAV and limit order; only for existing USD cash",
       "entryLow": null,
       "entryHigh": null,
       "stopLoss": null,
       "target1": null,
       "target2": null,
       "quoteStatus": "NOT_EXECUTABLE_LIVE_QUOTE_VERIFIED",
-      "catalyst": "Low-duration Treasury cash management; no need to trade on short-term noise",
-      "invalidation": "Fresh data contradicts thesis or liquidity/volume confirmation fails"
+      "catalyst": "Capital preservation",
+      "invalidation": "Price/volume/valuation validation fails"
     }
   ],
   "topEvaluated": [
@@ -177,7 +179,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 991.0
+        "ageMinutes": 1007.8
       }
     },
     {
@@ -205,7 +207,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 991.0
+        "ageMinutes": 1007.8
       }
     },
     {
@@ -233,7 +235,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 991.0
+        "ageMinutes": 1007.8
       }
     },
     {
@@ -261,7 +263,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 991.0
+        "ageMinutes": 1007.8
       }
     },
     {
@@ -289,7 +291,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 991.0
+        "ageMinutes": 1007.8
       }
     },
     {
@@ -317,7 +319,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 991.0
+        "ageMinutes": 1007.8
       }
     },
     {
@@ -345,7 +347,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 991.0
+        "ageMinutes": 1007.8
       }
     },
     {
@@ -373,7 +375,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 991.0
+        "ageMinutes": 1007.8
       }
     },
     {
@@ -401,7 +403,7 @@
           "score": -5
         },
         "fresh": false,
-        "ageMinutes": 991.0
+        "ageMinutes": 1007.8
       }
     },
     {
@@ -429,7 +431,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 991.0
+        "ageMinutes": 1007.8
       }
     },
     {
@@ -457,7 +459,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 991.0
+        "ageMinutes": 1007.8
       }
     },
     {
@@ -485,7 +487,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 991.0
+        "ageMinutes": 1007.8
       }
     },
     {
@@ -513,7 +515,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 991.0
+        "ageMinutes": 1007.8
       }
     },
     {
@@ -541,7 +543,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 991.0
+        "ageMinutes": 1007.8
       }
     },
     {
@@ -569,7 +571,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 991.0
+        "ageMinutes": 1007.8
       }
     },
     {
@@ -597,7 +599,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 991.0
+        "ageMinutes": 1007.8
       }
     },
     {
@@ -625,7 +627,7 @@
           "score": 1
         },
         "fresh": false,
-        "ageMinutes": 991.0
+        "ageMinutes": 1007.8
       }
     },
     {
@@ -653,7 +655,7 @@
           "score": -5
         },
         "fresh": false,
-        "ageMinutes": 991.0
+        "ageMinutes": 1007.8
       }
     },
     {
@@ -681,7 +683,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 991.0
+        "ageMinutes": 1007.8
       }
     },
     {
@@ -709,7 +711,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 991.0
+        "ageMinutes": 1007.8
       }
     },
     {
@@ -737,7 +739,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 991.0
+        "ageMinutes": 1007.8
       }
     },
     {
@@ -765,7 +767,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 991.0
+        "ageMinutes": 1007.8
       }
     },
     {
@@ -793,7 +795,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 991.0
+        "ageMinutes": 1007.8
       }
     },
     {
@@ -821,7 +823,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 991.0
+        "ageMinutes": 1007.8
       }
     },
     {
@@ -849,7 +851,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 991.0
+        "ageMinutes": 1007.8
       }
     },
     {
@@ -877,7 +879,7 @@
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 991.0
+        "ageMinutes": 1007.8
       }
     },
     {
@@ -905,7 +907,7 @@
           "score": -3
         },
         "fresh": false,
-        "ageMinutes": 991.0
+        "ageMinutes": 1007.8
       }
     },
     {
@@ -920,20 +922,20 @@
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.35,
-        "ema20": 100.392537,
-        "ema50": 99.678019,
-        "lastTimestamp": "2026-11-03T21:30:00+00:00",
+        "ema20": 100.402771,
+        "ema50": 99.710619,
+        "lastTimestamp": "2026-11-03T22:00:00+00:00",
         "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/NONE",
         "ict": {
           "bias": "NEUTRAL",
           "structure": "RANGE",
           "event": "NONE",
           "liquidity": "NONE",
-          "fvg": "BEARISH 100.8600~101.0133",
+          "fvg": "BEARISH 100.5000~100.5300",
           "score": -1
         },
         "fresh": false,
-        "ageMinutes": 61.0
+        "ageMinutes": 47.8
       }
     },
     {
@@ -944,24 +946,24 @@
       "dailySignalEligible": true,
       "trigger": {
         "ready": false,
-        "breakout": false,
+        "breakout": true,
         "reclaim": false,
         "volumeRatio": 0.0,
         "volumeThreshold": 1.35,
-        "ema20": 61.025584,
-        "ema50": 61.09316,
+        "ema20": 61.02927,
+        "ema50": 61.094678,
         "lastTimestamp": "2026-11-03T22:15:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=NEUTRAL/NONE/NONE",
+        "reason": "breakout=True; reclaim=False; volume=0.00x/1.35x; ICT=BULLISH/BOS_UP/NONE",
         "ict": {
-          "bias": "NEUTRAL",
+          "bias": "BULLISH",
           "structure": "RANGE",
-          "event": "NONE",
+          "event": "BOS_UP",
           "liquidity": "NONE",
           "fvg": "BULLISH 61.0900~61.1900",
-          "score": 1
+          "score": 3
         },
         "fresh": true,
-        "ageMinutes": 16.0
+        "ageMinutes": 32.8
       }
     },
     {
@@ -974,22 +976,22 @@
         "ready": false,
         "breakout": false,
         "reclaim": false,
-        "volumeRatio": 2.964,
+        "volumeRatio": 0.0,
         "volumeThreshold": 1.35,
-        "ema20": 174.706261,
-        "ema50": 174.632136,
-        "lastTimestamp": "2026-11-03T21:00:00+00:00",
-        "reason": "breakout=False; reclaim=False; volume=2.96x/1.35x; ICT=NEUTRAL/NONE/NONE",
+        "ema20": 174.410427,
+        "ema50": 174.513237,
+        "lastTimestamp": "2026-11-03T22:15:00+00:00",
+        "reason": "breakout=False; reclaim=False; volume=0.00x/1.35x; ICT=BEARISH/BOS_DOWN/NONE",
         "ict": {
-          "bias": "NEUTRAL",
+          "bias": "BEARISH",
           "structure": "RANGE",
-          "event": "NONE",
+          "event": "BOS_DOWN",
           "liquidity": "NONE",
-          "fvg": "BEARISH 174.7300~174.9500",
-          "score": -1
+          "fvg": "BEARISH 171.6000~174.0100",
+          "score": -3
         },
-        "fresh": false,
-        "ageMinutes": 91.0
+        "fresh": true,
+        "ageMinutes": 32.8
       }
     }
   ],
