@@ -10,6 +10,7 @@ on:
       - 'tools/global_market_strategy.py'
       - 'tools/global_market_universe.py'
       - 'tools/global_market_monitor.py'
+      - 'tools/global_event_radar.py'
       - 'reports/chatgpt_recommendations_latest.json'
       - 'tools/test_global_market_monitor.py'
       - '.github/workflows/global-market-monitor.yml'
@@ -54,6 +55,9 @@ jobs:
       - name: Test Korean ETF monitoring guarantees
         run: python -m unittest tools/test_global_market_monitor.py
 
+      - name: Discover global pre-event news leads
+        run: python tools/global_event_radar.py
+
       - name: Scan current shortlist
         env:
           PYTHONUNBUFFERED: '1'
@@ -67,7 +71,8 @@ jobs:
           git add -f \
             reports/global_market_signals_latest.json \
             reports/global_market_recommendation_history.json \
-            reports/global_market_daily_state.json
+            reports/global_market_daily_state.json \
+            reports/global_event_radar_latest.json
           if git diff --cached --quiet; then
             echo "No global market report changes."
             exit 0
@@ -84,4 +89,5 @@ jobs:
             reports/global_market_signals_latest.json
             reports/global_market_recommendation_history.json
             reports/global_market_daily_state.json
+            reports/global_event_radar_latest.json
           retention-days: 14
